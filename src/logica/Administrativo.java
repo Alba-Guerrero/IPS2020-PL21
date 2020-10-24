@@ -21,4 +21,6 @@ public class Administrativo {
 		this.pass = pass;
 		this.codAdmin = codAdmin;	
 	}	
+	
+	//comentario
 }
