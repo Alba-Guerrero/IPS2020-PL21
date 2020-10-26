@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 
 import ui.admin.PanelCitas;
 import ui.admin.VentanaJornada;
+import ui.admin.VentanaVerCita;
 import ui.admin.VerCitasAdmin;
 
 import javax.swing.JButton;
@@ -43,6 +44,12 @@ public class VentanaAdministrador extends JDialog {
 	private JPanel panel6;
 	private JPanel panel8;
 	private JLabel lblSelecciona;
+	private JPanel panel8_1;
+	private JPanel panel;
+	private JPanel panel_1;
+	private JPanel panel_2;
+	private JPanel panel_3;
+	private JButton btnNewButton;
 
 
 
@@ -59,6 +66,7 @@ public class VentanaAdministrador extends JDialog {
 		setContentPane(contentPane);
 		contentPane.add(getPnSur(), BorderLayout.SOUTH);
 		contentPane.add(getPnCentro(), BorderLayout.CENTER);
+		contentPane.add(getLblSelecciona(), BorderLayout.NORTH);
 	}
 
 	private JPanel getPnSur() {
@@ -75,22 +83,28 @@ public class VentanaAdministrador extends JDialog {
 		if (pnCentro == null) {
 			pnCentro = new JPanel();
 			pnCentro.setBackground(Color.WHITE);
-			pnCentro.setLayout(new GridLayout(0, 5, 0, 0));
+			pnCentro.setLayout(new GridLayout(0, 7, 0, 0));
 			pnCentro.add(getPanel1());
 			pnCentro.add(getPanel2());
 			pnCentro.add(getPanel3());
 			pnCentro.add(getPanel4());
 			pnCentro.add(getPanel5());
-			pnCentro.add(getBtnJornada());
 			pnCentro.add(getPanel6());
-			pnCentro.add(getBtnAsignarCitas());
 			pnCentro.add(getPanel7());
-			pnCentro.add(getBtnVerCitas());
+			pnCentro.add(getBtnAsignarCitas());
 			pnCentro.add(getPanel8());
+			pnCentro.add(getBtnVerCitas());
 			pnCentro.add(getPanel9());
+			pnCentro.add(getBtnJornada());
 			pnCentro.add(getPanel10());
+			pnCentro.add(getBtnNewButton());
 			pnCentro.add(getPanel11());
 			pnCentro.add(getPanel12());
+			pnCentro.add(getPanel8_1());
+			pnCentro.add(getPanel());
+			pnCentro.add(getPanel_1());
+			pnCentro.add(getPanel_2());
+			pnCentro.add(getPanel_3());
 		}
 		return pnCentro;
 	}
@@ -129,7 +143,6 @@ public class VentanaAdministrador extends JDialog {
 		if (panel1 == null) {
 			panel1 = new JPanel();
 			panel1.setBackground(Color.WHITE);
-			panel1.add(getLblSelecciona());
 		}
 		return panel1;
 	}
@@ -292,5 +305,59 @@ public class VentanaAdministrador extends JDialog {
 		vca.setVisible(true);
 		vca.setLocationRelativeTo(this);
 		
+	}
+	
+protected void verCalendarioCitas() {
+		
+		VentanaVerCita vca = new VentanaVerCita();
+		vca.setVisible(true);
+		vca.setLocationRelativeTo(this);
+		
+	}
+	private JPanel getPanel8_1() {
+		if (panel8_1 == null) {
+			panel8_1 = new JPanel();
+			panel8_1.setBackground(Color.WHITE);
+		}
+		return panel8_1;
+	}
+	private JPanel getPanel() {
+		if (panel == null) {
+			panel = new JPanel();
+			panel.setBackground(Color.WHITE);
+		}
+		return panel;
+	}
+	private JPanel getPanel_1() {
+		if (panel_1 == null) {
+			panel_1 = new JPanel();
+			panel_1.setBackground(Color.WHITE);
+		}
+		return panel_1;
+	}
+	private JPanel getPanel_2() {
+		if (panel_2 == null) {
+			panel_2 = new JPanel();
+			panel_2.setBackground(Color.WHITE);
+		}
+		return panel_2;
+	}
+	private JPanel getPanel_3() {
+		if (panel_3 == null) {
+			panel_3 = new JPanel();
+			panel_3.setBackground(Color.WHITE);
+		}
+		return panel_3;
+	}
+	private JButton getBtnNewButton() {
+		if (btnNewButton == null) {
+			btnNewButton = new JButton("Ver calendario\r\n de citas");
+			btnNewButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					verCalendarioCitas();
+				}
+			});
+		}
+		return btnNewButton;
 	}
 }

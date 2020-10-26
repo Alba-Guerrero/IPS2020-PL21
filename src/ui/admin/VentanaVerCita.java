@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 
 import logica.Cita;
 import logica.Paciente;
+import logica.empleados.Empleado;
 import logica.servicios.ParserBaseDeDatos;
 import ui.medico.ModeloNoEditable;
 
@@ -47,11 +48,11 @@ public class VentanaVerCita extends JDialog {
 	private JLabel lblNewLabel;
 	private JDateChooser dateChooser;
 	private JButton btnIr;
-	private String codmedico;
 	private List<String> codcitas= new ArrayList<String>();
 	private JPanel panelBotones;
 	private JButton btnNewButton_1;
 	private JButton btnNewButton_2;
+	private JButton btnTodasLasCitas;
 	
 
 
@@ -59,9 +60,8 @@ public class VentanaVerCita extends JDialog {
 	 * Create the frame.
 	 * @param codmedico 
 	 */
-	public VentanaVerCita(String codmedico) {
+	public VentanaVerCita() {
 		setTitle("M\u00E9dico: Ver citas");
-		this.codmedico=codmedico;
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 813, 521);
 		contentPane = new JPanel();
@@ -80,7 +80,7 @@ public class VentanaVerCita extends JDialog {
 	}
 	private JTable getTableCita() {
 			if (tablacita == null) {
-				String[] nombreColumnas= {"Nombre paciente "," Apellido  ","Hora inicio"," Hora fin","Fecha ","Nombre médico","Urgencia"};
+				String[] nombreColumnas= {"Nombre paciente "," Apellido paciente  ","Hora inicio"," Hora fin","Fecha ","Nombre médico","Urgencia"};
 				modeloTabla= new ModeloNoEditable(nombreColumnas,0);
 				tablacita = new JTable(modeloTabla);
 				tablacita.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
@@ -130,7 +130,7 @@ public class VentanaVerCita extends JDialog {
 		Date date = getDateChooser().getDate();
 		java.sql.Date sDate = new java.sql.Date(date.getTime());
 		try {
-			citas = pbd.devolvercitasMedicoPorFecha(sDate,codmedico);
+			citas = pbd.devolvercitasPorFecha(sDate);
 		} catch (SQLException e) {
 
 			e.printStackTrace();
@@ -139,25 +139,28 @@ public class VentanaVerCita extends JDialog {
 	}
 	else {
 		try {
-			citas = pbd.devolvercitasMedico(codmedico);
+			citas = pbd.devolverCitas();
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
 	}
 		for(Cita c:citas) {
 			Paciente p = null;
+			Empleado empleado=null;
 			try {
 				p = pbd.devolverPacientesMedico(c.getCodCita());
+				empleado=pbd.devolverEmpleado(c.getCodMed());
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 			
-			nuevaFila[0] = p.getCodePaciente();
-			nuevaFila[1] = p.getNombre();
-			nuevaFila[2]= p.getApellido();
-			nuevaFila[3] = c.gethInicio();
-			nuevaFila[4] =c.gethFin();
-			nuevaFila[5] =c.getDate();
+	
+			nuevaFila[0] = p.getNombre();
+			nuevaFila[1]= p.getApellido();
+			nuevaFila[2] = c.gethInicio();
+			nuevaFila[3] =c.gethFin();
+			nuevaFila[4] =c.getDate();
+			nuevaFila[5] = empleado.getNombre()+"  " +empleado.getApellido();
 			nuevaFila[6] = c.isUrgente();
 			modeloTabla.addRow(nuevaFila);
 			codcitas.add(c.getCodCita());
@@ -182,6 +185,7 @@ public class VentanaVerCita extends JDialog {
 			panelCita.add(getLblNewLabel());
 			panelCita.add(getDateChooser());
 			panelCita.add(getBtnIr());
+			panelCita.add(getBtnTodasLasCitas());
 		}
 		return panelCita;
 	}
@@ -228,5 +232,16 @@ public class VentanaVerCita extends JDialog {
 			btnNewButton_2 = new JButton("Modificar cita");
 		}
 		return btnNewButton_2;
+	}
+	private JButton getBtnTodasLasCitas() {
+		if (btnTodasLasCitas == null) {
+			btnTodasLasCitas = new JButton("Todas las citas");
+			btnTodasLasCitas.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					añadirFilas(false);
+				}
+			});
+		}
+		return btnTodasLasCitas;
 	}
 }
