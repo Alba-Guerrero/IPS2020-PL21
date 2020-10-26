@@ -52,6 +52,7 @@ public class VentanaMedicoCita extends JDialog {
 	private JButton btnNewButton;
 	private JButton btnNewButton_1;
 	private JButton btnNewButton_2;
+	private JButton btnNewButton_3;
 	
 
 
@@ -80,7 +81,7 @@ public class VentanaMedicoCita extends JDialog {
 	}
 	private JTable getTableCita() {
 			if (tablacita == null) {
-				String[] nombreColumnas= {"Cod paciente ","Nombre "," Apellido  ","Hora inicio"," Hora fin","Fecha ","Urgencia"};
+				String[] nombreColumnas= {"Nombre "," Apellido  ","Hora inicio"," Hora fin","Fecha ","Sala","Urgencia"};
 				modeloTabla= new ModeloNoEditable(nombreColumnas,0);
 				tablacita = new JTable(modeloTabla);
 				tablacita.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
@@ -152,12 +153,13 @@ public class VentanaMedicoCita extends JDialog {
 				e.printStackTrace();
 			}
 			
-			nuevaFila[0] = p.getCodePaciente();
-			nuevaFila[1] = p.getNombre();
-			nuevaFila[2]= p.getApellido();
-			nuevaFila[3] = c.gethInicio();
-			nuevaFila[4] =c.gethFin();
-			nuevaFila[5] =c.getDate();
+		
+			nuevaFila[0] = p.getNombre();
+			nuevaFila[1]= p.getApellido();
+			nuevaFila[2] = c.gethInicio();
+			nuevaFila[3] =c.gethFin();
+			nuevaFila[4] =c.getDate();
+			nuevaFila[5]=c.getUbicacion();
 			nuevaFila[6] = c.isUrgente();
 			modeloTabla.addRow(nuevaFila);
 			codcitas.add(c.getCodCita());
@@ -182,6 +184,7 @@ public class VentanaMedicoCita extends JDialog {
 			panelCita.add(getLblNewLabel());
 			panelCita.add(getDateChooser());
 			panelCita.add(getBtnIr());
+			panelCita.add(getBtnNewButton_3());
 		}
 		return panelCita;
 	}
@@ -235,5 +238,16 @@ public class VentanaMedicoCita extends JDialog {
 			btnNewButton_2 = new JButton("Modificar cita");
 		}
 		return btnNewButton_2;
+	}
+	private JButton getBtnNewButton_3() {
+		if (btnNewButton_3 == null) {
+			btnNewButton_3 = new JButton("Todas las citas");
+			btnNewButton_3.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					añadirFilas(false);
+				}
+			});
+		}
+		return btnNewButton_3;
 	}
 }
