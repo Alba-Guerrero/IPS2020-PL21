@@ -49,9 +49,9 @@ public class VentanaMedicoCita extends JDialog {
 	private String codmedico;
 	private List<String> codcitas= new ArrayList<String>();
 	private JPanel panelBotones;
-	private JButton btnNewButton;
-	private JButton btnNewButton_1;
-	private JButton btnNewButton_2;
+	private JButton btnhistorial;
+	private JButton btncita;
+	private JButton btnmodifica;
 	private JButton btnNewButton_3;
 	
 
@@ -92,16 +92,9 @@ public class VentanaMedicoCita extends JDialog {
 				tablacita.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
-						
-						int fila=tablacita.getSelectedRow();
-						if(fila!=-1) {
-							
-								try {
-									Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()));
-								} catch (SQLException e) {
-									e.printStackTrace();
-								}
-						}
+						btncita.setEnabled(true);
+						btnhistorial.setEnabled(true);
+						btnmodifica.setEnabled(true);
 					}
 				});
 			
@@ -215,29 +208,50 @@ public class VentanaMedicoCita extends JDialog {
 	private JPanel getPanelBotones() {
 		if (panelBotones == null) {
 			panelBotones = new JPanel();
-			panelBotones.add(getBtnNewButton());
-			panelBotones.add(getBtnNewButton_1());
-			panelBotones.add(getBtnNewButton_2());
+			panelBotones.add(getBtnhistorial());
+			panelBotones.add(getBtncita());
+			panelBotones.add(getBtnmodifica());
 		}
 		return panelBotones;
 	}
-	private JButton getBtnNewButton() {
-		if (btnNewButton == null) {
-			btnNewButton = new JButton("Ver historial");
+	private JButton getBtnhistorial() {
+		if (btnhistorial == null) {
+			btnhistorial = new JButton("Ver historial");
+			btnhistorial.setEnabled(false);
 		}
-		return btnNewButton;
+		return btnhistorial;
 	}
-	private JButton getBtnNewButton_1() {
-		if (btnNewButton_1 == null) {
-			btnNewButton_1 = new JButton("Ver cita");
+	private JButton getBtncita() {
+		if (btncita == null) {
+			btncita = new JButton("Ver cita");
+			btncita.setEnabled(false);
+			btncita.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				
+				int fila=tablacita.getSelectedRow();
+				if(fila!=-1) {
+					
+						
+							try {
+								Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()));
+								
+								//FALTA PASARLE EL PACIENTE A LA VENTANA
+							} catch (SQLException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+				}
+				}
+			});
 		}
-		return btnNewButton_1;
+		return btncita;
 	}
-	private JButton getBtnNewButton_2() {
-		if (btnNewButton_2 == null) {
-			btnNewButton_2 = new JButton("Modificar cita");
+	private JButton getBtnmodifica() {
+		if (btnmodifica == null) {
+			btnmodifica = new JButton("Modificar cita");
+			btnmodifica.setEnabled(false);
 		}
-		return btnNewButton_2;
+		return btnmodifica;
 	}
 	private JButton getBtnNewButton_3() {
 		if (btnNewButton_3 == null) {

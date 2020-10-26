@@ -80,7 +80,7 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 	
 	private final static String LIST_PREINSCRIPCIONES = "Select * from prescripcion";
 	private final static String GET_CITA_HISTORIAL = "select * from cita c,paciente p,historial h where c.codpaciente=p.codpaciente and h.nhistorial=?";
-	
+	private final static String DELETE_CITA="delete from cita where codcita=?;";
 	
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
@@ -721,6 +721,22 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 		pst.close();
 		con.close();
 		
+	}
+	
+	
+	public int  BorrarCita( String codcita) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(DELETE_CITA);
+		pst.setString(1,codcita);
+		
+		
+		
+		int res=pst.executeUpdate();
+		
+		
+		pst.close();
+		con.close();
+		return res;
 	}
 	
 

@@ -52,7 +52,7 @@ public class VentanaVerCita extends JDialog {
 	private JButton btnIr;
 	private List<String> codcitas= new ArrayList<String>();
 	private JPanel panelBotones;
-	private JButton btnNewButton_1;
+	private JButton btnEliminar;
 	private JButton btnNewButton_2;
 	private JButton btnTodasLasCitas;
 	private JTextField txtNDeHistorial;
@@ -223,21 +223,67 @@ public class VentanaVerCita extends JDialog {
 		if (panelBotones == null) {
 			panelBotones = new JPanel();
 			panelBotones.add(getBtnNewButton_2());
-			panelBotones.add(getBtnNewButton_1());
+			panelBotones.add(getBtnEliminar());
 		}
 		return panelBotones;
 	}
-	private JButton getBtnNewButton_1() {
-		if (btnNewButton_1 == null) {
-			btnNewButton_1 = new JButton("Cancelar cita");
+	private JButton getBtnEliminar() {
+		if (btnEliminar == null) {
+			btnEliminar = new JButton("Eliminar cita");
+			btnEliminar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int fila=tablacita.getSelectedRow();
+					if(fila!=-1) {
+					int res=JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea borrar la cita?","Mensaje de confirmación",JOptionPane.YES_NO_OPTION);
+					if(res==JOptionPane.YES_OPTION) {
+						try {
+							pbd.BorrarCita(codcitas.get(tablacita.getSelectedRow()));
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+						
+					}
+					
+					
+				}
+			});
 		}
-		return btnNewButton_1;
+		return btnEliminar;
 	}
 	private JButton getBtnNewButton_2() {
 		if (btnNewButton_2 == null) {
 			btnNewButton_2 = new JButton("Modificar cita");
+			btnNewButton_2.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					
+					int fila=tablacita.getSelectedRow();
+					if(fila!=-1) {
+						
+							try {
+								Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()));
+								VentanaModificarCita(p,codcitas.get(tablacita.getSelectedRow()));
+								
+							} catch (SQLException e) {
+								e.printStackTrace();
+							}
+					}
+				}
+					
+				
+			});
 		}
 		return btnNewButton_2;
+	}
+	
+	
+protected void VentanaModificarCita(Paciente p,String c) throws SQLException {
+		
+		ModificarCita mc = new ModificarCita(p,c);
+		mc.setVisible(true);
+		mc.setLocationRelativeTo(this);
+		
 	}
 	private JButton getBtnTodasLasCitas() {
 		if (btnTodasLasCitas == null) {
