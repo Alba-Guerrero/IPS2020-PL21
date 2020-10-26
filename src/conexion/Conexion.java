@@ -20,7 +20,6 @@ public  Connection getConnectionJDBC() throws SQLException {
 		
 	return con;
 	
-	
 }
 	
 	

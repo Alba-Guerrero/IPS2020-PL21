@@ -48,6 +48,10 @@ public class VentanaMedicoCita extends JDialog {
 	private JButton btnIr;
 	private String codmedico;
 	private List<String> codcitas= new ArrayList<String>();
+	private JPanel panelBotones;
+	private JButton btnNewButton;
+	private JButton btnNewButton_1;
+	private JButton btnNewButton_2;
 	
 
 
@@ -166,6 +170,7 @@ public class VentanaMedicoCita extends JDialog {
 		if (panel == null) {
 			panel = new JPanel();
 			panel.setLayout(new BorderLayout(0, 0));
+			panel.add(getPanelBotones(), BorderLayout.SOUTH);
 			panel.add(getPanelCita(), BorderLayout.NORTH);
 			panel.add(getScrollPane(), BorderLayout.CENTER);
 		}
@@ -203,5 +208,32 @@ public class VentanaMedicoCita extends JDialog {
 			});
 		}
 		return btnIr;
+	}
+	private JPanel getPanelBotones() {
+		if (panelBotones == null) {
+			panelBotones = new JPanel();
+			panelBotones.add(getBtnNewButton());
+			panelBotones.add(getBtnNewButton_1());
+			panelBotones.add(getBtnNewButton_2());
+		}
+		return panelBotones;
+	}
+	private JButton getBtnNewButton() {
+		if (btnNewButton == null) {
+			btnNewButton = new JButton("Ver historial");
+		}
+		return btnNewButton;
+	}
+	private JButton getBtnNewButton_1() {
+		if (btnNewButton_1 == null) {
+			btnNewButton_1 = new JButton("Ver cita");
+		}
+		return btnNewButton_1;
+	}
+	private JButton getBtnNewButton_2() {
+		if (btnNewButton_2 == null) {
+			btnNewButton_2 = new JButton("Modificar cita");
+		}
+		return btnNewButton_2;
 	}
 }

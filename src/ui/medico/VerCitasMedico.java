@@ -45,7 +45,7 @@ public class VerCitasMedico extends JDialog {
 	 */
 	public VerCitasMedico() throws SQLException {
 		setTitle("Ver citas");
-		setBounds(100, 100, 591, 379);
+		setBounds(100, 100, 624, 377);
 		getContentPane().setLayout(new BorderLayout());
 		{
 			JPanel buttonPane = new JPanel();
