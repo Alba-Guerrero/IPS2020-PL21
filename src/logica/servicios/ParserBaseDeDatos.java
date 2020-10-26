@@ -79,6 +79,7 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 	
 	
 	private final static String LIST_PREINSCRIPCIONES = "Select * from prescripcion";
+	private final static String GET_CITA_HISTORIAL = "select * from cita c,paciente p,historial h where c.codpaciente=p.codpaciente and h.nhistorial=?";
 	
 	
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
@@ -400,6 +401,39 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 	con.close();
 	return citas;
 }
+	
+	
+	
+	
+	
+
+	public List<Cita> devolvercitasHistorial(String codhistorial) throws SQLException {
+		List<Cita> citas = new ArrayList<Cita>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(GET_CITA_HISTORIAL);
+		boolean res=false;
+		pst.setString(1, codhistorial);
+
+	
+		ResultSet rs = pst.executeQuery();
+		
+	while(rs.next()) {
+		if(rs.getByte("urgencia")==0)
+			 res=true;
+		
+		citas.add(new Cita(rs.getString("codcita"),rs.getString("codpaciente"),rs.getString("codmedico"),rs.getTime("hinicio"), rs.getTime("hfin"),rs.getDate("fecha"),rs.getString("ubicacion"),res));
+		
+	}
+	
+	
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return citas;
+}
+	
 	
 	
 	

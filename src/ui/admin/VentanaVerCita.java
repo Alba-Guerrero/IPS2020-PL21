@@ -24,6 +24,7 @@ import java.util.List;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import com.toedter.calendar.JDateChooser;
 import javax.swing.JButton;
@@ -31,6 +32,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JTextField;
 
 public class VentanaVerCita extends JDialog {
 
@@ -53,6 +55,8 @@ public class VentanaVerCita extends JDialog {
 	private JButton btnNewButton_1;
 	private JButton btnNewButton_2;
 	private JButton btnTodasLasCitas;
+	private JTextField txtNDeHistorial;
+	private JButton irHistorial;
 	
 
 
@@ -186,6 +190,8 @@ public class VentanaVerCita extends JDialog {
 			panelCita.add(getDateChooser());
 			panelCita.add(getBtnIr());
 			panelCita.add(getBtnTodasLasCitas());
+			panelCita.add(getTxtNDeHistorial());
+			panelCita.add(getIrHistorial());
 		}
 		return panelCita;
 	}
@@ -243,5 +249,80 @@ public class VentanaVerCita extends JDialog {
 			});
 		}
 		return btnTodasLasCitas;
+	}
+	
+	
+	
+	
+	private void añadirFilasHistorial()  {
+		borrarModeloTabla();
+		Object[] nuevaFila=new Object[7];
+		List<Cita> citas = new ArrayList<Cita>();
+		try {
+			citas = pbd.devolvercitasHistorial(txtNDeHistorial.getText());
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+		
+	
+	
+		for(Cita c:citas) {
+			Paciente p = null;
+			Empleado empleado=null;
+			try {
+				p = pbd.devolverPacientesMedico(c.getCodCita());
+				empleado=pbd.devolverEmpleado(c.getCodMed());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+	
+			nuevaFila[0] = p.getNombre();
+			nuevaFila[1]= p.getApellido();
+			nuevaFila[2] = c.gethInicio();
+			nuevaFila[3] =c.gethFin();
+			nuevaFila[4] =c.getDate();
+			nuevaFila[5] = empleado.getNombre()+"  " +empleado.getApellido();
+			nuevaFila[6] = c.isUrgente();
+			modeloTabla.addRow(nuevaFila);
+			codcitas.add(c.getCodCita());
+		}
+		
+		}
+		
+	
+	private JTextField getTxtNDeHistorial() {
+		if (txtNDeHistorial == null) {
+			txtNDeHistorial = new JTextField();
+			txtNDeHistorial.setText("N\u00BA de historial");
+			txtNDeHistorial.setColumns(10);
+			txtNDeHistorial.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+					txtNDeHistorial.setText("");
+				}
+			});
+			
+			
+			
+		}
+		return txtNDeHistorial;
+	}
+	private JButton getIrHistorial() {
+		if (irHistorial == null) {
+			irHistorial = new JButton("Ir");
+			irHistorial.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if(txtNDeHistorial.getText().equals("")|| txtNDeHistorial.getText().equals("N\u00BA de historial"))
+						JOptionPane.showMessageDialog(null, "Por favor, introduzca un número de historial válido");
+					else
+						añadirFilasHistorial();
+					
+					txtNDeHistorial.setText("N\u00BA de historial");
+				}
+			});
+		}
+		return irHistorial;
 	}
 }
