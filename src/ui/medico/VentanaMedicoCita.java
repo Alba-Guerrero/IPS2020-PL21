@@ -7,6 +7,8 @@ import java.awt.EventQueue;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import logica.Cita;
 import logica.Paciente;
@@ -21,6 +23,8 @@ import java.util.List;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import com.toedter.calendar.JDateChooser;
@@ -87,6 +91,14 @@ public class VentanaMedicoCita extends JDialog {
 				tablacita.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
 				tablacita.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				tablacita.getTableHeader().setBackground(Color.LIGHT_GRAY);
+				TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tablacita.getModel());
+				tablacita.setRowSorter(sorter);
+
+				List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+				sortKeys.add(new RowSorter.SortKey(6, SortOrder.ASCENDING));
+				sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+				
+				sorter.setSortKeys(sortKeys);
 				añadirFilas(false);
 				
 				tablacita.addMouseListener(new MouseAdapter() {
