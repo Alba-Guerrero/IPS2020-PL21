@@ -53,7 +53,7 @@ public class VentanaVerCita extends JDialog {
 	private List<String> codcitas= new ArrayList<String>();
 	private JPanel panelBotones;
 	private JButton btnEliminar;
-	private JButton btnNewButton_2;
+	private JButton btnModificar;
 	private JButton btnTodasLasCitas;
 	private JTextField txtNDeHistorial;
 	private JButton irHistorial;
@@ -222,7 +222,7 @@ public class VentanaVerCita extends JDialog {
 	private JPanel getPanelBotones() {
 		if (panelBotones == null) {
 			panelBotones = new JPanel();
-			panelBotones.add(getBtnNewButton_2());
+			panelBotones.add(getBtnModificar());
 			panelBotones.add(getBtnEliminar());
 		}
 		return panelBotones;
@@ -252,10 +252,10 @@ public class VentanaVerCita extends JDialog {
 		}
 		return btnEliminar;
 	}
-	private JButton getBtnNewButton_2() {
-		if (btnNewButton_2 == null) {
-			btnNewButton_2 = new JButton("Modificar cita");
-			btnNewButton_2.addActionListener(new ActionListener() {
+	private JButton getBtnModificar() {
+		if (btnModificar == null) {
+			btnModificar = new JButton("Modificar cita");
+			btnModificar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					
 					int fila=tablacita.getSelectedRow();
@@ -274,7 +274,7 @@ public class VentanaVerCita extends JDialog {
 				
 			});
 		}
-		return btnNewButton_2;
+		return btnModificar;
 	}
 	
 	
