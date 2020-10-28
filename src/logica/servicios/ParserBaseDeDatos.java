@@ -81,6 +81,7 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 	private final static String LIST_PREINSCRIPCIONES = "Select * from prescripcion";
 	private final static String GET_CITA_HISTORIAL = "select * from cita c,paciente p,historial h where c.codpaciente=p.codpaciente and h.nhistorial=?";
 	private final static String DELETE_CITA="delete from cita where codcita=?;";
+	private final static String FIND_MED_BY_NAME="select *  from medico m,empleado e where e.codempleado=m.codmedico and  e.nombre=? ;";
 	
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
@@ -370,6 +371,34 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 	pst.close();
 	con.close();
 	return empleado;
+}
+
+	
+	
+	public List<Medico> devolverMedicoNombre(String name) throws SQLException {
+		List<Medico> medicos = new ArrayList<Medico>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(FIND_MED_BY_NAME);
+		@SuppressWarnings("unused")
+		boolean res=false;
+		pst.setString(1,name);
+		ResultSet rs = pst.executeQuery();
+	
+		
+	while(rs.next()) {
+		
+		medicos.add(new Medico( rs.getString("codmedico"),rs.getString("nombre"),rs.getString("apellido"),rs.getString("pass"), rs.getTime("hinicio"),rs.getTime("hfin"),rs.getDate("dinicio"),
+				rs.getDate("dfin"),rs.getString("djornada")));
+		
+	}
+	
+	
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return medicos;
 }
 
 

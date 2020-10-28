@@ -116,6 +116,7 @@ public class PanelCitas extends JDialog {
 				panelArriba_1.add(getPanel_2());
 				panelArriba_1.add(getPanel_1());
 			}
+			panelArriba.add(getPanel_3());
 			panelArriba.add(getPnMedico());
 		}
 		contentPanel.add(getPanelAbajo());
@@ -692,6 +693,7 @@ public class PanelCitas extends JDialog {
 	private JPanel panel_1;
 	private JTextField txtIntroduceLaSala;
 	private JPanel panel_2;
+	private JPanel panel_3;
 	
 	
 	private JButton getBtnActualizarDatos() {
@@ -751,5 +753,11 @@ public class PanelCitas extends JDialog {
 			panel_2.add(getComboBox());
 		}
 		return panel_2;
+	}
+	private JPanel getPanel_3() {
+		if (panel_3 == null) {
+			panel_3 = new JPanel();
+		}
+		return panel_3;
 	}
 }
