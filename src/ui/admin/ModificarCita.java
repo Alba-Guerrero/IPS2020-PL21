@@ -244,6 +244,17 @@ public class ModificarCita extends JDialog {
 		}
 		return modeloListaM;
 	}
+	
+	
+	private DefaultListModel<Medico> modeloListaNombre(String name) throws SQLException {
+		modeloListaM = new DefaultListModel<Medico>();
+		List<Medico> medicos = pbd.devolverMedicoNombre(name);
+		for (int i = 0; i < medicos.size(); i++) {
+			modeloListaM.addElement(medicos.get(i));
+
+		}
+		return modeloListaM;
+	}
 
 	private JDateChooser getDateCita() {
 		if (dateCita == null) {
@@ -357,11 +368,7 @@ public class ModificarCita extends JDialog {
 							medicos = new ArrayList<Medico>();
 							medicos.add((Medico) selectedValues[i]);
 
-						}
-
-					}
-
-
+						}    }
 				}
 
 			});
@@ -454,6 +461,20 @@ public class ModificarCita extends JDialog {
 	private JButton getBtnFiltrarPorNombre() {
 		if (btnFiltrarPorNombre == null) {
 			btnFiltrarPorNombre = new JButton("Filtrar por nombre");
+			btnFiltrarPorNombre.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					if(textField.getText().equals(""))
+						JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
+					else {	
+					try {
+						modeloListaNombre(textField.getText());
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+					
+				}
+				}
+			});
 		}
 		return btnFiltrarPorNombre;
 	}
