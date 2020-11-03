@@ -84,6 +84,8 @@ public class ModificarCita extends JDialog {
 	private JComboBox comboBox;
 	private Paciente p;
 	private String codcita;
+	private JTextField textField_1;
+	private JButton btnFiltrarPorNombre_1;
 
 
 	/**
@@ -444,17 +446,19 @@ public class ModificarCita extends JDialog {
 		if (panel == null) {
 			panel = new JPanel();
 			panel.setBorder(new TitledBorder(null, "Filtrar m\u00E9dico", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			panel.setLayout(new MigLayout("", "[116px][][][][][][]", "[22px][]"));
-			panel.add(getTextField(), "cell 1 1,alignx left,aligny top");
-			panel.add(getBtnFiltrarPorNombre(), "cell 4 1");
-			panel.add(getBtnFiltrarPorApellido(), "cell 6 1");
+			panel.setLayout(new MigLayout("", "[116px][grow][][][][][]", "[22px][][]"));
+			panel.add(getTextField(), "cell 1 0,alignx left");
+			panel.add(getBtnFiltrarPorNombre(), "cell 4 0");
+			panel.add(getTextField_1(), "cell 1 1,grow");
+			panel.add(getBtnFiltrarPorApellido(), "cell 4 1");
+			panel.add(getBtnFiltrarPorNombre_1(), "cell 4 2");
 		}
 		return panel;
 	}
 	private JTextField getTextField() {
 		if (textField == null) {
 			textField = new JTextField();
-			textField.setColumns(30);
+			textField.setColumns(25);
 		}
 		return textField;
 	}
@@ -505,5 +509,18 @@ public class ModificarCita extends JDialog {
 			comboBox = new JComboBox();
 		}
 		return comboBox;
+	}
+	private JTextField getTextField_1() {
+		if (textField_1 == null) {
+			textField_1 = new JTextField();
+			textField_1.setColumns(20);
+		}
+		return textField_1;
+	}
+	private JButton getBtnFiltrarPorNombre_1() {
+		if (btnFiltrarPorNombre_1 == null) {
+			btnFiltrarPorNombre_1 = new JButton("Filtrar por nombre y  apellido");
+		}
+		return btnFiltrarPorNombre_1;
 	}
 }
