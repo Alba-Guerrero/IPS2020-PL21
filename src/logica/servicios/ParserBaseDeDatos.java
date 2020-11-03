@@ -179,7 +179,6 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 		
 		
 		boolean res= rs.next();
-		System.out.print(res);
 		
 		rs.close();
 		pst.close();
@@ -205,7 +204,7 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 		
 		
 		boolean res= rs.next();
-		System.out.print("Check medico cita"+ res);
+	
 		
 		rs.close();
 		pst.close();
@@ -434,7 +433,7 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 	public List<Medico> devolverMedicoNombreApellido(String name,String apellido) throws SQLException {
 		List<Medico> medicos = new ArrayList<Medico>();
 		Connection con = new Conexion().getConnectionJDBC();
-		PreparedStatement pst=con.prepareStatement(FIND_MED_BY_SURNAME);
+		PreparedStatement pst=con.prepareStatement(FIND_MED_BY_NAME_SURNAME);
 		@SuppressWarnings("unused")
 		boolean res=false;
 		pst.setString(1,name);
@@ -568,7 +567,7 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 		
 	}
 	
-	System.out.println("SE ha encontradoo"+ citas.size());
+	
 	
 	//CERRAR EN ESTE ORDEN
 	rs.close();
@@ -674,7 +673,7 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 		
 		
 		boolean res= rs.next();
-		System.out.print(res);
+	
 		
 		rs.close();
 		pst.close();
@@ -700,7 +699,6 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 	
 	public Paciente devolverPaciente(String nombre, String apellido,String codPaciente) throws SQLException {
 		List<Paciente > pacientes= buscarPaciente("");
-		System.out.print(pacientes.size());
 		Paciente paciente = null;
 		for(int i=0;i<pacientes.size();i++) {
 			if(pacientes.get(i).getNombre().equals(nombre) && pacientes.get(i).getApellido().equals(apellido) && pacientes.get(i).getCodePaciente().equals(codPaciente)) {
@@ -735,7 +733,7 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 		
 		
 		boolean res= rs.next();
-		System.out.print(res);
+		
 		
 		rs.close();
 		pst.close();
@@ -758,8 +756,7 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 		
 		 
 		boolean res= rs.next();
-		System.out.print(res);
-		
+	
 		rs.close();
 		pst.close();
 		con.close();
@@ -779,7 +776,6 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 		
 		
 		boolean res= rs.next();
-		System.out.print(res);
 		
 		rs.close();
 		pst.close();
@@ -898,8 +894,6 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 		
 		pst.executeUpdate();
 		
-		System.err.println("SE HA EJUCTADA EL UPDATE");
-		
 		pst.close();
 		con.close();
 	}
@@ -957,7 +951,7 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 		
 		
 		boolean res= rs.next();
-		System.out.print(res);
+		
 		
 		rs.close();
 		pst.close();

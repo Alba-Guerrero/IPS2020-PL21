@@ -88,6 +88,7 @@ public class ModificarCita extends JDialog {
 	private Cita cita;
 	private JTextField textSurname;
 	private JButton btnNameSurname;
+	private JButton btnNewButton;
 
 
 	/**
@@ -392,6 +393,7 @@ public class ModificarCita extends JDialog {
 					@SuppressWarnings("deprecation")
 					Object[] selectedValues = list.getSelectedValues();
 					if (selectedValues.length >= 0) {
+						System.err.println("Tamñao medicos "+medicos.size());
 						for (int i = 0; i < selectedValues.length; i++) {
 							medicos = new ArrayList<Medico>();
 							medicos.add((Medico) selectedValues[i]);
@@ -481,7 +483,8 @@ public class ModificarCita extends JDialog {
 			panel.add(getBtnName(), "cell 4 0");
 			panel.add(getTextSurname(), "cell 1 1,grow");
 			panel.add(getBtnSurname(), "cell 4 1");
-			panel.add(getBtnNameSurname(), "cell 4 2");
+			panel.add(getBtnNameSurname(), "flowx,cell 1 2");
+			panel.add(getBtnNewButton(), "cell 1 2");
 		}
 		return panel;
 	}
@@ -583,5 +586,22 @@ public class ModificarCita extends JDialog {
 			});
 		}
 		return btnNameSurname;
+	}
+	private JButton getBtnNewButton() {
+		if (btnNewButton == null) {
+			btnNewButton = new JButton("Todos los m\u00E9dicos");
+			btnNewButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						
+						list.setModel(modeloListaM());
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+					
+				}
+			});
+		}
+		return btnNewButton;
 	}
 }
