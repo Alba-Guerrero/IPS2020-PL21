@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
+import java.awt.Font;
 
 public class VentanaAdministrador extends JDialog {
 
@@ -59,7 +60,7 @@ public class VentanaAdministrador extends JDialog {
 	public VentanaAdministrador() {
 		setTitle("VentanaAdministrador");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 932, 667);
+		setBounds(100, 100, 1225, 667);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -260,6 +261,8 @@ public class VentanaAdministrador extends JDialog {
 	private JLabel getLblSelecciona() {
 		if (lblSelecciona == null) {
 			lblSelecciona = new JLabel("Seleccione lo que desea hacer:");
+			lblSelecciona.setBackground(Color.WHITE);
+			lblSelecciona.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		}
 		return lblSelecciona;
 	}

@@ -61,6 +61,7 @@ public class VentanaVerCita extends JDialog {
 	private JButton btnTodasLasCitas;
 	private JTextField txtNDeHistorial;
 	private JButton irHistorial;
+	private JButton btnBuscarPorFecha;
 	
 
 
@@ -71,7 +72,8 @@ public class VentanaVerCita extends JDialog {
 	public VentanaVerCita() {
 		setTitle("M\u00E9dico: Ver citas");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 813, 521);
+		setBounds(100, 100, 870, 515);
+		setModal(true);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -112,7 +114,8 @@ public class VentanaVerCita extends JDialog {
 						
 						int fila=tablacita.getSelectedRow();
 						if(fila!=-1) {
-							
+							btnEliminar.setEnabled(true);
+							btnModificar.setEnabled(true);
 								try {
 									Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()));
 								} catch (SQLException e) {
@@ -206,6 +209,7 @@ public class VentanaVerCita extends JDialog {
 			panelCita.add(getBtnTodasLasCitas());
 			panelCita.add(getTxtNDeHistorial());
 			panelCita.add(getIrHistorial());
+			panelCita.add(getBtnBuscarPorFecha());
 		}
 		return panelCita;
 	}
@@ -244,6 +248,7 @@ public class VentanaVerCita extends JDialog {
 	private JButton getBtnEliminar() {
 		if (btnEliminar == null) {
 			btnEliminar = new JButton("Eliminar cita");
+			btnEliminar.setEnabled(false);
 			btnEliminar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					int fila=tablacita.getSelectedRow();
@@ -252,10 +257,12 @@ public class VentanaVerCita extends JDialog {
 					if(res==JOptionPane.YES_OPTION) {
 						try {
 							pbd.BorrarCita(codcitas.get(tablacita.getSelectedRow()));
+							añadirFilas(false);
 						} catch (SQLException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
+						
+						toFront();
 					}
 						
 					}
@@ -269,6 +276,7 @@ public class VentanaVerCita extends JDialog {
 	private JButton getBtnModificar() {
 		if (btnModificar == null) {
 			btnModificar = new JButton("Modificar cita");
+			btnModificar.setEnabled(false);
 			btnModificar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					
@@ -384,5 +392,11 @@ protected void VentanaModificarCita(Paciente p,String c) throws SQLException {
 			});
 		}
 		return irHistorial;
+	}
+	private JButton getBtnBuscarPorFecha() {
+		if (btnBuscarPorFecha == null) {
+			btnBuscarPorFecha = new JButton("Fecha e historial");
+		}
+		return btnBuscarPorFecha;
 	}
 }
