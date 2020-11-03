@@ -1,12 +1,12 @@
 package logica.servicios;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +20,7 @@ import logica.Preinscripcion;
 import logica.empleados.Empleado;
 import logica.empleados.Enfermero;
 import logica.empleados.Medico;
+import oracle.jdbc.proxy.annotation.GetDelegate;
 
 public class ParserBaseDeDatos {
 	
@@ -43,11 +44,11 @@ public class ParserBaseDeDatos {
 	
 	
 	private final static String GET_CITAS="select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and  c.codmedico=?;";
-	private final static String GET_CITAS_DATE="select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and c.fecha=?;";
+	private final static String GET_CITAS_DATE="select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.fecha=?;";
 	private final static String GET_CITAS_DATE_MED="select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and  c.codmedico=? and c.fecha=?;";
-	private final static String GET_PACIENTE_CITA="select * from paciente p, cita c where c.codcita=?;";
-	private final static String GET_CITA="select * from cita ;";
-	private final static String GET_CITAS_MED="select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and  c.codmedico=? ;";
+	private final static String GET_PACIENTE_CITA="select * from paciente p,medico m,empleado e, cita c where p.codpaciente= c.codpaciente and c.codmedico=e.codempleado and e.codempleado= m.codmedico  and c.codcita=?;";
+	private final static String GET_CITA="select * from cita c where c.fecha>=? ;";
+	private final static String GET_CITAS_MED="select * from  medico m ,empleado e where m.codmedico= e.codempleado and  e.codempleado=?  ;";
 	
 	
 	private final static String GET_ADMINISTRATIVO = "Select * from administrativo where codAdmin=?";
@@ -82,6 +83,10 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 	private final static String GET_CITA_HISTORIAL = "select * from cita c,paciente p,historial h where c.codpaciente=p.codpaciente and h.nhistorial=?";
 	private final static String DELETE_CITA="delete from cita where codcita=?;";
 	private final static String FIND_MED_BY_NAME="select *  from medico m,empleado e where e.codempleado=m.codmedico and  e.nombre=? ;";
+	private final static String FIND_MED_BY_SURNAME="select *  from medico m,empleado e where e.codempleado=m.codmedico and  e.apellido=? ;";
+	private final static String FIND_MED_BY_NAME_SURNAME="select *  from medico m,empleado e where e.codempleado=m.codmedico and e.nombre=? and  e.apellido=? ;";
+	
+	private final static String UPDATE_CITA = "UPDATE cita set hinicio = ?, hfin = ?, fecha = ? ,codmedico=?,ubicacion =?, urgencia=? where codcita=? and codpaciente=? and codmedico =?";
 	
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
@@ -348,15 +353,12 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 		Medico empleado = null;
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst=con.prepareStatement(GET_CITAS_MED);
-		@SuppressWarnings("unused")
-		boolean res=false;
 		pst.setString(1,codempleado);
 		ResultSet rs = pst.executeQuery();
 	
 		
 	while(rs.next()) {
-		if(rs.getByte("urgencia")==1)
-			 res=true;
+	
 		
 		empleado = new Medico( rs.getString("codmedico"),rs.getString("nombre"),rs.getString("apellido"),rs.getString("pass"), rs.getTime("hinicio"),rs.getTime("hfin"),rs.getDate("dinicio"),
 				rs.getDate("dfin"),rs.getString("djornada"));
@@ -401,6 +403,60 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 	return medicos;
 }
 
+	
+	public List<Medico> devolverMedicoApellido(String apellido) throws SQLException {
+		List<Medico> medicos = new ArrayList<Medico>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(FIND_MED_BY_SURNAME);
+		@SuppressWarnings("unused")
+		boolean res=false;
+		pst.setString(1,apellido);
+		ResultSet rs = pst.executeQuery();
+	
+		
+	while(rs.next()) {
+		
+		medicos.add(new Medico( rs.getString("codmedico"),rs.getString("nombre"),rs.getString("apellido"),rs.getString("pass"), rs.getTime("hinicio"),rs.getTime("hfin"),rs.getDate("dinicio"),
+				rs.getDate("dfin"),rs.getString("djornada")));
+		
+	}
+	
+	
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return medicos;
+}
+	
+	
+	public List<Medico> devolverMedicoNombreApellido(String name,String apellido) throws SQLException {
+		List<Medico> medicos = new ArrayList<Medico>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(FIND_MED_BY_SURNAME);
+		@SuppressWarnings("unused")
+		boolean res=false;
+		pst.setString(1,name);
+		pst.setString(2,apellido);
+		ResultSet rs = pst.executeQuery();
+	
+		
+	while(rs.next()) {
+		
+		medicos.add(new Medico( rs.getString("codmedico"),rs.getString("nombre"),rs.getString("apellido"),rs.getString("pass"), rs.getTime("hinicio"),rs.getTime("hfin"),rs.getDate("dinicio"),
+				rs.getDate("dfin"),rs.getString("djornada")));
+		
+	}
+	
+	
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return medicos;
+}
 
 
 
@@ -471,7 +527,9 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst=con.prepareStatement(GET_CITA);
 		boolean res=false;
-	
+		java.util.Date fecha = new java.util.Date();
+		java.sql.Date date = new java.sql.Date(fecha.getTime());
+		pst.setDate(1, date);
 		ResultSet rs = pst.executeQuery();
 		
 	while(rs.next()) {
@@ -503,14 +561,14 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 		ResultSet rs = pst.executeQuery();
 		
 	while(rs.next()) {
-		if(rs.getByte("urgencia")==0)
+		if(rs.getByte("urgencia")==1)
 			 res=true;
 		
 		citas.add(new Cita(rs.getString("codcita"),rs.getString("codpaciente"),rs.getString("codmedico"),rs.getTime("hinicio"), rs.getTime("hfin"),rs.getDate("fecha"),rs.getString("ubicacion"),res));
 		
 	}
 	
-	
+	System.out.println("SE ha encontradoo"+ citas.size());
 	
 	//CERRAR EN ESTE ORDEN
 	rs.close();
@@ -813,6 +871,34 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 		
 		pst.executeUpdate();
 		
+		
+		pst.close();
+		con.close();
+	}
+	
+	
+	
+	
+	
+	public void updateCita(Cita cita, String codmedico) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(UPDATE_CITA);
+	
+		java.sql.Date date= new java.sql.Date(cita.getDate().getTime());
+		
+		pst.setTime(1, cita.gethInicio());
+		pst.setTime(2, cita.gethFin());
+		pst.setDate(3, date);
+		pst.setString(4, cita.getCodMed());
+		pst.setString(5, cita.getUbicacion());
+		pst.setBoolean(6, cita.isUrgente());
+		pst.setString(7, cita.getCodCita());
+		pst.setString(8, cita.getCodPaciente());
+		pst.setString(9, codmedico);
+		
+		pst.executeUpdate();
+		
+		System.err.println("SE HA EJUCTADA EL UPDATE");
 		
 		pst.close();
 		con.close();

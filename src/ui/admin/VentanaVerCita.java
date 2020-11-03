@@ -54,7 +54,7 @@ public class VentanaVerCita extends JDialog {
 	private JLabel lblNewLabel;
 	private JDateChooser dateChooser;
 	private JButton btnIr;
-	private List<String> codcitas= new ArrayList<String>();
+	private List<Cita> codcitas= new ArrayList<Cita>();
 	private JPanel panelBotones;
 	private JButton btnEliminar;
 	private JButton btnModificar;
@@ -90,7 +90,7 @@ public class VentanaVerCita extends JDialog {
 	}
 	private JTable getTableCita() {
 			if (tablacita == null) {
-				String[] nombreColumnas= {"Nombre paciente "," Apellido paciente  ","Hora inicio"," Hora fin","Fecha ","Nombre médico","Urgencia"};
+				String[] nombreColumnas= {"Nombre paciente "," Apellido paciente  ","Hora inicio"," Hora fin","Fecha ","Ubicación ","Nombre médico","Urgencia"};
 				modeloTabla= new ModeloNoEditable(nombreColumnas,0);
 				tablacita = new JTable(modeloTabla);
 				tablacita.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
@@ -117,7 +117,7 @@ public class VentanaVerCita extends JDialog {
 							btnEliminar.setEnabled(true);
 							btnModificar.setEnabled(true);
 								try {
-									Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()));
+									Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()).getCodCita());
 								} catch (SQLException e) {
 									e.printStackTrace();
 								}
@@ -144,10 +144,10 @@ public class VentanaVerCita extends JDialog {
 	
 	private void añadirFilas(boolean dia)  {
 		borrarModeloTabla();
-		Object[] nuevaFila=new Object[7];
+		Object[] nuevaFila=new Object[8];
 		List<Cita> citas = new ArrayList<Cita>();
 	if(dia) {
-
+		
 		Date date = getDateChooser().getDate();
 		java.sql.Date sDate = new java.sql.Date(date.getTime());
 		try {
@@ -174,17 +174,17 @@ public class VentanaVerCita extends JDialog {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			
 	
 			nuevaFila[0] = p.getNombre();
 			nuevaFila[1]= p.getApellido();
 			nuevaFila[2] = c.gethInicio();
 			nuevaFila[3] =c.gethFin();
 			nuevaFila[4] =c.getDate();
-			nuevaFila[5] = empleado.getNombre()+"  " +empleado.getApellido();
-			nuevaFila[6] = c.isUrgente();
+			nuevaFila[5] =c.getUbicacion();
+			nuevaFila[6] = empleado.getNombre()+"  " +empleado.getApellido();
+			nuevaFila[7] = c.isUrgente();
 			modeloTabla.addRow(nuevaFila);
-			codcitas.add(c.getCodCita());
+			codcitas.add(c);
 		}
 		
 		}
@@ -256,7 +256,7 @@ public class VentanaVerCita extends JDialog {
 					int res=JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea borrar la cita?","Mensaje de confirmación",JOptionPane.YES_NO_OPTION);
 					if(res==JOptionPane.YES_OPTION) {
 						try {
-							pbd.BorrarCita(codcitas.get(tablacita.getSelectedRow()));
+							pbd.BorrarCita(codcitas.get(tablacita.getSelectedRow()).getCodCita());
 							añadirFilas(false);
 						} catch (SQLException e1) {
 							e1.printStackTrace();
@@ -284,7 +284,7 @@ public class VentanaVerCita extends JDialog {
 					if(fila!=-1) {
 						
 							try {
-								Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()));
+								Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()).getCodCita());
 								VentanaModificarCita(p,codcitas.get(tablacita.getSelectedRow()));
 								
 							} catch (SQLException e) {
@@ -300,7 +300,7 @@ public class VentanaVerCita extends JDialog {
 	}
 	
 	
-protected void VentanaModificarCita(Paciente p,String c) throws SQLException {
+protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 		
 		ModificarCita mc = new ModificarCita(p,c);
 		mc.setVisible(true);
@@ -354,7 +354,7 @@ protected void VentanaModificarCita(Paciente p,String c) throws SQLException {
 			nuevaFila[5] = empleado.getNombre()+"  " +empleado.getApellido();
 			nuevaFila[6] = c.isUrgente();
 			modeloTabla.addRow(nuevaFila);
-			codcitas.add(c.getCodCita());
+			codcitas.add(c);
 		}
 		
 		}

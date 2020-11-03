@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 
 import java.awt.Font;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 import javax.swing.SpinnerDateModel;
 import javax.swing.JSpinner;
 
@@ -48,6 +49,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
 import java.awt.FlowLayout;
 import net.miginfocom.swing.MigLayout;
+import javax.swing.DefaultComboBoxModel;
 
 public class ModificarCita extends JDialog {
 	/**
@@ -71,21 +73,21 @@ public class ModificarCita extends JDialog {
 	private JTextArea textArea_descripcion;
 	private JButton btnModificar;
 	private JCheckBox chckbxEsUrgente;
-	private ArrayList<Medico> medicos;
+	private ArrayList<Medico> medicos=new ArrayList<Medico>();
 	private JSpinner timeSpinnerInicio;
 	private JSpinner timeSpinnerFin;
 	private Paciente pacienteCita;
 	private JPanel panel;
-	private JTextField textField;
-	private JButton btnFiltrarPorNombre;
-	private JButton btnFiltrarPorApellido;
+	private JTextField textName;
+	private JButton btnName;
+	private JButton btnSurname;
 	private JPanel panel_1;
 	private JLabel lblEscogeLaSala;
-	private JComboBox comboBox;
+	private JComboBox<String> comboBox;
 	private Paciente p;
-	private String codcita;
-	private JTextField textField_1;
-	private JButton btnFiltrarPorNombre_1;
+	private Cita cita;
+	private JTextField textSurname;
+	private JButton btnNameSurname;
 
 
 	/**
@@ -95,11 +97,12 @@ public class ModificarCita extends JDialog {
 	 * 
 	 * @throws SQLException
 	 */
-	public ModificarCita(Paciente p, String codcita) throws SQLException {
+	public ModificarCita(Paciente p, Cita cita) throws SQLException {
 		this.p=p;
-		this.codcita=codcita;
+		this.cita=cita;
 		setTitle("Administrativo: Modificar cita");
 		setLocationRelativeTo(null);
+		setModal(true);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 914, 554);
 		getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
@@ -258,6 +261,31 @@ public class ModificarCita extends JDialog {
 		return modeloListaM;
 	}
 
+	
+	
+	private DefaultListModel<Medico> modeloListaApellido(String apellido) throws SQLException {
+		modeloListaM = new DefaultListModel<Medico>();
+		List<Medico> medicos = pbd.devolverMedicoApellido(apellido);
+		for (int i = 0; i < medicos.size(); i++) {
+			modeloListaM.addElement(medicos.get(i));
+
+		}
+		return modeloListaM;
+	}
+	private DefaultListModel<Medico> modeloListaNombreApellido(String name,String apellido) {
+		modeloListaM = new DefaultListModel<Medico>();
+		List<Medico> medicos=new ArrayList<Medico>();
+		try {
+			medicos = pbd.devolverMedicoNombreApellido(name,apellido);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		for (int i = 0; i < medicos.size(); i++) {
+			modeloListaM.addElement(medicos.get(i));
+
+		}
+		return modeloListaM;
+	}
 	private JDateChooser getDateCita() {
 		if (dateCita == null) {
 			dateCita = new JDateChooser();
@@ -273,19 +301,17 @@ public class ModificarCita extends JDialog {
 			btnModificar =new JButton("Modificar cita");
 			btnModificar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-
-
+					
 					if(hora()) {
 
 						if (checkMedico()) {
-							UpdateCita();;
+							UpdateCita();
 							JOptionPane.showMessageDialog(null, "Su cita se ha modificado con éxito");
 							dispose();
 						}
 					}
 				}
 			});
-			btnModificar.setEnabled(false);
 		}
 		return btnModificar;
 	}
@@ -414,7 +440,7 @@ public class ModificarCita extends JDialog {
 	 * @throws SQLException
 	 */
 	private void UpdateCita() {
-
+		String combo="";
 		Date dateIncio = (Date) timeSpinnerInicio.getValue();
 		Time timeInicio = new Time(dateIncio.getTime());
 
@@ -423,14 +449,18 @@ public class ModificarCita extends JDialog {
 
 		Date date = getDateCita().getDate();
 		java.sql.Date sDate = new java.sql.Date(date.getTime());
-
+			if(comboBox.getSelectedIndex()!=-1) {
+		combo=comboBox.getModel().getElementAt(comboBox.getSelectedIndex());
+			}
+				
 		for (int i = 0; i < medicos.size(); i++) {
 
 			Cita c;
 			try {
-				c = new Cita(p.getCodePaciente(), medicos.get(i).getCodeEmpleado(), timeInicio, timeFin, sDate,"",
+				
+				c = new Cita(cita.getCodCita(),p.getCodePaciente(), medicos.get(i).getCodeEmpleado(), timeInicio, timeFin, sDate,combo,
 						chckbxEsUrgente.isSelected());
-				pbd.crearCita(c);
+				pbd.updateCita(c,cita.getCodMed());
 
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -447,31 +477,33 @@ public class ModificarCita extends JDialog {
 			panel = new JPanel();
 			panel.setBorder(new TitledBorder(null, "Filtrar m\u00E9dico", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			panel.setLayout(new MigLayout("", "[116px][grow][][][][][]", "[22px][][]"));
-			panel.add(getTextField(), "cell 1 0,alignx left");
-			panel.add(getBtnFiltrarPorNombre(), "cell 4 0");
-			panel.add(getTextField_1(), "cell 1 1,grow");
-			panel.add(getBtnFiltrarPorApellido(), "cell 4 1");
-			panel.add(getBtnFiltrarPorNombre_1(), "cell 4 2");
+			panel.add(getTextName(), "cell 1 0,growx");
+			panel.add(getBtnName(), "cell 4 0");
+			panel.add(getTextSurname(), "cell 1 1,grow");
+			panel.add(getBtnSurname(), "cell 4 1");
+			panel.add(getBtnNameSurname(), "cell 4 2");
 		}
 		return panel;
 	}
-	private JTextField getTextField() {
-		if (textField == null) {
-			textField = new JTextField();
-			textField.setColumns(25);
+	private JTextField getTextName() {
+		if (textName == null) {
+			textName = new JTextField();
+			textName.setColumns(25);
 		}
-		return textField;
+		return textName;
 	}
-	private JButton getBtnFiltrarPorNombre() {
-		if (btnFiltrarPorNombre == null) {
-			btnFiltrarPorNombre = new JButton("Filtrar por nombre");
-			btnFiltrarPorNombre.addActionListener(new ActionListener() {
+	private JButton getBtnName() {
+		if (btnName == null) {
+			btnName = new JButton("Filtrar por nombre");
+			btnName.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					if(textField.getText().equals(""))
+					if(textName.getText().equals(""))
 						JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
 					else {	
 					try {
-						modeloListaNombre(textField.getText());
+						modeloListaNombre(textName.getText());
+						list.setModel(modeloListaM);
+						
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}
@@ -480,20 +512,36 @@ public class ModificarCita extends JDialog {
 				}
 			});
 		}
-		return btnFiltrarPorNombre;
+		return btnName;
 	}
-	private JButton getBtnFiltrarPorApellido() {
-		if (btnFiltrarPorApellido == null) {
-			btnFiltrarPorApellido = new JButton("Filtrar por apellido");
+	private JButton getBtnSurname() {
+		if (btnSurname == null) {
+			btnSurname = new JButton("Filtrar por apellido");
+			btnSurname.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					
+					if(textSurname.getText().equals(""))
+						JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
+					else {	
+					try {
+						modeloListaNombre(textName.getText());
+						list.setModel(modeloListaM);
+						
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+					
+				}
+			}});
 		}
-		return btnFiltrarPorApellido;
+		return btnSurname;
 	}
 	private JPanel getPanel_1() {
 		if (panel_1 == null) {
 			panel_1 = new JPanel();
 			panel_1.setLayout(new MigLayout("", "[109px][grow][][][][][][][][][][][][][][][][][][][][][][][]", "[25px][][]"));
 			panel_1.add(getLblEscogeLaSala(), "cell 0 1,alignx trailing");
-			panel_1.add(getComboBox(), "cell 1 1 6 1,growx");
+			panel_1.add(getComboBox(), "cell 1 1 6 1");
 			panel_1.add(getBtnModificar(), "cell 23 2,alignx left,aligny top");
 		}
 		return panel_1;
@@ -504,23 +552,36 @@ public class ModificarCita extends JDialog {
 		}
 		return lblEscogeLaSala;
 	}
-	private JComboBox getComboBox() {
+	private JComboBox<String> getComboBox() {
 		if (comboBox == null) {
-			comboBox = new JComboBox();
+			comboBox = new JComboBox<String>();
+			comboBox.setModel(new DefaultComboBoxModel<String>(new String[] {"Sala 1", "Sala 2", "Sala 3", "Sala de rayos 1", "Sala de curas 1", "Quir\u00F3fano 1", "Quir\u00F3fano 2"}));
 		}
 		return comboBox;
 	}
-	private JTextField getTextField_1() {
-		if (textField_1 == null) {
-			textField_1 = new JTextField();
-			textField_1.setColumns(20);
+	private JTextField getTextSurname() {
+		if (textSurname == null) {
+			textSurname = new JTextField();
+			textSurname.setColumns(20);
 		}
-		return textField_1;
+		return textSurname;
 	}
-	private JButton getBtnFiltrarPorNombre_1() {
-		if (btnFiltrarPorNombre_1 == null) {
-			btnFiltrarPorNombre_1 = new JButton("Filtrar por nombre y  apellido");
+	private JButton getBtnNameSurname() {
+		if (btnNameSurname == null) {
+			btnNameSurname = new JButton("Filtrar por nombre y  apellido");
+			btnNameSurname.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					
+					if(textName.getText().equals("")|| textSurname.getText().equals(""))
+						JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
+					else {	
+					modeloListaNombreApellido(textName.getText(), textSurname.getText());
+					list.setModel(modeloListaM);
+					
+				}
+				}
+			});
 		}
-		return btnFiltrarPorNombre_1;
+		return btnNameSurname;
 	}
 }
