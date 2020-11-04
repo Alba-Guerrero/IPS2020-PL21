@@ -48,7 +48,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
 import java.awt.FlowLayout;
-import net.miginfocom.swing.MigLayout;
+//import net.miginfocom.swing.MigLayout;
 import javax.swing.DefaultComboBoxModel;
 
 public class ModificarCita extends JDialog {
@@ -478,7 +478,7 @@ public class ModificarCita extends JDialog {
 		if (panel == null) {
 			panel = new JPanel();
 			panel.setBorder(new TitledBorder(null, "Filtrar m\u00E9dico", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			panel.setLayout(new MigLayout("", "[116px][grow][][][][][]", "[22px][][]"));
+			//panel.setLayout(new MigLayout("", "[116px][grow][][][][][]", "[22px][][]"));
 			panel.add(getTextName(), "cell 1 0,growx");
 			panel.add(getBtnName(), "cell 4 0");
 			panel.add(getTextSurname(), "cell 1 1,grow");
@@ -542,7 +542,7 @@ public class ModificarCita extends JDialog {
 	private JPanel getPanel_1() {
 		if (panel_1 == null) {
 			panel_1 = new JPanel();
-			panel_1.setLayout(new MigLayout("", "[109px][grow][][][][][][][][][][][][][][][][][][][][][][][]", "[25px][][]"));
+			//panel_1.setLayout(new MigLayout("", "[109px][grow][][][][][][][][][][][][][][][][][][][][][][][]", "[25px][][]"));
 			panel_1.add(getLblEscogeLaSala(), "cell 0 1,alignx trailing");
 			panel_1.add(getComboBox(), "cell 1 1 6 1");
 			panel_1.add(getBtnModificar(), "cell 23 2,alignx left,aligny top");
