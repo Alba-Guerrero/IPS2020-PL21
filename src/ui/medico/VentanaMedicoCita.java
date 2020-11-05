@@ -11,8 +11,10 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import logica.Cita;
+import logica.HistorialMedico;
 import logica.Paciente;
 import logica.servicios.ParserBaseDeDatos;
+import ui.MostrarHistorial;
 
 import javax.swing.JScrollPane;
 import java.awt.GridLayout;
@@ -229,10 +231,35 @@ public class VentanaMedicoCita extends JDialog {
 	private JButton getBtnhistorial() {
 		if (btnhistorial == null) {
 			btnhistorial = new JButton("Ver historial");
+			btnhistorial.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					mostrarHistorial();
+				}
+			});
 			btnhistorial.setEnabled(false);
 		}
 		return btnhistorial;
 	}
+	
+	protected void mostrarHistorial() {
+		int fila=tablacita.getSelectedRow();
+		if(fila!=-1) {
+		try {
+			Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()));
+			Cita cita = pbd.verCita(p.getHistorial());
+			HistorialMedico hm = pbd.verHistorial(p.getHistorial());
+			MostrarHistorial mh = new MostrarHistorial(hm,cita);
+			mh.setLocationRelativeTo(null);
+			mh.setResizable(true);
+			mh.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+			mh.setVisible(true);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		}
+	}
+	
 	private JButton getBtncita() {
 		if (btncita == null) {
 			btncita = new JButton("Ver cita");
@@ -261,10 +288,36 @@ public class VentanaMedicoCita extends JDialog {
 	private JButton getBtnmodifica() {
 		if (btnmodifica == null) {
 			btnmodifica = new JButton("Modificar cita");
+			btnmodifica.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int fila=tablacita.getSelectedRow();
+					if(fila!=-1) {
+					abrirModificarCita();
+					}
+				}
+			});
 			btnmodifica.setEnabled(false);
 		}
 		return btnmodifica;
 	}
+	
+	protected void abrirModificarCita() {
+		try {
+			Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()));
+			Cita cita = pbd.verCita(p.getHistorial());
+			ModificarMedicosNuevoCard mc = new ModificarMedicosNuevoCard(p, cita);
+			mc.setLocationRelativeTo(this);
+			mc.setResizable(true);
+			mc.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+			mc.setVisible(true);
+		}  catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+
+	}
+	
 	private JButton getBtnNewButton_3() {
 		if (btnNewButton_3 == null) {
 			btnNewButton_3 = new JButton("Todas las citas");

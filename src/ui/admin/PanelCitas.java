@@ -471,11 +471,9 @@ public class PanelCitas extends JDialog {
 
 	
 	
-	private boolean txtSala() {
-		if(txtIntroduceLaSala.getText().equals("")|| txtIntroduceLaSala.getText().equals("Introduce la sala"))
-		return false;
-		return true;
-		
+	private boolean ComboBoxSala() {
+		return getCbSala().getSelectedItem() != null;
+
 	}
 	/**
 	 * Metodo que comprueba que todos los cmapos obligatosio estan cubiertos y pone
@@ -485,7 +483,7 @@ public class PanelCitas extends JDialog {
 	 * @throws SQLException
 	 */
 	private boolean camposCubiertos() {
-		if (JlistMedicoFill() && ComboBoxPacientes() &&txtSala() ) {
+		if (JlistMedicoFill() && ComboBoxPacientes() &&ComboBoxSala() ) {
 			btnCrearCita.setEnabled(true);
 			return true;
 
@@ -514,9 +512,10 @@ public class PanelCitas extends JDialog {
 
 		for (int i = 0; i < medicos.size(); i++) {
 			Paciente p = (Paciente) comboBox.getSelectedItem();
+			String sala = (String) getCbSala().getSelectedItem();
 			Cita c;
 			try {
-				c = new Cita(p.getCodePaciente(), medicos.get(i).getCodeEmpleado(), timeInicio, timeFin, sDate, txtIntroduceLaSala.getText(),
+				c = new Cita(p.getCodePaciente(), medicos.get(i).getCodeEmpleado(), timeInicio, timeFin, sDate, sala,
 						chckbxEsUrgente.isSelected());
 				pbd.crearCita(c);
 
@@ -691,9 +690,9 @@ public class PanelCitas extends JDialog {
 	
 	private JButton btnActualizarDatos;
 	private JPanel panel_1;
-	private JTextField txtIntroduceLaSala;
 	private JPanel panel_2;
 	private JPanel panel_3;
+	private JComboBox cbSala;
 	
 	
 	private JButton getBtnActualizarDatos() {
@@ -724,27 +723,37 @@ public class PanelCitas extends JDialog {
 			panel_1 = new JPanel();
 			panel_1.setBorder(new TitledBorder(null, "Introduce la sala", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			panel_1.setLayout(null);
-			panel_1.add(getTxtIntroduceLaSala());
+			panel_1.add(getCbSala());
 		}
 		return panel_1;
 	}
-	private JTextField getTxtIntroduceLaSala() {
-		if (txtIntroduceLaSala == null) {
-			txtIntroduceLaSala = new JTextField();
-			txtIntroduceLaSala.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent arg0) {
-					txtIntroduceLaSala.setText("");
-					txtIntroduceLaSala.setText(txtIntroduceLaSala.getText());
-					camposCubiertos();
-				}
-			});
-			txtIntroduceLaSala.setText("Introduce la sala");
-			txtIntroduceLaSala.setBounds(66, 49, 197, 22);
-			txtIntroduceLaSala.setColumns(10);
+	private JComboBox<String> getCbSala() {
+		if (cbSala == null) {
+			List<String> salas= rellenarSalas();
+			cbSala = new JComboBox<String>();
+			cbSala.setBounds(54, 47, 236, 22);
+			for (int i = 0; i < salas.size(); i++) {
+				cbSala.insertItemAt(salas.get(i), i);
+			}
 		}
-		return txtIntroduceLaSala;
+		return cbSala;
 	}
+	
+	private List<String> rellenarSalas() {
+		List<String> salas = new ArrayList<String>();
+		for(int i = 1; i < 4; i++) {
+			salas.add("Quirófano " + i);
+			salas.add("Sala de rayos " + i);
+			salas.add("Pediatría " + i);
+		}
+
+		salas.add("Digestivo");
+		salas.add("Oncología");
+		salas.add("Uroología");
+		salas.add("Cardiología");
+		return salas;
+	}
+	
 	private JPanel getPanel_2() {
 		if (panel_2 == null) {
 			panel_2 = new JPanel();

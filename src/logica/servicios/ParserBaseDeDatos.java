@@ -59,11 +59,11 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
 	private final static String VER_HISTORIAL ="SELECT * FROM historial where nHistorial =?";
 	
-private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where codvacuna  = ?";
+	private final static String VER_VACUNAS ="SELECT nombreVacuna, fecha FROM vacuna where codvacuna  = ?";
 	
-	private final static String VER_ENFERM_PREVIAS ="SELECT nombreEnfermedad FROM enfermedadPrevia where codenfermedad  =?";
+	private final static String VER_ENFERM_PREVIAS ="SELECT nombreEnfermedad, fecha FROM enfermedadPrevia where codenfermedad  =?";
 	
-	private final static String VER_CAUSAS ="SELECT  nombrecausa  FROM causa where codcausa  = ?";
+	private final static String VER_CAUSAS ="SELECT  nombrecausa, fecha  FROM causa where codcausa  = ?";
 	
 	private final static String MODIFICAR_UBICACION_CITA = "UPDATE cita SET ubicacion=? where codpaciente=?";
 	
@@ -909,7 +909,7 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 		ResultSet rs=st.executeQuery();
 	
 		while(rs.next()) {
-			nombresVacunas.add(rs.getString(1));
+			nombresVacunas.add(rs.getString(1)+ "\t" + rs.getDate(2));
 		}
 	
 		//CERRAR EN ESTE ORDEN
@@ -921,21 +921,42 @@ private final static String VER_VACUNAS ="SELECT nombreVacuna FROM vacuna where 
 	
 	
 	public List<String> buscarEnfermPrevias(String codEnferm) throws SQLException {
-		List<String> nombresVacunas = new ArrayList<String>();
+		List<String> nombresEnfPrev  = new ArrayList<String>();
 		Connection con =new Conexion().getConnectionJDBC();
 		PreparedStatement st=con.prepareStatement(VER_ENFERM_PREVIAS);
 		st.setString(1, codEnferm);
 		ResultSet rs=st.executeQuery();
 	
 		while(rs.next()) {
-			nombresVacunas.add(rs.getString(1));
+			nombresEnfPrev.add(rs.getString(1)+ "\t" + rs.getDate(2));
 		}
 	
 		//CERRAR EN ESTE ORDEN
 		rs.close();
 		st.close();
 		con.close();
-		return nombresVacunas;
+		return nombresEnfPrev ;
+	}
+	
+	public List<String> buscarCausas(String codCausa) throws SQLException {
+		List<String> nombresCausas = new ArrayList<String>();
+		Connection con =new Conexion().getConnectionJDBC();
+		PreparedStatement st=con.prepareStatement(VER_CAUSAS);
+		st.setString(1, codCausa);
+		ResultSet rs=st.executeQuery();
+
+		while(rs.next()) {
+			nombresCausas.add(rs.getString(1)+ "\t" + rs.getDate(2));
+		}
+		for(int i = 0; i<nombresCausas.size(); i++) {
+			System.out.print(nombresCausas.get(i));
+		}
+
+		//CERRAR EN ESTE ORDEN
+		rs.close();
+		st.close();
+		con.close();
+		return nombresCausas;
 	}
 	
 	public String verCausas(String cod) throws SQLException {
