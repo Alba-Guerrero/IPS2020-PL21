@@ -47,7 +47,7 @@ public class AnadirPreinscripcion extends JDialog {
 	private JRadioButton rdbtnMedicamento;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	
-	private ModificarCitaMedico modificarCitaMedico;
+	private ModificarMedicosNuevoCard modificarCitaMedico;
 	
 	private ParserBaseDeDatos pbd=new ParserBaseDeDatos();
 
@@ -69,11 +69,11 @@ public class AnadirPreinscripcion extends JDialog {
 
 	/**
 	 * Create the frame.
-	 * @param modificarCitaMedico 
+	 * @param modificarMedicosNuevoCard 
 	 */
-	public AnadirPreinscripcion(ModificarCitaMedico modificarCitaMedico) {
+	public AnadirPreinscripcion(ModificarMedicosNuevoCard modificarMedicosNuevoCard) {
 		
-		this.modificarCitaMedico = modificarCitaMedico; // La ventana anterior
+		this.modificarCitaMedico = modificarMedicosNuevoCard; // La ventana anterior
 		
 		setTitle("A\u00F1adir preinscripcion");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -215,6 +215,8 @@ public class AnadirPreinscripcion extends JDialog {
 			modificarCitaMedico.setPreinscripcion(preinscripcion); // Le mandamos la preinscripcion a la ventana anterior
 			
 			pbd.nuevaPreinscripcion(preinscripcion); // Lo guardo en la base de datos
+			
+			modificarCitaMedico.actualizar(); // Ponemos el comboBox que indica el nombre de la preinscripcion con el que acaba de crear
 			
 			dispose();
 		}

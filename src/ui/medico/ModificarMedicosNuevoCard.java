@@ -41,6 +41,13 @@ import java.awt.Component;
 import javax.swing.Box;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import java.awt.FlowLayout;
+import javax.swing.BoxLayout;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.JTree;
+import javax.swing.JList;
 
 public class ModificarMedicosNuevoCard extends JDialog {
 
@@ -85,6 +92,34 @@ public class ModificarMedicosNuevoCard extends JDialog {
 
 	private List<String> nombresCausas;
 	private ModificarMedicosNuevoCard mm;
+	private JPanel pnPreinscripciones;
+	private JPanel pnIzq;
+	private JPanel pnDcha;
+	private JPanel pnCentro;
+	private JLabel lblNombrePreinscripcion;
+	private JButton btnNueva;
+	private JLabel lblNCantidad;
+	private JLabel lblDuracion;
+	private JLabel lblIntervalo;
+	private JLabel lblInstrucciones;
+	private JComboBox<String> cbNombre;
+	private JPanel pnPreinscripcionNombre;
+	private JButton btnSeleccionar;
+	private JPanel pnVacío;
+	private JSpinner spinnerCantidad;
+	private JSpinner spinnerDuracion;
+	private JSpinner spinnerIntervalo;
+	private JScrollPane scrollPane;
+	private JTextArea textArea;
+	private JPanel pnResumen;
+	private JPanel pnBorrarPreinscripcion;
+	private JButton btnBorrar;
+	private JPanel pnResumenPreinscripciones;
+	private JLabel lblResumenPreinscripciones;
+	private JList list;
+	private JScrollPane scrollPane_2;
+	private JList listPreinscripciones;
+	private JButton btnAadirPreinscripcin;
 
 	/**
 	 * Create the frame.
@@ -156,6 +191,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			panelPestañas.addTab("Causas", null, getPanelCausas(), null);
 			panelPestañas.addTab("Enferm previas", null, getPanelEnfermedPrevia(), null);
 			panelPestañas.addTab("Vacunas", null, getPanelVacunas(), null);
+			panelPestañas.addTab("Preinscripciones", null, getPnPreinscripciones(), null);
 		}
 		return panelPestañas;
 	}
@@ -180,12 +216,24 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel getPanelVacunas() throws SQLException {
 		if (panelVacunas == null) {
 			panelVacunas = new JPanel();
-			panelVacunas.setLayout(new BorderLayout(0, 0));
+			
 		}
 		return panelVacunas;
 	}
 
 
+	
+	private JPanel getPnPreinscripciones() {
+		if (pnPreinscripciones == null) {
+			pnPreinscripciones = new JPanel();
+			pnPreinscripciones.setLayout(new GridLayout(0, 3, 0, 0));
+			pnPreinscripciones.add(getPnIzq());
+			pnPreinscripciones.add(getPnCentro());
+			pnPreinscripciones.add(getPnDcha());
+			panelVacunas.setLayout(new BorderLayout(0, 0));
+		}
+		return pnPreinscripciones;
+	}
 
 	// LOGICA
 
@@ -419,4 +467,279 @@ public class ModificarMedicosNuevoCard extends JDialog {
 
 
 
+	
+	private JPanel getPnIzq() {
+		if (pnIzq == null) {
+			pnIzq = new JPanel();
+			pnIzq.setLayout(new GridLayout(7, 1, 0, 0));
+			pnIzq.add(getBtnNueva());
+			pnIzq.add(getLabel_4_2());
+			pnIzq.add(getLabel_4_3());
+			pnIzq.add(getLabel_4_4());
+			pnIzq.add(getLabel_4_5());
+			pnIzq.add(getLabel_4_6());
+		}
+		return pnIzq;
+	}
+	private JPanel getPnDcha() {
+		if (pnDcha == null) {
+			pnDcha = new JPanel();
+			pnDcha.setLayout(new BorderLayout(0, 0));
+			pnDcha.add(getPnResumen());
+			pnDcha.add(getPnBorrarPreinscripcion());
+			pnDcha.add(getPnResumen(), BorderLayout.CENTER);
+			pnDcha.add(getPnBorrarPreinscripcion(), BorderLayout.SOUTH);
+			pnDcha.add(getPnResumenPreinscripciones(), BorderLayout.NORTH);
+		
+		}
+		return pnDcha;
+	}
+	private JPanel getPnCentro() {
+		if (pnCentro == null) {
+			pnCentro = new JPanel();
+			pnCentro.setLayout(new GridLayout(7, 1, 0, 0));
+			pnCentro.add(getPnVacío());
+			pnCentro.add(getPnPreinscripcionNombre());
+			pnCentro.add(getSpinnerCantidad());
+			pnCentro.add(getSpinnerDuracion());
+			pnCentro.add(getSpinnerIntervalo());
+			pnCentro.add(getScrollPane());
+			pnCentro.add(getBtnAadirPreinscripcin());
+//			pnCentro.add(getTextArea());
+		}
+		return pnCentro;
+	}
+	private JLabel getLabel_4_2() {
+		if (lblNombrePreinscripcion == null) {
+			lblNombrePreinscripcion = new JLabel("Nombre:");
+		}
+		return lblNombrePreinscripcion;
+	}
+	private JButton getBtnNueva() {
+		if (btnNueva == null) {
+			btnNueva = new JButton("Crear nueva preinscripci\u00F3n");
+			btnNueva.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					crearPreinscripción();
+				}
+			});
+		}
+		return btnNueva;
+	}
+	
+	/**
+	 * Método para crear una nueva preinscripción que no había antes
+	 */
+	protected void crearPreinscripción() {
+		AnadirPreinscripcion ventanaPreinscripcion = new AnadirPreinscripcion(this);
+		
+		ventanaPreinscripcion.setLocationRelativeTo(this);
+		ventanaPreinscripcion.setResizable(true);
+		ventanaPreinscripcion.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+		ventanaPreinscripcion.setVisible(true);
+		
+	}
+	
+	/**
+	 * Método que me permite guardar la preinscripcion
+	 * @param preinscripcion the preinscripcion to set
+	 */
+	public void setPreinscripcion(Preinscripcion preinscripcion) {
+		this.preinscripcion = preinscripcion;
+	}
+
+	private JLabel getLabel_4_3() {
+		if (lblNCantidad == null) {
+			lblNCantidad = new JLabel("Cantidad:");
+		}
+		return lblNCantidad;
+	}
+	private JLabel getLabel_4_4() {
+		if (lblDuracion == null) {
+			lblDuracion = new JLabel("Duraci\u00F3n (en d\u00EDas):");
+		}
+		return lblDuracion;
+	}
+	private JLabel getLabel_4_5() {
+		if (lblIntervalo == null) {
+			lblIntervalo = new JLabel("Intervalo (en horas):");
+		}
+		return lblIntervalo;
+	}
+	private JLabel getLabel_4_6() {
+		if (lblInstrucciones == null) {
+			lblInstrucciones = new JLabel("Instrucciones:");
+		}
+		return lblInstrucciones;
+	}
+	private JComboBox getCbNombre() {
+		if (cbNombre == null) {
+			cbNombre = new JComboBox();
+			
+
+			String[] nombrePreinscripciones = new String[preinscripciones.size()];
+			for (int i = 0; i< preinscripciones.size(); i++) {
+				nombrePreinscripciones[i] = preinscripciones.get(i).getNombre();
+			}
+			
+			cbNombre.setModel(new DefaultComboBoxModel<String>(nombrePreinscripciones));				
+
+			
+		}
+		return cbNombre;
+	}
+	private JPanel getPnPreinscripcionNombre() {
+		if (pnPreinscripcionNombre == null) {
+			pnPreinscripcionNombre = new JPanel();
+			pnPreinscripcionNombre.setLayout(new GridLayout(0, 2, 0, 0));
+			pnPreinscripcionNombre.add(getCbNombre());
+			pnPreinscripcionNombre.add(getBtnSeleccionar());
+		}
+		return pnPreinscripcionNombre;
+	}
+	private JButton getBtnSeleccionar() {
+		if (btnSeleccionar == null) {
+			btnSeleccionar = new JButton("Seleccionar");
+		}
+		return btnSeleccionar;
+	}
+	private JPanel getPnVacío() {
+		if (pnVacío == null) {
+			pnVacío = new JPanel();
+		}
+		return pnVacío;
+	}
+	private JSpinner getSpinnerCantidad() {
+		if (spinnerCantidad == null) {
+			spinnerCantidad = new JSpinner();
+			spinnerCantidad.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
+		}
+		return spinnerCantidad;
+	}
+	private JSpinner getSpinnerDuracion() {
+		if (spinnerDuracion == null) {
+			spinnerDuracion = new JSpinner();
+			spinnerDuracion.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
+		}
+		return spinnerDuracion;
+	}
+	private JSpinner getSpinnerIntervalo() {
+		if (spinnerIntervalo == null) {
+			spinnerIntervalo = new JSpinner();
+			spinnerIntervalo.setModel(new SpinnerNumberModel(new Integer(0), new Integer(0), null, new Integer(1)));
+		}
+		return spinnerIntervalo;
+	}
+	private JScrollPane getScrollPane() {
+		if (scrollPane == null) {
+			scrollPane = new JScrollPane();
+			scrollPane.setViewportView(getTextArea());
+		}
+		return scrollPane;
+	}
+	private JTextArea getTextArea() {
+		if (textArea == null) {
+			textArea = new JTextArea();
+			textArea.setLineWrap(true);
+			textArea.setWrapStyleWord(true);
+		}
+		return textArea;
+	}
+	private JPanel getPnResumen() {
+		if (pnResumen == null) {
+			pnResumen = new JPanel();
+			pnResumen.setLayout(new GridLayout(0, 1, 0, 0));
+			pnResumen.add(getListPreinscripciones());
+			//pnResumen.add(getList());
+			//pnResumen.add(getTextArea_1());
+		}
+		return pnResumen;
+	}
+	private JPanel getPnBorrarPreinscripcion() {
+		if (pnBorrarPreinscripcion == null) {
+			pnBorrarPreinscripcion = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnBorrarPreinscripcion.getLayout();
+			flowLayout.setAlignment(FlowLayout.RIGHT);
+			pnBorrarPreinscripcion.add(getBtnBorrar());
+		}
+		return pnBorrarPreinscripcion;
+	}
+	private JButton getBtnBorrar() {
+		if (btnBorrar == null) {
+			btnBorrar = new JButton("Borrar preinscripci\u00F3n");
+		}
+		return btnBorrar;
+	}
+	private JPanel getPnResumenPreinscripciones() {
+		if (pnResumenPreinscripciones == null) {
+			pnResumenPreinscripciones = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnResumenPreinscripciones.getLayout();
+			flowLayout.setAlignment(FlowLayout.LEFT);
+			pnResumenPreinscripciones.add(getLabel_4_7());
+		}
+		return pnResumenPreinscripciones;
+	}
+	private JLabel getLabel_4_7() {
+		if (lblResumenPreinscripciones == null) {
+			lblResumenPreinscripciones = new JLabel("Preinscripciones seleccionadas:");
+		}
+		return lblResumenPreinscripciones;
+	}
+
+	private JList getList() {
+		if (list == null) {
+			list = new JList();			
+		}
+		return list;
+	}
+	private JList getListPreinscripciones() {
+		if (listPreinscripciones == null) {
+			listPreinscripciones = new JList();
+		}
+		return listPreinscripciones;
+	}
+	private JButton getBtnAadirPreinscripcin() {
+		if (btnAadirPreinscripcin == null) {
+			btnAadirPreinscripcin = new JButton("A\u00F1adir preinscripci\u00F3n");
+		}
+		return btnAadirPreinscripcin;
+	}
+
+	/**
+	 * Método para actualizar el elemento que se muestra en el comboBox de Preinscripciones
+	 */
+	public void actualizar() {
+		
+		try {
+			preinscripciones = pbd.listarPrescripciones(); // Volvemos a cargar las preinscripciones de la base de datos después de haber añadido
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		cbNombre.removeAllItems(); // Vacío todo el combo box
+		
+//		// Actualizamos el combo box
+//		for (int i = 0; i < preinscripciones.size(); i++) {
+//			cbNombre.insertItemAt(preinscripciones.get(i), i);
+//		}
+		
+		String[] nombrePreinscripciones = new String[preinscripciones.size()];
+		for (int i = 0; i< preinscripciones.size(); i++) {
+			nombrePreinscripciones[i] = preinscripciones.get(i).getNombre();
+		}
+		
+		cbNombre.setModel(new DefaultComboBoxModel<String>(nombrePreinscripciones));				
+
+		int contador = 0;
+		for (Preinscripcion p : preinscripciones) {
+			if (p.getNombre().equals(preinscripcion.getNombre())) {
+				cbNombre.setSelectedIndex(contador);				
+			}
+			contador = contador + 1;
+		}
+		
+		
+	}
 }
