@@ -8,6 +8,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.sun.org.apache.xml.internal.serialize.XHTMLSerializer;
+
 import logica.AsignaPreinscripcion;
 import logica.Cita;
 import logica.HistorialMedico;
@@ -41,6 +43,14 @@ import javax.swing.JSpinner;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.JRadioButton;
+import java.awt.Component;
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ModificarCitaMedico extends JDialog {
 
@@ -69,7 +79,6 @@ public class ModificarCitaMedico extends JDialog {
 	private JPanel pnPreinscripcionPrincipal;
 	private JButton btPreinscripcion;
 	private JComboBox<Preinscripcion> cbPreinscripciones;
-	private JCheckBox chckbxAcudio;
 	private JSpinner timeSpinnerFin;
 	private JSpinner timeSpinnerInicio;
 	private JLabel lblNombre_1;
@@ -98,6 +107,14 @@ public class ModificarCitaMedico extends JDialog {
 	private ParserBaseDeDatos pbd=new ParserBaseDeDatos();
 	private JLabel lblCausas;
 	private JTextField txtCausas;
+	private JPanel panelAcudio;
+	private Component horizontalStrut;
+	private JRadioButton rdbtnAcudio;
+	private JRadioButton rdbtnNoAcudio;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
+	
+	
+	
 	
 //	/**
 //	 * Launch the application.
@@ -216,7 +233,7 @@ public class ModificarCitaMedico extends JDialog {
 			pnDcha.add(getPnDuracion());
 			pnDcha.add(getPnIntervalo());
 			pnDcha.add(getPnInstrucciones());
-			pnDcha.add(getChckbxAcudio());
+			pnDcha.add(getPanelAcudio());
 			pnDcha.add(getTxtCausas());
 		}
 		return pnDcha;
@@ -318,18 +335,6 @@ public class ModificarCitaMedico extends JDialog {
 		}
 		return cbPreinscripciones;
 	}
-	private JCheckBox getChckbxAcudio() {
-		if (chckbxAcudio == null) {
-			chckbxAcudio = new JCheckBox("Acudi\u00F3");
-			
-			
-			if (cita.isAcudio()) {
-				chckbxAcudio.setSelected(true);
-			}
-			
-		}
-		return chckbxAcudio;
-	}
 	
 	
 	
@@ -348,16 +353,15 @@ public class ModificarCitaMedico extends JDialog {
 				anadirLaPreinscripcion();
 				
 			}
-
-
-			// Si el paciente acudió a la cita o no		
-			if  (getChckbxAcudio().isSelected() == true) { // Si acudió a la cita
-				if (cita.isAcudio() == false) {
+			
+			if(buttonGroup.getSelection().isSelected()) {
+				if(getRdbtnAcudio().isSelected()) {
 					cita.setAcudio(true);
 				}
-				
+				else if (getRdbtnNoAcudio().isSelected()) {
+					cita.setAcudio(false);
+				}
 			}
-			
 			
 			// Guardamos otra vez la hora de inicio por si se ha modificado
 			Date dateInicio = (Date) timeSpinnerInicio.getValue();
@@ -440,13 +444,13 @@ public class ModificarCitaMedico extends JDialog {
 	 */
 	protected void preinscripcion() {
 		
-		//AnadirPreinscripcion ventanaPreinscripcion = new AnadirPreinscripcion(this);
+		AnadirPreinscripcion ventanaPreinscripcion = new AnadirPreinscripcion(this);
 		
 		
-//		ventanaPreinscripcion.setLocationRelativeTo(null);
-//		ventanaPreinscripcion.setResizable(true);
-//		ventanaPreinscripcion.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
-//		ventanaPreinscripcion.setVisible(true);
+		ventanaPreinscripcion.setLocationRelativeTo(null);
+		ventanaPreinscripcion.setResizable(true);
+		ventanaPreinscripcion.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+		ventanaPreinscripcion.setVisible(true);
 
 		
 	}
@@ -700,4 +704,59 @@ public class ModificarCitaMedico extends JDialog {
 	
 	
 	
+	private JPanel getPanelAcudio() {
+		if (panelAcudio == null) {
+			panelAcudio = new JPanel();
+			panelAcudio.add(getRdbtnAcudio());
+			panelAcudio.add(getHorizontalStrut_1());
+			panelAcudio.add(getRdbtnNoAcudio());
+		}
+		return panelAcudio;
+	}
+	private Component getHorizontalStrut_1() {
+		if (horizontalStrut == null) {
+			horizontalStrut = Box.createHorizontalStrut(40);
+		}
+		return horizontalStrut;
+	}
+	
+	
+	private JRadioButton getRdbtnAcudio() {
+		if (rdbtnAcudio == null) {
+			rdbtnAcudio = new JRadioButton("Acudio");
+			rdbtnAcudio.addMouseListener(new MouseAdapter() {
+				int clickCountAcudio = 0;
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					
+					if(rdbtnAcudio.isSelected() && ++clickCountAcudio % 2 == 0) {
+						buttonGroup.clearSelection();
+						clickCountAcudio = 0;
+					}
+					
+				}
+			});
+			buttonGroup.add(rdbtnAcudio);
+		}
+		return rdbtnAcudio;
+	}
+	private JRadioButton getRdbtnNoAcudio() {
+		if (rdbtnNoAcudio == null) {
+			rdbtnNoAcudio = new JRadioButton("No Acudio");
+			rdbtnNoAcudio.addMouseListener(new MouseAdapter() {
+				int clickCountNoAcudio = 0;
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					
+					if(rdbtnNoAcudio.isSelected() && ++clickCountNoAcudio % 2 == 0) {
+						buttonGroup.clearSelection();
+						clickCountNoAcudio = 0;
+					}
+					
+				}
+			});
+			buttonGroup.add(rdbtnNoAcudio);
+		}
+		return rdbtnNoAcudio;
+	}
 }

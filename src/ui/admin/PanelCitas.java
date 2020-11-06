@@ -25,6 +25,7 @@ import javax.swing.SpinnerDateModel;
 import javax.swing.JSpinner;
 
 import logica.Cita;
+import logica.Email;
 import logica.Paciente;
 import logica.empleados.Medico;
 
@@ -518,6 +519,8 @@ public class PanelCitas extends JDialog {
 				c = new Cita(p.getCodePaciente(), medicos.get(i).getCodeEmpleado(), timeInicio, timeFin, sDate, sala,
 						chckbxEsUrgente.isSelected());
 				pbd.crearCita(c);
+				if(c.isUrgente())
+					Email.enviarCorreo("roloalvarez7@gmail.com", "sbeiaolebhiewuzz", "UO266007@uniovi.es", pacienteCita, c);
 
 			} catch (SQLException e) {
 				e.printStackTrace();

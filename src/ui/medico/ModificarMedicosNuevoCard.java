@@ -95,7 +95,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel panDe;
 	private JTextField textField;
 	private JTextField textField_1;
-	private JRadioButton rdbtnAcudio;
 	private JPanel panel_5;
 	private JPanel panel_6;
 	private JPanel panel_7;
@@ -134,6 +133,10 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JScrollPane scrollPane_2;
 	private JButton btnAadirPreinscripcin;
 	private JTable table;
+	private JPanel panel_3;
+	private JRadioButton rdbtnAcudio;
+	private JRadioButton rdbtnNoAcudio;
+	private Component horizontalStrut;
 
 	/**
 	 * Create the frame.
@@ -334,7 +337,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			panDe.setLayout(new GridLayout(0, 1, 0, 0));
 			panDe.add(getPanel_6());
 			panDe.add(getPanel_8());
-			panDe.add(getRdbtnAcudio_1());
+			panDe.add(getPanel_3());
 		}
 		return panDe;
 	}
@@ -355,12 +358,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			textField_1.setColumns(10);
 		}
 		return textField_1;
-	}
-	private JRadioButton getRdbtnAcudio_1() {
-		if (rdbtnAcudio == null) {
-			rdbtnAcudio = new JRadioButton("Acudio");
-		}
-		return rdbtnAcudio;
 	}
 	private JPanel getPanel_5() {
 		if (panel_5 == null) {
@@ -1036,5 +1033,32 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		
 		
 		// AÑADIR LAS DEMAS MODIFICACIONES DE LA CITA
+	}
+	private JPanel getPanel_3() {
+		if (panel_3 == null) {
+			panel_3 = new JPanel();
+			panel_3.add(getRdbtnAcudio());
+			panel_3.add(getHorizontalStrut());
+			panel_3.add(getRdbtnNoAcudio());
+		}
+		return panel_3;
+	}
+	private JRadioButton getRdbtnAcudio() {
+		if (rdbtnAcudio == null) {
+			rdbtnAcudio = new JRadioButton("Acudio");
+		}
+		return rdbtnAcudio;
+	}
+	private JRadioButton getRdbtnNoAcudio() {
+		if (rdbtnNoAcudio == null) {
+			rdbtnNoAcudio = new JRadioButton("No acudio");
+		}
+		return rdbtnNoAcudio;
+	}
+	private Component getHorizontalStrut() {
+		if (horizontalStrut == null) {
+			horizontalStrut = Box.createHorizontalStrut(60);
+		}
+		return horizontalStrut;
 	}
 }
