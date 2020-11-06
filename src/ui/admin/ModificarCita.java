@@ -26,6 +26,7 @@ import javax.swing.SpinnerDateModel;
 import javax.swing.JSpinner;
 
 import logica.Cita;
+import logica.Email;
 import logica.Paciente;
 import logica.empleados.Medico;
 
@@ -307,6 +308,9 @@ public class ModificarCita extends JDialog {
 
 						if (checkMedico()) {
 							UpdateCita();
+							if(cita.isUrgente()) {
+								Email.enviarCorreo("raulalvarezips@gmail.com", "sbeiaolebhiewuzz", "UO266007@uniovi.es", pacienteCita, cita);
+							}
 							JOptionPane.showMessageDialog(null, "Su cita se ha modificado con éxito");
 							dispose();
 						}
