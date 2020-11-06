@@ -88,6 +88,10 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
 	private final static String UPDATE_CITA = "UPDATE cita set hinicio = ?, hfin = ?, fecha = ? ,codmedico=?,ubicacion =?, urgencia=? where codcita=? and codpaciente=? and codmedico =?";
 	
+	private final static String VER_PREINSCRIPCIONES_ASIGNADAS = "SELECT * FROM asignaprescripcion where nhistorial = ?";
+
+	
+	
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
 		Connection con =new Conexion().getConnectionJDBC();
@@ -1089,6 +1093,36 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		
 		
 		return prescripciones;
+	}
+
+
+	/**
+	 * Método para buscar todas las preinscripciones que se le han asignado a un paciente en concreto
+	 * @param historial
+	 * @return
+	 * @throws SQLException 
+	 */
+	public List<String> buscarPreinscripcionesAsignadas(String nhistorial) throws SQLException {
+		List<String> nombrePreinscripciones = new ArrayList<String>();
+		
+		Connection con =new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(VER_PREINSCRIPCIONES_ASIGNADAS);
+		
+		pst.setString(1, nhistorial); // busco por n de historial
+		
+		ResultSet rs = pst.executeQuery(); // Creo el resultSet
+		
+		
+		while (rs.next()) {
+			nombrePreinscripciones.add(rs.getString(2) + "	Cantidad: " + rs.getString(5) + "	Intervalo(dias): " + rs.getString(6) + "	Duracion(horas): " + rs.getString(7) + "	Instrucciones: " +rs.getString(8));
+		}
+
+
+		//CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return nombrePreinscripciones;
 	}
 	
 }

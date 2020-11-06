@@ -33,6 +33,7 @@ public class MostrarHistorial extends JDialog {
 	private JPanel panelCausas;
 	private JPanel panelEnfermedPrevia;
 	private JPanel panelVacunas;
+	private JPanel panelPreinscripciones;
 	
 	private DefaultListModel<Preinscripcion> modeloListaM;
 	
@@ -40,12 +41,16 @@ public class MostrarHistorial extends JDialog {
 	private HistorialMedico hm;
 	private Cita cita;
 	private ParserBaseDeDatos pbd = new ParserBaseDeDatos();
+	
+	
 	private JScrollPane scrollPaneCausas;
 	private JTextArea textAreaCausas;
 	private JScrollPane scrollPaneEnfermPrevia;
 	private JTextArea textAreaEnfermPrev;
 	private JScrollPane scrollPaneVacunas;
 	private JTextArea textAreaVacunas;
+	private JScrollPane scrollPanePreinscripciones;
+	private JTextArea textAreaPreinscripciones;
 
 	/**
 	 * Create the frame.
@@ -56,7 +61,7 @@ public class MostrarHistorial extends JDialog {
 		this.hm = hm;
 		this.cita = cita;
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 732, 385);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -77,6 +82,7 @@ public class MostrarHistorial extends JDialog {
 			panelPestañas.addTab("Causas", null, getPanelCausas(), null);
 			panelPestañas.addTab("Enferm previas", null, getPanelEnfermedPrevia(), null);
 			panelPestañas.addTab("Vacunas", null, getPanelVacunas(), null);
+			panelPestañas.addTab("Preinscripciones", null, getPanelPreinscripciones(), null);
 		}
 		return panelPestañas;
 	}
@@ -185,5 +191,45 @@ public class MostrarHistorial extends JDialog {
 			textAreaVacunas.setText(darVacunas());
 		}
 		return textAreaVacunas;
+	}
+	private JPanel getPanelPreinscripciones() throws SQLException {
+		if (panelPreinscripciones == null) {
+			panelPreinscripciones = new JPanel();
+			panelPreinscripciones.setLayout(new BorderLayout(0, 0));
+			panelPreinscripciones.add(getScrollPanePreinscripciones());
+			//panelPreinscripciones.add(getTextAreaPreinscripciones());
+		}
+		return panelPreinscripciones;
+	}
+	private JScrollPane getScrollPanePreinscripciones() throws SQLException {
+		if (scrollPanePreinscripciones == null) {
+			scrollPanePreinscripciones = new JScrollPane();
+			scrollPanePreinscripciones.setViewportView(getTextAreaPreinscripciones());
+		}
+		return scrollPanePreinscripciones;
+	}
+	private JTextArea getTextAreaPreinscripciones() throws SQLException {
+		if (textAreaPreinscripciones == null) {
+			textAreaPreinscripciones = new JTextArea();
+			textAreaPreinscripciones.setEditable(false);
+			textAreaPreinscripciones.setText(ponerPreinscripciones());
+		}
+		return textAreaPreinscripciones;
+	}
+
+	/**
+	 * Método para rellenar con las preinscripciones que le han asignado hasta ahora al paciente
+	 * @return
+	 * @throws SQLException 
+	 */
+	private String ponerPreinscripciones() throws SQLException {
+		String preinscripciones = "";
+		
+		List<String> nombrePreinscripciones = new ArrayList<>();
+		nombrePreinscripciones = pbd.buscarPreinscripcionesAsignadas(hm.getHistorial());
+		for(String str : nombrePreinscripciones) {
+			preinscripciones += str + "\n";
+		}
+		return preinscripciones;
 	}
 }
