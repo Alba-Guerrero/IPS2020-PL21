@@ -211,11 +211,10 @@ public class AnadirPreinscripcion extends JDialog {
 			
 			// Metemos la nueva preinscripcion en el historial
 			Preinscripcion preinscripcion = new Preinscripcion(nombre, medicamento);
-			
-			modificarCitaMedico.setPreinscripcion(preinscripcion); // Le mandamos la preinscripcion a la ventana anterior
-			
 			pbd.nuevaPreinscripcion(preinscripcion); // Lo guardo en la base de datos
 			
+			modificarCitaMedico.setPreinscripcion(preinscripcion); // Le mandamos la preinscripcion a la ventana anterior
+						
 			modificarCitaMedico.actualizar(); // Ponemos el comboBox que indica el nombre de la preinscripcion con el que acaba de crear
 			
 			dispose();

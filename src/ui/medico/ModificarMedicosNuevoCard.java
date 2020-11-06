@@ -6,7 +6,10 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
+import logica.AsignaPreinscripcion;
 import logica.Causas;
 import logica.Cita;
 import logica.HistorialMedico;
@@ -45,12 +48,23 @@ import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JTree;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.JList;
+import javax.swing.JTable;
 
 public class ModificarMedicosNuevoCard extends JDialog {
 
+	private boolean listo = true;
+	private boolean tablaLista = false;
+	DefaultListModel modeloLista = new DefaultListModel();
+	private ModeloNoEditable modeloTabla;
+
+	
 	private JPanel contentPane;
 	private JPanel panel;
 	private JButton button;
@@ -65,6 +79,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private Cita cita; // El paciente del que estamos modificando la cita
 	private Preinscripcion preinscripcion; // La preinscripcion
 	private List<Preinscripcion> preinscripciones;
+	private List<Preinscripcion> preinscripcionesPaciente = new ArrayList<Preinscripcion>();
+	private List<AsignaPreinscripcion> asignaPreinscripcionesPaciente = new ArrayList<AsignaPreinscripcion>();
 	private Paciente paciente;
 
 	private Causas causa;
@@ -103,8 +119,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JLabel lblIntervalo;
 	private JLabel lblInstrucciones;
 	private JComboBox<String> cbNombre;
-	private JPanel pnPreinscripcionNombre;
-	private JButton btnSeleccionar;
 	private JPanel pnVacío;
 	private JSpinner spinnerCantidad;
 	private JSpinner spinnerDuracion;
@@ -118,8 +132,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JLabel lblResumenPreinscripciones;
 	private JList list;
 	private JScrollPane scrollPane_2;
-	private JList listPreinscripciones;
 	private JButton btnAadirPreinscripcin;
+	private JTable table;
 
 	/**
 	 * Create the frame.
@@ -158,7 +172,12 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			button = new JButton("Guardar");
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-
+					try {
+						guardar();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			});
 		}
@@ -472,7 +491,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		if (pnIzq == null) {
 			pnIzq = new JPanel();
 			pnIzq.setLayout(new GridLayout(7, 1, 0, 0));
-			pnIzq.add(getBtnNueva());
+			pnIzq.add(getPnVacío());
 			pnIzq.add(getLabel_4_2());
 			pnIzq.add(getLabel_4_3());
 			pnIzq.add(getLabel_4_4());
@@ -498,8 +517,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		if (pnCentro == null) {
 			pnCentro = new JPanel();
 			pnCentro.setLayout(new GridLayout(7, 1, 0, 0));
-			pnCentro.add(getPnVacío());
-			pnCentro.add(getPnPreinscripcionNombre());
+			pnCentro.add(getBtnNueva());
+			pnCentro.add(getCbNombre());
 			pnCentro.add(getSpinnerCantidad());
 			pnCentro.add(getSpinnerDuracion());
 			pnCentro.add(getSpinnerIntervalo());
@@ -575,6 +594,12 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JComboBox getCbNombre() {
 		if (cbNombre == null) {
 			cbNombre = new JComboBox();
+			cbNombre.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					cambiarEnabled();
+				}
+
+			});
 			
 
 			String[] nombrePreinscripciones = new String[preinscripciones.size()];
@@ -588,21 +613,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		return cbNombre;
 	}
-	private JPanel getPnPreinscripcionNombre() {
-		if (pnPreinscripcionNombre == null) {
-			pnPreinscripcionNombre = new JPanel();
-			pnPreinscripcionNombre.setLayout(new GridLayout(0, 2, 0, 0));
-			pnPreinscripcionNombre.add(getCbNombre());
-			pnPreinscripcionNombre.add(getBtnSeleccionar());
-		}
-		return pnPreinscripcionNombre;
-	}
-	private JButton getBtnSeleccionar() {
-		if (btnSeleccionar == null) {
-			btnSeleccionar = new JButton("Seleccionar");
-		}
-		return btnSeleccionar;
-	}
 	private JPanel getPnVacío() {
 		if (pnVacío == null) {
 			pnVacío = new JPanel();
@@ -613,13 +623,38 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		if (spinnerCantidad == null) {
 			spinnerCantidad = new JSpinner();
 			spinnerCantidad.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
+			
+			if(comprobarSiEsMedicamento()) { // Si la preinscripción es un medicamento
+				if(!spinnerCantidad.isEnabled()) { // Si no estaba enabled
+					spinnerCantidad.setEnabled(true);
+				}
+			}
+			else if(comprobarSiEsMedicamento() == false) {
+				if (spinnerCantidad.isEnabled()) {
+					spinnerCantidad.setEnabled(false);
+				}
+			}
+			
 		}
 		return spinnerCantidad;
 	}
+
+
 	private JSpinner getSpinnerDuracion() {
 		if (spinnerDuracion == null) {
 			spinnerDuracion = new JSpinner();
 			spinnerDuracion.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
+			
+			if(comprobarSiEsMedicamento()) { // Si la preinscripción es un medicamento
+				if(!spinnerDuracion.isEnabled()) { // Si no estaba enabled
+					spinnerDuracion.setEnabled(true);
+				}
+			}
+			else if(comprobarSiEsMedicamento() == false) {
+				if(spinnerDuracion.isEnabled()) {
+					spinnerDuracion.setEnabled(false);
+				}
+			}
 		}
 		return spinnerDuracion;
 	}
@@ -627,6 +662,17 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		if (spinnerIntervalo == null) {
 			spinnerIntervalo = new JSpinner();
 			spinnerIntervalo.setModel(new SpinnerNumberModel(new Integer(0), new Integer(0), null, new Integer(1)));
+			
+			if(comprobarSiEsMedicamento()) { // Si la preinscripción es un medicamento
+				if(!spinnerIntervalo.isEnabled()) { // Si no estaba enabled
+					spinnerIntervalo.setEnabled(true);
+				}
+			}
+			else if(comprobarSiEsMedicamento() == false) {
+				if (spinnerIntervalo.isEnabled()) {
+					spinnerIntervalo.setEnabled(false);	
+				}
+			}
 		}
 		return spinnerIntervalo;
 	}
@@ -649,7 +695,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		if (pnResumen == null) {
 			pnResumen = new JPanel();
 			pnResumen.setLayout(new GridLayout(0, 1, 0, 0));
-			pnResumen.add(getListPreinscripciones());
+			pnResumen.add(getTable());
 			//pnResumen.add(getList());
 			//pnResumen.add(getTextArea_1());
 		}
@@ -692,15 +738,16 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		return list;
 	}
-	private JList getListPreinscripciones() {
-		if (listPreinscripciones == null) {
-			listPreinscripciones = new JList();
-		}
-		return listPreinscripciones;
-	}
 	private JButton getBtnAadirPreinscripcin() {
 		if (btnAadirPreinscripcin == null) {
 			btnAadirPreinscripcin = new JButton("A\u00F1adir preinscripci\u00F3n");
+			btnAadirPreinscripcin.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+					anadirPreinscripcionPaciente();
+
+				}
+			});
 		}
 		return btnAadirPreinscripcin;
 	}
@@ -717,14 +764,10 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			e.printStackTrace();
 		}
 		
-		
+		listo = false;
 		cbNombre.removeAllItems(); // Vacío todo el combo box
 		
-//		// Actualizamos el combo box
-//		for (int i = 0; i < preinscripciones.size(); i++) {
-//			cbNombre.insertItemAt(preinscripciones.get(i), i);
-//		}
-		
+		// Cargo otra vez las preinscripciones en el cb
 		String[] nombrePreinscripciones = new String[preinscripciones.size()];
 		for (int i = 0; i< preinscripciones.size(); i++) {
 			nombrePreinscripciones[i] = preinscripciones.get(i).getNombre();
@@ -732,14 +775,266 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		
 		cbNombre.setModel(new DefaultComboBoxModel<String>(nombrePreinscripciones));				
 
+		listo = true;
+		
 		int contador = 0;
 		for (Preinscripcion p : preinscripciones) {
 			if (p.getNombre().equals(preinscripcion.getNombre())) {
-				cbNombre.setSelectedIndex(contador);				
+				cbNombre.setSelectedIndex(contador);
+				comprobarSiEsMedicamento(); // Comprobamos si es un medicamento para cambiar los enabled de los spinner
+			}
+			contador = contador + 1;
+		}
+	}	
+		/**
+		 * Método que me comprueba si la preinscripción que hay seleccionada en el comboBox es de tipo medicamento o no
+		 */
+	private boolean comprobarSiEsMedicamento() {
+		
+		int indiceSeleciconado = getCbNombre().getSelectedIndex();
+		Preinscripcion p = null;
+			
+
+		int contador = 0;
+		for (Preinscripcion pre : preinscripciones) {
+			if (indiceSeleciconado == contador) {
+				p = pre;
+			}
+			contador = contador + 1;
+		}
+			
+		if (p.isMedicamento()) { // Si era medicamento
+			return true;
+		}
+		
+		return false; // Si no era medicamento
+	}
+	
+	
+	/**
+	 * Método que para cuando cambio el comboBox me compruebe si tiene que cambiar el enabled de los spinner por ser/no un medicamento lo que
+	 * tiene seleccionado
+	 */
+	private void cambiarEnabled() {
+		if (listo) { // Para que no casque mientras está cambiando la ventana
+			boolean isMedicamento = comprobarSiEsMedicamento(); // Compruebo si es un medicamento
+			
+			
+			
+			if(isMedicamento) { // Si la preinscripción es un medicamento
+				if(!spinnerCantidad.isEnabled()) { // Si no estaba enabled
+					spinnerCantidad.setEnabled(true);
+				}
+				if(!spinnerDuracion.isEnabled()) { 
+					spinnerDuracion.setEnabled(true);
+				}
+				if(!spinnerIntervalo.isEnabled()) { 
+					spinnerIntervalo.setEnabled(true);
+				}
+				
+			}
+			else if(isMedicamento == false) {
+				if (spinnerCantidad.isEnabled()) {
+					spinnerCantidad.setEnabled(false);
+				}
+				if (spinnerDuracion.isEnabled()) {
+					spinnerDuracion.setEnabled(false);
+				}
+				if (spinnerIntervalo.isEnabled()) {
+					spinnerIntervalo.setEnabled(false);
+				}
+			}			
+		}
+		
+		
+	}
+	
+	
+	/**
+	 * Método para añadir la preinscripcion al paciente
+	 */
+	private void anadirPreinscripcionPaciente() {
+						
+		int indiceSeleciconado = getCbNombre().getSelectedIndex(); // Lo que está seleccionado en el comboBox
+		Preinscripcion p = null; // La preinscripcion
+			
+
+		// Buscamos la preinscripcion que hay seleccionada en el comboBox
+		int contador = 0;
+		for (Preinscripcion pre : preinscripciones) {
+			if (indiceSeleciconado == contador) {
+				p = pre;
+			}
+			contador = contador + 1;
+		}
+		
+		preinscripcionesPaciente.add(p); // Añadimos la preinscripcion
+		crearAsignaPreinscripcion(p);
+		
+		if (tablaLista = false) { // Para que no casque al pintar la tabla de las preinscripciones
+			tablaLista = true;
+		}
+		
+		añadirFilas();
+	}
+	
+	
+	/**
+	 * Método que me crea un asigna preinscripcion y me lo añade a la lista de preinscripciones que va a tener el paciente
+	 * @param p
+	 */
+	private void crearAsignaPreinscripcion(Preinscripcion p) {
+		
+		int indiceSeleciconado = getCbNombre().getSelectedIndex();
+			
+
+		int contador = 0;
+		for (Preinscripcion pre : preinscripciones) {
+			if (indiceSeleciconado == contador) {
+				preinscripcion = pre;
 			}
 			contador = contador + 1;
 		}
 		
 		
+		
+		// El codigo de la preinscripcion
+		Random r = new Random();
+		String codAsignaPreinscripcion = "" + r.nextInt(800);
+		
+		// El código del historial del paciente
+		String codigoHistorial = paciente.getHistorial();
+		String codigoPreinscripcion = preinscripcion.getNombre();
+		
+		// El codigo del empleado (medico)
+		//String codempleado = cita.getCodMed();
+		String codempleado = "1a";
+		
+		
+		// Si es medicamento o no
+		boolean medicamento = preinscripcion.isMedicamento();
+
+		// Las dosis (SOLO SI ES MEDICAMENTO, sino se queda a 0 por defecto)
+		int cantidad = 0;
+		int intervalo = 0;
+		int duracion = 0;
+		
+		if (medicamento) {
+			cantidad = (int) getSpinnerCantidad().getValue();
+			duracion= (int) getSpinnerDuracion().getValue();
+			intervalo = (int)getSpinnerIntervalo().getValue();	
+		}
+		
+		// Las instrucciones para tomar la preinscripcion
+		String instrucciones = getTextArea().getText();	
+
+		// Fecha y hora actuales del sistema
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());
+		
+		AsignaPreinscripcion ap = new AsignaPreinscripcion(codAsignaPreinscripcion, codigoHistorial, codempleado, codigoPreinscripcion, cantidad, 
+									intervalo, duracion, instrucciones, fecha, hora);
+		
+		
+		
+		
+		asignaPreinscripcionesPaciente.add(ap); // Añado la asignacion de la preinscripcion a una lista que tengo
+	}
+
+	
+	private JTable getTable() {
+		if (table == null) {
+			table = new JTable();
+			
+			String[] nombreColumnas= {"Nombre","Medicamento","Cantidad","Duracion","Intervalo"};
+			modeloTabla= new ModeloNoEditable(nombreColumnas,0);
+			table = new JTable(modeloTabla);
+			table.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
+			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			table.getTableHeader().setBackground(Color.LIGHT_GRAY);
+			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
+			table.setRowSorter(sorter);
+			
+//			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+//			sortKeys.add(new RowSorter.SortKey(6, SortOrder.ASCENDING));
+//			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+//			
+//			sorter.setSortKeys(sortKeys);
+			añadirFilas();
+		}
+		return table;
+	}
+
+	/**
+	 * Método para añadir filas a la tabla de las preinscripciones
+	 * @param b
+	 */
+	private void añadirFilas() {
+		borrarModeloTabla(); // Borramos todo antes de volver a pintar
+	
+		Object[] nuevaFila=new Object[5]; // 5 son las columnas
+		
+		if (tablaLista) {
+			for (AsignaPreinscripcion a : asignaPreinscripcionesPaciente) {
+				nuevaFila[0] = a.getCodigoPreinscripcion(); // El nombre de la preinscripcion
+				
+				boolean medicamento = false;
+				for (Preinscripcion p : preinscripcionesPaciente) {
+					if (p.getNombre().equals(a.getCodigoAsignaPreinscripcion())) { // Si es la preinscripcion
+						
+						if (p.isMedicamento()) { // Si la preinscripcion es un medicamento
+							nuevaFila[1] = "Si";
+							medicamento = true;
+						}
+						else if (!p.isMedicamento()) { // Si NO es un medicamento
+							nuevaFila[1] = "No";
+						}	 
+					}
+				}
+				
+				if (medicamento) { // Si es un medicamento le ponemos las demás características
+					nuevaFila[2] = "" + a.getCantidad();
+					nuevaFila[3] = "" + a.getDuracion();
+					nuevaFila[4] = "" + a.getIntervalo();
+				}
+				else if (!medicamento){ // Si no es un medicamento
+					nuevaFila[2] = "-";
+					nuevaFila[3] = "-";
+					nuevaFila[4] = "-";
+				}
+				
+			}
+		}
+		
+	}
+
+	
+	/**
+	 * Método para borrar todas las filas de tabla
+	 */
+	private void borrarModeloTabla() {
+		int filas = modeloTabla.getRowCount();
+		for (int i = 0; i < filas; i++) {
+			modeloTabla.removeRow(0);			
+		}		
+	}
+	
+	
+	
+	/**
+	 * Método que me guarda lo que he modificado de la cita
+	 * @throws SQLException 
+	 */
+	private void guardar() throws SQLException {
+		
+		// Guardo las preinscripciones que le he asignado al paciente
+		if (!asignaPreinscripcionesPaciente.isEmpty()) { // Que le hayamos asignado algo
+			for (AsignaPreinscripcion ap : asignaPreinscripcionesPaciente) { // Voy guardando cada una de las preinscripciones que le he asignado
+				pbd.nuevaAsignaPreinscripcion(ap);
+			}
+		}
+		
+		
+		// AÑADIR LAS DEMAS MODIFICACIONES DE LA CITA
 	}
 }
