@@ -59,6 +59,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 public class ModificarMedicosNuevoCard extends JDialog {
@@ -750,9 +751,30 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getBtnBorrar() {
 		if (btnBorrar == null) {
 			btnBorrar = new JButton("Borrar preinscripci\u00F3n");
+			btnBorrar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int fila=table.getSelectedRow();
+					
+					if (fila != -1) {
+						int res = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea borrar la preinscripción?","Mensaje de confirmación",JOptionPane.YES_NO_OPTION);
+						if(res == JOptionPane.YES_OPTION) {	
+								
+								preinscripcionesPaciente.remove(table.getSelectedRow());
+								asignaPreinscripcionesPaciente.remove(table.getSelectedRow());
+								
+								añadirFilas();
+						
+						}						
+					}		
+				}
+			});
 		}
 		return btnBorrar;
 	}
+	
+	
+
+
 	private JPanel getPnResumenPreinscripciones() {
 		if (pnResumenPreinscripciones == null) {
 			pnResumenPreinscripciones = new JPanel();
@@ -981,7 +1003,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	
 	private JTable getTable() {
 		if (table == null) {
-//			table = new JTable();
 			
 			String[] nombreColumnas= {"Nombre","Medicamento","Cantidad","Duracion","Intervalo"};
 			modeloTabla= new ModeloNoEditable(nombreColumnas,0);
@@ -1071,7 +1092,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	 */
 	private void guardar() throws SQLException {
 		guardarPreinscripciones();
-		guardarCausas();
+		//guardarCausas();
 		guardarVacunas();
 		guardarDiagnosticos();
 	}
