@@ -94,6 +94,9 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	private final static String UPDATE_CITA = "UPDATE cita set hinicio = ?, hfin = ?, fecha = ? ,codmedico=?,ubicacion =?, urgencia=? where codcita=? and codpaciente=? and codmedico =?";
 	
 	private final static String VER_PREINSCRIPCIONES_ASIGNADAS = "SELECT * FROM asignaprescripcion where nhistorial = ?";
+	
+	private final static String VER_VACUNAS_ASIGNADAS = "SELECT * FROM asignavacuna where codhistorial = ?";
+	
 	private final static String ADD_VACACIONES = "INSERT INTO VACACIONES (CODVACACIONES, CODEMPLEADO, CODADMIN, DINICIO, DFINAL)" + " VALUES(?,?,?,?,?)";
 	private final static String LIST_VACUNAS = "Select * from vacuna";
 	
@@ -979,6 +982,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		List<String> nombresCausas = new ArrayList<String>();
 		Connection con =new Conexion().getConnectionJDBC();
 		PreparedStatement st=con.prepareStatement(VER_CAUSAS);
+		System.out.println(codCausa);
 		st.setString(1, codCausa);
 		ResultSet rs=st.executeQuery();
 
@@ -1015,7 +1019,10 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		pst.close();
 		con.close();
 		return infoCausas;
-		}
+	}
+	
+	
+	
 	public List<Cita> devolvercitas(String codPaciente) throws SQLException {
 		List<Cita> citas = new ArrayList<Cita>();
 		Connection con = new Conexion().getConnectionJDBC();
@@ -1272,6 +1279,35 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	 con.close();
 
 	 }
+
+
+	 /**
+	  * Método para sacar todas las vacunas que se le han asignado a un paciente
+	  * @param historial
+	  * @return
+	 * @throws SQLException 
+	  */
+	public List<String> buscarVacunasAsignadas(String historial) throws SQLException {
+		List<String> nombreVacunas = new ArrayList<String>();
+		
+		Connection con =new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(VER_VACUNAS_ASIGNADAS);
+		
+		pst.setString(1, historial); // busco por n de historial
+		
+		ResultSet rs = pst.executeQuery(); // Creo el resultSet
+					
+		while (rs.next()) {
+			nombreVacunas.add(rs.getString(2) + "	Fecha: " + rs.getString(5) + "	Hora: " + rs.getString(6) + "	Médico: " + rs.getString(3));
+		}
+
+
+		//CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return nombreVacunas;
+	}
 
 	
 }

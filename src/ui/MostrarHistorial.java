@@ -174,12 +174,19 @@ public class MostrarHistorial extends JDialog {
 		return scrollPaneVacunas;
 	}
 	
-	public String darVacunas() throws SQLException {
+	/**
+	 * Método que me muestra las vacunas que se le han asignado al paciente
+	 * @return
+	 * @throws SQLException
+	 */
+	public String mostrarVacunas() throws SQLException {
+		
 		String vacunas = "";
+		
 		List<String> nombreVacunas = new ArrayList<>();
-		nombreVacunas = pbd.buscarVacunas(hm.getCodVacuna());
-		for(String v: nombreVacunas) {
-			vacunas += v + "\n";
+		nombreVacunas = pbd.buscarVacunasAsignadas(hm.getHistorial());
+		for(String str : nombreVacunas) {
+			vacunas += str + "\n";
 		}
 		return vacunas;
 	}
@@ -188,7 +195,7 @@ public class MostrarHistorial extends JDialog {
 		if (textAreaVacunas == null) {
 			textAreaVacunas = new JTextArea();
 			textAreaVacunas.setEditable(false);
-			textAreaVacunas.setText(darVacunas());
+			textAreaVacunas.setText(mostrarVacunas());
 		}
 		return textAreaVacunas;
 	}

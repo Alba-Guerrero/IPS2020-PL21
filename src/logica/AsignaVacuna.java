@@ -15,6 +15,7 @@ public class AsignaVacuna {
 
 	
 	private String codVacuna; // Lo que me identifica la vacuna
+	private String nombreVacuna;
 	private String codEmpleado;
 	private String codHistorial;
 	
@@ -33,12 +34,23 @@ public class AsignaVacuna {
 	 * @param date
 	 * @param time
 	 */
-	public AsignaVacuna(String codVacuna, String codEmpleado, String codHistorial, Date date, Time time) {
+	public AsignaVacuna(String codVacuna, String nombreVacuna, String codEmpleado, String codHistorial, Date date, Time time) {
 		this.codVacuna = codVacuna;
+		this.nombreVacuna = nombreVacuna;
 		this.codEmpleado = codEmpleado;
 		this.codHistorial = codHistorial;
 		this.date = date;
 		this.time = time;
+	}
+
+
+
+
+	/**
+	 * @return the nombreVacuna
+	 */
+	public String getNombreVacuna() {
+		return nombreVacuna;
 	}
 
 

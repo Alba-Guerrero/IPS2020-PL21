@@ -888,9 +888,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		
 		preinscripcionesPaciente.add(p); // Añadimos la preinscripcion
 		crearAsignaPreinscripcion(p);
-		
-		System.out.println("" + preinscripciones.size());
-		
+				
 		if (tablaLista == false) { // Para que no casque al pintar la tabla de las preinscripciones
 			tablaLista = true;
 		}
@@ -994,9 +992,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		borrarModeloTabla(); // Borramos todo antes de volver a pintar
 	
 		Object[] nuevaFila=new Object[5]; // 5 son las columnas
-		
-		System.out.println(asignaPreinscripcionesPaciente.size());
-		
+				
 		
 		if (tablaLista) {
 			for (AsignaPreinscripcion a : asignaPreinscripcionesPaciente) {
@@ -1234,13 +1230,14 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		
 		String codVacuna = vacuna.getCodVacuna();	
+		String nombreVacuna = vacuna.getNombreVacuna();
 		String codEmpleado = cita.getCodMed();
 		String codHistorial = paciente.getHistorial();
 		Date fecha = new Date();	
 		Time hora = new Time(new Date().getTime());		
 		
 		
-		AsignaVacuna av = new AsignaVacuna(codVacuna, codEmpleado, codHistorial, fecha, hora);
+		AsignaVacuna av = new AsignaVacuna(codVacuna, nombreVacuna, codEmpleado, codHistorial, fecha, hora);
 		
 		asignaVacunasPaciente.add(av);
 	}
@@ -1248,8 +1245,9 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	
 	/**
 	 * Método para asignar definitivamente las vacunas al paciente
+	 * @throws SQLException 
 	 */
-	private void guardarVacunas() {
+	private void guardarVacunas() throws SQLException {
 		
 		if (!asignaVacunasPaciente.isEmpty()) { // Que le hayamos asignado alguna vacuna
 			for (AsignaVacuna av : asignaVacunasPaciente) { // Voy guardando cada una de las vacunas que le he asignado
