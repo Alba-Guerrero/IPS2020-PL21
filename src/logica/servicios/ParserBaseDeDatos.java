@@ -45,12 +45,12 @@ public class ParserBaseDeDatos {
 	
 	
 	private final static String GET_CITAS="select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and  c.codmedico=?;";
-	private final static String GET_CITAS_DATE="select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.fecha=?;";
+	private final static String GET_CITAS_DATE="select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.codpaciente= p.codpaciente and c.fecha=?;";
 	private final static String GET_CITAS_DATE_MED="select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and  c.codmedico=? and c.fecha=?;";
 	private final static String GET_PACIENTE_CITA="select * from paciente p,medico m,empleado e, cita c where p.codpaciente= c.codpaciente and c.codmedico=e.codempleado and e.codempleado= m.codmedico  and c.codcita=?;";
 	private final static String GET_CITA="select * from cita c where c.fecha>=? ;";
 	private final static String GET_CITAS_MED="select * from  medico m ,empleado e where m.codmedico= e.codempleado and  e.codempleado=?  ;";
-	
+	private final static String GET_CITA_FECHA_HISTORIAL="select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.codpaciente= p.codpaciente and c.fecha=? and p.nhistorial =?";
 	
 	private final static String GET_ADMINISTRATIVO = "Select * from administrativo where codAdmin=?";
 	private final static String GET_MEDICO = "Select * from medico where codmedico=?";
@@ -339,8 +339,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
 		
 	while(rs.next()) {
-		if(rs.getByte("urgencia")==1)
-			 res=true;
+		
 		
 		pacientes= new Paciente( rs.getString("codpaciente"),rs.getString("nombre"),rs.getString("apellido"),rs.getInt("movil"), rs.getString("email"),rs.getString("info"),rs.getString("nhistorial"));
 		
@@ -354,6 +353,33 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	con.close();
 	return pacientes;
 }
+	
+	public List<Cita> devolvercitasHistorialFechas(String codcita,java.util.Date date2) throws SQLException {
+		List<Cita> citas = new ArrayList<Cita>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(GET_CITA_FECHA_HISTORIAL);
+		boolean res=false;
+		java.sql.Date date = new java.sql.Date(date2.getTime());
+		pst.setDate(1, date);
+		pst.setString(2,codcita);
+		ResultSet rs = pst.executeQuery();
+		
+		
+	while(rs.next()) {
+		if(rs.getByte("urgencia")==1)
+			 res=true;
+			citas.add(new Cita(rs.getString("codcita"),rs.getString("codpaciente"),rs.getString("codmedico"),rs.getTime("hinicio"), rs.getTime("hfin"),rs.getDate("fecha"),rs.getString("ubicacion"),res));
+		
+	}
+	
+	
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return citas;
+	}
 	
 	public Medico devolverEmpleado(String codempleado) throws SQLException {
 		Medico empleado = null;
