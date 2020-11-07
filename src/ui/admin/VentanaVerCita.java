@@ -324,7 +324,7 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 	
 	private void añadirFilasHistorial()  {
 		borrarModeloTabla();
-		Object[] nuevaFila=new Object[7];
+		Object[] nuevaFila=new Object[8];
 		List<Cita> citas = new ArrayList<Cita>();
 		try {
 			citas = pbd.devolvercitasHistorial(txtNDeHistorial.getText());
@@ -351,13 +351,54 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 			nuevaFila[2] = c.gethInicio();
 			nuevaFila[3] =c.gethFin();
 			nuevaFila[4] =c.getDate();
-			nuevaFila[5] = empleado.getNombre()+"  " +empleado.getApellido();
-			nuevaFila[6] = c.isUrgente();
+			nuevaFila[5] =c.getUbicacion();
+			nuevaFila[6] = empleado.getNombre()+"  " +empleado.getApellido();
+			nuevaFila[7] = c.isUrgente();
 			modeloTabla.addRow(nuevaFila);
 			codcitas.add(c);
 		}
 		
 		}
+	
+	
+	private void añadirFilasHistorialFecha()  {
+		borrarModeloTabla();
+		Object[] nuevaFila=new Object[8];
+		List<Cita> citas = new ArrayList<Cita>();
+		try {
+			citas = pbd.devolvercitasHistorialFechas(txtNDeHistorial.getText(),dateChooser.getDate());
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+		
+	
+	
+		for(Cita c:citas) {
+			Paciente p = null;
+			Empleado empleado=null;
+			try {
+				p = pbd.devolverPacientesMedico(c.getCodCita());
+				empleado=pbd.devolverEmpleado(c.getCodMed());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+	
+			nuevaFila[0] = p.getNombre();
+			nuevaFila[1]= p.getApellido();
+			nuevaFila[2] = c.gethInicio();
+			nuevaFila[3] =c.gethFin();
+			nuevaFila[4] =c.getDate();
+			nuevaFila[5] =c.getUbicacion();
+			nuevaFila[6] = empleado.getNombre()+"  " +empleado.getApellido();
+			nuevaFila[7] = c.isUrgente();
+			modeloTabla.addRow(nuevaFila);
+			codcitas.add(c);
+		}
+		
+		}
+		
 		
 	
 	private JTextField getTxtNDeHistorial() {
@@ -396,6 +437,11 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 	private JButton getBtnBuscarPorFecha() {
 		if (btnBuscarPorFecha == null) {
 			btnBuscarPorFecha = new JButton("Fecha e historial");
+			btnBuscarPorFecha.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					añadirFilasHistorialFecha();
+				}
+			});
 		}
 		return btnBuscarPorFecha;
 	}
