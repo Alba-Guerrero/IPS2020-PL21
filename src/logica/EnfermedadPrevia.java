@@ -9,13 +9,20 @@ package logica;
  */
 public class EnfermedadPrevia {
 
-	private String codEPrev;
-
-	/**
-	 * Constructor
-	 * @param codEPrev
-	 */
-	public EnfermedadPrevia(String codEPrev) {
-		this.codEPrev = codEPrev;
-	}	
+private String nombreEnfermPrev;
+	
+	
+	public EnfermedadPrevia(String nombreEnfermPrev) {
+		this.nombreEnfermPrev = nombreEnfermPrev;
+	}
+	
+	
+	public String getNombreEnfermPrev() {
+		return nombreEnfermPrev;
+	}
+	
+	
+	public void setNombreEnfermPrev(String nombreEnfermPrev) {
+		this.nombreEnfermPrev = nombreEnfermPrev;
+	}
 }
