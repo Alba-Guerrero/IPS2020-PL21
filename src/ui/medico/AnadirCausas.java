@@ -193,7 +193,7 @@ public class AnadirCausas extends JDialog {
 		String causas = txtPreinscripcion.getText();		
 
 		if(!causas.equals("")) {
-			pbd.actualizarAsignaCausas(causas);
+			pbd.actualizarCausa(causas);
 		}
 		dispose();
 		}

@@ -257,6 +257,8 @@ public class VentanaMedicoCita extends JDialog {
 		if(fila!=-1) {
 		try {
 			Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()).getCodCita());
+			System.out.println(p.getNombre());
+			System.out.println(p.getHistorial());
 			HistorialMedico hm = pbd.verHistorial(p.getHistorial());
 			MostrarHistorial mh = new MostrarHistorial(hm);
 			mh.setLocationRelativeTo(null);
@@ -314,7 +316,8 @@ public class VentanaMedicoCita extends JDialog {
 	protected void abrirModificarCita() {
 		try {
 			Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()).getCodCita());
-			Cita cita = pbd.verCita(p.getHistorial());
+			Cita cita = pbd.verCita(p.getCodePaciente());
+			Date date = pbd.verHoraCita(p.getHistorial());
 			ModificarMedicosNuevoCard mc = new ModificarMedicosNuevoCard(p, cita);
 			mc.setLocationRelativeTo(this);
 			mc.setResizable(true);

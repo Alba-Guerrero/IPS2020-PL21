@@ -11,9 +11,11 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import logica.Cita;
+import logica.HistorialMedico;
 import logica.Paciente;
 import logica.empleados.Empleado;
 import logica.servicios.ParserBaseDeDatos;
+import ui.MostrarHistorial;
 import ui.medico.ModeloNoEditable;
 
 import javax.swing.JScrollPane;
@@ -62,6 +64,7 @@ public class VentanaVerCita extends JDialog {
 	private JTextField txtNDeHistorial;
 	private JButton irHistorial;
 	private JButton btnBuscarPorFecha;
+	private JButton btnVerHistorial;
 	
 
 
@@ -240,6 +243,7 @@ public class VentanaVerCita extends JDialog {
 	private JPanel getPanelBotones() {
 		if (panelBotones == null) {
 			panelBotones = new JPanel();
+			panelBotones.add(getBtnVerHistorial());
 			panelBotones.add(getBtnModificar());
 			panelBotones.add(getBtnEliminar());
 		}
@@ -447,5 +451,36 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 			});
 		}
 		return btnBuscarPorFecha;
+	}
+	private JButton getBtnVerHistorial() {
+		if (btnVerHistorial == null) {
+			btnVerHistorial = new JButton("Ver historial");
+			btnVerHistorial.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					mostrarHistorial();
+				}
+			});
+		}
+		return btnVerHistorial;
+	}
+	
+	protected void mostrarHistorial() {
+		int fila=tablacita.getSelectedRow();
+		if(fila!=-1) {
+		try {
+			Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()).getCodCita());
+			System.out.println(p.getNombre());
+			System.out.println(p.getHistorial());
+			HistorialMedico hm = pbd.verHistorial(p.getHistorial());
+			MostrarHistorial mh = new MostrarHistorial(hm);
+			mh.setLocationRelativeTo(null);
+			mh.setResizable(true);
+			mh.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+			mh.setVisible(true);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		}
 	}
 }

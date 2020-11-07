@@ -110,7 +110,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel panel_8;
 	private JPanel panel_2;
 	private JLabel lblNombre;
-	private JButton btnNewButton;
+	private JButton btnSeleccionar;
 	private JButton btnAñadirNuevo;
 	private JComboBox cbCausas;
 
@@ -170,6 +170,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JLabel lblDiagnosticos;
 	private JComboBox<String> cbDiagnosticos;
 	private JButton btnDiagnosticar;
+	
+	private boolean causaSeleccionada;
 
 	/**
 	 * Create the frame.
@@ -180,6 +182,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		this.paciente = paciente;
 		this.cita = cita;
 		ponerCausas();
+		causaSeleccionada = false;
 
 
 		preinscripciones = pbd.listarPrescripciones();
@@ -212,6 +215,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 				public void actionPerformed(ActionEvent e) {
 					try {
 						guardar();
+						dispose();
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -440,7 +444,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			panel_2.setLayout(new GridLayout(0, 4, 0, 0));
 			panel_2.add(getLabel_4_1());
 			panel_2.add(getCbCausas());
-			panel_2.add(getBtnNewButton());
+			panel_2.add(getBtnSeleccionar());
 			panel_2.add(getBtnAñadirNuevo());
 		}
 		return panel_2;
@@ -451,11 +455,16 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		return lblNombre;
 	}
-	private JButton getBtnNewButton() {
-		if (btnNewButton == null) {
-			btnNewButton = new JButton("Seleccionar");
+	private JButton getBtnSeleccionar() {
+		if (btnSeleccionar == null) {
+			btnSeleccionar = new JButton("Seleccionar");
+			btnSeleccionar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					setCausaSeleccionada(true);
+				}
+			});
 		}
-		return btnNewButton;
+		return btnSeleccionar;
 	}
 	private JButton getBtnAñadirNuevo() {
 		if (btnAñadirNuevo == null) {
@@ -841,11 +850,11 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			}
 			contador = contador + 1;
 		}
-			
-		if (p.isMedicamento()) { // Si era medicamento
-			return true;
+		if(p != null) {
+			if (p.isMedicamento()) { // Si era medicamento
+				return true;
+			}
 		}
-		
 		return false; // Si no era medicamento
 	}
 	
@@ -1072,9 +1081,11 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	 */
 	private void guardar() throws SQLException {
 		guardarPreinscripciones();
-		//guardarCausas();
-		guardarVacunas();
-		guardarDiagnosticos();
+		if(isCausaSeleccionada()) {
+			guardarCausas();
+		}
+		//guardarVacunas();
+		//guardarDiagnosticos();
 	}
 
 
@@ -1110,24 +1121,25 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 	
 	protected void guardarCausas() throws SQLException {
-		String causas = getCbCausas().getSelectedItem().toString();
-		String nHistorial = "" + mm.getPaciente().getHistorial();
-		Time hora =  cita.gethInicio();
-		
-		java.sql.Date horas = new java.sql.Date(hora.getTime());
-		
-		Time hour = new Time(horas.getTime());
-		
-		Date fecha = (Date) cita.getDate();
-		
-		java.sql.Date sDate = new java.sql.Date(fecha.getTime());
-		
+			String causas = getCbCausas().getSelectedItem().toString();
+			String nHistorial = "" + mm.getPaciente().getHistorial();
+			Time hora =  cita.gethInicio();
+			
+			java.sql.Date horas = new java.sql.Date(hora.getTime());
+			
+			Time hour = new Time(horas.getTime());
+			
+			Date fecha = (Date) cita.getDate();
+			
+			java.sql.Date sDate = new java.sql.Date(fecha.getTime());
+			
 
-		if(!causas.equals("")) {
-			Random r = new Random();
-			String codcausa = "" + r.nextInt(300);
-			pbd.actualizarCausas(codcausa,causas, nHistorial, sDate, hour, cita.getCodMed());
-		}
+			if(!causas.equals("")) {
+				Random r = new Random();
+				String codcausa = "" + r.nextInt(300);
+				pbd.actualizarAsignaCausa(codcausa,causas, nHistorial, sDate, hour, cita.getCodMed());
+			}
+		
 		
 	}
 	
@@ -1440,4 +1452,15 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			}
 		}	
 	}
+
+	public boolean isCausaSeleccionada() {
+		return causaSeleccionada;
+	}
+
+	public void setCausaSeleccionada(boolean causaSeleccionada) {
+		this.causaSeleccionada = causaSeleccionada;
+	}
+	
+	
+	
 }

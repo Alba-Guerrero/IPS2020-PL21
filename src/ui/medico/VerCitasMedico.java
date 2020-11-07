@@ -13,7 +13,6 @@ import javax.swing.border.EmptyBorder;
 import logica.Cita;
 import logica.Paciente;
 import logica.servicios.ParserBaseDeDatos;
-import ui.admin.InfoCitaAdmin;
 
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;

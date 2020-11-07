@@ -61,6 +61,8 @@ public class ParserBaseDeDatos {
 	
 	
 private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
+
+	private final static String VER_HORA_CITA ="SELECT hinicio FROM cita where codpaciente=?";
 	
 	private final static String VER_HISTORIAL ="SELECT nhistorial FROM historial where nHistorial =?";
 	
@@ -80,7 +82,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
 	private final static String INSERT_CAUSAS = "INSERT into causa (nombrecausa) values (?)";
 	
-	private final static String INSERT_ASIGNA_CAUSA = "INSERT into causa (codasigcausa, nombrecausa, historial, codempleado, fecha, hora) values(?,?,?,?,?,?)";
+	private final static String INSERT_ASIGNA_CAUSA = "INSERT into asignacausa (codasigcausa, nombrecausa, historial, codempleado, fecha, hora) values(?,?,?,?,?,?)";
 	
 	private final static String ACTUALIZAR_CITA = "UPDATE cita set hinicio = ?, hfin = ?, acudio = ? where codcita = ?";
 
@@ -111,7 +113,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
 	private final static String VER_VACUNAS_ASIGNADAS = "SELECT * FROM asignavacuna where historial = ?";
 	
-	private final static String VER_DIAGNOSTICOS_ASIGNADOS = "SELECT *FROM asingadiagnostico where historial = ?";
+	private final static String VER_DIAGNOSTICOS_ASIGNADOS = "SELECT * FROM asignadiagnostico where historial = ?";
 	
 	private final static String ADD_VACACIONES = "INSERT INTO VACACIONES (CODVACACIONES, CODEMPLEADO, CODADMIN, DINICIO, DFINAL)" + " VALUES(?,?,?,?,?)";
 	private final static String LIST_VACUNAS = "Select * from vacuna";
@@ -790,6 +792,24 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		return empleados;
 	}
 	
+	public Date verHoraCita(String cod) throws SQLException {
+		Date date = null;
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(VER_HORA_CITA);
+		pst.setString(1,cod);
+		ResultSet rs=pst.executeQuery();
+		
+		if(rs.next()) {
+			date = rs.getDate("dinicio");
+		}
+		
+		
+		rs.close();
+		pst.close();
+		con.close();
+		return date;
+	}
+	
 	public Cita verCita(String cod) throws SQLException {
 		Cita cita = null;
 		Connection con = new Conexion().getConnectionJDBC();
@@ -801,9 +821,6 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 			cita = new Cita(rs.getString(1), rs.getString(2) ,rs.getString(3),  rs.getTime(4), rs.getTime(5), rs.getDate(6), rs.getString(7), rs.getBoolean(8));
 		}
 		
-		
-		boolean res= rs.next();
-	
 		
 		rs.close();
 		pst.close();
@@ -1066,12 +1083,12 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		return nombresCausas;
 	}
 	
-	public void actualizarCausas(String causas, String nombre, String historial, Date fecha, Time hora, String codempelado) throws SQLException {
+	public void actualizarAsignaCausa(String causas, String nombre, String historial, Date fecha, Time hora, String codempelado) throws SQLException {
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst=con.prepareStatement(INSERT_ASIGNA_CAUSA);
 		pst.setString(1,causas);
 		pst.setString(2,nombre);
-		pst.setString(3,nombre);
+		pst.setString(3,historial);
 		pst.setString(4, codempelado);
 		pst.setDate(5,fecha);
 		pst.setTime(6,hora);
@@ -1085,7 +1102,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		
 	}
 	
-	public void actualizarAsignaCausas(String nombre) throws SQLException {
+	public void actualizarCausa(String nombre) throws SQLException {
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst=con.prepareStatement(INSERT_CAUSAS);
 		pst.setString(1,nombre);

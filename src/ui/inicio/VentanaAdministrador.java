@@ -12,7 +12,6 @@ import ui.admin.AsignarVacaciones;
 import ui.admin.PanelCitas;
 import ui.admin.VentanaJornada;
 import ui.admin.VentanaVerCita;
-import ui.admin.VerCitasAdmin;
 
 import javax.swing.JButton;
 import java.awt.FlowLayout;
@@ -34,7 +33,6 @@ public class VentanaAdministrador extends JDialog {
 	private JPanel panel1;
 	private JButton btnAsignarCitas;
 	private JPanel panel2;
-	private JButton btnVerCitas;
 	private JPanel panel3;
 	private JPanel panel4;
 	private JPanel panel5;
@@ -106,7 +104,6 @@ public class VentanaAdministrador extends JDialog {
 			pnCentro.add(getPanel8());
 			pnCentro.add(getBtnNewButton_1_1());
 			pnCentro.add(getPanel_6());
-			pnCentro.add(getBtnVerCitas());
 			pnCentro.add(getPanel9());
 			pnCentro.add(getBtnJornada());
 			pnCentro.add(getPanel10());
@@ -186,19 +183,6 @@ public class VentanaAdministrador extends JDialog {
 			panel2.setBackground(Color.WHITE);
 		}
 		return panel2;
-	}
-	private JButton getBtnVerCitas() {
-		if (btnVerCitas == null) {
-			btnVerCitas = new JButton("Ver Citas");
-			btnVerCitas.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					
-					verCitas();
-					
-				}
-			});
-		}
-		return btnVerCitas;
 	}
 
 
@@ -313,16 +297,7 @@ public class VentanaAdministrador extends JDialog {
 	
 	
 	
-	/**
-	 * Método para pasar a la ventana de ver citas
-	 */
-	protected void verCitas() {
-		
-		VerCitasAdmin vca = new VerCitasAdmin();
-		vca.setVisible(true);
-		vca.setLocationRelativeTo(this);
-		
-	}
+
 	
 protected void verCalendarioCitas() {
 		

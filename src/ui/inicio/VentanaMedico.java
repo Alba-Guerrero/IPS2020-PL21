@@ -10,7 +10,6 @@ import javax.swing.border.EmptyBorder;
 
 import ui.admin.PanelCitas;
 import ui.admin.VentanaJornada;
-import ui.admin.VerCitasAdmin;
 import ui.medico.VentanaMedicoCita;
 import ui.medico.VerCitasMedico;
 
