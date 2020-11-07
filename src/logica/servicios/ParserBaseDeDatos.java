@@ -1194,34 +1194,32 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		con.close();
 	}
 	
-	
 	/**
 	* Método para listar todas las vacunas que tenemos en la base de datos
 	* @return
 	* @throws SQLException
 	*/
-	public List<Vacuna> listarVacunas() throws SQLException {​​​​
-	List<Vacuna> vacunas = new ArrayList<Vacuna>(); // Creo la lista que voy a devolver
+	public List<Vacuna> listarVacunas() throws SQLException {
+		List<Vacuna> vacunas = new ArrayList<Vacuna>(); // Creo la lista que voy a devolver
 
-	Connection con = new Conexion().getConnectionJDBC();
-	PreparedStatement pst=con.prepareStatement(LIST_VACUNAS);
-
-
-	ResultSet rs = pst.executeQuery(); // Creo el resultSet
-
-	while(rs.next()) {​​​​
-
-	vacunas.add(new Vacuna(rs.getString("codVacuna"), rs.getString("nombreVacuna")));
-	}​​​​
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(LIST_VACUNAS);
 
 
+		ResultSet rs = pst.executeQuery(); // Creo el resultSet
 
-	pst.close();
-	con.close();
+		while(rs.next()) {
+			vacunas.add(new Vacuna(rs.getString("codVacuna"), rs.getString("nombreVacuna")));
+		}
+
+		pst.close();
+		con.close();
 
 
-	return vacunas;
-	}​​​​
+		return vacunas;
+	}
+	
+	
 
 
 	
