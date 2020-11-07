@@ -48,9 +48,9 @@ public class ParserBaseDeDatos {
 	
 	
 	
-	private final static String GET_CITAS="select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and  c.codmedico=?;";
+	private final static String GET_CITAS="select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and p.codpaciente=c.codpaciente and  m.codmedico=c.codmedico and c.codmedico=?;";
 	private final static String GET_CITAS_DATE="select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.codpaciente= p.codpaciente and c.fecha=?;";
-	private final static String GET_CITAS_DATE_MED="select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and  c.codmedico=? and c.fecha=?;";
+	private final static String GET_CITAS_DATE_MED="select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.codpaciente= p.codpaciente and c.codmedico=? and c.fecha=?;";
 	private final static String GET_PACIENTE_CITA="select * from paciente p,medico m,empleado e, cita c where p.codpaciente= c.codpaciente and c.codmedico=e.codempleado and e.codempleado= m.codmedico  and c.codcita=?;";
 	private final static String GET_CITA="select * from cita c where c.fecha>=? ;";
 	private final static String GET_CITAS_MED="select * from  medico m ,empleado e where m.codmedico= e.codempleado and  e.codempleado=?  ;";
@@ -114,6 +114,8 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
 	private final static String ADD_VACACIONES = "INSERT INTO VACACIONES (CODVACACIONES, CODEMPLEADO, CODADMIN, DINICIO, DFINAL)" + " VALUES(?,?,?,?,?)";
 	private final static String LIST_VACUNAS = "Select * from vacuna";
+	private final static String FIND_PACIENTE_BY_NAME = "Select * from paciente where nombre=?";
+	private final static String FIND_PACIENTE_BY_SURNAME = "Select * from paciente where apellido=?";
 	
 	private final static String ADD_ASIGNA_VACUNA = "INSERT INTO ASIGNAVACUNA (CODVACUNA, CODEMPLEADO, CODHISTORIAL, FECHA, HORA) VALUES (?,?,?,?,?)";
 	
@@ -136,6 +138,52 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	//CERRAR EN ESTE ORDEN
 	rs.close();
 	st.close();
+	con.close();
+	return pacientes;
+}
+	
+	public List<Paciente> buscarPacienteNombre(String nombre) throws SQLException {
+		List<Paciente> pacientes = new ArrayList<Paciente>();
+		Connection con =new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(FIND_PACIENTE_BY_NAME);
+		pst.setString(1, nombre);
+		ResultSet rs = pst.executeQuery();
+		
+	while(rs.next()) {
+		
+		
+		pacientes.add(new Paciente( rs.getString("codpaciente"), rs.getString("nombre"), rs.getString("apellido"),rs.getInt("movil") , 
+		rs.getString("email"), rs.getString("info"),rs.getString("nhistorial")));
+		
+		
+	}
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return pacientes;
+}
+
+	public List<Paciente> buscarPacienteApellido(String apellido) throws SQLException {
+		List<Paciente> pacientes = new ArrayList<Paciente>();
+		Connection con =new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(FIND_PACIENTE_BY_SURNAME);
+		pst.setString(1, apellido);
+		ResultSet rs = pst.executeQuery();
+		
+	while(rs.next()) {
+		
+		
+		pacientes.add(new Paciente( rs.getString("codpaciente"), rs.getString("nombre"), rs.getString("apellido"),rs.getInt("movil") , 
+		rs.getString("email"), rs.getString("info"),rs.getString("nhistorial")));
+		
+		
+	}
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
 	con.close();
 	return pacientes;
 }
@@ -1053,15 +1101,14 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		List<Cita> citas = new ArrayList<Cita>();
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement st=con.prepareStatement(VER_CITA);
-		boolean res=false;
+		
 		st.setString(1,codPaciente);
 		ResultSet rs = st.executeQuery();
 		
 		while(rs.next()) {
-			if(rs.getByte("urgencia")==1)
-				res=true;
+			
 		
-		citas.add(new Cita(rs.getString("codcita"),rs.getString("codpaciente"),rs.getString("codmedico"),rs.getTime("hinicio"), rs.getTime("hfin"),rs.getDate("fecha"),rs.getString("ubicacion"),res));
+		citas.add(DtoCita.cita(rs));
 		
 	}
 	

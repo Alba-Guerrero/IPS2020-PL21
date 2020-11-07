@@ -47,6 +47,10 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class PanelCitas extends JDialog {
 	/**
@@ -261,8 +265,15 @@ public class PanelCitas extends JDialog {
 
 	private JComboBox<Paciente> getComboBox()  {
 		if (comboBox == null) {
+
+			List<Paciente> pacientes=new ArrayList<>();
 			comboBox = new JComboBox<Paciente>();
+			comboBox.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent arg0) {
+				}
+			});
 			comboBox.setBounds(37, 47, 344, 22);
+			
 			comboBox.setEditable(false);
 			comboBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -271,7 +282,6 @@ public class PanelCitas extends JDialog {
 					
 			});
 			
-			List<Paciente> pacientes=new ArrayList<>();
 			try {
 				pacientes = pbd.buscarPaciente("");
 			} catch (SQLException e1) {
