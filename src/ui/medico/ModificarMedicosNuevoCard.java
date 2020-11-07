@@ -15,6 +15,7 @@ import logica.Cita;
 import logica.HistorialMedico;
 import logica.Paciente;
 import logica.Preinscripcion;
+import logica.Vacuna;
 import logica.servicios.ParserBaseDeDatos;
 
 import java.awt.Color;
@@ -78,7 +79,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private ParserBaseDeDatos pbd=new ParserBaseDeDatos();
 	private Cita cita; // El paciente del que estamos modificando la cita
 	private Preinscripcion preinscripcion; // La preinscripcion
-	private List<Preinscripcion> preinscripciones;
+	private List<Preinscripcion> preinscripciones; // Las preinscripciones que tenemos en la base de datos
+	private List<Vacuna> vacunas; // Las bacuans que tenemos en la base de datos
 	private List<Preinscripcion> preinscripcionesPaciente = new ArrayList<Preinscripcion>();
 	private List<AsignaPreinscripcion> asignaPreinscripcionesPaciente = new ArrayList<AsignaPreinscripcion>();
 	private Paciente paciente;
@@ -137,6 +139,17 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JRadioButton rdbtnAcudio;
 	private JRadioButton rdbtnNoAcudio;
 	private Component horizontalStrut;
+	private JPanel pn1;
+	private JPanel pn2;
+	private JPanel pn4;
+	private JPanel pn5;
+	private JPanel pn6;
+	private JPanel pn7;
+	private JPanel pn8;
+	private JLabel lblVacuna;
+	private JPanel pn3;
+	private JComboBox<String> cbVacunas;
+	private JButton btnAsignarVacuna;
 
 	/**
 	 * Create the frame.
@@ -150,6 +163,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 
 
 		preinscripciones = pbd.listarPrescripciones();
+		vacunas = pbd.listarVacunas();
 
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 900, 550);
@@ -238,6 +252,15 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel getPanelVacunas() throws SQLException {
 		if (panelVacunas == null) {
 			panelVacunas = new JPanel();
+			panelVacunas.setLayout(new GridLayout(4, 0, 2, 0));
+			panelVacunas.add(getPn1());
+			panelVacunas.add(getPn2());
+			panelVacunas.add(getPn3());
+			panelVacunas.add(getPn4());
+			panelVacunas.add(getPn5());
+			panelVacunas.add(getPn6());
+			panelVacunas.add(getPn7());
+			panelVacunas.add(getPn8());
 			
 		}
 		return panelVacunas;
@@ -252,7 +275,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			pnPreinscripciones.add(getPnIzq());
 			pnPreinscripciones.add(getPnCentro());
 			pnPreinscripciones.add(getPnDcha());
-			panelVacunas.setLayout(new BorderLayout(0, 0));
 		}
 		return pnPreinscripciones;
 	}
@@ -1086,4 +1108,83 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 	}
 	
+	private JPanel getPn1() {
+		if (pn1 == null) {
+			pn1 = new JPanel();
+		}
+		return pn1;
+	}
+	private JPanel getPn2() {
+		if (pn2 == null) {
+			pn2 = new JPanel();
+		}
+		return pn2;
+	}
+	private JPanel getPn4() {
+		if (pn4 == null) {
+			pn4 = new JPanel();
+			pn4.setLayout(new GridLayout(0, 2, 0, 0));
+			pn4.add(getCbVacunas());
+		}
+		return pn4;
+	}
+	private JPanel getPn5() {
+		if (pn5 == null) {
+			pn5 = new JPanel();
+		}
+		return pn5;
+	}
+	private JPanel getPn6() {
+		if (pn6 == null) {
+			pn6 = new JPanel();
+		}
+		return pn6;
+	}
+	private JPanel getPn7() {
+		if (pn7 == null) {
+			pn7 = new JPanel();
+		}
+		return pn7;
+	}
+	private JPanel getPn8() {
+		if (pn8 == null) {
+			pn8 = new JPanel();
+			pn8.add(getBtnAsignarVacuna());
+		}
+		return pn8;
+	}
+	private JLabel getLabel_4_8() {
+		if (lblVacuna == null) {
+			lblVacuna = new JLabel("Vacuna:");
+			lblVacuna.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		}
+		return lblVacuna;
+	}
+	private JPanel getPn3() {
+		if (pn3 == null) {
+			pn3 = new JPanel();
+			pn3.add(getLabel_4_8());
+		}
+		return pn3;
+	}
+	private JComboBox<String> getCbVacunas() {
+		if (cbVacunas == null) {
+			cbVacunas = new JComboBox();
+			
+			String[] nombreVacunas = new String[vacunas.size()];
+			for (int i = 0; i < vacunas.size(); i++) {
+				nombreVacunas[i] = vacunas.get(i).getCodVacuna();
+			}
+			
+			cbVacunas.setModel(new DefaultComboBoxModel<String>(nombreVacunas));	
+		}
+		
+		return cbVacunas;
+	}
+	private JButton getBtnAsignarVacuna() {
+		if (btnAsignarVacuna == null) {
+			btnAsignarVacuna = new JButton("Asignar vacuna");
+		}
+		return btnAsignarVacuna;
+	}
 }

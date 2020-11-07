@@ -444,13 +444,13 @@ public class ModificarCitaMedico extends JDialog {
 	 */
 	protected void preinscripcion() {
 		
-		AnadirPreinscripcion ventanaPreinscripcion = new AnadirPreinscripcion(this);
-		
-		
-		ventanaPreinscripcion.setLocationRelativeTo(null);
-		ventanaPreinscripcion.setResizable(true);
-		ventanaPreinscripcion.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
-		ventanaPreinscripcion.setVisible(true);
+//		AnadirPreinscripcion ventanaPreinscripcion = new AnadirPreinscripcion(this);
+//		
+//		
+//		ventanaPreinscripcion.setLocationRelativeTo(null);
+//		ventanaPreinscripcion.setResizable(true);
+//		ventanaPreinscripcion.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+//		ventanaPreinscripcion.setVisible(true);
 
 		
 	}
