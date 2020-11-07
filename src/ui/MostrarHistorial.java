@@ -51,6 +51,9 @@ public class MostrarHistorial extends JDialog {
 	private JTextArea textAreaVacunas;
 	private JScrollPane scrollPanePreinscripciones;
 	private JTextArea textAreaPreinscripciones;
+	private JPanel panelDiagnosticos;
+	private JScrollPane scrollPaneDiagnosticos;
+	private JTextArea textAreaDiagnosticos;
 
 	/**
 	 * Create the frame.
@@ -83,6 +86,7 @@ public class MostrarHistorial extends JDialog {
 			panelPestañas.addTab("Enferm previas", null, getPanelEnfermedPrevia(), null);
 			panelPestañas.addTab("Vacunas", null, getPanelVacunas(), null);
 			panelPestañas.addTab("Preinscripciones", null, getPanelPreinscripciones(), null);
+			panelPestañas.addTab("Diagnosticos", null, getPanelDiagnosticos(), null);
 		}
 		return panelPestañas;
 	}
@@ -238,5 +242,46 @@ public class MostrarHistorial extends JDialog {
 			preinscripciones += str + "\n";
 		}
 		return preinscripciones;
+	}
+	private JPanel getPanelDiagnosticos() throws SQLException {
+		if (panelDiagnosticos == null) {
+			panelDiagnosticos = new JPanel();
+			panelDiagnosticos.add(getScrollPaneDiagnosticos());
+			//panelDiagnosticos.add(getTextAreaDiagnosticos());
+		}
+		return panelDiagnosticos;
+	}
+	private JScrollPane getScrollPaneDiagnosticos() throws SQLException {
+		if (scrollPaneDiagnosticos == null) {
+			scrollPaneDiagnosticos = new JScrollPane();
+			scrollPaneDiagnosticos.setViewportView(getTextAreaDiagnosticos());
+
+		}
+		return scrollPaneDiagnosticos;
+	}
+	private JTextArea getTextAreaDiagnosticos() throws SQLException {
+		if (textAreaDiagnosticos == null) {
+			textAreaDiagnosticos = new JTextArea();
+			textAreaDiagnosticos.setEditable(false);
+			textAreaDiagnosticos.setText(ponerDiagnosticos());
+		}
+		return textAreaDiagnosticos;
+	}
+
+	/**
+	 * Método para pintar en el historial los diagnosticos que se le han asignado a un paciente
+	 * 
+	 * @return
+	 * @throws SQLException 
+	 */
+	private String ponerDiagnosticos() throws SQLException {
+		String diagnosticos = "";
+		
+		List<String> nombreDiagnosticos = new ArrayList<>();
+		nombreDiagnosticos = pbd.buscarDiagnosticosAsignados(hm.getHistorial());
+		for(String str : nombreDiagnosticos) {
+			diagnosticos += str + "\n";
+		}
+		return diagnosticos;
 	}
 }
