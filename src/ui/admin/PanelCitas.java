@@ -45,6 +45,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
 
@@ -474,7 +475,7 @@ public class PanelCitas extends JDialog {
 		return false;
 
 	}
-	*/
+	
 
 	/**
 	 * Metodo que crea la cita si tiene los cmapos cubiertos

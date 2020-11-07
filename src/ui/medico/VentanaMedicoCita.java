@@ -342,6 +342,14 @@ public class VentanaMedicoCita extends JDialog {
 	private JTextField getTextHistorial() {
 		if (textHistorial == null) {
 			textHistorial = new JTextField();
+			textHistorial.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+					
+					
+					t.setText("");
+				}
+			});
 			textHistorial.setText("N\u00BA de historial");
 			textHistorial.setColumns(10);
 		}
