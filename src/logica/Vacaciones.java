@@ -4,17 +4,32 @@ import java.util.Date;
 
 public class Vacaciones {
 
+	public String codVad;
 	public String codMed;
 	public String codAdmin;
 	public Date dInicio;
 	public Date dFinal;
 	
-	public Vacaciones(String codMed, String codAdmin, Date dInicio, Date dFinal) {
+	public Vacaciones(String codVad, String codMed, String codAdmin, Date dInicio, Date dFinal) {
+		this.codVad = codVad;
 		this.codMed = codMed;
 		this.codAdmin = codAdmin;
 		this.dInicio= dInicio;
 		this.dFinal= dFinal;
 	}
+	
+
+	public String getCodVad() {
+		return codVad;
+	}
+
+
+
+	public void setCodVad(String codVad) {
+		this.codVad = codVad;
+	}
+
+
 
 	public String getCodMed() {
 		return codMed;

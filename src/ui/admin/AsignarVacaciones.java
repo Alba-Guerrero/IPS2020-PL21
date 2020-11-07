@@ -9,12 +9,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
@@ -233,7 +235,15 @@ public class AsignarVacaciones extends JDialog{
 						if(comprobarEmpleadoSelected() && comprobarFechas() <= 0) {
 							System.out.print("funciona");
 							if(comprobarCitas()) {
-								preguntarVacaciones();
+								//preguntarVacaciones();
+								int res = JOptionPane.showConfirmDialog(null,
+										 "El médico tiene una cita en el periodo indicado. " + "\n" + 
+													"¿Desea continuar igualmente?"  ,
+
+										 "Advertencia: Dar vacaciones", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+								if(res == JOptionPane.YES_OPTION) {
+									asignarVacaciones();
+								}
 							}
 							else {
 								asignarVacaciones();
@@ -241,7 +251,6 @@ public class AsignarVacaciones extends JDialog{
 							}
 						}
 					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 		}
@@ -250,20 +259,15 @@ public class AsignarVacaciones extends JDialog{
 		}
 		return btnAsignar;
 	}
-	
-	protected void preguntarVacaciones() {
-		ConfirmarVacaciones cv = new ConfirmarVacaciones(this);
-		cv.setVisible(true);
-		cv.setLocationRelativeTo(null);
-		cv.setResizable(true);
-	}
 
 
 	protected void asignarVacaciones() throws SQLException {
 		Date d1 = getChooseDInicio().getDate();
 		Date d2 = getchooseDFin().getDate();
 		String codEmpleado = getSelectedEmpleadoCodigo();
-		Vacaciones vacaciones = new Vacaciones(codEmpleado, codAdmin, d1, d2);
+		Random r = new Random();
+		String codVac = "va" + r.nextInt(300);
+		Vacaciones vacaciones = new Vacaciones(codVac, codEmpleado, codAdmin, d1, d2);
 				
 		//pbd.asignarVacaciones(vacaciones);
 	}

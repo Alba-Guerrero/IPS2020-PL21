@@ -12,6 +12,7 @@ import java.util.List;
 
 import conexion.Conexion;
 import logica.AsignaPreinscripcion;
+import logica.AsignaVacuna;
 import logica.Causas;
 import logica.Cita;
 import logica.HistorialMedico;
@@ -93,8 +94,10 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	private final static String UPDATE_CITA = "UPDATE cita set hinicio = ?, hfin = ?, fecha = ? ,codmedico=?,ubicacion =?, urgencia=? where codcita=? and codpaciente=? and codmedico =?";
 	
 	private final static String VER_PREINSCRIPCIONES_ASIGNADAS = "SELECT * FROM asignaprescripcion where nhistorial = ?";
-	private final static String ADD_VACACIONES = "INSERT INTO VACACIONES (CODEMPLEADO, CODADMIN, DINICIO, DFINAL)" + " VALUES(?,?,?,?)";
+	private final static String ADD_VACACIONES = "INSERT INTO VACACIONES (CODVACACIONES, CODEMPLEADO, CODADMIN, DINICIO, DFINAL)" + " VALUES(?,?,?,?,?)";
 	private final static String LIST_VACUNAS = "Select * from vacuna";
+	
+	private final static String ADD_ASIGNA_VACUNA = "INSERT INTO ASIGNAVACUNA (CODVACUNA, CODEMPLEADO, CODHISTORIAL, FECHA, HORA) VALUES (?,?,?,?,?)";
 	
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
@@ -1178,13 +1181,15 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst=con.prepareStatement(ADD_VACACIONES);
 		
+		String codVac = vacaciones.getCodVad();
 		String codEmpleado=vacaciones.getCodMed();
 		String codAdmin=vacaciones.getCodAdmin();
 		Date dateInicio=(Date) vacaciones.getdInicio();
 		Date dateFinal=(Date) vacaciones.getdFinal();
 		
-		pst.setString(1,codEmpleado);
-		pst.setString(2,codAdmin);
+		pst.setString(1,codVac);
+		pst.setString(2,codEmpleado);
+		pst.setString(3,codAdmin);
 		pst.setDate(3, dateInicio);
 		pst.setDate(4,dateFinal);
 		
@@ -1220,8 +1225,53 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		return vacunas;
 	}
 	
-	
+	/**
 
+	 * Método para guardar las vacunas que se le han asignado a un paciente
+
+	 * @param av
+
+	 * @throws SQLException
+
+	 */
+
+	 public void nuevaAsignaVacuna(AsignaVacuna av) throws SQLException {
+	 Connection con = new Conexion().getConnectionJDBC();
+
+	 PreparedStatement pst=con.prepareStatement(ADD_ASIGNA_VACUNA);
+
+
+	 String codVacuna = av.getCodVacuna();
+
+	 String codEmpleado = av.getCodEmpleado();
+
+	 String codHistorial = av.getCodHistorial();
+
+	 java.sql.Date fecha = new java.sql.Date(av.getDate().getTime());
+
+	 Time hour = new Time(fecha.getTime());
+
+
+	 pst.setString(1, codVacuna);
+
+	 pst.setString(2, codEmpleado);
+
+	 pst.setString(3, codHistorial);
+
+	 pst.setDate(4, fecha);
+
+	 pst.setTime(5, hour);
+
+
+
+	 pst.executeUpdate();
+
+
+	 pst.close();
+
+	 con.close();
+
+	 }
 
 	
 }
