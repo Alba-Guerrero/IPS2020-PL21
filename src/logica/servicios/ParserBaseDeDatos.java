@@ -1117,7 +1117,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		}
 		
 		
-		
+		rs.close();
 		pst.close();
 		con.close();
 		
@@ -1212,6 +1212,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 			vacunas.add(new Vacuna(rs.getString("codVacuna"), rs.getString("nombreVacuna")));
 		}
 
+		rs.close();
 		pst.close();
 		con.close();
 
