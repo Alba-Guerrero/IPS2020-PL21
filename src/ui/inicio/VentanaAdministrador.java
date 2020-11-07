@@ -394,9 +394,27 @@ protected void verCalendarioCitas() {
 	private JButton getBtnNewButton_1_1() {
 		if (btnNewButton_1 == null) {
 			btnNewButton_1 = new JButton("Asignar vacaciones");
+			btnNewButton_1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						abrirVacaciones();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			});
 		}
 		return btnNewButton_1;
 	}
+	protected void abrirVacaciones() throws SQLException {
+		AsignarVacaciones av = new AsignarVacaciones(codAdmin);
+		av.setVisible(true);
+		av.setLocationRelativeTo(null);
+		av.setResizable(true);
+		av.setModal(true);
+	}
+
 	private JPanel getPanel_6() {
 		if (panel_6 == null) {
 			panel_6 = new JPanel();
