@@ -50,6 +50,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
 import java.awt.FlowLayout;
+<<<<<<< HEAD
+=======
+import net.miginfocom.swing.MigLayout;
+>>>>>>> refs/heads/ramaRaul
 import javax.swing.DefaultComboBoxModel;
 
 public class ModificarCita extends JDialog {

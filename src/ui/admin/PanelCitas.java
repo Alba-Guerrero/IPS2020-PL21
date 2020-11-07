@@ -47,10 +47,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 
 public class PanelCitas extends JDialog {
 	/**
@@ -65,7 +61,6 @@ public class PanelCitas extends JDialog {
 	private JLabel lblHoraInicio;
 	private JLabel lblHoraFin;
 	private JLabel lblFecha;
-	private JComboBox<Paciente> comboBox;
 	private ParserBaseDeDatos pbd = new ParserBaseDeDatos();
 	private VentanaInicio vi;
 	private JScrollPane scrollPane;
@@ -116,12 +111,12 @@ public class PanelCitas extends JDialog {
 			panelArriba.setLayout(new GridLayout(0, 1, 0, 0));
 			{
 				JPanel panelArriba_1 = new JPanel();
+				panelArriba_1.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "Paciente", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 				panelArriba.add(panelArriba_1);
 				panelArriba_1.setLayout(new GridLayout(0, 2, 0, 0));
 				panelArriba_1.add(getPanel_2());
-				panelArriba_1.add(getPanel_1());
+				panelArriba_1.add(getScrollPane_1_2());
 			}
-			panelArriba.add(getPanel_3());
 			panelArriba.add(getPnMedico());
 		}
 		contentPanel.add(getPanelAbajo());
@@ -135,8 +130,9 @@ public class PanelCitas extends JDialog {
 			pnMedico = new JPanel();
 			pnMedico.setBorder(new TitledBorder(null, "M\u00E9dico", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			pnMedico.setSize(new Dimension(219, 200));
-			pnMedico.setLayout(new BorderLayout(0, 0));
-			pnMedico.add(getScrollPane_1(), BorderLayout.CENTER);
+			pnMedico.setLayout(new GridLayout(0, 2, 0, 0));
+			pnMedico.add(getPanel_3());
+			pnMedico.add(getScrollPane_1());
 		}
 		return pnMedico;
 	}
@@ -178,6 +174,8 @@ public class PanelCitas extends JDialog {
 			panelAbajo2.add(getLblFecha());
 			panelAbajo2.add(getDateCita());
 			panelAbajo2.add(getChckbxEsUrgente());
+			panelAbajo2.add(getCbSala());
+			panelAbajo2.add(getLblNewLabel());
 
 			
 
@@ -207,14 +205,14 @@ public class PanelCitas extends JDialog {
 	private JLabel getLblHoraInicio() {
 		if (lblHoraInicio == null) {
 			lblHoraInicio = new JLabel("Hora Inicio:");
-			lblHoraInicio.setBounds(12, 66, 66, 16);
+			lblHoraInicio.setBounds(21, 34, 66, 16);
 		}
 		return lblHoraInicio;
 	}
 
 	private JSpinner getSpinnerInicio() {
 		timeSpinnerInicio = new JSpinner(new SpinnerDateModel());
-		timeSpinnerInicio.setBounds(97, 62, 81, 24);
+		timeSpinnerInicio.setBounds(97, 29, 81, 24);
 		timeSpinnerInicio.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		JSpinner.DateEditor de_timeSpinnerInicio = new JSpinner.DateEditor(timeSpinnerInicio, "HH:mm");
 		timeSpinnerInicio.setEditor(de_timeSpinnerInicio);
@@ -232,14 +230,14 @@ public class PanelCitas extends JDialog {
 	private JLabel getLblHoraFin() {
 		if (lblHoraFin == null) {
 			lblHoraFin = new JLabel("Hora Fin:");
-			lblHoraFin.setBounds(203, 66, 53, 16);
+			lblHoraFin.setBounds(200, 34, 53, 16);
 		}
 		return lblHoraFin;
 	}
 
 	private JSpinner getTimeSpinnerF() {
 		timeSpinnerFin = new JSpinner(new SpinnerDateModel());
-		timeSpinnerFin.setBounds(267, 62, 81, 24);
+		timeSpinnerFin.setBounds(263, 29, 81, 24);
 		timeSpinnerFin.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		JSpinner.DateEditor de_timeSpinnerFin = new JSpinner.DateEditor(timeSpinnerFin, "HH:mm");
 		timeSpinnerFin.setEditor(de_timeSpinnerFin);
@@ -258,40 +256,9 @@ public class PanelCitas extends JDialog {
 	private JLabel getLblFecha() {
 		if (lblFecha == null) {
 			lblFecha = new JLabel("Fecha:");
-			lblFecha.setBounds(381, 66, 39, 16);
+			lblFecha.setBounds(370, 34, 39, 16);
 		}
 		return lblFecha;
-	}
-
-	private JComboBox<Paciente> getComboBox()  {
-		if (comboBox == null) {
-
-			List<Paciente> pacientes=new ArrayList<>();
-			comboBox = new JComboBox<Paciente>();
-			comboBox.addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent arg0) {
-				}
-			});
-			comboBox.setBounds(37, 47, 344, 22);
-			
-			comboBox.setEditable(false);
-			comboBox.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					setContactData();
-				}
-					
-			});
-			
-			try {
-				pacientes = pbd.buscarPaciente("");
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-			for (int i = 0; i < pacientes.size(); i++) {
-				comboBox.insertItemAt(pacientes.get(i), i);
-			}
-		}
-		return comboBox;
 	}
 
 	private JScrollPane getScrollPane_1() throws SQLException {
@@ -316,7 +283,7 @@ public class PanelCitas extends JDialog {
 	private JDateChooser getDateCita() {
 		if (dateCita == null) {
 			dateCita = new JDateChooser();
-			dateCita.setBounds(432, 60, 117, 22);
+			dateCita.setBounds(419, 34, 117, 22);
 			dateCita.setDateFormatString("yyyy-MM-dd");
 			dateCita.setDate(new Date());
 			dateCita.addMouseListener(new MouseAdapter() {
@@ -417,7 +384,7 @@ public class PanelCitas extends JDialog {
 					}
 				}
 			});
-			chckbxEsUrgente.setBounds(587, 57, 113, 25);
+			chckbxEsUrgente.setBounds(370, 80, 113, 25);
 		}
 		return chckbxEsUrgente;
 	}
@@ -459,10 +426,12 @@ public class PanelCitas extends JDialog {
 		return medicos.size() > 0;
 	}
 
+	/*
 	private boolean ComboBoxPacientes() {
 		return comboBox.getSelectedItem() instanceof Paciente;
 
 	}
+	*/
 
 	private boolean hora() {
 		Date dateIncio = (Date) timeSpinnerInicio.getValue();
@@ -486,6 +455,7 @@ public class PanelCitas extends JDialog {
 		return getCbSala().getSelectedItem() != null;
 
 	}
+	
 	/**
 	 * Metodo que comprueba que todos los cmapos obligatosio estan cubiertos y pone
 	 * a enabled el boton de cita si asi es
@@ -494,7 +464,7 @@ public class PanelCitas extends JDialog {
 	 * @throws SQLException
 	 */
 	private boolean camposCubiertos() {
-		if (JlistMedicoFill() && ComboBoxPacientes() &&ComboBoxSala() ) {
+		if (JlistMedicoFill() &&ComboBoxSala() ) {
 			btnCrearCita.setEnabled(true);
 			return true;
 
@@ -504,6 +474,7 @@ public class PanelCitas extends JDialog {
 		return false;
 
 	}
+	*/
 
 	/**
 	 * Metodo que crea la cita si tiene los cmapos cubiertos
@@ -679,6 +650,7 @@ public class PanelCitas extends JDialog {
 	 * Comprobamos si se han cambiado los campos de contacto
 	 * @return
 	 */
+	/*
 	private boolean checkCambiosInfo() {
 		Paciente p = null;
 		if(comboBox.getSelectedItem() instanceof Paciente)
@@ -700,12 +672,30 @@ public class PanelCitas extends JDialog {
 		}
 	
 	}
+	*/
 	
 	private JButton btnActualizarDatos;
-	private JPanel panel_1;
 	private JPanel panel_2;
 	private JPanel panel_3;
 	private JComboBox cbSala;
+	private JLabel lblFiltroNombre;
+	private JTextField txtFieldNombreFiltro;
+	private JButton btnFiltrarNombre;
+	private JLabel lblApellidoFiltro;
+	private JTextField txtFieldApellidoFiltro;
+	private JButton btnFiltrarApellidos;
+	private JLabel lblNewLabel;
+	private JScrollPane scrollPanePacientes;
+	private JLabel lblCodHistorial;
+	private JTextField txtFieldCodHistorial;
+	private JButton btnFiltrarHistorial;
+	private JLabel lblNombreFiltroMedico;
+	private JLabel lblApellidoMedicoFiltro;
+	private JTextField txtFieldNombreMedicoFiltro;
+	private JTextField txtFieldApellidoMedicoFiltro;
+	private JButton btnFiltrarNombreMedico;
+	private JButton btnFiltrarApellidoMedico;
+	private JList listPaciente;
 	
 	
 	private JButton getBtnActualizarDatos() {
@@ -731,20 +721,11 @@ public class PanelCitas extends JDialog {
 		}
 		return btnActualizarDatos;
 	}
-	private JPanel getPanel_1() {
-		if (panel_1 == null) {
-			panel_1 = new JPanel();
-			panel_1.setBorder(new TitledBorder(null, "Introduce la sala", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			panel_1.setLayout(null);
-			panel_1.add(getCbSala());
-		}
-		return panel_1;
-	}
 	private JComboBox<String> getCbSala() {
 		if (cbSala == null) {
 			List<String> salas= rellenarSalas();
 			cbSala = new JComboBox<String>();
-			cbSala.setBounds(54, 47, 236, 22);
+			cbSala.setBounds(94, 81, 236, 22);
 			for (int i = 0; i < salas.size(); i++) {
 				cbSala.insertItemAt(salas.get(i), i);
 			}
@@ -770,16 +751,171 @@ public class PanelCitas extends JDialog {
 	private JPanel getPanel_2() {
 		if (panel_2 == null) {
 			panel_2 = new JPanel();
-			panel_2.setBorder(new TitledBorder(null, "Paciente", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			panel_2.setLayout(null);
-			panel_2.add(getComboBox());
+			panel_2.add(getLblFiltroNombre());
+			panel_2.add(getTxtFieldNombreFiltro());
+			panel_2.add(getBtnFiltrarNombre());
+			panel_2.add(getLblApellidoFiltro());
+			panel_2.add(getTxtFieldApellidoFiltro());
+			panel_2.add(getBtnFiltrarApellidos());
+			panel_2.add(getLblCodHistorial());
+			panel_2.add(getTxtFieldCodHistorial());
+			panel_2.add(getBtnFiltrarHistorial());
 		}
 		return panel_2;
 	}
 	private JPanel getPanel_3() {
 		if (panel_3 == null) {
 			panel_3 = new JPanel();
+			panel_3.setLayout(null);
+			panel_3.add(getLblNombreFiltroMedico());
+			panel_3.add(getLblApellidoMedicoFiltro());
+			panel_3.add(getTextField_2());
+			panel_3.add(getTextField_1_1());
+			panel_3.add(getBtnFiltrarApellidoMedico());
+			panel_3.add(getBtnFiltrarNombreMedico());
 		}
 		return panel_3;
+	}
+	private JLabel getLblFiltroNombre() {
+		if (lblFiltroNombre == null) {
+			lblFiltroNombre = new JLabel("Nombre:");
+			lblFiltroNombre.setBounds(22, 28, 61, 14);
+		}
+		return lblFiltroNombre;
+	}
+	private JTextField getTxtFieldNombreFiltro() {
+		if (txtFieldNombreFiltro == null) {
+			txtFieldNombreFiltro = new JTextField();
+			txtFieldNombreFiltro.setBounds(104, 25, 222, 20);
+			txtFieldNombreFiltro.setColumns(10);
+		}
+		return txtFieldNombreFiltro;
+	}
+	private JButton getBtnFiltrarNombre() {
+		if (btnFiltrarNombre == null) {
+			btnFiltrarNombre = new JButton("Filtrar");
+			btnFiltrarNombre.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if(!getTxtFieldNombreFiltro().getText().equals(""))
+						btnFiltrarNombre.setEnabled(true);
+				}
+			});
+			btnFiltrarNombre.setEnabled(false);
+			btnFiltrarNombre.setBounds(336, 24, 82, 23);
+		}
+		return btnFiltrarNombre;
+	}
+	private JLabel getLblApellidoFiltro() {
+		if (lblApellidoFiltro == null) {
+			lblApellidoFiltro = new JLabel("Apellido:");
+			lblApellidoFiltro.setBounds(23, 59, 61, 14);
+		}
+		return lblApellidoFiltro;
+	}
+	private JTextField getTxtFieldApellidoFiltro() {
+		if (txtFieldApellidoFiltro == null) {
+			txtFieldApellidoFiltro = new JTextField();
+			txtFieldApellidoFiltro.setBounds(104, 56, 222, 20);
+			txtFieldApellidoFiltro.setColumns(10);
+		}
+		return txtFieldApellidoFiltro;
+	}
+	private JButton getBtnFiltrarApellidos() {
+		if (btnFiltrarApellidos == null) {
+			btnFiltrarApellidos = new JButton("Filtrar");
+			btnFiltrarApellidos.setEnabled(false);
+			btnFiltrarApellidos.setBounds(336, 55, 82, 23);
+		}
+		return btnFiltrarApellidos;
+	}
+	private JLabel getLblNewLabel() {
+		if (lblNewLabel == null) {
+			lblNewLabel = new JLabel("Sala:");
+			lblNewLabel.setBounds(38, 85, 46, 14);
+		}
+		return lblNewLabel;
+	}
+	private JScrollPane getScrollPane_1_2() {
+		if (scrollPanePacientes == null) {
+			scrollPanePacientes = new JScrollPane();
+			scrollPanePacientes.setViewportView(getList_1_1());
+		}
+		return scrollPanePacientes;
+	}
+	private JLabel getLblCodHistorial() {
+		if (lblCodHistorial == null) {
+			lblCodHistorial = new JLabel("Codigo historial:");
+			lblCodHistorial.setBounds(10, 90, 84, 14);
+		}
+		return lblCodHistorial;
+	}
+	private JTextField getTxtFieldCodHistorial() {
+		if (txtFieldCodHistorial == null) {
+			txtFieldCodHistorial = new JTextField();
+			txtFieldCodHistorial.setBounds(104, 87, 222, 20);
+			txtFieldCodHistorial.setColumns(10);
+		}
+		return txtFieldCodHistorial;
+	}
+	private JButton getBtnFiltrarHistorial() {
+		if (btnFiltrarHistorial == null) {
+			btnFiltrarHistorial = new JButton("Filtrar");
+			btnFiltrarHistorial.setEnabled(false);
+			btnFiltrarHistorial.setBounds(336, 86, 82, 23);
+		}
+		return btnFiltrarHistorial;
+	}
+	private JLabel getLblNombreFiltroMedico() {
+		if (lblNombreFiltroMedico == null) {
+			lblNombreFiltroMedico = new JLabel("Nombre:");
+			lblNombreFiltroMedico.setBounds(28, 33, 59, 14);
+		}
+		return lblNombreFiltroMedico;
+	}
+	private JLabel getLblApellidoMedicoFiltro() {
+		if (lblApellidoMedicoFiltro == null) {
+			lblApellidoMedicoFiltro = new JLabel("Apellido:");
+			lblApellidoMedicoFiltro.setBounds(28, 76, 59, 14);
+		}
+		return lblApellidoMedicoFiltro;
+	}
+	private JTextField getTextField_2() {
+		if (txtFieldNombreMedicoFiltro == null) {
+			txtFieldNombreMedicoFiltro = new JTextField();
+			txtFieldNombreMedicoFiltro.setBounds(97, 30, 239, 20);
+			txtFieldNombreMedicoFiltro.setColumns(10);
+		}
+		return txtFieldNombreMedicoFiltro;
+	}
+	private JTextField getTextField_1_1() {
+		if (txtFieldApellidoMedicoFiltro == null) {
+			txtFieldApellidoMedicoFiltro = new JTextField();
+			txtFieldApellidoMedicoFiltro.setBounds(97, 73, 239, 20);
+			txtFieldApellidoMedicoFiltro.setColumns(10);
+		}
+		return txtFieldApellidoMedicoFiltro;
+	}
+	private JButton getBtnFiltrarNombreMedico() {
+		if (btnFiltrarNombreMedico == null) {
+			btnFiltrarNombreMedico = new JButton("Filtrar");
+			btnFiltrarNombreMedico.setEnabled(false);
+			btnFiltrarNombreMedico.setBounds(346, 29, 82, 23);
+		}
+		return btnFiltrarNombreMedico;
+	}
+	private JButton getBtnFiltrarApellidoMedico() {
+		if (btnFiltrarApellidoMedico == null) {
+			btnFiltrarApellidoMedico = new JButton("Filtrar");
+			btnFiltrarApellidoMedico.setEnabled(false);
+			btnFiltrarApellidoMedico.setBounds(346, 72, 82, 23);
+		}
+		return btnFiltrarApellidoMedico;
+	}
+	private JList getList_1_1() {
+		if (listPaciente == null) {
+			listPaciente = new JList();
+		}
+		return listPaciente;
 	}
 }
