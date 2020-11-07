@@ -3,9 +3,9 @@
  */
 package logica;
 
-import java.sql.Date;
-import java.sql.Time;
 
+import java.sql.Time;
+import java.util.Date;
 
 /**
  * @author María
