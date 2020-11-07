@@ -39,7 +39,6 @@ public class MostrarHistorial extends JDialog {
 	
 	
 	private HistorialMedico hm;
-	private Cita cita;
 	private ParserBaseDeDatos pbd = new ParserBaseDeDatos();
 	
 	
@@ -59,10 +58,9 @@ public class MostrarHistorial extends JDialog {
 	 * Create the frame.
 	 * @throws SQLException 
 	 */
-	public MostrarHistorial(HistorialMedico hm,Cita cita) throws SQLException {
+	public MostrarHistorial(HistorialMedico hm) throws SQLException {
 		setTitle("Historial m\u00E9dico");
 		this.hm = hm;
-		this.cita = cita;
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 732, 385);
 		contentPane = new JPanel();

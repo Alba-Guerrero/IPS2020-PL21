@@ -257,9 +257,8 @@ public class VentanaMedicoCita extends JDialog {
 		if(fila!=-1) {
 		try {
 			Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()).getCodCita());
-			Cita cita = pbd.verCita(p.getHistorial());
 			HistorialMedico hm = pbd.verHistorial(p.getHistorial());
-			MostrarHistorial mh = new MostrarHistorial(hm,cita);
+			MostrarHistorial mh = new MostrarHistorial(hm);
 			mh.setLocationRelativeTo(null);
 			mh.setResizable(true);
 			mh.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra

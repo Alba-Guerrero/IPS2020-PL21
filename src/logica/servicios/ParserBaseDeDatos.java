@@ -62,7 +62,7 @@ public class ParserBaseDeDatos {
 	
 private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
-	private final static String VER_HISTORIAL ="SELECT * FROM historial where nHistorial =?";
+	private final static String VER_HISTORIAL ="SELECT nhistorial FROM historial where nHistorial =?";
 	
 	private final static String VER_VACUNAS ="SELECT nombreVacuna, fecha FROM vacuna where codvacuna  = ?";
 	
@@ -109,16 +109,16 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
 	private final static String VER_PREINSCRIPCIONES_ASIGNADAS = "SELECT * FROM asignaprescripcion where nhistorial = ?";
 	
-	private final static String VER_VACUNAS_ASIGNADAS = "SELECT * FROM asignavacuna where codhistorial = ?";
+	private final static String VER_VACUNAS_ASIGNADAS = "SELECT * FROM asignavacuna where historial = ?";
 	
-	private final static String VER_DIAGNOSTICOS_ASIGNADOS = "SELECT *FROM asingadiagnostico where codhistorial = ?";
+	private final static String VER_DIAGNOSTICOS_ASIGNADOS = "SELECT *FROM asingadiagnostico where historial = ?";
 	
 	private final static String ADD_VACACIONES = "INSERT INTO VACACIONES (CODVACACIONES, CODEMPLEADO, CODADMIN, DINICIO, DFINAL)" + " VALUES(?,?,?,?,?)";
 	private final static String LIST_VACUNAS = "Select * from vacuna";
 	private final static String FIND_PACIENTE_BY_NAME = "Select * from paciente where nombre=?";
 	private final static String FIND_PACIENTE_BY_SURNAME = "Select * from paciente where apellido=?";
 	
-	private final static String ADD_ASIGNA_VACUNA = "INSERT INTO ASIGNAVACUNA (CODVACUNA, CODEMPLEADO, CODHISTORIAL, FECHA, HORA) VALUES (?,?,?,?,?)";
+	private final static String ADD_ASIGNA_VACUNA = "INSERT INTO ASIGNAVACUNA (CODVACUNA, CODEMPLEADO, historial, FECHA, HORA) VALUES (?,?,?,?,?)";
 	
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
@@ -410,8 +410,6 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
 		
 	while(rs.next()) {
-		
-		
 		pacientes= new Paciente( rs.getString("codpaciente"),rs.getString("nombre"),rs.getString("apellido"),rs.getInt("movil"), rs.getString("email"),rs.getString("info"),rs.getString("nhistorial"));
 		
 	}
@@ -595,12 +593,12 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
 	
 
-	public List<Cita> devolvercitasHistorial(String codhistorial) throws SQLException {
+	public List<Cita> devolvercitasHistorial(String historial) throws SQLException {
 		List<Cita> citas = new ArrayList<Cita>();
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst=con.prepareStatement(GET_CITA_HISTORIAL);
 		boolean res=false;
-		pst.setString(1, codhistorial);
+		pst.setString(1, historial);
 
 	
 		ResultSet rs = pst.executeQuery();
@@ -622,12 +620,12 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	return citas;
 }
 	
-	public List<Cita> devolvercitasHistorialMed(String codhistorial,String codMedico) throws SQLException {
+	public List<Cita> devolvercitasHistorialMed(String historial,String codMedico) throws SQLException {
 		List<Cita> citas = new ArrayList<Cita>();
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst=con.prepareStatement(GET_CITA_HISTORIAL_MED);
 		boolean res=false;
-		pst.setString(1, codhistorial);
+		pst.setString(1, historial);
 		pst.setString(2, codMedico);
 
 	
@@ -862,9 +860,6 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		if(rs.next()) {
 			historial = new HistorialMedico(rs.getString(1));
 		}
-		
-		
-		boolean res= rs.next();
 		
 		
 		rs.close();
@@ -1354,7 +1349,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 
 	 String codEmpleado = av.getCodEmpleado();
 
-	 String codHistorial = av.getCodHistorial();
+	 String historial = av.getCodHistorial();
 
 	 java.sql.Date fecha = new java.sql.Date(av.getDate().getTime());
 
@@ -1365,7 +1360,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 
 	 pst.setString(2, codEmpleado);
 
-	 pst.setString(3, codHistorial);
+	 pst.setString(3, historial);
 
 	 pst.setDate(4, fecha);
 
