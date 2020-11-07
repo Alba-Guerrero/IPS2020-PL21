@@ -142,10 +142,10 @@ public class VentanaInicio extends JFrame {
 	
 	
 	private void panelCita() {
-		
+		String codAdmin = getTextField().getText();
 		VentanaAdministrador va;
 
-			va = new VentanaAdministrador();
+			va = new VentanaAdministrador(codAdmin);
 			va.setVisible(true);
 			va.setLocationRelativeTo(null);
 			va.setResizable(true);

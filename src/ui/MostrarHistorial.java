@@ -51,6 +51,9 @@ public class MostrarHistorial extends JDialog {
 	private JTextArea textAreaVacunas;
 	private JScrollPane scrollPanePreinscripciones;
 	private JTextArea textAreaPreinscripciones;
+	private JPanel panelDiagnosticos;
+	private JScrollPane scrollPaneDiagnosticos;
+	private JTextArea textAreaDiagnosticos;
 
 	/**
 	 * Create the frame.
@@ -83,6 +86,7 @@ public class MostrarHistorial extends JDialog {
 			panelPestañas.addTab("Enferm previas", null, getPanelEnfermedPrevia(), null);
 			panelPestañas.addTab("Vacunas", null, getPanelVacunas(), null);
 			panelPestañas.addTab("Preinscripciones", null, getPanelPreinscripciones(), null);
+			panelPestañas.addTab("Diagnosticos", null, getPanelDiagnosticos(), null);
 		}
 		return panelPestañas;
 	}
@@ -124,7 +128,7 @@ public class MostrarHistorial extends JDialog {
 	public String darCausas() throws SQLException {
 		String causa = "";
 		List<String> causas = new ArrayList<>();
-		causas = pbd.buscarCausas(hm.getCodCausas());
+		causas = pbd.buscarCausas(hm.getHistorial());
 		for(String c: causas) {
 			causa += c + "\n";
 		}
@@ -151,7 +155,7 @@ public class MostrarHistorial extends JDialog {
 	public String darEnfermPrevias() throws SQLException {
 		String enfermPrev = "";
 		List<String> enfermPrevs = new ArrayList<>();
-		enfermPrevs = pbd.buscarEnfermPrevias(hm.getCodEnfermPrevia());
+		enfermPrevs = pbd.buscarEnfermPrevias(hm.getHistorial());
 		for(String e: enfermPrevs) {
 			enfermPrev += e + "\n";
 		}
@@ -174,12 +178,19 @@ public class MostrarHistorial extends JDialog {
 		return scrollPaneVacunas;
 	}
 	
-	public String darVacunas() throws SQLException {
+	/**
+	 * Método que me muestra las vacunas que se le han asignado al paciente
+	 * @return
+	 * @throws SQLException
+	 */
+	public String mostrarVacunas() throws SQLException {
+		
 		String vacunas = "";
+		
 		List<String> nombreVacunas = new ArrayList<>();
-		nombreVacunas = pbd.buscarVacunas(hm.getCodVacuna());
-		for(String v: nombreVacunas) {
-			vacunas += v + "\n";
+		nombreVacunas = pbd.buscarVacunasAsignadas(hm.getHistorial());
+		for(String str : nombreVacunas) {
+			vacunas += str + "\n";
 		}
 		return vacunas;
 	}
@@ -188,7 +199,7 @@ public class MostrarHistorial extends JDialog {
 		if (textAreaVacunas == null) {
 			textAreaVacunas = new JTextArea();
 			textAreaVacunas.setEditable(false);
-			textAreaVacunas.setText(darVacunas());
+			textAreaVacunas.setText(mostrarVacunas());
 		}
 		return textAreaVacunas;
 	}
@@ -231,5 +242,46 @@ public class MostrarHistorial extends JDialog {
 			preinscripciones += str + "\n";
 		}
 		return preinscripciones;
+	}
+	private JPanel getPanelDiagnosticos() throws SQLException {
+		if (panelDiagnosticos == null) {
+			panelDiagnosticos = new JPanel();
+			panelDiagnosticos.add(getScrollPaneDiagnosticos());
+			//panelDiagnosticos.add(getTextAreaDiagnosticos());
+		}
+		return panelDiagnosticos;
+	}
+	private JScrollPane getScrollPaneDiagnosticos() throws SQLException {
+		if (scrollPaneDiagnosticos == null) {
+			scrollPaneDiagnosticos = new JScrollPane();
+			scrollPaneDiagnosticos.setViewportView(getTextAreaDiagnosticos());
+
+		}
+		return scrollPaneDiagnosticos;
+	}
+	private JTextArea getTextAreaDiagnosticos() throws SQLException {
+		if (textAreaDiagnosticos == null) {
+			textAreaDiagnosticos = new JTextArea();
+			textAreaDiagnosticos.setEditable(false);
+			textAreaDiagnosticos.setText(ponerDiagnosticos());
+		}
+		return textAreaDiagnosticos;
+	}
+
+	/**
+	 * Método para pintar en el historial los diagnosticos que se le han asignado a un paciente
+	 * 
+	 * @return
+	 * @throws SQLException 
+	 */
+	private String ponerDiagnosticos() throws SQLException {
+		String diagnosticos = "";
+		
+		List<String> nombreDiagnosticos = new ArrayList<>();
+		nombreDiagnosticos = pbd.buscarDiagnosticosAsignados(hm.getHistorial());
+		for(String str : nombreDiagnosticos) {
+			diagnosticos += str + "\n";
+		}
+		return diagnosticos;
 	}
 }

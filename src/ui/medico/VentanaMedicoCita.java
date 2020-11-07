@@ -13,6 +13,7 @@ import javax.swing.table.TableRowSorter;
 import logica.Cita;
 import logica.HistorialMedico;
 import logica.Paciente;
+import logica.empleados.Empleado;
 import logica.servicios.ParserBaseDeDatos;
 import ui.MostrarHistorial;
 
@@ -35,6 +36,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JTextField;
 
 public class VentanaMedicoCita extends JDialog {
 
@@ -53,12 +55,15 @@ public class VentanaMedicoCita extends JDialog {
 	private JDateChooser dateChooser;
 	private JButton btnIr;
 	private String codmedico;
-	private List<String> codcitas= new ArrayList<String>();
+	private List<Cita> codcitas= new ArrayList<Cita>();
 	private JPanel panelBotones;
 	private JButton btnhistorial;
 	private JButton btncita;
 	private JButton btnmodifica;
-	private JButton btnNewButton_3;
+	private JButton btnTodas;
+	private JTextField textHistorial;
+	private JButton irHistorial;
+	private JButton btnBuscarPorFecha;
 	
 
 
@@ -70,7 +75,7 @@ public class VentanaMedicoCita extends JDialog {
 		setTitle("M\u00E9dico: Ver citas");
 		this.codmedico=codmedico;
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 813, 521);
+		setBounds(100, 100, 889, 521);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -138,7 +143,9 @@ public class VentanaMedicoCita extends JDialog {
 		Date date = getDateChooser().getDate();
 		java.sql.Date sDate = new java.sql.Date(date.getTime());
 		try {
+			
 			citas = pbd.devolvercitasMedicoPorFecha(sDate,codmedico);
+			System.err.print(citas.size());
 		} catch (SQLException e) {
 
 			e.printStackTrace();
@@ -169,7 +176,7 @@ public class VentanaMedicoCita extends JDialog {
 			nuevaFila[5]=c.getUbicacion();
 			nuevaFila[6] = c.isUrgente();
 			modeloTabla.addRow(nuevaFila);
-			codcitas.add(c.getCodCita());
+			codcitas.add(c);
 		}
 		
 		}
@@ -191,7 +198,10 @@ public class VentanaMedicoCita extends JDialog {
 			panelCita.add(getLblNewLabel());
 			panelCita.add(getDateChooser());
 			panelCita.add(getBtnIr());
-			panelCita.add(getBtnNewButton_3());
+			panelCita.add(getBtnTodas());
+			panelCita.add(getTextHistorial());
+			panelCita.add(getIrHistorial());
+			panelCita.add(getBtnBuscarPorFecha());
 		}
 		return panelCita;
 	}
@@ -245,7 +255,7 @@ public class VentanaMedicoCita extends JDialog {
 		int fila=tablacita.getSelectedRow();
 		if(fila!=-1) {
 		try {
-			Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()));
+			Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()).getCodCita());
 			Cita cita = pbd.verCita(p.getHistorial());
 			HistorialMedico hm = pbd.verHistorial(p.getHistorial());
 			MostrarHistorial mh = new MostrarHistorial(hm,cita);
@@ -272,7 +282,7 @@ public class VentanaMedicoCita extends JDialog {
 					
 						
 							try {
-								Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()));
+								Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()).getCodCita());
 								
 								//FALTA PASARLE EL PACIENTE A LA VENTANA
 							} catch (SQLException e1) {
@@ -303,7 +313,7 @@ public class VentanaMedicoCita extends JDialog {
 	
 	protected void abrirModificarCita() {
 		try {
-			Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()));
+			Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()).getCodCita());
 			Cita cita = pbd.verCita(p.getHistorial());
 			ModificarMedicosNuevoCard mc = new ModificarMedicosNuevoCard(p, cita);
 			mc.setLocationRelativeTo(this);
@@ -318,15 +328,129 @@ public class VentanaMedicoCita extends JDialog {
 
 	}
 	
-	private JButton getBtnNewButton_3() {
-		if (btnNewButton_3 == null) {
-			btnNewButton_3 = new JButton("Todas las citas");
-			btnNewButton_3.addActionListener(new ActionListener() {
+	private JButton getBtnTodas() {
+		if (btnTodas == null) {
+			btnTodas = new JButton("Todas las citas");
+			btnTodas.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					añadirFilas(false);
 				}
 			});
 		}
-		return btnNewButton_3;
+		return btnTodas;
+	}
+	private JTextField getTextHistorial() {
+		if (textHistorial == null) {
+			textHistorial = new JTextField();
+			textHistorial.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+					
+					
+					t.setText("");
+				}
+			});
+			textHistorial.setText("N\u00BA de historial");
+			textHistorial.setColumns(10);
+		}
+		return textHistorial;
+	}
+	private JButton getIrHistorial() {
+		if (irHistorial == null) {
+			irHistorial = new JButton("Ir");
+			irHistorial.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					añadirFilasHistorial();
+					
+				}
+			});
+		}
+		return irHistorial;
+	}
+	private void añadirFilasHistorial()  {
+		borrarModeloTabla();
+		Object[] nuevaFila=new Object[8];
+		List<Cita> citas = new ArrayList<Cita>();
+		try {
+			citas = pbd.devolvercitasHistorial(textHistorial.getText());
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+		
+	
+	
+		for(Cita c:citas) {
+			Paciente p = null;
+			Empleado empleado=null;
+			try {
+				p = pbd.devolverPacientesMedico(c.getCodCita());
+				empleado=pbd.devolverEmpleado(c.getCodMed());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+	
+			nuevaFila[0] = p.getNombre();
+			nuevaFila[1]= p.getApellido();
+			nuevaFila[2] = c.gethInicio();
+			nuevaFila[3] =c.gethFin();
+			nuevaFila[4] =c.getDate();
+			nuevaFila[5] =c.getUbicacion();
+			nuevaFila[6] = c.isUrgente();
+			modeloTabla.addRow(nuevaFila);
+			codcitas.add(c);
+		}
+		
+		}
+	private void añadirFilasHistorialFecha()  {
+		borrarModeloTabla();
+		Object[] nuevaFila=new Object[8];
+		List<Cita> citas = new ArrayList<Cita>();
+		try {
+			citas = pbd.devolvercitasHistorialFechas(textHistorial.getText(),dateChooser.getDate());
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+		
+	
+	
+		for(Cita c:citas) {
+			Paciente p = null;
+			Empleado empleado=null;
+			try {
+				p = pbd.devolverPacientesMedico(c.getCodCita());
+				empleado=pbd.devolverEmpleado(c.getCodMed());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+	
+			nuevaFila[0] = p.getNombre();
+			nuevaFila[1]= p.getApellido();
+			nuevaFila[2] = c.gethInicio();
+			nuevaFila[3] =c.gethFin();
+			nuevaFila[4] =c.getDate();
+			nuevaFila[5] =c.getUbicacion();
+			nuevaFila[6] = c.isUrgente();
+			modeloTabla.addRow(nuevaFila);
+			codcitas.add(c);
+		}
+		
+		}
+	
+			
+		
+	private JButton getBtnBuscarPorFecha() {
+		if (btnBuscarPorFecha == null) {
+			btnBuscarPorFecha = new JButton("Fecha e historial");
+			btnBuscarPorFecha.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					añadirFilasHistorialFecha();
+				}
+			});
+		}
+		return btnBuscarPorFecha;
 	}
 }

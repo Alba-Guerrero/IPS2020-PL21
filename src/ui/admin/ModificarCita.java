@@ -8,6 +8,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import logica.servicios.ParserBaseDeDatos;
+import net.miginfocom.swing.MigLayout;
 import ui.inicio.VentanaInicio;
 
 import java.awt.GridLayout;
@@ -49,7 +50,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
 import java.awt.FlowLayout;
-import net.miginfocom.swing.MigLayout;
+
 import javax.swing.DefaultComboBoxModel;
 
 public class ModificarCita extends JDialog {
@@ -548,7 +549,7 @@ public class ModificarCita extends JDialog {
 			panel_1 = new JPanel();
 			panel_1.setLayout(new MigLayout("", "[109px][grow][][][][][][][][][][][][][][][][][][][][][][][]", "[25px][][]"));
 			panel_1.add(getLblEscogeLaSala(), "cell 0 1,alignx trailing");
-			panel_1.add(getComboBox(), "cell 1 1 6 1");
+			panel_1.add(getComboBox(), "cell 1 1 5 1");
 			panel_1.add(getBtnModificar(), "cell 23 2,alignx left,aligny top");
 		}
 		return panel_1;
@@ -562,10 +563,31 @@ public class ModificarCita extends JDialog {
 	private JComboBox<String> getComboBox() {
 		if (comboBox == null) {
 			comboBox = new JComboBox<String>();
-			comboBox.setModel(new DefaultComboBoxModel<String>(new String[] {"Sala 1", "Sala 2", "Sala 3", "Sala de rayos 1", "Sala de curas 1", "Quir\u00F3fano 1", "Quir\u00F3fano 2"}));
+			List<String> salas= rellenarSalas();
+			//comboBox.setModel(new DefaultComboBoxModel<String>(new String[] {"Sala 1", "Sala 2", "Sala 3", "Sala de rayos 1", "Sala de curas 1", "Quir\u00F3fano 1", "Quir\u00F3fano 2"}));
+			comboBox.setBounds(54, 47, 236, 22);
+			for (int i = 0; i < salas.size(); i++) {
+				comboBox.insertItemAt(salas.get(i), i);
+			}
 		}
 		return comboBox;
 	}
+	
+	private List<String> rellenarSalas() {
+		List<String> salas = new ArrayList<String>();
+		for(int i = 1; i < 4; i++) {
+			salas.add("Quirófano " + i);
+			salas.add("Sala de rayos " + i);
+			salas.add("Pediatría " + i);
+		}
+
+		salas.add("Digestivo");
+		salas.add("Oncología");
+		salas.add("Uroología");
+		salas.add("Cardiología");
+		return salas;
+	}
+	
 	private JTextField getTextSurname() {
 		if (textSurname == null) {
 			textSurname = new JTextField();

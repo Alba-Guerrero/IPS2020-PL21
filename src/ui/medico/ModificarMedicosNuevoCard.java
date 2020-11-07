@@ -9,12 +9,16 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import logica.AsignaDiagnostico;
 import logica.AsignaPreinscripcion;
+import logica.AsignaVacuna;
 import logica.Causas;
 import logica.Cita;
+import logica.Diagnostico;
 import logica.HistorialMedico;
 import logica.Paciente;
 import logica.Preinscripcion;
+import logica.Vacuna;
 import logica.servicios.ParserBaseDeDatos;
 
 import java.awt.Color;
@@ -55,6 +59,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 public class ModificarMedicosNuevoCard extends JDialog {
@@ -78,9 +83,13 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private ParserBaseDeDatos pbd=new ParserBaseDeDatos();
 	private Cita cita; // El paciente del que estamos modificando la cita
 	private Preinscripcion preinscripcion; // La preinscripcion
-	private List<Preinscripcion> preinscripciones;
+	private List<Preinscripcion> preinscripciones; // Las preinscripciones que tenemos en la base de datos
+	private List<Vacuna> vacunas; // Las bacuans que tenemos en la base de datos
+	private List<Diagnostico> diagnosticos; // Los diagnosticos que tenemos en la base de datos
 	private List<Preinscripcion> preinscripcionesPaciente = new ArrayList<Preinscripcion>();
 	private List<AsignaPreinscripcion> asignaPreinscripcionesPaciente = new ArrayList<AsignaPreinscripcion>();
+	private List<AsignaVacuna> asignaVacunasPaciente = new ArrayList<AsignaVacuna>();
+	private List <AsignaDiagnostico> asignaDiagnosticosPaciente = new ArrayList<AsignaDiagnostico>();
 	private Paciente paciente;
 
 	private Causas causa;
@@ -137,6 +146,30 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JRadioButton rdbtnAcudio;
 	private JRadioButton rdbtnNoAcudio;
 	private Component horizontalStrut;
+	private JPanel pn1;
+	private JPanel pn2;
+	private JPanel pn4;
+	private JPanel pn5;
+	private JPanel pn6;
+	private JPanel pn7;
+	private JPanel pn8;
+	private JLabel lblVacuna;
+	private JPanel pn3;
+	private JComboBox<String> cbVacunas;
+	private JButton btnAsignarVacuna;
+	private JScrollPane scrollPanTabla;
+	private JPanel pnDiagnosticos;
+	private JPanel pn1d;
+	private JPanel pn2d;
+	private JPanel pn3d;
+	private JPanel pn4d;
+	private JPanel pn5d;
+	private JPanel pn6d;
+	private JPanel pn7d;
+	private JPanel pn8d;
+	private JLabel lblDiagnosticos;
+	private JComboBox<String> cbDiagnosticos;
+	private JButton btnDiagnosticar;
 
 	/**
 	 * Create the frame.
@@ -150,9 +183,11 @@ public class ModificarMedicosNuevoCard extends JDialog {
 
 
 		preinscripciones = pbd.listarPrescripciones();
+		vacunas = pbd.listarVacunas();
+		diagnosticos = pbd.listarDiagnosticos();
 
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 900, 550);
+		setBounds(100, 100, 1486, 691);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -214,6 +249,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			panelPestañas.addTab("Enferm previas", null, getPanelEnfermedPrevia(), null);
 			panelPestañas.addTab("Vacunas", null, getPanelVacunas(), null);
 			panelPestañas.addTab("Preinscripciones", null, getPnPreinscripciones(), null);
+			panelPestañas.addTab("Diagnosticos", null, getPnDiagnosticos(), null);
+			
 		}
 		return panelPestañas;
 	}
@@ -238,6 +275,15 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel getPanelVacunas() throws SQLException {
 		if (panelVacunas == null) {
 			panelVacunas = new JPanel();
+			panelVacunas.setLayout(new GridLayout(4, 0, 2, 0));
+			panelVacunas.add(getPn1());
+			panelVacunas.add(getPn2());
+			panelVacunas.add(getPn3());
+			panelVacunas.add(getPn4());
+			panelVacunas.add(getPn5());
+			panelVacunas.add(getPn6());
+			panelVacunas.add(getPn7());
+			panelVacunas.add(getPn8());
 			
 		}
 		return panelVacunas;
@@ -252,7 +298,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			pnPreinscripciones.add(getPnIzq());
 			pnPreinscripciones.add(getPnCentro());
 			pnPreinscripciones.add(getPnDcha());
-			panelVacunas.setLayout(new BorderLayout(0, 0));
 		}
 		return pnPreinscripciones;
 	}
@@ -446,36 +491,11 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 	}
 
-	protected void modificarCausas() throws SQLException {
-		String causas = (String) getCbCausas().getSelectedItem();
-		Time hora =  cita.gethInicio();
-
-		java.sql.Date horas = new java.sql.Date(hora.getTime());
-
-		Time hour = new Time(horas.getTime());
-
-		Date fecha = (Date) cita.getDate();
-
-		java.sql.Date sDate = new java.sql.Date(fecha.getTime());
-
-
-		if(!causas.equals("")) {
-			Random r = new Random();
-			String codcausa = "" + r.nextInt(300);
-			pbd.actualizarCausas(codcausa,causas, sDate, hour, cita.getCodMed());
-		}
-		dispose();
-		}
 
 	public List<String> darCausas() {
 		return nombresCausas;
 	}
 
-	public void ponerCausas() {
-		nombresCausas = new ArrayList<>();
-		nombresCausas.add("Rotura de tobillo derecho");
-		nombresCausas.add("Rotura de rodilla derecha");
-	}
 
 	public void añadirCausa(String causa) {
 		nombresCausas.add(causa);
@@ -692,7 +712,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		if (pnResumen == null) {
 			pnResumen = new JPanel();
 			pnResumen.setLayout(new GridLayout(0, 1, 0, 0));
-			pnResumen.add(getTable());
+			//pnResumen.add(getTable());
+			pnResumen.add(getScrollPanTabla());
 			//pnResumen.add(getList());
 			//pnResumen.add(getTextArea_1());
 		}
@@ -710,9 +731,30 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getBtnBorrar() {
 		if (btnBorrar == null) {
 			btnBorrar = new JButton("Borrar preinscripci\u00F3n");
+			btnBorrar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int fila=table.getSelectedRow();
+					
+					if (fila != -1) {
+						int res = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea borrar la preinscripción?","Mensaje de confirmación",JOptionPane.YES_NO_OPTION);
+						if(res == JOptionPane.YES_OPTION) {	
+								
+								preinscripcionesPaciente.remove(table.getSelectedRow());
+								asignaPreinscripcionesPaciente.remove(table.getSelectedRow());
+								
+								añadirFilas();
+						
+						}						
+					}		
+				}
+			});
 		}
 		return btnBorrar;
 	}
+	
+	
+
+
 	private JPanel getPnResumenPreinscripciones() {
 		if (pnResumenPreinscripciones == null) {
 			pnResumenPreinscripciones = new JPanel();
@@ -867,8 +909,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		
 		preinscripcionesPaciente.add(p); // Añadimos la preinscripcion
 		crearAsignaPreinscripcion(p);
-		
-		if (tablaLista = false) { // Para que no casque al pintar la tabla de las preinscripciones
+				
+		if (tablaLista == false) { // Para que no casque al pintar la tabla de las preinscripciones
 			tablaLista = true;
 		}
 		
@@ -941,7 +983,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	
 	private JTable getTable() {
 		if (table == null) {
-			table = new JTable();
 			
 			String[] nombreColumnas= {"Nombre","Medicamento","Cantidad","Duracion","Intervalo"};
 			modeloTabla= new ModeloNoEditable(nombreColumnas,0);
@@ -952,11 +993,12 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
 			table.setRowSorter(sorter);
 			
-//			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-//			sortKeys.add(new RowSorter.SortKey(6, SortOrder.ASCENDING));
-//			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
-//			
-//			sorter.setSortKeys(sortKeys);
+			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+			sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
+			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+			
+			sorter.setSortKeys(sortKeys);
+			
 			añadirFilas();
 		}
 		return table;
@@ -970,6 +1012,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		borrarModeloTabla(); // Borramos todo antes de volver a pintar
 	
 		Object[] nuevaFila=new Object[5]; // 5 son las columnas
+				
 		
 		if (tablaLista) {
 			for (AsignaPreinscripcion a : asignaPreinscripcionesPaciente) {
@@ -977,7 +1020,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 				
 				boolean medicamento = false;
 				for (Preinscripcion p : preinscripcionesPaciente) {
-					if (p.getNombre().equals(a.getCodigoAsignaPreinscripcion())) { // Si es la preinscripcion
+					if (p.getNombre().equals(a.getCodigoPreinscripcion())) { // Si es la preinscripcion
 						
 						if (p.isMedicamento()) { // Si la preinscripcion es un medicamento
 							nuevaFila[1] = "Si";
@@ -1000,7 +1043,12 @@ public class ModificarMedicosNuevoCard extends JDialog {
 					nuevaFila[4] = "-";
 				}
 				
+				
+				modeloTabla.addRow(nuevaFila); // Añado la fila
+				
 			}
+			
+			
 		}
 		
 	}
@@ -1023,17 +1071,16 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	 * @throws SQLException 
 	 */
 	private void guardar() throws SQLException {
-		
-		// Guardo las preinscripciones que le he asignado al paciente
-		if (!asignaPreinscripcionesPaciente.isEmpty()) { // Que le hayamos asignado algo
-			for (AsignaPreinscripcion ap : asignaPreinscripcionesPaciente) { // Voy guardando cada una de las preinscripciones que le he asignado
-				pbd.nuevaAsignaPreinscripcion(ap);
-			}
-		}
-		
-		
-		// AÑADIR LAS DEMAS MODIFICACIONES DE LA CITA
+		guardarPreinscripciones();
+		//guardarCausas();
+		guardarVacunas();
+		guardarDiagnosticos();
 	}
+
+
+
+
+
 	private JPanel getPanel_3() {
 		if (panel_3 == null) {
 			panel_3 = new JPanel();
@@ -1060,5 +1107,337 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			horizontalStrut = Box.createHorizontalStrut(60);
 		}
 		return horizontalStrut;
+	}
+	
+	protected void guardarCausas() throws SQLException {
+		String causas = getCbCausas().getSelectedItem().toString();
+		String nHistorial = "" + mm.getPaciente().getHistorial();
+		Time hora =  cita.gethInicio();
+		
+		java.sql.Date horas = new java.sql.Date(hora.getTime());
+		
+		Time hour = new Time(horas.getTime());
+		
+		Date fecha = (Date) cita.getDate();
+		
+		java.sql.Date sDate = new java.sql.Date(fecha.getTime());
+		
+
+		if(!causas.equals("")) {
+			Random r = new Random();
+			String codcausa = "" + r.nextInt(300);
+			pbd.actualizarCausas(codcausa,causas, nHistorial, sDate, hour, cita.getCodMed());
+		}
+		
+	}
+	
+	public void ponerCausas() throws SQLException {
+		nombresCausas = new ArrayList<>() ;
+		List<String> causas = pbd.buscarNombreTodasCausas();
+		for(int i =0; i< causas.size(); i++) {
+			nombresCausas.add(causas.get(i));
+		}
+	}
+	
+	private JPanel getPn1() {
+		if (pn1 == null) {
+			pn1 = new JPanel();
+		}
+		return pn1;
+	}
+	private JPanel getPn2() {
+		if (pn2 == null) {
+			pn2 = new JPanel();
+		}
+		return pn2;
+	}
+	private JPanel getPn4() {
+		if (pn4 == null) {
+			pn4 = new JPanel();
+			pn4.setLayout(new GridLayout(0, 2, 0, 0));
+			pn4.add(getCbVacunas());
+		}
+		return pn4;
+	}
+	private JPanel getPn5() {
+		if (pn5 == null) {
+			pn5 = new JPanel();
+		}
+		return pn5;
+	}
+	private JPanel getPn6() {
+		if (pn6 == null) {
+			pn6 = new JPanel();
+		}
+		return pn6;
+	}
+	private JPanel getPn7() {
+		if (pn7 == null) {
+			pn7 = new JPanel();
+		}
+		return pn7;
+	}
+	private JPanel getPn8() {
+		if (pn8 == null) {
+			pn8 = new JPanel();
+			pn8.add(getBtnAsignarVacuna());
+		}
+		return pn8;
+	}
+	private JLabel getLabel_4_8() {
+		if (lblVacuna == null) {
+			lblVacuna = new JLabel("Vacuna:");
+			lblVacuna.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		}
+		return lblVacuna;
+	}
+	private JPanel getPn3() {
+		if (pn3 == null) {
+			pn3 = new JPanel();
+			pn3.add(getLabel_4_8());
+		}
+		return pn3;
+	}
+	private JComboBox<String> getCbVacunas() {
+		if (cbVacunas == null) {
+			cbVacunas = new JComboBox();
+			
+			String[] nombreVacunas = new String[vacunas.size()];
+			for (int i = 0; i < vacunas.size(); i++) {
+				nombreVacunas[i] = vacunas.get(i).getCodVacuna();
+			}
+			
+			cbVacunas.setModel(new DefaultComboBoxModel<String>(nombreVacunas));	
+		}
+		
+		return cbVacunas;
+	}
+	private JButton getBtnAsignarVacuna() {
+		if (btnAsignarVacuna == null) {
+			btnAsignarVacuna = new JButton("Asignar vacuna");
+			btnAsignarVacuna.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					anadirVacuna();
+				}
+
+
+			});
+		}
+		return btnAsignarVacuna;
+	}
+	private JScrollPane getScrollPanTabla() {
+		if (scrollPanTabla == null) {
+			scrollPanTabla = new JScrollPane();
+			
+			scrollPanTabla.setViewportView(getTable());
+		}
+		return scrollPanTabla;
+	}
+	
+	
+	
+	/**
+	 * Método para añadir la vacuna temporalmente al paciente
+	 */
+	private void anadirVacuna() {
+		int indice = cbVacunas.getSelectedIndex(); // el índice que hay seleccionado en el cb
+		Vacuna vacuna = null;
+		
+		// Buscamos la vacuna que hay seleccionada en el cb
+		int contador = 0;
+		for(Vacuna v : vacunas) {
+			if (indice == contador) {
+				vacuna = v;
+			}
+			contador = contador + 1;
+		}
+		
+		String codVacuna = vacuna.getCodVacuna();	
+		String nombreVacuna = vacuna.getNombreVacuna();
+		String codEmpleado = cita.getCodMed();
+		String codHistorial = paciente.getHistorial();
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());		
+		
+		
+		AsignaVacuna av = new AsignaVacuna(codVacuna, nombreVacuna, codEmpleado, codHistorial, fecha, hora);
+		
+		asignaVacunasPaciente.add(av);
+	}
+	
+	
+	/**
+	 * Método para asignar definitivamente las vacunas al paciente
+	 * @throws SQLException 
+	 */
+	private void guardarVacunas() throws SQLException {
+		
+		if (!asignaVacunasPaciente.isEmpty()) { // Que le hayamos asignado alguna vacuna
+			for (AsignaVacuna av : asignaVacunasPaciente) { // Voy guardando cada una de las vacunas que le he asignado
+				pbd.nuevaAsignaVacuna(av);
+			}
+		}
+	}
+	
+	
+	/**
+	 * Método para guardar las preinscripciones que se le han asignado a un paciente
+	 * @throws SQLException 
+	 */
+	private void guardarPreinscripciones() throws SQLException {
+		// Guardo las preinscripciones que le he asignado al paciente
+		if (!asignaPreinscripcionesPaciente.isEmpty()) { // Que le hayamos asignado algo
+			for (AsignaPreinscripcion ap : asignaPreinscripcionesPaciente) { // Voy guardando cada una de las preinscripciones que le he asignado
+				pbd.nuevaAsignaPreinscripcion(ap);
+			}
+		}		
+	}
+	private JPanel getPnDiagnosticos() {
+		if (pnDiagnosticos == null) {
+			pnDiagnosticos = new JPanel();
+			pnDiagnosticos.setLayout(new GridLayout(4, 0, 2, 0));
+			pnDiagnosticos.add(getPn1d());
+			pnDiagnosticos.add(getPn2d());
+			pnDiagnosticos.add(getPn3d());
+			pnDiagnosticos.add(getPn4d());
+			pnDiagnosticos.add(getPn5d());
+			pnDiagnosticos.add(getPn6d());
+			pnDiagnosticos.add(getPn7d());
+			pnDiagnosticos.add(getPn8d());
+		}
+		return pnDiagnosticos;
+	}
+	private JPanel getPn1d() {
+		if (pn1d == null) {
+			pn1d = new JPanel();
+		}
+		return pn1d;
+	}
+	private JPanel getPn2d() {
+		if (pn2d == null) {
+			pn2d = new JPanel();
+		}
+		return pn2d;
+	}
+	private JPanel getPn3d() {
+		if (pn3d == null) {
+			pn3d = new JPanel();
+			pn3d.add(getLabel_4_9());
+		}
+		return pn3d;
+	}
+	private JPanel getPn4d() {
+		if (pn4d == null) {
+			pn4d = new JPanel();
+			pn4d.setLayout(new GridLayout(0, 2, 0, 0));
+			pn4d.add(getCbDiagnosticos());
+		}
+		return pn4d;
+	}
+	private JPanel getPn5d() {
+		if (pn5d == null) {
+			pn5d = new JPanel();
+		}
+		return pn5d;
+	}
+	private JPanel getPn6d() {
+		if (pn6d == null) {
+			pn6d = new JPanel();
+		}
+		return pn6d;
+	}
+	private JPanel getPn7d() {
+		if (pn7d == null) {
+			pn7d = new JPanel();
+		}
+		return pn7d;
+	}
+	private JPanel getPn8d() {
+		if (pn8d == null) {
+			pn8d = new JPanel();
+			pn8d.add(getBtnDiagnosticar());
+		}
+		return pn8d;
+	}
+	private JLabel getLabel_4_9() {
+		if (lblDiagnosticos == null) {
+			lblDiagnosticos = new JLabel("Diagnosticos:");
+		}
+		return lblDiagnosticos;
+	}
+	private JComboBox<String> getCbDiagnosticos() {
+		if (cbDiagnosticos == null) {
+			cbDiagnosticos = new JComboBox();
+			
+			String[] nombreDiagnosticos = new String[diagnosticos.size()];
+			for (int i = 0; i < diagnosticos.size(); i++) {
+				nombreDiagnosticos[i] = diagnosticos.get(i).getNombre();
+			}
+			
+			cbDiagnosticos.setModel(new DefaultComboBoxModel<String>(nombreDiagnosticos));
+		}
+		return cbDiagnosticos;
+	}
+	private JButton getBtnDiagnosticar() {
+		if (btnDiagnosticar == null) {
+			btnDiagnosticar = new JButton("Diagnosticar");
+			btnDiagnosticar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					anadirDiagnostico();
+				}
+			});
+		}
+		return btnDiagnosticar;
+	}
+
+	
+	/**
+	 * Método para asignar un diagnóstico nuevo a un paciente
+	 */
+	protected void anadirDiagnostico() {
+		int indice = cbDiagnosticos.getSelectedIndex(); // el índice que hay seleccionado en el cb
+		Diagnostico diagnostico = null;
+		
+		// Buscamos la vacuna que hay seleccionada en el cb
+		int contador = 0;
+		for(Diagnostico d : diagnosticos) {
+			if (indice == contador) {
+				diagnostico = d;
+			}
+			contador = contador + 1;
+		}
+		
+		
+		Random r = new Random();
+		String codAsigDiagnostico = "" + r.nextInt(999); // El código es aleatorio
+		
+		String nombreDiagnostico = diagnostico.getNombre();
+		String nHistorial = paciente.getHistorial(); // El número de historial del paciente a quien le hemos asignado el diagnostico
+		String nDiagnostico = diagnostico.getNumeroDiagnostico(); // El identificador del diagnostico
+		String codMedico = cita.getCodMed();
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());		
+		
+		
+		AsignaDiagnostico ad = new AsignaDiagnostico(codAsigDiagnostico, nombreDiagnostico, nHistorial, nDiagnostico, nDiagnostico, fecha, hora);
+		
+		asignaDiagnosticosPaciente.add(ad);
+		
+	}
+	
+	
+	
+	
+	
+	/**
+	 * Método para guardar definitivamente todos los diagnósticos que se le han asignado al paciente
+	 * @throws SQLException 
+	 */
+	private void guardarDiagnosticos() throws SQLException {
+		if (!asignaDiagnosticosPaciente.isEmpty()) { // Que le hayamos asignado algun diagnostico
+			for (AsignaDiagnostico ad : asignaDiagnosticosPaciente) { // Voy guardando cada uno de los diagnosticos
+				pbd.nuevaAsignaDiagnostico(ad);
+			}
+		}	
 	}
 }
