@@ -52,9 +52,14 @@ public class VentanaAdministrador extends JDialog {
 	private JPanel panel_2;
 	private JPanel panel_3;
 	private JButton btnNewButton;
-	private JButton btnNewButton_1;
 
 	private String codAdmin;
+	private JPanel panel_4;
+	private JPanel panel_5;
+	private JButton btnNewButton_1;
+	private JPanel panel_6;
+	private JPanel panel_7;
+	private JPanel panel_8;
 
 	/**
 	 * Create the frame.
@@ -87,7 +92,7 @@ public class VentanaAdministrador extends JDialog {
 		if (pnCentro == null) {
 			pnCentro = new JPanel();
 			pnCentro.setBackground(Color.WHITE);
-			pnCentro.setLayout(new GridLayout(0, 7, 0, 0));
+			pnCentro.setLayout(new GridLayout(0, 9, 0, 0));
 			pnCentro.add(getPanel1());
 			pnCentro.add(getPanel2());
 			pnCentro.add(getPanel3());
@@ -95,8 +100,12 @@ public class VentanaAdministrador extends JDialog {
 			pnCentro.add(getPanel5());
 			pnCentro.add(getPanel6());
 			pnCentro.add(getPanel7());
+			pnCentro.add(getPanel_4());
+			pnCentro.add(getPanel_5());
 			pnCentro.add(getBtnAsignarCitas());
 			pnCentro.add(getPanel8());
+			pnCentro.add(getBtnNewButton_1_1());
+			pnCentro.add(getPanel_6());
 			pnCentro.add(getBtnVerCitas());
 			pnCentro.add(getPanel9());
 			pnCentro.add(getBtnJornada());
@@ -107,6 +116,8 @@ public class VentanaAdministrador extends JDialog {
 			pnCentro.add(getPanel8_1());
 			pnCentro.add(getPanel());
 			pnCentro.add(getPanel_1());
+			pnCentro.add(getPanel_8());
+			pnCentro.add(getPanel_7());
 			pnCentro.add(getPanel_2());
 			pnCentro.add(getPanel_3());
 		}
@@ -258,7 +269,6 @@ public class VentanaAdministrador extends JDialog {
 		if (panel8 == null) {
 			panel8 = new JPanel();
 			panel8.setBackground(Color.WHITE);
-			panel8.add(getBtnNewButton_1());
 		}
 		return panel8;
 	}
@@ -367,26 +377,45 @@ protected void verCalendarioCitas() {
 		}
 		return btnNewButton;
 	}
-	private JButton getBtnNewButton_1() {
+	private JPanel getPanel_4() {
+		if (panel_4 == null) {
+			panel_4 = new JPanel();
+			panel_4.setBackground(Color.WHITE);
+		}
+		return panel_4;
+	}
+	private JPanel getPanel_5() {
+		if (panel_5 == null) {
+			panel_5 = new JPanel();
+			panel_5.setBackground(Color.WHITE);
+		}
+		return panel_5;
+	}
+	private JButton getBtnNewButton_1_1() {
 		if (btnNewButton_1 == null) {
 			btnNewButton_1 = new JButton("Asignar vacaciones");
-			btnNewButton_1.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					AsignarVacaciones av;
-					try {
-						av = new AsignarVacaciones(codAdmin);
-						av.setVisible(true);
-						av.setLocationRelativeTo(null);
-						av.setResizable(true);
-						av.setModal(true);
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					
-				}
-			});
 		}
 		return btnNewButton_1;
+	}
+	private JPanel getPanel_6() {
+		if (panel_6 == null) {
+			panel_6 = new JPanel();
+			panel_6.setBackground(Color.WHITE);
+		}
+		return panel_6;
+	}
+	private JPanel getPanel_7() {
+		if (panel_7 == null) {
+			panel_7 = new JPanel();
+			panel_7.setBackground(Color.WHITE);
+		}
+		return panel_7;
+	}
+	private JPanel getPanel_8() {
+		if (panel_8 == null) {
+			panel_8 = new JPanel();
+			panel_8.setBackground(Color.WHITE);
+		}
+		return panel_8;
 	}
 }
