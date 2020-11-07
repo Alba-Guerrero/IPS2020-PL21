@@ -439,6 +439,9 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 			btnBuscarPorFecha = new JButton("Fecha e historial");
 			btnBuscarPorFecha.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
+					if(txtNDeHistorial.getText().equals("")|| txtNDeHistorial.getText().equals("N\u00BA de historial"))
+						JOptionPane.showMessageDialog(null, "Por favor, introduzca un número de historial válido o fecha valida");
+					else
 					añadirFilasHistorialFecha();
 				}
 			});

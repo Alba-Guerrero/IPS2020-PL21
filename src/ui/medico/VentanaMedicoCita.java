@@ -29,6 +29,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import com.toedter.calendar.JDateChooser;
 import javax.swing.JButton;
@@ -347,7 +348,7 @@ public class VentanaMedicoCita extends JDialog {
 				public void mouseClicked(MouseEvent arg0) {
 					
 					
-					t.setText("");
+					textHistorial.setText("");
 				}
 			});
 			textHistorial.setText("N\u00BA de historial");
@@ -360,6 +361,9 @@ public class VentanaMedicoCita extends JDialog {
 			irHistorial = new JButton("Ir");
 			irHistorial.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
+					if(textHistorial.getText().equals("")|| textHistorial.getText().equals("N\u00BA de historial"))
+						JOptionPane.showMessageDialog(null, "Por favor, introduzca un número de historial válido");
+					else
 					añadirFilasHistorial();
 					
 				}
@@ -369,10 +373,10 @@ public class VentanaMedicoCita extends JDialog {
 	}
 	private void añadirFilasHistorial()  {
 		borrarModeloTabla();
-		Object[] nuevaFila=new Object[8];
+		Object[] nuevaFila=new Object[7];
 		List<Cita> citas = new ArrayList<Cita>();
 		try {
-			citas = pbd.devolvercitasHistorial(textHistorial.getText());
+			citas = pbd.devolvercitasHistorialMed(textHistorial.getText(),codmedico);
 		} catch (SQLException e) {
 
 			e.printStackTrace();
@@ -408,7 +412,7 @@ public class VentanaMedicoCita extends JDialog {
 		Object[] nuevaFila=new Object[8];
 		List<Cita> citas = new ArrayList<Cita>();
 		try {
-			citas = pbd.devolvercitasHistorialFechas(textHistorial.getText(),dateChooser.getDate());
+			citas = pbd.devolvercitasHistorialFechasMedico(textHistorial.getText(),dateChooser.getDate(),codmedico);
 		} catch (SQLException e) {
 
 			e.printStackTrace();
@@ -447,7 +451,12 @@ public class VentanaMedicoCita extends JDialog {
 			btnBuscarPorFecha = new JButton("Fecha e historial");
 			btnBuscarPorFecha.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					if(textHistorial.getText().equals("")|| textHistorial.getText().equals("N\u00BA de historial"))
+						JOptionPane.showMessageDialog(null, "Por favor, introduzca un número de historial válido o una fecha válida");
+					else {
 					añadirFilasHistorialFecha();
+					 textHistorial.getText().equals("N\u00BA de historial");
+					}
 				}
 			});
 		}

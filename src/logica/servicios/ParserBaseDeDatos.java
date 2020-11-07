@@ -55,7 +55,7 @@ public class ParserBaseDeDatos {
 	private final static String GET_CITA="select * from cita c where c.fecha>=? ;";
 	private final static String GET_CITAS_MED="select * from  medico m ,empleado e where m.codmedico= e.codempleado and  e.codempleado=?  ;";
 	private final static String GET_CITA_FECHA_HISTORIAL="select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.codpaciente= p.codpaciente and c.fecha=? and p.nhistorial =?";
-	
+	private final static String GET_CITA_FECHA_HISTORIAL_MED="select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.codpaciente= p.codpaciente and c.fecha=? and p.nhistorial =? and c.codmedico=?";
 	private final static String GET_ADMINISTRATIVO = "Select * from administrativo where codAdmin=?";
 	private final static String GET_MEDICO = "Select * from medico where codmedico=?";
 	
@@ -99,6 +99,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	private final static String LIST_DIAGNOSTICOS = "Select * from diagnostico";
 	
 	private final static String GET_CITA_HISTORIAL = "select * from cita c,paciente p,historial h where c.codpaciente=p.codpaciente and h.nhistorial=?";
+	private final static String GET_CITA_HISTORIAL_MED = "select * from cita c,paciente p,historial h where c.codpaciente=p.codpaciente  and h.nhistorial=? and c.codmedico=?";
 	private final static String DELETE_CITA="delete from cita where codcita=?;";
 	private final static String FIND_MED_BY_NAME="select *  from medico m,empleado e where e.codempleado=m.codmedico and  e.nombre=? ;";
 	private final static String FIND_MED_BY_SURNAME="select *  from medico m,empleado e where e.codempleado=m.codmedico and  e.apellido=? ;";
@@ -600,6 +601,34 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		PreparedStatement pst=con.prepareStatement(GET_CITA_HISTORIAL);
 		boolean res=false;
 		pst.setString(1, codhistorial);
+
+	
+		ResultSet rs = pst.executeQuery();
+		
+	while(rs.next()) {
+		if(rs.getByte("urgencia")==0)
+			 res=true;
+		
+		citas.add(new Cita(rs.getString("codcita"),rs.getString("codpaciente"),rs.getString("codmedico"),rs.getTime("hinicio"), rs.getTime("hfin"),rs.getDate("fecha"),rs.getString("ubicacion"),res));
+		
+	}
+	
+	
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return citas;
+}
+	
+	public List<Cita> devolvercitasHistorialMed(String codhistorial,String codMedico) throws SQLException {
+		List<Cita> citas = new ArrayList<Cita>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(GET_CITA_HISTORIAL_MED);
+		boolean res=false;
+		pst.setString(1, codhistorial);
+		pst.setString(2, codMedico);
 
 	
 		ResultSet rs = pst.executeQuery();
@@ -1473,6 +1502,34 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		pst.close();
 		con.close();
 		return nombreDiagnosticos;
+	}
+
+	public List<Cita> devolvercitasHistorialFechasMedico(String historial, java.util.Date fecha, String codmedico) throws SQLException {
+		List<Cita> citas = new ArrayList<Cita>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(GET_CITA_FECHA_HISTORIAL_MED);
+		boolean res=false;
+		java.sql.Date date = new java.sql.Date(fecha.getTime());
+		pst.setDate(1, date);
+		pst.setString(2,historial);
+		pst.setString(3, codmedico);
+		ResultSet rs = pst.executeQuery();
+		
+		
+	while(rs.next()) {
+		if(rs.getByte("urgencia")==1)
+			 res=true;
+			citas.add(new Cita(rs.getString("codcita"),rs.getString("codpaciente"),rs.getString("codmedico"),rs.getTime("hinicio"), rs.getTime("hfin"),rs.getDate("fecha"),rs.getString("ubicacion"),res));
+		
+	}
+	
+	
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return citas;
 	}
 
 	
