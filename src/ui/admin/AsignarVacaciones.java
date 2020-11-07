@@ -243,10 +243,13 @@ public class AsignarVacaciones extends JDialog{
 										 "Advertencia: Dar vacaciones", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 								if(res == JOptionPane.YES_OPTION) {
 									asignarVacaciones();
+									mensajeVacaciones();
+									dispose();
 								}
 							}
 							else {
 								asignarVacaciones();
+								mensajeVacaciones();
 								dispose();
 							}
 						}
@@ -260,16 +263,23 @@ public class AsignarVacaciones extends JDialog{
 		return btnAsignar;
 	}
 
-
+	private void mensajeVacaciones() {
+		JOptionPane.showMessageDialog(null, "Vacaciones dadas correctamente");
+	}
+	
+	
 	protected void asignarVacaciones() throws SQLException {
 		Date d1 = getChooseDInicio().getDate();
+		java.sql.Date dIn = new java.sql.Date(d1.getTime());
 		Date d2 = getchooseDFin().getDate();
+		java.sql.Date dFin = new java.sql.Date(d2.getTime());
+		
 		String codEmpleado = getSelectedEmpleadoCodigo();
 		Random r = new Random();
 		String codVac = "va" + r.nextInt(300);
-		Vacaciones vacaciones = new Vacaciones(codVac, codEmpleado, codAdmin, d1, d2);
+		Vacaciones vacaciones = new Vacaciones(codVac, codEmpleado, codAdmin, dIn, dFin);
 				
-		//pbd.asignarVacaciones(vacaciones);
+		pbd.asignarVacaciones(vacaciones);
 	}
 	
 	

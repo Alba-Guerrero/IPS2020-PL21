@@ -1311,8 +1311,8 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		pst.setString(1,codVac);
 		pst.setString(2,codEmpleado);
 		pst.setString(3,codAdmin);
-		pst.setDate(3, dateInicio);
-		pst.setDate(4,dateFinal);
+		pst.setDate(4, dateInicio);
+		pst.setDate(5,dateFinal);
 		
 		pst.executeUpdate();
 	
