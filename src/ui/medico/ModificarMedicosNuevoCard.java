@@ -9,10 +9,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import logica.AsignaDiagnostico;
 import logica.AsignaPreinscripcion;
 import logica.AsignaVacuna;
 import logica.Causas;
 import logica.Cita;
+import logica.Diagnostico;
 import logica.HistorialMedico;
 import logica.Paciente;
 import logica.Preinscripcion;
@@ -82,9 +84,11 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private Preinscripcion preinscripcion; // La preinscripcion
 	private List<Preinscripcion> preinscripciones; // Las preinscripciones que tenemos en la base de datos
 	private List<Vacuna> vacunas; // Las bacuans que tenemos en la base de datos
+	private List<Diagnostico> diagnosticos; // Los diagnosticos que tenemos en la base de datos
 	private List<Preinscripcion> preinscripcionesPaciente = new ArrayList<Preinscripcion>();
 	private List<AsignaPreinscripcion> asignaPreinscripcionesPaciente = new ArrayList<AsignaPreinscripcion>();
 	private List<AsignaVacuna> asignaVacunasPaciente = new ArrayList<AsignaVacuna>();
+	private List <AsignaDiagnostico> asignaDiagnosticosPaciente = new ArrayList<AsignaDiagnostico>();
 	private Paciente paciente;
 
 	private Causas causa;
@@ -153,6 +157,18 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JComboBox<String> cbVacunas;
 	private JButton btnAsignarVacuna;
 	private JScrollPane scrollPanTabla;
+	private JPanel pnDiagnosticos;
+	private JPanel pn1d;
+	private JPanel pn2d;
+	private JPanel pn3d;
+	private JPanel pn4d;
+	private JPanel pn5d;
+	private JPanel pn6d;
+	private JPanel pn7d;
+	private JPanel pn8d;
+	private JLabel lblDiagnosticos;
+	private JComboBox<String> cbDiagnosticos;
+	private JButton btnDiagnosticar;
 
 	/**
 	 * Create the frame.
@@ -167,6 +183,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 
 		preinscripciones = pbd.listarPrescripciones();
 		vacunas = pbd.listarVacunas();
+		diagnosticos = pbd.listarDiagnosticos();
 
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1486, 691);
@@ -231,6 +248,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			panelPestañas.addTab("Enferm previas", null, getPanelEnfermedPrevia(), null);
 			panelPestañas.addTab("Vacunas", null, getPanelVacunas(), null);
 			panelPestañas.addTab("Preinscripciones", null, getPnPreinscripciones(), null);
+			panelPestañas.addTab("Diagnosticos", null, getPnDiagnosticos(), null);
+			
 		}
 		return panelPestañas;
 	}
@@ -1054,7 +1073,9 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		guardarPreinscripciones();
 		guardarCausas();
 		guardarVacunas();
+		guardarDiagnosticos();
 	}
+
 
 
 
@@ -1268,5 +1289,153 @@ public class ModificarMedicosNuevoCard extends JDialog {
 				pbd.nuevaAsignaPreinscripcion(ap);
 			}
 		}		
+	}
+	private JPanel getPnDiagnosticos() {
+		if (pnDiagnosticos == null) {
+			pnDiagnosticos = new JPanel();
+			pnDiagnosticos.setLayout(new GridLayout(4, 0, 2, 0));
+			pnDiagnosticos.add(getPn1d());
+			pnDiagnosticos.add(getPn2d());
+			pnDiagnosticos.add(getPn3d());
+			pnDiagnosticos.add(getPn4d());
+			pnDiagnosticos.add(getPn5d());
+			pnDiagnosticos.add(getPn6d());
+			pnDiagnosticos.add(getPn7d());
+			pnDiagnosticos.add(getPn8d());
+		}
+		return pnDiagnosticos;
+	}
+	private JPanel getPn1d() {
+		if (pn1d == null) {
+			pn1d = new JPanel();
+		}
+		return pn1d;
+	}
+	private JPanel getPn2d() {
+		if (pn2d == null) {
+			pn2d = new JPanel();
+		}
+		return pn2d;
+	}
+	private JPanel getPn3d() {
+		if (pn3d == null) {
+			pn3d = new JPanel();
+			pn3d.add(getLabel_4_9());
+		}
+		return pn3d;
+	}
+	private JPanel getPn4d() {
+		if (pn4d == null) {
+			pn4d = new JPanel();
+			pn4d.setLayout(new GridLayout(0, 2, 0, 0));
+			pn4d.add(getCbDiagnosticos());
+		}
+		return pn4d;
+	}
+	private JPanel getPn5d() {
+		if (pn5d == null) {
+			pn5d = new JPanel();
+		}
+		return pn5d;
+	}
+	private JPanel getPn6d() {
+		if (pn6d == null) {
+			pn6d = new JPanel();
+		}
+		return pn6d;
+	}
+	private JPanel getPn7d() {
+		if (pn7d == null) {
+			pn7d = new JPanel();
+		}
+		return pn7d;
+	}
+	private JPanel getPn8d() {
+		if (pn8d == null) {
+			pn8d = new JPanel();
+			pn8d.add(getBtnDiagnosticar());
+		}
+		return pn8d;
+	}
+	private JLabel getLabel_4_9() {
+		if (lblDiagnosticos == null) {
+			lblDiagnosticos = new JLabel("Diagnosticos:");
+		}
+		return lblDiagnosticos;
+	}
+	private JComboBox<String> getCbDiagnosticos() {
+		if (cbDiagnosticos == null) {
+			cbDiagnosticos = new JComboBox();
+			
+			String[] nombreDiagnosticos = new String[diagnosticos.size()];
+			for (int i = 0; i < diagnosticos.size(); i++) {
+				nombreDiagnosticos[i] = diagnosticos.get(i).getNombre();
+			}
+			
+			cbDiagnosticos.setModel(new DefaultComboBoxModel<String>(nombreDiagnosticos));
+		}
+		return cbDiagnosticos;
+	}
+	private JButton getBtnDiagnosticar() {
+		if (btnDiagnosticar == null) {
+			btnDiagnosticar = new JButton("Diagnosticar");
+			btnDiagnosticar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					anadirDiagnostico();
+				}
+			});
+		}
+		return btnDiagnosticar;
+	}
+
+	
+	/**
+	 * Método para asignar un diagnóstico nuevo a un paciente
+	 */
+	protected void anadirDiagnostico() {
+		int indice = cbDiagnosticos.getSelectedIndex(); // el índice que hay seleccionado en el cb
+		Diagnostico diagnostico = null;
+		
+		// Buscamos la vacuna que hay seleccionada en el cb
+		int contador = 0;
+		for(Diagnostico d : diagnosticos) {
+			if (indice == contador) {
+				diagnostico = d;
+			}
+			contador = contador + 1;
+		}
+		
+		
+		Random r = new Random();
+		String codAsigDiagnostico = "" + r.nextInt(999); // El código es aleatorio
+		
+		String nombreDiagnostico = diagnostico.getNombre();
+		String nHistorial = paciente.getHistorial(); // El número de historial del paciente a quien le hemos asignado el diagnostico
+		String nDiagnostico = diagnostico.getNumeroDiagnostico(); // El identificador del diagnostico
+		String codMedico = cita.getCodMed();
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());		
+		
+		
+		AsignaDiagnostico ad = new AsignaDiagnostico(codAsigDiagnostico, nombreDiagnostico, nHistorial, nDiagnostico, nDiagnostico, fecha, hora);
+		
+		asignaDiagnosticosPaciente.add(ad);
+		
+	}
+	
+	
+	
+	
+	
+	/**
+	 * Método para guardar definitivamente todos los diagnósticos que se le han asignado al paciente
+	 * @throws SQLException 
+	 */
+	private void guardarDiagnosticos() throws SQLException {
+		if (!asignaDiagnosticosPaciente.isEmpty()) { // Que le hayamos asignado algun diagnostico
+			for (AsignaDiagnostico ad : asignaDiagnosticosPaciente) { // Voy guardando cada uno de los diagnosticos
+				pbd.nuevaAsignaDiagnostico(ad);
+			}
+		}	
 	}
 }

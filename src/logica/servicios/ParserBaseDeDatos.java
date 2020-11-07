@@ -11,10 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import conexion.Conexion;
+import logica.AsignaDiagnostico;
 import logica.AsignaPreinscripcion;
 import logica.AsignaVacuna;
 import logica.Causas;
 import logica.Cita;
+import logica.Diagnostico;
 import logica.HistorialMedico;
 import logica.Paciente;
 import logica.Preinscripcion;
@@ -81,10 +83,16 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
 	private final static String ADD_ASIGNA_PPREINSCRIPCION = "INSERT INTO ASIGNAPRESCRIPCION (CODASIGPRESCRIPCION, NOMBREPRESCRIPCION, NHISTORIAL, CODEMPLEADO, CANTIDAD, INTERVALO, DURACION, INSTRUCCIONES, FECHA, HORA ) VALUES(?,?,?,?,?,?,?,?,?,?)";    
 
+	private final static String ADD_ASIGNA_DIAGNOSTICO = "INSERT INTO ASIGNADIAGNOSTICO (CODASIGDIAGNOSTICO, NHISTORIAL, NDIAGNOSTICO, CODMEDICO, FECHA, HORA) VALUES (?,?,?,?,?,?)";
+	
 	private final static String ADD_PREINSCRIPCION = "INSERT INTO PRESCRIPCION (NOMBREPRESCRIPCION, MEDICAMENTO)" + " VALUES(?,?)";
 	
 	
+	
 	private final static String LIST_PREINSCRIPCIONES = "Select * from prescripcion";
+	
+	private final static String LIST_DIAGNOSTICOS = "Select * from diagnostico";
+	
 	private final static String GET_CITA_HISTORIAL = "select * from cita c,paciente p,historial h where c.codpaciente=p.codpaciente and h.nhistorial=?";
 	private final static String DELETE_CITA="delete from cita where codcita=?;";
 	private final static String FIND_MED_BY_NAME="select *  from medico m,empleado e where e.codempleado=m.codmedico and  e.nombre=? ;";
@@ -96,6 +104,8 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	private final static String VER_PREINSCRIPCIONES_ASIGNADAS = "SELECT * FROM asignaprescripcion where nhistorial = ?";
 	
 	private final static String VER_VACUNAS_ASIGNADAS = "SELECT * FROM asignavacuna where codhistorial = ?";
+	
+	private final static String VER_DIAGNOSTICOS_ASIGNADOS = "SELECT *FROM asingadiagnostico where codhistorial = ?";
 	
 	private final static String ADD_VACACIONES = "INSERT INTO VACACIONES (CODVACACIONES, CODEMPLEADO, CODADMIN, DINICIO, DFINAL)" + " VALUES(?,?,?,?,?)";
 	private final static String LIST_VACUNAS = "Select * from vacuna";
@@ -1307,6 +1317,99 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		pst.close();
 		con.close();
 		return nombreVacunas;
+	}
+
+
+	
+	/**
+	 * Método que me devuelve una lista con todos los diagnosticos que tengo en la bd
+	 * @return
+	 * @throws SQLException 
+	 */
+	public List<Diagnostico> listarDiagnosticos() throws SQLException {
+		List<Diagnostico> diagnosticos = new ArrayList<Diagnostico>(); // Creo la lista que voy a devolver
+		
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(LIST_DIAGNOSTICOS);
+		
+		
+		ResultSet rs = pst.executeQuery(); // Creo el resultSet
+		
+		while(rs.next()) {
+			
+			diagnosticos.add(new Diagnostico(rs.getString("numeroDiagnostico"), rs.getString("nombre") ));
+		}
+		
+		
+		rs.close();
+		pst.close();
+		con.close();
+		
+		
+		return diagnosticos;
+	}
+
+
+	/**
+	 * Método para guardar todos los diagnosticos que se le han asignaso a un paciente
+	 * @param ad
+	 * @throws SQLException 
+	 */
+	public void nuevaAsignaDiagnostico(AsignaDiagnostico ad) throws SQLException {
+		 Connection con = new Conexion().getConnectionJDBC();
+		 PreparedStatement pst=con.prepareStatement(ADD_ASIGNA_DIAGNOSTICO);
+
+		 
+		 String codAsigDiagnostico = ad.getCodAsigDiagnostico();
+		 String nHistorial = ad.getnHistorial();
+		 String nDiagnostico = ad.getnDiagnostico();
+		 String codMedico = ad.getCodMedico();
+		 java.sql.Date fecha = new java.sql.Date(ad.getFecha().getTime());
+		 Time hora = new Time(fecha.getTime());
+
+
+		 pst.setString(1, codAsigDiagnostico);
+		 pst.setString(2, nHistorial);
+		 pst.setString(3, nDiagnostico);
+		 pst.setString(4, codMedico);
+		 pst.setDate(5, fecha);
+		 pst.setTime(6, hora);
+
+		 pst.executeUpdate();
+
+		 pst.close();
+		 con.close();
+		
+	}
+
+
+	/**
+	 * Buscar los diagnosticos que se le han asignado a un paciente
+	 * @param historial
+	 * @return
+	 * @throws SQLException 
+	 */
+	public List<String> buscarDiagnosticosAsignados(String historial) throws SQLException {
+		List<String> nombreDiagnosticos = new ArrayList<String>();
+		
+		Connection con =new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(VER_DIAGNOSTICOS_ASIGNADOS);
+		
+		pst.setString(1, historial); // busco por n de historial
+		
+		ResultSet rs = pst.executeQuery(); // Creo el resultSet
+		
+		
+		while (rs.next()) {
+			nombreDiagnosticos.add(rs.getString(2) + "	Fecha: " + rs.getDate(6) + "	Hora: " + rs.getTime(7) + "	Empleado: " + rs.getString(5));
+		}
+
+
+		//CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return nombreDiagnosticos;
 	}
 
 	
