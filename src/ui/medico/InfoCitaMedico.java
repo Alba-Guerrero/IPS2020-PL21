@@ -178,9 +178,9 @@ protected void modificarCita() throws SQLException {
 	protected void abrirHistorial() throws SQLException {
 		HistorialMedico hm = pbd.verHistorial(paciente.getHistorial());
 		if(hm instanceof HistorialMedico) {
-		String nombreVacuna = pbd.verNombreVacuna(hm.getCodVacuna());
-		String nombreEnfermPrevia = pbd.verNombreEnfermedadPrevias(hm.getCodEnfermPrevia());
-		String causas = pbd.verCausas(hm.getCodCausas());
+//		String nombreVacuna = pbd.verNombreVacuna(hm.getCodVacuna());
+//		String nombreEnfermPrevia = pbd.verNombreEnfermedadPrevias(hm.getCodEnfermPrevia());
+//		String causas = pbd.verCausas(hm.getCodCausas());
 		
 		MostrarHistorial mh = new MostrarHistorial(hm,cita);
 		mh.setLocationRelativeTo(null);

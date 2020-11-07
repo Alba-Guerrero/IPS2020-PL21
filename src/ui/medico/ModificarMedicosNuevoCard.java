@@ -490,26 +490,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 	}
 
-	protected void modificarCausas() throws SQLException {
-		String causas = (String) getCbCausas().getSelectedItem();
-		Time hora =  cita.gethInicio();
-
-		java.sql.Date horas = new java.sql.Date(hora.getTime());
-
-		Time hour = new Time(horas.getTime());
-
-		Date fecha = (Date) cita.getDate();
-
-		java.sql.Date sDate = new java.sql.Date(fecha.getTime());
-
-
-		if(!causas.equals("")) {
-			Random r = new Random();
-			String codcausa = "" + r.nextInt(300);
-			pbd.actualizarCausas(codcausa,causas, sDate, hour, cita.getCodMed());
-		}
-		dispose();
-		}
 
 	public List<String> darCausas() {
 		return nombresCausas;
@@ -1110,6 +1090,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	
 	protected void guardarCausas() throws SQLException {
 		String causas = getCbCausas().getSelectedItem().toString();
+		String nHistorial = "" + mm.getPaciente().getHistorial();
 		Time hora =  cita.gethInicio();
 		
 		java.sql.Date horas = new java.sql.Date(hora.getTime());
@@ -1124,7 +1105,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		if(!causas.equals("")) {
 			Random r = new Random();
 			String codcausa = "" + r.nextInt(300);
-			pbd.actualizarCausas(codcausa,causas, sDate, hour, cita.getCodMed());
+			pbd.actualizarCausas(codcausa,causas, nHistorial, sDate, hour, cita.getCodMed());
 		}
 		
 	}

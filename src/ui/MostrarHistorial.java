@@ -128,7 +128,7 @@ public class MostrarHistorial extends JDialog {
 	public String darCausas() throws SQLException {
 		String causa = "";
 		List<String> causas = new ArrayList<>();
-		causas = pbd.buscarCausas(hm.getCodCausas());
+		causas = pbd.buscarCausas(hm.getHistorial());
 		for(String c: causas) {
 			causa += c + "\n";
 		}
@@ -155,7 +155,7 @@ public class MostrarHistorial extends JDialog {
 	public String darEnfermPrevias() throws SQLException {
 		String enfermPrev = "";
 		List<String> enfermPrevs = new ArrayList<>();
-		enfermPrevs = pbd.buscarEnfermPrevias(hm.getCodEnfermPrevia());
+		enfermPrevs = pbd.buscarEnfermPrevias(hm.getHistorial());
 		for(String e: enfermPrevs) {
 			enfermPrev += e + "\n";
 		}
