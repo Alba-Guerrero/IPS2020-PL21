@@ -18,6 +18,7 @@ import logica.HistorialMedico;
 import logica.Paciente;
 import logica.Preinscripcion;
 import logica.Vacaciones;
+import logica.Vacuna;
 import logica.empleados.Empleado;
 import logica.empleados.Enfermero;
 import logica.empleados.Medico;
@@ -92,8 +93,8 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	private final static String UPDATE_CITA = "UPDATE cita set hinicio = ?, hfin = ?, fecha = ? ,codmedico=?,ubicacion =?, urgencia=? where codcita=? and codpaciente=? and codmedico =?";
 	
 	private final static String VER_PREINSCRIPCIONES_ASIGNADAS = "SELECT * FROM asignaprescripcion where nhistorial = ?";
-
-	
+	private final static String ADD_VACACIONES = "INSERT INTO VACACIONES (CODEMPLEADO, CODADMIN, DINICIO, DFINAL)" + " VALUES(?,?,?,?)";
+	private final static String LIST_VACUNAS = "Select * from vacuna";
 	
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
@@ -1175,7 +1176,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	//AÑADIR QUERY VACACIONES
 	public void asignarVacaciones(Vacaciones vacaciones) throws SQLException {
 		Connection con = new Conexion().getConnectionJDBC();
-		PreparedStatement pst=con.prepareStatement(ADD_CITA);
+		PreparedStatement pst=con.prepareStatement(ADD_VACACIONES);
 		
 		String codEmpleado=vacaciones.getCodMed();
 		String codAdmin=vacaciones.getCodAdmin();
@@ -1192,5 +1193,36 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		pst.close();
 		con.close();
 	}
+	
+	
+	/**
+	* Método para listar todas las vacunas que tenemos en la base de datos
+	* @return
+	* @throws SQLException
+	*/
+	public List<Vacuna> listarVacunas() throws SQLException {​​​​
+	List<Vacuna> vacunas = new ArrayList<Vacuna>(); // Creo la lista que voy a devolver
+
+	Connection con = new Conexion().getConnectionJDBC();
+	PreparedStatement pst=con.prepareStatement(LIST_VACUNAS);
+
+
+	ResultSet rs = pst.executeQuery(); // Creo el resultSet
+
+	while(rs.next()) {​​​​
+
+	vacunas.add(new Vacuna(rs.getString("codVacuna"), rs.getString("nombreVacuna")));
+	}​​​​
+
+
+
+	pst.close();
+	con.close();
+
+
+	return vacunas;
+	}​​​​
+
+
 	
 }
