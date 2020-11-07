@@ -56,9 +56,9 @@ public class AsignarVacaciones extends JDialog{
 	public AsignarVacaciones(String codAdmin) throws SQLException {
 		this.codAdmin = codAdmin;
 		citasBorrar = new ArrayList<Cita>();
-		setTitle("Asignar Jornada");
+		setTitle("Asignar Vacaciones");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 750, 500);
+		setBounds(100, 100, 700, 350);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -104,7 +104,7 @@ public class AsignarVacaciones extends JDialog{
 	private JPanel getPanelJornada() {
 		if (panelJornada == null) {
 			panelJornada = new JPanel();
-			panelJornada.setBounds(0, 123, 614, 218);
+			panelJornada.setBounds(0, 123, 674, 177);
 			panelJornada.setBorder(new TitledBorder(new LineBorder(new Color(192, 192, 192)), "Selecciona horarios:", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 			panelJornada.setLayout(null);
 			panelJornada.add(getPanelDia());
@@ -133,7 +133,7 @@ public class AsignarVacaciones extends JDialog{
 //			});
 			
 			
-			chooseDFin.setBounds(364, 23, 178, 20);
+			chooseDFin.setBounds(364, 23, 178, 37);
 			chooseDFin.setDateFormatString("yyyy-MM-dd");
 			chooseDFin.setDate(new Date());
 			
@@ -184,7 +184,7 @@ public class AsignarVacaciones extends JDialog{
 //			});
 			
 			
-			chooseDInicio.setBounds(80, 23, 169, 20);
+			chooseDInicio.setBounds(80, 23, 169, 37);
 			chooseDInicio.setDateFormatString("yyyy-MM-dd");
 			chooseDInicio.setDate(new Date());
 		}
@@ -246,7 +246,7 @@ public class AsignarVacaciones extends JDialog{
 					}
 		}
 			});
-			btnAsignar.setBounds(346, 111, 89, 23);
+			btnAsignar.setBounds(456, 139, 89, 23);
 		}
 		return btnAsignar;
 	}
@@ -324,12 +324,12 @@ public class AsignarVacaciones extends JDialog{
 	private JButton getBtnCancelar() {
 		if (btnCancelar == null) {
 			btnCancelar = new JButton("Cancelar");
+			btnCancelar.setBounds(575, 139, 89, 23);
 			btnCancelar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					dispose();
 				}
 			});
-			btnCancelar.setBounds(453, 111, 89, 23);
 		}
 		return btnCancelar;
 	}
