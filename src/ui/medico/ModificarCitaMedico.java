@@ -401,7 +401,7 @@ public class ModificarCitaMedico extends JDialog {
 		if(!causas.equals("")) {
 			Random r = new Random();
 			String codcausa = "" + r.nextInt(300);
-			pbd.actualizarCausas(codcausa,causas, sDate, hour, cita.getCodMed());
+			//pbd.actualizarCausas(codcausa,causas, sDate, hour, cita.getCodMed());
 		}
 		dispose();
 		}
@@ -674,7 +674,7 @@ public class ModificarCitaMedico extends JDialog {
 	private String darCausas() throws SQLException {
 		
 		HistorialMedico hm = pbd.verHistorial(paciente.getHistorial());
-		String causas = pbd.verCausas(hm.getCodCausas());
+		String causas = pbd.verCausas(hm.getHistorial());
 		return causas;
 		
 	}

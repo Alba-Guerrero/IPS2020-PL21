@@ -170,8 +170,8 @@ public class AnadirCausas extends JDialog {
 	protected void guardar() throws SQLException {
 		
 		if (comprobarCampos()) { // Comprueba que al menos ha puesto el nombre y seleccionado el tipo de preinscripcion
+			modificarAsignaCausas();
 			nuevaCausa();
-			
 			dispose();
 		}
 		
@@ -184,28 +184,16 @@ public class AnadirCausas extends JDialog {
 	}
 
 	
-	private void nuevaCausa() {
-		mm.añadirCausa(txtPreinscripcion.getText());
+	private void nuevaCausa() throws SQLException {
+		mm.ponerCausas();
 		
 	}
 
-	protected void modificarCausas() throws SQLException {
-		String causas = txtPreinscripcion.getText();
-		Time hora =  mm.getCita().gethInicio();
-		
-		java.sql.Date horas = new java.sql.Date(hora.getTime());
-		
-		Time hour = new Time(horas.getTime());
-		
-		Date fecha = (Date) mm.getCita().getDate();
-		
-		java.sql.Date sDate = new java.sql.Date(fecha.getTime());
-		
+	protected void modificarAsignaCausas() throws SQLException {
+		String causas = txtPreinscripcion.getText();		
 
 		if(!causas.equals("")) {
-			Random r = new Random();
-			String codcausa = "" + r.nextInt(300);
-			pbd.actualizarCausas(codcausa,causas, sDate, hour, mm.getCita().getCodMed());
+			pbd.actualizarAsignaCausas(causas);
 		}
 		dispose();
 		}
