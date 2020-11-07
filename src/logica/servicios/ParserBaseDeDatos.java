@@ -17,6 +17,7 @@ import logica.Cita;
 import logica.HistorialMedico;
 import logica.Paciente;
 import logica.Preinscripcion;
+import logica.Vacaciones;
 import logica.empleados.Empleado;
 import logica.empleados.Enfermero;
 import logica.empleados.Medico;
@@ -64,6 +65,8 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	private final static String VER_ENFERM_PREVIAS ="SELECT nombreEnfermedad, fecha FROM enfermedadPrevia where codenfermedad  =?";
 	
 	private final static String VER_CAUSAS ="SELECT  nombrecausa, fecha  FROM causa where codcausa  = ?";
+	
+	private final static String VER_NOMBRE_CAUSA ="SELECT  nombrecausa FROM causa";
 	
 	private final static String MODIFICAR_UBICACION_CITA = "UPDATE cita SET ubicacion=? where codpaciente=?";
 	
@@ -1123,6 +1126,45 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		pst.close();
 		con.close();
 		return nombrePreinscripciones;
+	}
+	
+	public List<String> buscarNombreTodasCausas() throws SQLException {
+		List<String> nombresCausas = new ArrayList<String>();
+		Connection con =new Conexion().getConnectionJDBC();
+		PreparedStatement st=con.prepareStatement(VER_NOMBRE_CAUSA);
+		ResultSet rs=st.executeQuery();
+
+		while(rs.next()) {
+			nombresCausas.add(rs.getString(1));
+		}
+
+		//CERRAR EN ESTE ORDEN
+		rs.close();
+		st.close();
+		con.close();
+		return nombresCausas;
+	}
+	
+	
+	//AÑADIR QUERY VACACIONES
+	public void asignarVacaciones(Vacaciones vacaciones) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(ADD_CITA);
+		
+		String codEmpleado=vacaciones.getCodMed();
+		String codAdmin=vacaciones.getCodAdmin();
+		Date dateInicio=(Date) vacaciones.getdInicio();
+		Date dateFinal=(Date) vacaciones.getdFinal();
+		
+		pst.setString(1,codEmpleado);
+		pst.setString(2,codAdmin);
+		pst.setDate(3, dateInicio);
+		pst.setDate(4,dateFinal);
+		
+		pst.executeUpdate();
+	
+		pst.close();
+		con.close();
 	}
 	
 }
