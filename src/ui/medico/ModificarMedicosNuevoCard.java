@@ -471,11 +471,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		return nombresCausas;
 	}
 
-	public void ponerCausas() {
-		nombresCausas = new ArrayList<>();
-		nombresCausas.add("Rotura de tobillo derecho");
-		nombresCausas.add("Rotura de rodilla derecha");
-	}
 
 	public void añadirCausa(String causa) {
 		nombresCausas.add(causa);
@@ -1031,7 +1026,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			}
 		}
 		
-		
+		guardarCausas();
 		// AÑADIR LAS DEMAS MODIFICACIONES DE LA CITA
 	}
 	private JPanel getPanel_3() {
@@ -1061,4 +1056,34 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		return horizontalStrut;
 	}
+	
+	protected void guardarCausas() throws SQLException {
+		String causas = getCbCausas().getSelectedItem().toString();
+		Time hora =  cita.gethInicio();
+		
+		java.sql.Date horas = new java.sql.Date(hora.getTime());
+		
+		Time hour = new Time(horas.getTime());
+		
+		Date fecha = (Date) cita.getDate();
+		
+		java.sql.Date sDate = new java.sql.Date(fecha.getTime());
+		
+
+		if(!causas.equals("")) {
+			Random r = new Random();
+			String codcausa = "" + r.nextInt(300);
+			pbd.actualizarCausas(codcausa,causas, sDate, hour, cita.getCodMed());
+		}
+		
+	}
+	
+	public void ponerCausas() throws SQLException {
+		nombresCausas = new ArrayList<>() ;
+		List<String> causas = pbd.buscarNombreTodasCausas();
+		for(int i =0; i< causas.size(); i++) {
+			nombresCausas.add(causas.get(i));
+		}
+	}
+	
 }

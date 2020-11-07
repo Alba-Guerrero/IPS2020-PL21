@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import ui.admin.AsignarVacaciones;
 import ui.admin.PanelCitas;
 import ui.admin.VentanaJornada;
 import ui.admin.VentanaVerCita;
@@ -51,13 +52,15 @@ public class VentanaAdministrador extends JDialog {
 	private JPanel panel_2;
 	private JPanel panel_3;
 	private JButton btnNewButton;
+	private JButton btnNewButton_1;
 
-
+	private String codAdmin;
 
 	/**
 	 * Create the frame.
 	 */
-	public VentanaAdministrador() {
+	public VentanaAdministrador(String codAdmin) {
+		this.codAdmin = codAdmin;
 		setTitle("VentanaAdministrador");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1225, 667);
@@ -255,6 +258,7 @@ public class VentanaAdministrador extends JDialog {
 		if (panel8 == null) {
 			panel8 = new JPanel();
 			panel8.setBackground(Color.WHITE);
+			panel8.add(getBtnNewButton_1());
 		}
 		return panel8;
 	}
@@ -362,5 +366,27 @@ protected void verCalendarioCitas() {
 			});
 		}
 		return btnNewButton;
+	}
+	private JButton getBtnNewButton_1() {
+		if (btnNewButton_1 == null) {
+			btnNewButton_1 = new JButton("Asignar vacaciones");
+			btnNewButton_1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					AsignarVacaciones av;
+					try {
+						av = new AsignarVacaciones(codAdmin);
+						av.setVisible(true);
+						av.setLocationRelativeTo(null);
+						av.setResizable(true);
+						av.setModal(true);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+				}
+			});
+		}
+		return btnNewButton_1;
 	}
 }
