@@ -10,6 +10,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import logica.AsignaPreinscripcion;
+import logica.AsignaVacuna;
 import logica.Causas;
 import logica.Cita;
 import logica.HistorialMedico;
@@ -83,6 +84,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private List<Vacuna> vacunas; // Las bacuans que tenemos en la base de datos
 	private List<Preinscripcion> preinscripcionesPaciente = new ArrayList<Preinscripcion>();
 	private List<AsignaPreinscripcion> asignaPreinscripcionesPaciente = new ArrayList<AsignaPreinscripcion>();
+	private List<AsignaVacuna> asignaVacunasPaciente = new ArrayList<AsignaVacuna>();
 	private Paciente paciente;
 
 	private Causas causa;
@@ -150,6 +152,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel pn3;
 	private JComboBox<String> cbVacunas;
 	private JButton btnAsignarVacuna;
+	private JScrollPane scrollPanTabla;
 
 	/**
 	 * Create the frame.
@@ -166,7 +169,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		vacunas = pbd.listarVacunas();
 
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 900, 550);
+		setBounds(100, 100, 1486, 691);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -709,7 +712,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		if (pnResumen == null) {
 			pnResumen = new JPanel();
 			pnResumen.setLayout(new GridLayout(0, 1, 0, 0));
-			pnResumen.add(getTable());
+			//pnResumen.add(getTable());
+			pnResumen.add(getScrollPanTabla());
 			//pnResumen.add(getList());
 			//pnResumen.add(getTextArea_1());
 		}
@@ -885,7 +889,9 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		preinscripcionesPaciente.add(p); // Añadimos la preinscripcion
 		crearAsignaPreinscripcion(p);
 		
-		if (tablaLista = false) { // Para que no casque al pintar la tabla de las preinscripciones
+		System.out.println("" + preinscripciones.size());
+		
+		if (tablaLista == false) { // Para que no casque al pintar la tabla de las preinscripciones
 			tablaLista = true;
 		}
 		
@@ -958,7 +964,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	
 	private JTable getTable() {
 		if (table == null) {
-			table = new JTable();
+//			table = new JTable();
 			
 			String[] nombreColumnas= {"Nombre","Medicamento","Cantidad","Duracion","Intervalo"};
 			modeloTabla= new ModeloNoEditable(nombreColumnas,0);
@@ -969,11 +975,12 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
 			table.setRowSorter(sorter);
 			
-//			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-//			sortKeys.add(new RowSorter.SortKey(6, SortOrder.ASCENDING));
-//			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
-//			
-//			sorter.setSortKeys(sortKeys);
+			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+			sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
+			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+			
+			sorter.setSortKeys(sortKeys);
+			
 			añadirFilas();
 		}
 		return table;
@@ -988,13 +995,16 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	
 		Object[] nuevaFila=new Object[5]; // 5 son las columnas
 		
+		System.out.println(asignaPreinscripcionesPaciente.size());
+		
+		
 		if (tablaLista) {
 			for (AsignaPreinscripcion a : asignaPreinscripcionesPaciente) {
 				nuevaFila[0] = a.getCodigoPreinscripcion(); // El nombre de la preinscripcion
 				
 				boolean medicamento = false;
 				for (Preinscripcion p : preinscripcionesPaciente) {
-					if (p.getNombre().equals(a.getCodigoAsignaPreinscripcion())) { // Si es la preinscripcion
+					if (p.getNombre().equals(a.getCodigoPreinscripcion())) { // Si es la preinscripcion
 						
 						if (p.isMedicamento()) { // Si la preinscripcion es un medicamento
 							nuevaFila[1] = "Si";
@@ -1017,7 +1027,12 @@ public class ModificarMedicosNuevoCard extends JDialog {
 					nuevaFila[4] = "-";
 				}
 				
+				
+				modeloTabla.addRow(nuevaFila); // Añado la fila
+				
 			}
+			
+			
 		}
 		
 	}
@@ -1040,17 +1055,14 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	 * @throws SQLException 
 	 */
 	private void guardar() throws SQLException {
-		
-		// Guardo las preinscripciones que le he asignado al paciente
-		if (!asignaPreinscripcionesPaciente.isEmpty()) { // Que le hayamos asignado algo
-			for (AsignaPreinscripcion ap : asignaPreinscripcionesPaciente) { // Voy guardando cada una de las preinscripciones que le he asignado
-				pbd.nuevaAsignaPreinscripcion(ap);
-			}
-		}
-		
+		guardarPreinscripciones();
 		guardarCausas();
-		// AÑADIR LAS DEMAS MODIFICACIONES DE LA CITA
+		guardarVacunas();
 	}
+
+
+
+
 	private JPanel getPanel_3() {
 		if (panel_3 == null) {
 			panel_3 = new JPanel();
@@ -1184,7 +1196,79 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getBtnAsignarVacuna() {
 		if (btnAsignarVacuna == null) {
 			btnAsignarVacuna = new JButton("Asignar vacuna");
+			btnAsignarVacuna.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					anadirVacuna();
+				}
+
+
+			});
 		}
 		return btnAsignarVacuna;
+	}
+	private JScrollPane getScrollPanTabla() {
+		if (scrollPanTabla == null) {
+			scrollPanTabla = new JScrollPane();
+			
+			scrollPanTabla.setViewportView(getTable());
+		}
+		return scrollPanTabla;
+	}
+	
+	
+	
+	/**
+	 * Método para añadir la vacuna temporalmente al paciente
+	 */
+	private void anadirVacuna() {
+		int indice = cbVacunas.getSelectedIndex(); // el índice que hay seleccionado en el cb
+		Vacuna vacuna = null;
+		
+		// Buscamos la vacuna que hay seleccionada en el cb
+		int contador = 0;
+		for(Vacuna v : vacunas) {
+			if (indice == contador) {
+				vacuna = v;
+			}
+			contador = contador + 1;
+		}
+		
+		String codVacuna = vacuna.getCodVacuna();	
+		String codEmpleado = cita.getCodMed();
+		String codHistorial = paciente.getHistorial();
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());		
+		
+		
+		AsignaVacuna av = new AsignaVacuna(codVacuna, codEmpleado, codHistorial, fecha, hora);
+		
+		asignaVacunasPaciente.add(av);
+	}
+	
+	
+	/**
+	 * Método para asignar definitivamente las vacunas al paciente
+	 */
+	private void guardarVacunas() {
+		
+		if (!asignaVacunasPaciente.isEmpty()) { // Que le hayamos asignado alguna vacuna
+			for (AsignaVacuna av : asignaVacunasPaciente) { // Voy guardando cada una de las vacunas que le he asignado
+				pbd.nuevaAsignaVacuna(av);
+			}
+		}
+	}
+	
+	
+	/**
+	 * Método para guardar las preinscripciones que se le han asignado a un paciente
+	 * @throws SQLException 
+	 */
+	private void guardarPreinscripciones() throws SQLException {
+		// Guardo las preinscripciones que le he asignado al paciente
+		if (!asignaPreinscripcionesPaciente.isEmpty()) { // Que le hayamos asignado algo
+			for (AsignaPreinscripcion ap : asignaPreinscripcionesPaciente) { // Voy guardando cada una de las preinscripciones que le he asignado
+				pbd.nuevaAsignaPreinscripcion(ap);
+			}
+		}		
 	}
 }
