@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import conexion.Conexion;
+import logica.Acompañante;
 import logica.AsignaDiagnostico;
 import logica.AsignaPreinscripcion;
 import logica.AsignaVacuna;
@@ -125,7 +126,8 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	private final static String CITA_CODCITA="select * from cita  where codCita=? and codpaciente=? ";
 	private final static String PACIENTE_HISTORIAL="select * from paciente  where nhistorial=? ";
 
-	
+	private final static String VACUNAS_PERSONA="SELECT * FROM asignaVacuna WHERE nHistorial=?";
+	private final static String GET_ACOMPAÑANTE = "SELECT * FROM acompañantePaciente WHERE codpaciente=?";
 	
 	
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
@@ -1607,5 +1609,40 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	pst.close();
 	con.close();
 	return pacientes;
+	}
+	
+	public List<AsignaVacuna> verVacunasPaciente(String nHistorial) throws SQLException{
+		List<AsignaVacuna> listaVacunas = new ArrayList<AsignaVacuna>();
+		
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VACUNAS_PERSONA);
+		pst.setString(1, nHistorial);
+		ResultSet rs = pst.executeQuery();
+		if(rs.next()) {
+			listaVacunas.add(new AsignaVacuna(rs.getString("codasigvac"), rs.getString("codvacuna"), rs.getString("nhistorial"), rs.getString("codempleado"), rs.getDate("fecha"),  rs.getTime("hora")));
+		}
+		
+		rs.close();
+		pst.close();
+		con.close();
+		
+		 return listaVacunas;
+	}
+	
+	public Acompañante getAcompañante(String codAcompañante) throws SQLException {
+		Acompañante acompañante = null;
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_ACOMPAÑANTE);
+		pst.setString(1, codAcompañante);
+		ResultSet rs = pst.executeQuery();
+		if(rs.next()) {
+			acompañante = new Acompañante(rs.getString("codacompañante"), rs.getString("codpaciente"), rs.getString("nombre"), rs.getString("apellido"), rs.getInt("movil"), rs.getString("correo"));
+		}
+		
+		rs.close();
+		pst.close();
+		con.close();
+		
+		return acompañante;
 	}
 }
