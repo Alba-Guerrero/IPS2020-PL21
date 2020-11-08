@@ -10,6 +10,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+
+import logica.Paciente;
+
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import java.awt.GridLayout;
@@ -26,11 +29,13 @@ public class CalendarioVacunas extends JDialog {
 	private JTable tablaVacunas;
 	private ModeloNoEditable modeloTabla;
 	private ModeloNoEditable modeloNombres;
-
+	private JLabel lblPaciente;
+	private Paciente paciente;
+	
 	/**
 	 * Launch the application.
 	 */
-	
+	/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -44,11 +49,11 @@ public class CalendarioVacunas extends JDialog {
 		});
 	}
 	
-
+*/
 	/**
 	 * Create the frame.
 	 */
-	public CalendarioVacunas() {
+	public CalendarioVacunas(Paciente p) {
 		setTitle("Calendario de vacunas");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1106, 466);
@@ -58,10 +63,12 @@ public class CalendarioVacunas extends JDialog {
 		setContentPane(contentPane);
 		contentPane.add(getPanel(), BorderLayout.NORTH);
 		contentPane.add(getScrollPane(), BorderLayout.CENTER);
+		paciente = p;
 	}
 	private JPanel getPanel() {
 		if (panel == null) {
 			panel = new JPanel();
+			panel.add(getLblPaciente());
 		}
 		return panel;
 	}
@@ -151,7 +158,15 @@ public class CalendarioVacunas extends JDialog {
 			tablaVacunas.setValueAt("SRP", 9, 8);
 			
 			tablaVacunas.setValueAt("VPH", 10, 10);
+			
 		}
 		return tablaVacunas;
+	}
+	private JLabel getLblPaciente() {
+		if (lblPaciente == null) {
+			lblPaciente = new JLabel("");
+			lblPaciente.setText(paciente.getNombre() + paciente.getApellido());
+		}
+		return lblPaciente;
 	}
 }
