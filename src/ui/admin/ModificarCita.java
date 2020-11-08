@@ -87,7 +87,6 @@ public class ModificarCita extends JDialog {
 	private JPanel panel_1;
 	private JLabel lblEscogeLaSala;
 	private JComboBox<String> cbSala;
-	private Paciente p;
 	private Cita cita;
 	private JTextField textSurname;
 	private JButton btnNameSurname;
@@ -104,7 +103,7 @@ public class ModificarCita extends JDialog {
 	 */
 	public ModificarCita(VentanaVerCita vvc, Paciente p, Cita cita) throws SQLException {
 		this.vvc = vvc;
-		this.p=p;
+		this.pacienteCita=p;
 		this.cita=cita;
 		setTitle("Administrativo: Modificar cita");
 		setLocationRelativeTo(null);
@@ -473,7 +472,7 @@ public class ModificarCita extends JDialog {
 				Cita c = null;
 				try {
 					
-					c = new Cita(cita.getCodCita(),p.getCodePaciente(), medicos.get(i).getCodeEmpleado(), timeInicio, timeFin, sDate,combo,
+					c = new Cita(cita.getCodCita(),pacienteCita.getCodePaciente(), medicos.get(i).getCodeEmpleado(), timeInicio, timeFin, sDate,combo,
 							chckbxEsUrgente.isSelected());
 					pbd.updateCita(c,cita.getCodMed());
 
@@ -487,7 +486,7 @@ public class ModificarCita extends JDialog {
 			Cita c = null;
 			try {
 						
-				c = new Cita(cita.getCodCita(),p.getCodePaciente(), cita.getCodMed(), timeInicio, timeFin, sDate,combo,
+				c = new Cita(cita.getCodCita(),pacienteCita.getCodePaciente(), cita.getCodMed(), timeInicio, timeFin, sDate,combo,
 					chckbxEsUrgente.isSelected());
 					pbd.updateCita(c,cita.getCodMed());
 

@@ -7,6 +7,7 @@ import java.awt.EventQueue;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -109,9 +110,12 @@ public class VentanaVerCita extends JDialog {
 				sortKeys.add(new RowSorter.SortKey(2, SortOrder.ASCENDING));
 				sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
 				sorter.setSortKeys(sortKeys);
-				tablacita.removeColumn(tablacita.getColumnModel().getColumn(8));
-				tablacita.removeColumn(tablacita.getColumnModel().getColumn(8));
-				tablacita.removeColumn(tablacita.getColumnModel().getColumn(8));
+				for (int i = 8; i < 11; i++) {
+					tablacita.getColumnModel().getColumn(i).setMinWidth(0);
+					tablacita.getColumnModel().getColumn(i).setMaxWidth(0);
+					tablacita.getColumnModel().getColumn(i).setWidth(0);
+				}
+
 				añadirFilas(false);
 				
 				tablacita.addMouseListener(new MouseAdapter() {
@@ -296,10 +300,11 @@ public class VentanaVerCita extends JDialog {
 					if(fila!=-1) {
 						
 							try {
-								Paciente p=pbd.devolverPacientesMedico((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 8));
-								System.err.println(p.getNombre());
-								Cita c=pbd.citaCod((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 8),
-										(String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 9));
+								Paciente p=pbd.devolverPacientesMedico((String)tablacita.getValueAt(tablacita.getSelectedRow(),8));
+								
+								Cita c=pbd.citaCod((String)tablacita.getValueAt(tablacita.getSelectedRow(),8),
+										(String)tablacita.getValueAt(tablacita.getSelectedRow(),9));
+								
 								VentanaModificarCita(p,c);
 								
 							} catch (SQLException e) {
