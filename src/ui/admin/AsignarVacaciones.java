@@ -5,12 +5,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -26,15 +31,18 @@ import javax.swing.border.TitledBorder;
 import com.toedter.calendar.JDateChooser;
 
 import logica.Cita;
+import logica.Paciente;
 import logica.Vacaciones;
 import logica.empleados.Empleado;
+import logica.empleados.Medico;
 import logica.servicios.ParserBaseDeDatos;
+import javax.swing.JTextField;
 
 public class AsignarVacaciones extends JDialog{
 
 	private JPanel contentPane;
 	private JPanel panelSeleccionEmpleado;
-	private JComboBox<Empleado> cmboBoxEmpleado;
+	private JComboBox<Medico> cmboBoxEmpleado;
 	private JPanel panelJornada;
 	private JDateChooser chooseDFin;
 	private JPanel panelDia;
@@ -46,9 +54,14 @@ public class AsignarVacaciones extends JDialog{
 	private List<JToggleButton> diasSeleccionados = new ArrayList<JToggleButton>();
 	private JButton btnAsignar;
 	private JButton btnCancelar;
+	private DefaultComboBoxModel<Medico> modeloListaM;
 	
 	List<Cita> citasBorrar;
 	private String codAdmin;
+	private JLabel lblNombre;
+	private JTextField txtNombre;
+	private JButton btnFiltrar;
+	List<Medico> empleados;
 
 
 	/**
@@ -56,11 +69,12 @@ public class AsignarVacaciones extends JDialog{
 	 * @throws SQLException 
 	 */
 	public AsignarVacaciones(String codAdmin) throws SQLException {
+		empleados = pbd.buscarMedico("");
 		this.codAdmin = codAdmin;
 		citasBorrar = new ArrayList<Cita>();
 		setTitle("Asignar Vacaciones");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 700, 350);
+		setBounds(100, 100, 739, 382);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -74,15 +88,20 @@ public class AsignarVacaciones extends JDialog{
 		if (panelSeleccionEmpleado == null) {
 			panelSeleccionEmpleado = new JPanel();
 			panelSeleccionEmpleado.setBorder(new TitledBorder(new LineBorder(new Color(192, 192, 192)), "Seleccionar empleado:", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-			panelSeleccionEmpleado.setBounds(10, 11, 614, 101);
+			panelSeleccionEmpleado.setBounds(10, 11, 703, 101);
 			panelSeleccionEmpleado.setLayout(null);
 			panelSeleccionEmpleado.add(getCmboBoxEmpleado());
+			panelSeleccionEmpleado.add(getLblNombre());
+			panelSeleccionEmpleado.add(getTxtNombre());
+			panelSeleccionEmpleado.add(getBtnFiltrar());
 		}
 		return panelSeleccionEmpleado;
 	}
-	private JComboBox<Empleado> getCmboBoxEmpleado() throws SQLException {
+	private JComboBox<Medico> getCmboBoxEmpleado() throws SQLException {
 		if (cmboBoxEmpleado == null) {
-			cmboBoxEmpleado = new JComboBox<Empleado>();
+			modeloListaM(pbd.buscarMedico(""));
+			cmboBoxEmpleado = new JComboBox<Medico>();
+			cmboBoxEmpleado.setModel(modeloListaM);
 			cmboBoxEmpleado.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
@@ -93,8 +112,8 @@ public class AsignarVacaciones extends JDialog{
 					}
 				}
 			});
-			cmboBoxEmpleado.setBounds(10, 43, 482, 22);
-			List<Empleado> empleados = pbd.buscarEmpleados();
+			cmboBoxEmpleado.setBounds(341, 34, 352, 32);
+			
 			for (int i = 0; i < empleados.size(); i++) {
 				cmboBoxEmpleado.insertItemAt(empleados.get(i), i);
 			}
@@ -102,6 +121,16 @@ public class AsignarVacaciones extends JDialog{
 			
 		}
 		return cmboBoxEmpleado;
+	}
+	
+	private DefaultComboBoxModel<Medico> modeloListaM(List<Medico> medico) throws SQLException {
+		modeloListaM = new DefaultComboBoxModel<Medico>();
+		List<Medico> medicos = medico;
+		for (int i = 0; i < medicos.size(); i++) {
+			modeloListaM.addElement(medicos.get(i));
+
+		}
+		return modeloListaM;
 	}
 	private JPanel getPanelJornada() {
 		if (panelJornada == null) {
@@ -349,6 +378,61 @@ public class AsignarVacaciones extends JDialog{
 	}
 	
 	public void borrarCitas() {
+		
+	}
+	private JLabel getLblNombre() {
+		if (lblNombre == null) {
+			lblNombre = new JLabel("Nombre");
+			lblNombre.setBounds(10, 39, 58, 22);
+		}
+		return lblNombre;
+	}
+	private JTextField getTxtNombre() {
+		if (txtNombre == null) {
+			txtNombre = new JTextField();
+			txtNombre.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+					btnFiltrar.setEnabled(true);
+				}
+			});
+			txtNombre.setBounds(78, 40, 114, 20);
+			txtNombre.setColumns(10);
+		}
+		return txtNombre;
+	}
+	private JButton getBtnFiltrar() {
+		if (btnFiltrar == null) {
+			btnFiltrar = new JButton("Filtrar");
+			btnFiltrar.setBounds(203, 38, 89, 23);
+			btnFiltrar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if(txtNombre.getText().equals(""))
+						JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
+					else {	
+						filtrarPorNombre(txtNombre.getText());
+				}
+				}
+			});
+		}
+		return btnFiltrar;
+	}
+	
+	
+	private void filtrarPorNombre(String name) {
+		for(int i=0; i < empleados.size(); i++) {
+			if(empleados.get(i).getNombre().equals(name)) {
+				cmboBoxEmpleado.setSelectedIndex(i);
+			}
+		}
+	}
+
+
+	protected void modeloListaPaciente(List<Medico> buscarPacienteNombre) {
+		cmboBoxEmpleado.removeAll();
+		for(int i=0; i<buscarPacienteNombre.size(); i++) {
+			cmboBoxEmpleado.insertItemAt(buscarPacienteNombre.get(i), i);
+		}
 		
 	}
 }
