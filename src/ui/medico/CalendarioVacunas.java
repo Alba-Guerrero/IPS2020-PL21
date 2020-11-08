@@ -7,6 +7,9 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import java.awt.GridLayout;
@@ -27,6 +30,7 @@ public class CalendarioVacunas extends JDialog {
 	/**
 	 * Launch the application.
 	 */
+	/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -39,6 +43,7 @@ public class CalendarioVacunas extends JDialog {
 			}
 		});
 	}
+	*/
 
 	/**
 	 * Create the frame.
@@ -46,7 +51,7 @@ public class CalendarioVacunas extends JDialog {
 	public CalendarioVacunas() {
 		setTitle("Calendario de vacunas");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 810, 466);
+		setBounds(100, 100, 1106, 466);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -73,54 +78,79 @@ public class CalendarioVacunas extends JDialog {
 			String[] vacunas = {"Hepatitis B", "Difteria, tétanos y tosferina", "Poliomelitis", "Influenza", "Neumococo", "Rotavirus", "Menungococo B", "Meningococo C y ACWY",
 					"Sarampión, rubeola y parotiditis", "Varicela", "Virus del papiloma humano"};
 			modeloTabla = new ModeloNoEditable(edad, 11);
-			tablaVacunas = new JTable(modeloTabla);
-			tablaVacunas.setValueAt("HB", 0, 0);
-			tablaVacunas.setValueAt("HB", 0, 2);
-			tablaVacunas.setValueAt("HB", 0, 4);
 			
-			tablaVacunas.setValueAt("DTPa", 1, 0);
-			tablaVacunas.setValueAt("DTPa", 1, 2);
-			tablaVacunas.setValueAt("DTPa", 1, 4);
-			tablaVacunas.setValueAt("DTPa", 1, 0);
-			tablaVacunas.setValueAt("DTPa/Tdpa", 1, 8);
-			tablaVacunas.setValueAt("Tdpa", 1, 9);
+			tablaVacunas = new JTable(modeloTabla) {
+			@Override
+		       public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+		           Component component = super.prepareRenderer(renderer, row, column);
+		           int rendererWidth = component.getPreferredSize().width;
+		           TableColumn tableColumn = getColumnModel().getColumn(column);
+		           tableColumn.setPreferredWidth(Math.max(rendererWidth + getIntercellSpacing().width, tableColumn.getPreferredWidth()));
+		           return component;
+		        }
+		    };
+			tablaVacunas.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			tablaVacunas.setRowHeight(30);
+			tablaVacunas.setEnabled(false);
+			
+			tablaVacunas.setValueAt("Hepatitis B", 0, 0);
+			tablaVacunas.setValueAt("Difteria, tétanos y tosferina", 1, 0);
+			tablaVacunas.setValueAt("Poliomelitis", 2, 0);
+			tablaVacunas.setValueAt("Haemophilus influenzae tipo b", 3, 0);
+			tablaVacunas.setValueAt("Neumococo", 4, 0);
+			tablaVacunas.setValueAt("Rotavirus", 5, 0);
+			tablaVacunas.setValueAt("Meningococo B", 6, 0);
+			tablaVacunas.setValueAt("Meningococos C y ACWY", 7, 0);
+			tablaVacunas.setValueAt("Sarampión, rubeola y parotiditis", 8, 0);
+			tablaVacunas.setValueAt("Varicela", 9, 0);
+			tablaVacunas.setValueAt("Virus del papiloma humano", 10, 0);
+			
+			tablaVacunas.setValueAt("HB", 0, 1);
+			tablaVacunas.setValueAt("HB", 0, 3);
+			tablaVacunas.setValueAt("HB", 0, 5);
+			
+			tablaVacunas.setValueAt("DTPa", 1, 1);
+			tablaVacunas.setValueAt("DTPa", 1, 3);
+			tablaVacunas.setValueAt("DTPa", 1, 5);
+			tablaVacunas.setValueAt("DTPa/Tdpa", 1, 9);
 			tablaVacunas.setValueAt("Tdpa", 1, 10);
+			tablaVacunas.setValueAt("Tdpa", 1, 11);
 			
-			tablaVacunas.setValueAt("VPI", 2, 0);
-			tablaVacunas.setValueAt("VPI", 2, 2);
-			tablaVacunas.setValueAt("VPI", 2, 4);
-			tablaVacunas.setValueAt("VPI", 2, 8);
+			tablaVacunas.setValueAt("VPI", 2, 1);
+			tablaVacunas.setValueAt("VPI", 2, 3);
+			tablaVacunas.setValueAt("VPI", 2, 5);
+			tablaVacunas.setValueAt("VPI", 2, 9);
 			
-			tablaVacunas.setValueAt("Hib", 3, 0);
-			tablaVacunas.setValueAt("Hib", 3, 2);
-			tablaVacunas.setValueAt("Hib", 3, 4);
+			tablaVacunas.setValueAt("Hib", 3, 1);
+			tablaVacunas.setValueAt("Hib", 3, 3);
+			tablaVacunas.setValueAt("Hib", 3, 5);
 			
-			tablaVacunas.setValueAt("VNC", 4, 0);
-			tablaVacunas.setValueAt("VNC", 4, 2);
-			tablaVacunas.setValueAt("VNC", 4, 4);
+			tablaVacunas.setValueAt("VNC", 4, 1);
+			tablaVacunas.setValueAt("VNC", 4, 3);
+			tablaVacunas.setValueAt("VNC", 4, 5);
 			
-			tablaVacunas.setValueAt("RV", 5, 0);
 			tablaVacunas.setValueAt("RV", 5, 1);
 			tablaVacunas.setValueAt("RV", 5, 2);
+			tablaVacunas.setValueAt("RV", 5, 3);
 			
-			tablaVacunas.setValueAt("MenB", 6, 1);
-			tablaVacunas.setValueAt("MenB", 6, 3);
-			tablaVacunas.setValueAt("MenB", 6, 5);
+			tablaVacunas.setValueAt("MenB", 6, 2);
+			tablaVacunas.setValueAt("MenB", 6, 4);
+			tablaVacunas.setValueAt("MenB", 6, 6);
 			tablaVacunas.setValueAt("MenB", 6, 6);
 			
-			tablaVacunas.setValueAt("MenC", 7, 2);
-			tablaVacunas.setValueAt("Men ACWY", 7, 5);
-			tablaVacunas.setValueAt("Men ACWY", 7, 9);
+			tablaVacunas.setValueAt("MenC", 7, 3);
+			tablaVacunas.setValueAt("Men ACWY", 7, 6);
 			tablaVacunas.setValueAt("Men ACWY", 7, 10);
 			tablaVacunas.setValueAt("Men ACWY", 7, 11);
+			tablaVacunas.setValueAt("Men ACWY", 7, 12);
 			
-			tablaVacunas.setValueAt("SRP", 8, 5);
-			tablaVacunas.setValueAt("SRP Var /", 8, 7);
+			tablaVacunas.setValueAt("SRP", 8, 6);
+			tablaVacunas.setValueAt("SRP Var /", 8, 8);
 			
-			tablaVacunas.setValueAt("Var", 9, 6);
-			tablaVacunas.setValueAt("SRP", 9, 7);
+			tablaVacunas.setValueAt("Var", 9, 7);
+			tablaVacunas.setValueAt("SRP", 9, 8);
 			
-			tablaVacunas.setValueAt("VPH", 10, 9);
+			tablaVacunas.setValueAt("VPH", 10, 10);
 		}
 		return tablaVacunas;
 	}

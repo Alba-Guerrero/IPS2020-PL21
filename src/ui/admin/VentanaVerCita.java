@@ -223,6 +223,7 @@ public class VentanaVerCita extends JDialog {
 	private JDateChooser getDateChooser() {
 		if (dateChooser == null) {
 			dateChooser = new JDateChooser(new Date());
+			
 		}
 		return dateChooser;
 	}
