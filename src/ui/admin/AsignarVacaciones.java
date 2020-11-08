@@ -396,7 +396,7 @@ public class AsignarVacaciones extends JDialog{
 					btnFiltrar.setEnabled(true);
 				}
 			});
-			txtNombre.setBounds(78, 40, 114, 20);
+			txtNombre.setBounds(78, 40, 114, 26);
 			txtNombre.setColumns(10);
 		}
 		return txtNombre;

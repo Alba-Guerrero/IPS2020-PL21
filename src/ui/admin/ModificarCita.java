@@ -94,6 +94,11 @@ public class ModificarCita extends JDialog {
 	private JButton btnNewButton;
 
 	private VentanaVerCita vvc;
+	private JLabel lblNombreSala;
+	private JTextField txtNombreSala;
+	private JButton btnFiltrar;
+	
+	List<String> salas;
 
 	/**
 	 * Create the dialog.
@@ -569,10 +574,13 @@ public class ModificarCita extends JDialog {
 	private JPanel getPanel_1() {
 		if (panel_1 == null) {
 			panel_1 = new JPanel();
-			panel_1.setLayout(new MigLayout("", "[109px][grow][][][][][][][][][][][][][][][][][][][][][][][]", "[25px][][]"));
+			panel_1.setLayout(new MigLayout("", "[109px][grow][][][][][][][][][][][grow][][][][][][][][][][][][][][][]", "[25px][][]"));
 			panel_1.add(getLblEscogeLaSala(), "cell 0 1,alignx trailing");
 			panel_1.add(getCbSala(), "cell 1 1 5 1");
-			panel_1.add(getBtnModificar(), "cell 23 2,alignx left,aligny top");
+			panel_1.add(getLblNombreSala(), "cell 10 1,aligny center");
+			panel_1.add(getTxtNombreSala(), "cell 11 1 4 1,growx");
+			panel_1.add(getBtnFiltrar(), "cell 15 1");
+			panel_1.add(getBtnModificar(), "cell 26 2,alignx left,aligny top");
 		}
 		return panel_1;
 	}
@@ -585,9 +593,9 @@ public class ModificarCita extends JDialog {
 	private JComboBox<String> getCbSala() {
 		if (cbSala == null) {
 			cbSala = new JComboBox<String>();
-			List<String> salas= rellenarSalas();
+			salas= rellenarSalas();
 			String[] array = salas.toArray( new String[salas.size()] );
-			 Arrays.sort(array);
+			 //Arrays.sort(array);
 			cbSala.setModel(new DefaultComboBoxModel<String>(array));
 			cbSala.setBounds(54, 47, 236, 22);
 			
@@ -651,5 +659,43 @@ public class ModificarCita extends JDialog {
 			});
 		}
 		return btnNewButton;
+	}
+	private JLabel getLblNombreSala() {
+		if (lblNombreSala == null) {
+			lblNombreSala = new JLabel("Nombre sala");
+		}
+		return lblNombreSala;
+	}
+	private JTextField getTxtNombreSala() {
+		if (txtNombreSala == null) {
+			txtNombreSala = new JTextField();
+			txtNombreSala.setColumns(10);
+		}
+		return txtNombreSala;
+	}
+	private JButton getBtnFiltrar() {
+		if (btnFiltrar == null) {
+			btnFiltrar = new JButton("Filtrar");
+			btnFiltrar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if(txtNombreSala.getText().equals(""))
+						JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
+					else {	
+						filtrarPorNombre(txtNombreSala.getText());
+				}
+				}
+			});
+		}
+		return btnFiltrar;
+	}
+
+
+
+	private void filtrarPorNombre(String name) {
+		for(int i=0; i < salas.size(); i++) {
+			if(salas.get(i).equals(name)) {
+				cbSala.setSelectedIndex(i);
+			}
+		}
 	}
 }
