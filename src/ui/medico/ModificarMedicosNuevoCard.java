@@ -181,7 +181,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JTextField txtApellido;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JButton btnMostrarHistorial;
-<<<<<<< HEAD
 	private JPanel pnVacio11;
 	private JPanel pnVacio8;
 	private JPanel pnMostrarHistorialVacunas;
