@@ -62,6 +62,8 @@ import javax.swing.SortOrder;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
 
 public class ModificarMedicosNuevoCard extends JDialog {
 
@@ -99,16 +101,14 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel panIz;
 	private JLabel label;
 	private JLabel label_1;
-	private JLabel label_2;
-	private JLabel label_3;
 	private JLabel lblAcudi;
 	private JPanel panDe;
 	private JTextField textField;
 	private JTextField textField_1;
 	private JPanel panel_5;
 	private JPanel panel_6;
-	private JPanel panel_7;
-	private JPanel panel_8;
+	private JPanel pnHoraEntrada;
+	private JPanel pnHoraSalida;
 	private JPanel panel_2;
 	private JLabel lblNombre;
 	private JButton btnSeleccionar;
@@ -173,6 +173,30 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton btnDiagnosticar;
 	
 	private boolean causaSeleccionada;
+	private JLabel lblHoraInicio;
+	private JPanel pnVacio3;
+	private JPanel pnHoraInicio;
+	private JPanel pnVacio;
+	private JPanel pnVacio2;
+	private JSpinner spinnerHInicioR;
+	private JPanel pnHoraInicioF;
+	private JPanel pnGuardarHInicio;
+	private JPanel pnModificarHInicio;
+	private JButton btnModificar;
+	private JSpinner spinnerHInicioNueva;
+	private JButton btnGuardarInicio;
+	private JLabel lblHorasalida;
+	private JPanel pnVacio5;
+	private JPanel pnHoraFin;
+	private JPanel pnVacio6;
+	private JSpinner spinnerHFinR;
+	private JPanel pnVacio7;
+	private JPanel pnHoraFinF;
+	private JPanel pnModificarHoraFinF;
+	private JButton btnModificarFin;
+	private JSpinner spinnerHFinNueva;
+	private JPanel pnGuardarHFin;
+	private JButton btnGuardarFin;
 
 	/**
 	 * Create the frame.
@@ -346,7 +370,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			panIz = new JPanel();
 			panIz.setLayout(new GridLayout(0, 1, 0, 0));
 			panIz.add(getPanel_5());
-			panIz.add(getPanel_7());
+			panIz.add(getPnHoraEntrada());
 			panIz.add(getLblAcudi_1());
 		}
 		return panIz;
@@ -363,18 +387,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		return label_1;
 	}
-	private JLabel getLabel_2_1() {
-		if (label_2 == null) {
-			label_2 = new JLabel("Hora entrada:");
-		}
-		return label_2;
-	}
-	private JLabel getLabel_3_1() {
-		if (label_3 == null) {
-			label_3 = new JLabel("Hora salida:");
-		}
-		return label_3;
-	}
 	private JLabel getLblAcudi_1() {
 		if (lblAcudi == null) {
 			lblAcudi = new JLabel("Acudi\u00F3");
@@ -386,7 +398,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			panDe = new JPanel();
 			panDe.setLayout(new GridLayout(0, 1, 0, 0));
 			panDe.add(getPanel_6());
-			panDe.add(getPanel_8());
+			panDe.add(getPnHoraSalida());
 			panDe.add(getPanel_3());
 		}
 		return panDe;
@@ -425,19 +437,31 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		return panel_6;
 	}
-	private JPanel getPanel_7() {
-		if (panel_7 == null) {
-			panel_7 = new JPanel();
-			panel_7.add(getLabel_2_1());
+	private JPanel getPnHoraEntrada() {
+		if (pnHoraEntrada == null) {
+			pnHoraEntrada = new JPanel();
+			pnHoraEntrada.setLayout(new GridLayout(3, 2, 0, 0));
+			pnHoraEntrada.add(getLblHoraInicio());
+			pnHoraEntrada.add(getPnVacio3());
+			pnHoraEntrada.add(getPnHoraInicio());
+			pnHoraEntrada.add(getPnVacio());
+			pnHoraEntrada.add(getPnHoraInicioF());
+			pnHoraEntrada.add(getPanel_7_1());
 		}
-		return panel_7;
+		return pnHoraEntrada;
 	}
-	private JPanel getPanel_8() {
-		if (panel_8 == null) {
-			panel_8 = new JPanel();
-			panel_8.add(getLabel_3_1());
+	private JPanel getPnHoraSalida() {
+		if (pnHoraSalida == null) {
+			pnHoraSalida = new JPanel();
+			pnHoraSalida.setLayout(new GridLayout(3, 2, 0, 0));
+			pnHoraSalida.add(getLblHorasalida());
+			pnHoraSalida.add(getPnVacio5());
+			pnHoraSalida.add(getPnHoraFin());
+			pnHoraSalida.add(getPnVacio7());
+			pnHoraSalida.add(getPnHoraFinF());
+			pnHoraSalida.add(getPnGuardarHFin());
 		}
-		return panel_8;
+		return pnHoraSalida;
 	}
 	private JPanel getPanel_2() {
 		if (panel_2 == null) {
@@ -1406,13 +1430,15 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			btnDiagnosticar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					anadirDiagnostico();
+					restaurarCbDiagnosticos();
 				}
 			});
 		}
 		return btnDiagnosticar;
 	}
 
-	
+
+
 	/**
 	 * Método para asignar un diagnóstico nuevo a un paciente
 	 */
@@ -1487,11 +1513,185 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 	
 	/**
-	 * 	Método para poner el valor del cb en su valor actual
+	 * 	Método para poner el valor del cb en su valor de inicio
 	 */
 	protected void restaurarCb() {
 		cbVacunas.setSelectedIndex(0);
 		
 	}
 	
+	
+	/**
+	 * Método para poner el valor del cb en su valor de inicio
+	 */
+	protected void restaurarCbDiagnosticos() {
+		cbDiagnosticos.setSelectedIndex(0);		
+	}
+	
+	private JLabel getLblHoraInicio() {
+		if (lblHoraInicio == null) {
+			lblHoraInicio = new JLabel("Hora Inicio:");
+			lblHoraInicio.setFont(new Font("Dialog", Font.PLAIN, 15));
+		}
+		return lblHoraInicio;
+	}
+	private JPanel getPnVacio3() {
+		if (pnVacio3 == null) {
+			pnVacio3 = new JPanel();
+		}
+		return pnVacio3;
+	}
+	private JPanel getPnHoraInicio() {
+		if (pnHoraInicio == null) {
+			pnHoraInicio = new JPanel();
+			pnHoraInicio.setLayout(new GridLayout(0, 2, 0, 0));
+			pnHoraInicio.add(getPnVacio2());
+			pnHoraInicio.add(getSpinnerHInicioR());
+		}
+		return pnHoraInicio;
+	}
+	private JPanel getPnVacio() {
+		if (pnVacio == null) {
+			pnVacio = new JPanel();
+		}
+		return pnVacio;
+	}
+	private JPanel getPnVacio2() {
+		if (pnVacio2 == null) {
+			pnVacio2 = new JPanel();
+		}
+		return pnVacio2;
+	}
+	private JSpinner getSpinnerHInicioR() {
+		if (spinnerHInicioR == null) {
+			spinnerHInicioR = new JSpinner();
+		}
+		return spinnerHInicioR;
+	}
+	private JPanel getPnHoraInicioF() {
+		if (pnHoraInicioF == null) {
+			pnHoraInicioF = new JPanel();
+			pnHoraInicioF.setLayout(new GridLayout(1, 0, 0, 0));
+			pnHoraInicioF.add(getPnModificarHInicio());
+			pnHoraInicioF.add(getSpinnerHInicioNueva());
+		}
+		return pnHoraInicioF;
+	}
+	private JPanel getPanel_7_1() {
+		if (pnGuardarHInicio == null) {
+			pnGuardarHInicio = new JPanel();
+			pnGuardarHInicio.setLayout(new GridLayout(0, 2, 0, 0));
+			pnGuardarHInicio.add(getBtnGuardarInicio());
+		}
+		return pnGuardarHInicio;
+	}
+	private JPanel getPnModificarHInicio() {
+		if (pnModificarHInicio == null) {
+			pnModificarHInicio = new JPanel();
+			pnModificarHInicio.add(getBtnModificar());
+		}
+		return pnModificarHInicio;
+	}
+	private JButton getBtnModificar() {
+		if (btnModificar == null) {
+			btnModificar = new JButton("Modificar");
+		}
+		return btnModificar;
+	}
+	private JSpinner getSpinnerHInicioNueva() {
+		if (spinnerHInicioNueva == null) {
+			spinnerHInicioNueva = new JSpinner();
+			spinnerHInicioNueva.setEnabled(false);
+		}
+		return spinnerHInicioNueva;
+	}
+	private JButton getBtnGuardarInicio() {
+		if (btnGuardarInicio == null) {
+			btnGuardarInicio = new JButton("Guardar");
+		}
+		return btnGuardarInicio;
+	}
+	private JLabel getLblHorasalida() {
+		if (lblHorasalida == null) {
+			lblHorasalida = new JLabel("HoraSalida:");
+			lblHorasalida.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		}
+		return lblHorasalida;
+	}
+	private JPanel getPnVacio5() {
+		if (pnVacio5 == null) {
+			pnVacio5 = new JPanel();
+		}
+		return pnVacio5;
+	}
+	private JPanel getPnHoraFin() {
+		if (pnHoraFin == null) {
+			pnHoraFin = new JPanel();
+			pnHoraFin.setLayout(new GridLayout(0, 2, 0, 0));
+			pnHoraFin.add(getPnVacio6());
+			pnHoraFin.add(getSpinnerHFinR());
+		}
+		return pnHoraFin;
+	}
+	private JPanel getPnVacio6() {
+		if (pnVacio6 == null) {
+			pnVacio6 = new JPanel();
+		}
+		return pnVacio6;
+	}
+	private JSpinner getSpinnerHFinR() {
+		if (spinnerHFinR == null) {
+			spinnerHFinR = new JSpinner();
+		}
+		return spinnerHFinR;
+	}
+	private JPanel getPnVacio7() {
+		if (pnVacio7 == null) {
+			pnVacio7 = new JPanel();
+		}
+		return pnVacio7;
+	}
+	private JPanel getPnHoraFinF() {
+		if (pnHoraFinF == null) {
+			pnHoraFinF = new JPanel();
+			pnHoraFinF.setLayout(new GridLayout(1, 0, 0, 0));
+			pnHoraFinF.add(getPnModificarHoraFinF());
+			pnHoraFinF.add(getSpinnerHFinNueva());
+		}
+		return pnHoraFinF;
+	}
+	private JPanel getPnModificarHoraFinF() {
+		if (pnModificarHoraFinF == null) {
+			pnModificarHoraFinF = new JPanel();
+			pnModificarHoraFinF.add(getBtnModificarFin());
+		}
+		return pnModificarHoraFinF;
+	}
+	private JButton getBtnModificarFin() {
+		if (btnModificarFin == null) {
+			btnModificarFin = new JButton("Modificar");
+		}
+		return btnModificarFin;
+	}
+	private JSpinner getSpinnerHFinNueva() {
+		if (spinnerHFinNueva == null) {
+			spinnerHFinNueva = new JSpinner();
+			spinnerHFinNueva.setEnabled(false);
+		}
+		return spinnerHFinNueva;
+	}
+	private JPanel getPnGuardarHFin() {
+		if (pnGuardarHFin == null) {
+			pnGuardarHFin = new JPanel();
+			pnGuardarHFin.setLayout(new GridLayout(0, 2, 0, 0));
+			pnGuardarHFin.add(getBtnGuardarFin());
+		}
+		return pnGuardarHFin;
+	}
+	private JButton getBtnGuardarFin() {
+		if (btnGuardarFin == null) {
+			btnGuardarFin = new JButton("Guardar");
+		}
+		return btnGuardarFin;
+	}
 }
