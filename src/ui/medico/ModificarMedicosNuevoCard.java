@@ -1937,7 +1937,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			
 			for(int i = 0; i < vacunas.size(); i++) {
 				if (vacunas.get(i).getNombreVacuna().toLowerCase().equals(buscador)) { // Si lo que está buscando lo hay en la lista de vacunas
-					vacunaBuscada
+					//vacunaBuscada
 				}
 			}
 		}
