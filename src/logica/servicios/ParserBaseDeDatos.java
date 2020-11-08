@@ -122,6 +122,12 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
 	private final static String ADD_ASIGNA_VACUNA = "INSERT INTO ASIGNAVACUNA (codasigvac, nombrevacuna, historial, codempleado,FECHA, HORA) VALUES (?,?,?,?,?,?)";
 	private final static String HISTORIAL_CITA="select nhistorial from cita c,paciente p where c.codpaciente=p.codpaciente and c.codCita=? and c.codpaciente=? and c.codmedico=?";
+	private final static String CITA_CODCITA="select * from cita  where codCita=? and codpaciente=? ";
+	private final static String PACIENTE_HISTORIAL="select * from paciente  where nhistorial=? ";
+
+	
+	
+	
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
 		Connection con =new Conexion().getConnectionJDBC();
@@ -1563,4 +1569,43 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	return hs;
 	}
 	
+	
+	public Cita citaCod(String codcita, String codPaciente) throws SQLException {
+		Cita cita=null;
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(CITA_CODCITA);
+	
+	
+		pst.setString(1, codcita);
+		pst.setString(2,codPaciente);
+		ResultSet rs = pst.executeQuery();
+	if(rs.next()) {
+		
+			cita = DtoCita.cita(rs);
+		
+	}
+	rs.close();
+	pst.close();
+	con.close();
+	return cita;
+	}
+	
+	
+
+	public List<Paciente>  pacienteHistorial(String historial) throws SQLException {
+		List<Paciente> pacientes = new ArrayList<Paciente>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(PACIENTE_HISTORIAL);
+		pst.setString(1, historial);
+		ResultSet rs = pst.executeQuery();
+	if(rs.next()) {
+		
+			pacientes.add((new Paciente( rs.getString("codpaciente"), rs.getString("nombre"), rs.getString("apellido"),rs.getInt("movil") , 
+					rs.getString("email"), rs.getString("info"),rs.getString("nhistorial"))));
+	}
+	rs.close();
+	pst.close();
+	con.close();
+	return pacientes;
+	}
 }

@@ -295,7 +295,7 @@ public class VentanaMedicoCita extends JDialog {
 					
 						
 							try {
-								Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()).getCodCita());
+								Paciente p=pbd.devolverPacientesMedico((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 7));
 								
 								//FALTA PASARLE EL PACIENTE A LA VENTANA
 							} catch (SQLException e1) {
