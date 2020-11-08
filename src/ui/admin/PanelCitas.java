@@ -811,7 +811,6 @@ public class PanelCitas extends JDialog {
 			txtFieldNombreFiltro.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent arg0) {
-					if(!getTxtFieldNombreFiltro().getText().equals(""))
 						btnFiltrarNombre.setEnabled(true);
 				}
 			});
@@ -943,6 +942,12 @@ public class PanelCitas extends JDialog {
 	private JTextField getTextField_2() {
 		if (txtFieldNombreMedicoFiltro == null) {
 			txtFieldNombreMedicoFiltro = new JTextField();
+			txtFieldNombreMedicoFiltro.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					btnFiltrarNombreMedico.setEnabled(true);
+				}
+			});
 			txtFieldNombreMedicoFiltro.setColumns(10);
 		}
 		return txtFieldNombreMedicoFiltro;
