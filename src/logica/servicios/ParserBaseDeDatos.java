@@ -241,11 +241,8 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		pst.setTime(5,hFin);
 		pst.setDate(6, date);
 		pst.setString(7,ubicacion);
-		
-		if(urgente==true)
-			pst.setByte(8,(byte) 1 );
-		else
-			pst.setByte(8,(byte) 0);
+		System.err.println(urgente);
+		pst.setBoolean(8,urgente);
 		
 		pst.executeUpdate();
 	
@@ -672,8 +669,10 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		ResultSet rs = pst.executeQuery();
 		
 	while(rs.next()) {
-		if(rs.getByte("urgencia")==0)
+		if(rs.getByte("urgencia")==1)
 			 res=true;
+		else
+			res=false;
 		
 		citas.add(new Cita(rs.getString("codcita"),rs.getString("codpaciente"),rs.getString("codmedico"),rs.getTime("hinicio"), rs.getTime("hfin"),rs.getDate("fecha"),rs.getString("ubicacion"),res));
 		

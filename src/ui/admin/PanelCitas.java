@@ -411,7 +411,7 @@ public class PanelCitas extends JDialog {
 			chckbxEsUrgente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					
-					if(chckbxEsUrgente.isEnabled()) {
+					if(chckbxEsUrgente.isSelected()) {
 						System.out.println("Se ha enviado un correo al medico");
 					JOptionPane.showMessageDialog(null, "Se ha enviado un correo al medico");
 					}
@@ -1063,14 +1063,14 @@ public class PanelCitas extends JDialog {
 	private JLabel getLblNombreSala() {
 		if (lblNombreSala == null) {
 			lblNombreSala = new JLabel("Nombre sala");
-			lblNombreSala.setBounds(438, 103, 72, 22);
+			lblNombreSala.setBounds(399, 103, 72, 22);
 		}
 		return lblNombreSala;
 	}
 	private JTextField getTxtNombreSala() {
 		if (txtNombreSala == null) {
 			txtNombreSala = new JTextField();
-			txtNombreSala.setBounds(533, 102, 147, 25);
+			txtNombreSala.setBounds(483, 102, 147, 25);
 			txtNombreSala.setColumns(10);
 		}
 		return txtNombreSala;
@@ -1088,7 +1088,7 @@ public class PanelCitas extends JDialog {
 				}
 			});
 			btnFiltrar.setHorizontalAlignment(SwingConstants.RIGHT);
-			btnFiltrar.setBounds(708, 103, 66, 23);
+			btnFiltrar.setBounds(642, 103, 66, 23);
 		}
 		return btnFiltrar;
 	}
