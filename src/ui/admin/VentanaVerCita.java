@@ -301,10 +301,10 @@ public class VentanaVerCita extends JDialog {
 						
 							try {
 								Paciente p=pbd.devolverPacientesMedico((String)tablacita.getValueAt(tablacita.getSelectedRow(),8));
-								
+								System.err.println(p.getNombre() +" "+p.getApellido()+" "+p.getCodePaciente());
 								Cita c=pbd.citaCod((String)tablacita.getValueAt(tablacita.getSelectedRow(),8),
 										(String)tablacita.getValueAt(tablacita.getSelectedRow(),9));
-								
+								System.err.println((String)tablacita.getValueAt(tablacita.getSelectedRow(),9)+" "+c.getDate()+" "+c.gethFin());
 								VentanaModificarCita(p,c);
 								
 							} catch (SQLException e) {

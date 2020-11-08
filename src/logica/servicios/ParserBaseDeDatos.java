@@ -90,7 +90,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
 	private final static String ADD_ASIGNA_PPREINSCRIPCION = "INSERT INTO ASIGNAPRESCRIPCION (CODASIGPRESCRIPCION, NOMBREPRESCRIPCION, NHISTORIAL, CODEMPLEADO, CANTIDAD, INTERVALO, DURACION, INSTRUCCIONES, FECHA, HORA ) VALUES(?,?,?,?,?,?,?,?,?,?)";    
 
-	private final static String ADD_ASIGNA_DIAGNOSTICO = "INSERT INTO ASIGNADIAGNOSTICO (CODASIGDIAGNOSTICO, CODDIAGNOSTICO, HISTORIAL, CODEMPLEADO, FECHA, HORA) VALUES (?,?,?,?,?,?)";
+	private final static String ADD_ASIGNA_DIAGNOSTICO =  "INSERT INTO ASIGNADIAGNOSTICO (CODASIGDIAGNOSTICO,NOMBREDIAGNOSTICO, CODDIAGNOSTICO, HISTORIAL, CODEMPLEADO, FECHA, HORA) VALUES (?,?,?,?,?,?,?)";
 	
 	private final static String ADD_PREINSCRIPCION = "INSERT INTO PRESCRIPCION (NOMBREPRESCRIPCION, MEDICAMENTO)" + " VALUES(?,?)";
 	
@@ -817,7 +817,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		con.close();
 		return date;
 	}
-	
+	/*
 	public Cita verCita(String cod) throws SQLException {
 		Cita cita = null;
 		Connection con = new Conexion().getConnectionJDBC();
@@ -837,7 +837,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
 		}
 	
-	
+	*/
 	
 	public String devolverCodPaciente(String nombre, String apellido) throws SQLException {
 		List<Paciente > pacientes= buscarPaciente("");
@@ -1463,7 +1463,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	public void nuevaAsignaDiagnostico(AsignaDiagnostico ad) throws SQLException {
 		 Connection con = new Conexion().getConnectionJDBC();
 		 PreparedStatement pst=con.prepareStatement(ADD_ASIGNA_DIAGNOSTICO);
-
+		
 		
 		 String codAsigDiagnostico = ad.getCodAsigDiagnostico();
 		 String nombreDiagnostico = ad.getNombreDiagnostico();
@@ -1472,9 +1472,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		 String codempleado = ad.getCodMedico();
 		 java.sql.Date fecha = new java.sql.Date(ad.getFecha().getTime());
 		 Time hora = new Time(fecha.getTime());
-
 		 
-
 		 pst.setString(1, codAsigDiagnostico);
 		 pst.setString(2, nombreDiagnostico);
 		 pst.setString(3, codDiagnostico);

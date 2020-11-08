@@ -299,9 +299,15 @@ public class VentanaMedicoCita extends JDialog {
 	
 	protected void abrirModificarCita() {
 		try {
-			Paciente p=pbd.devolverPacientesMedico((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 7));
-			Cita cita = pbd.verCita((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 8));
-			ModificarMedicosNuevoCard mc = new ModificarMedicosNuevoCard(p, cita);
+			
+			Paciente p=pbd.devolverPacientesMedico((String)tablacita.getValueAt(tablacita.getSelectedRow(),7));
+			
+			Cita c=pbd.citaCod((String)tablacita.getValueAt(tablacita.getSelectedRow(),7),
+					(String)tablacita.getValueAt(tablacita.getSelectedRow(),8));
+			
+			
+			
+			ModificarMedicosNuevoCard mc = new ModificarMedicosNuevoCard(p, c);
 			mc.setLocationRelativeTo(this);
 			mc.setResizable(true);
 			mc.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
