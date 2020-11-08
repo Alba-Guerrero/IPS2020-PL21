@@ -847,9 +847,7 @@ public class PanelCitas extends JDialog {
 			txtFieldApellidoFiltro = new JTextField();
 			txtFieldApellidoFiltro.addMouseListener(new MouseAdapter() {
 				@Override
-				public void mouseClicked(MouseEvent arg0) {
-					if(!getTxtFieldApellidoFiltro().getText().equals(""))
-						btnFiltrarApellidos.setEnabled(true);
+				public void mouseClicked(MouseEvent arg0) {						btnFiltrarApellidos.setEnabled(true);
 					
 				}
 			});
@@ -900,9 +898,7 @@ public class PanelCitas extends JDialog {
 			txtFieldCodHistorial = new JTextField();
 			txtFieldCodHistorial.addMouseListener(new MouseAdapter() {
 				@Override
-				public void mouseClicked(MouseEvent e) {
-					if(!getTxtFieldCodHistorial().getText().equals(""))
-					btnFiltrarHistorial.setEnabled(true);
+				public void mouseClicked(MouseEvent e) {					btnFiltrarHistorial.setEnabled(true);
 				}
 			});
 			txtFieldCodHistorial.setColumns(10);
@@ -942,12 +938,12 @@ public class PanelCitas extends JDialog {
 	private JTextField getTextField_2() {
 		if (txtFieldNombreMedicoFiltro == null) {
 			txtFieldNombreMedicoFiltro = new JTextField();
-			txtFieldNombreMedicoFiltro.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
+			txtFieldNombreMedicoFiltro.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
 					btnFiltrarNombreMedico.setEnabled(true);
 				}
 			});
+			
 			txtFieldNombreMedicoFiltro.setColumns(10);
 		}
 		return txtFieldNombreMedicoFiltro;
@@ -956,6 +952,14 @@ public class PanelCitas extends JDialog {
 		if (txtFieldApellidoMedicoFiltro == null) {
 			txtFieldApellidoMedicoFiltro = new JTextField();
 			txtFieldApellidoMedicoFiltro.setColumns(10);
+			txtFieldApellidoMedicoFiltro.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					btnFiltrarApellidoMedico.setEnabled(true);
+				}
+				
+			});
+			
 		}
 		return txtFieldApellidoMedicoFiltro;
 	}
@@ -985,6 +989,22 @@ public class PanelCitas extends JDialog {
 	private JButton getBtnFiltrarApellidoMedico() {
 		if (btnFiltrarApellidoMedico == null) {
 			btnFiltrarApellidoMedico = new JButton("Filtrar");
+			btnFiltrarApellidoMedico.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+					if(txtFieldApellidoFiltro.getText().equals(""))
+					JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
+				else {	
+				
+					try {
+						modeloListaM(pbd.devolverMedicoApellido(txtFieldApellidoFiltro.getText()));
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+					
+				}
+				}
+			});
 			btnFiltrarApellidoMedico.setEnabled(false);
 		}
 		return btnFiltrarApellidoMedico;
