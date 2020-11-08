@@ -48,10 +48,14 @@ import logica.AsignaVacuna;
 import logica.Causas;
 import logica.Cita;
 import logica.Diagnostico;
+import logica.HistorialMedico;
 import logica.Paciente;
 import logica.Preinscripcion;
 import logica.Vacuna;
 import logica.servicios.ParserBaseDeDatos;
+import ui.MostrarHistorial;
+
+import javax.swing.ButtonGroup;
 
 public class ModificarMedicosNuevoCard extends JDialog {
 
@@ -186,13 +190,15 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton btnGuardarFin;
 	private JLabel label_1;
 	private JTextField txtApellido;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private JButton btnMostrarHistorial;
 
 	/**
 	 * Create the frame.
 	 * @throws SQLException 
 	 */
 	public ModificarMedicosNuevoCard(Paciente paciente, Cita cita) throws SQLException {
-		setTitle("Modificar cita.");
+		setTitle("Atender Consulta");
 		mm = this;
 		this.paciente = paciente;
 		this.cita = cita;
@@ -231,6 +237,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 				public void actionPerformed(ActionEvent e) {
 					try {
 						guardar();
+						consultaAtendida();
 						dispose();
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
@@ -241,6 +248,11 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		return button;
 	}
+	
+	private void consultaAtendida() {
+			JOptionPane.showMessageDialog(null, "Los cambios de la consulta han sido guardados");
+	}
+	
 	private JButton getButton_1() {
 		if (button_1 == null) {
 			button_1 = new JButton("Cancelar");
@@ -405,6 +417,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		if (panel_6 == null) {
 			panel_6 = new JPanel();
 			panel_6.setLayout(null);
+			panel_6.add(getBtnMostrarHistorial());
 		}
 		return panel_6;
 	}
@@ -1107,12 +1120,14 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JRadioButton getRdbtnAcudio() {
 		if (rdbtnAcudio == null) {
 			rdbtnAcudio = new JRadioButton("Acudio");
+			buttonGroup.add(rdbtnAcudio);
 		}
 		return rdbtnAcudio;
 	}
 	private JRadioButton getRdbtnNoAcudio() {
 		if (rdbtnNoAcudio == null) {
 			rdbtnNoAcudio = new JRadioButton("No acudio");
+			buttonGroup.add(rdbtnNoAcudio);
 		}
 		return rdbtnNoAcudio;
 	}
@@ -1428,11 +1443,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			}
 			contador = contador + 1;
 		}
-		
-		
-		
-		
-
 		
 		Random r = new Random();
 		String codAsigDiagnostico = "" + r.nextInt(999); // El código es aleatorio
@@ -1799,9 +1809,17 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	 * @throws SQLException 
 	 */
 	private void guardarInfoCita() throws SQLException {
+		boolean acudio = false;
+		boolean noAcudio = false;
+		if(rdbtnAcudio.isSelected()) {
+			acudio = true;
+		}
+		if(rdbtnNoAcudio.isSelected()) {
+			noAcudio = true;
+		}
 		
 		// Guardamos en la base de datos
-		pbd.actualizarCita(horaInicioCita, horaFinCita, cita.isAcudio(), cita.isNoAcudio(), cita.getCodCita());
+		pbd.actualizarCita(horaInicioCita, horaFinCita, acudio, noAcudio, cita.getCodCita());
 		
 	}
 
@@ -1822,5 +1840,31 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			txtApellido.setText(paciente.getApellido());
 		}
 		return txtApellido;
+	}
+	private JButton getBtnMostrarHistorial() {
+		if (btnMostrarHistorial == null) {
+			btnMostrarHistorial = new JButton("Mostrar historial");
+			btnMostrarHistorial.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						mostrarHistorial();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			});
+			btnMostrarHistorial.setBounds(38, 40, 157, 23);
+		}
+		return btnMostrarHistorial;
+	}
+	
+	private void mostrarHistorial() throws SQLException {
+		HistorialMedico hm = pbd.HistorialCita(cita.getCodCita(),paciente.getCodePaciente(),cita.getCodMed());
+		MostrarHistorial mh = new MostrarHistorial(hm);
+		mh.setLocationRelativeTo(null);
+		mh.setResizable(true);
+		mh.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+		mh.setVisible(true);
 	}
 }

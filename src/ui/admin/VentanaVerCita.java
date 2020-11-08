@@ -91,7 +91,7 @@ public class VentanaVerCita extends JDialog {
 		}
 		return scrollPane;
 	}
-	private JTable getTableCita() {
+	public JTable getTableCita() {
 			if (tablacita == null) {
 				String[] nombreColumnas= {"Nombre paciente "," Apellido paciente  ","Hora inicio"," Hora fin","Fecha ","Ubicación ","Nombre médico","Urgencia","Codcita","CodPaciente","CodMed"};
 				modeloTabla= new ModeloNoEditable(nombreColumnas,0);
@@ -122,6 +122,7 @@ public class VentanaVerCita extends JDialog {
 						if(fila!=-1) {
 							btnEliminar.setEnabled(true);
 							btnModificar.setEnabled(true);
+							btnVerHistorial.setEnabled(true);
 								try {
 									Paciente p=pbd.devolverPacientesMedico((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 9));
 								} catch (SQLException e) {
@@ -148,7 +149,7 @@ public class VentanaVerCita extends JDialog {
 	}
 	
 	
-	private void añadirFilas(boolean dia)  {
+	public void añadirFilas(boolean dia)  {
 		borrarModeloTabla();
 		Object[] nuevaFila=new Object[11];
 		List<Cita> citas = new ArrayList<Cita>();
@@ -266,7 +267,7 @@ public class VentanaVerCita extends JDialog {
 					int res=JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea borrar la cita?","Mensaje de confirmación",JOptionPane.YES_NO_OPTION);
 					if(res==JOptionPane.YES_OPTION) {
 						try {
-							pbd.BorrarCita((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 9));
+							pbd.BorrarCita((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 8));
 							añadirFilas(false);
 						} catch (SQLException e1) {
 							e1.printStackTrace();
@@ -315,7 +316,7 @@ public class VentanaVerCita extends JDialog {
 	
 protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 		
-		ModificarCita mc = new ModificarCita(p,c);
+		ModificarCita mc = new ModificarCita(this, p,c);
 		mc.setVisible(true);
 		mc.setLocationRelativeTo(this);
 		
@@ -469,6 +470,7 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 	private JButton getBtnVerHistorial() {
 		if (btnVerHistorial == null) {
 			btnVerHistorial = new JButton("Ver historial");
+			btnVerHistorial.setEnabled(false);
 			btnVerHistorial.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					mostrarHistorial();
@@ -478,14 +480,18 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 		return btnVerHistorial;
 	}
 	
+	
+	
 	protected void mostrarHistorial() {
 		int fila=tablacita.getSelectedRow();
 		if(fila!=-1) {
+			String codcita=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 8);
+			String codPaciente=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 9);
+			String codMedico=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 10);
+			
 		try {
-			Paciente p=pbd.devolverPacientesMedico((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 9));
-			System.out.println(p.getNombre());
-			System.out.println(p.getHistorial());
-			HistorialMedico hm = pbd.verHistorial(p.getHistorial());
+			
+			HistorialMedico hm = pbd.HistorialCita(codcita,codPaciente,codMedico);
 			MostrarHistorial mh = new MostrarHistorial(hm);
 			mh.setLocationRelativeTo(null);
 			mh.setResizable(true);
@@ -497,4 +503,5 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 		}
 		}
 	}
+	
 }

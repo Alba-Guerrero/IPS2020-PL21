@@ -86,13 +86,14 @@ public class ModificarCita extends JDialog {
 	private JButton btnSurname;
 	private JPanel panel_1;
 	private JLabel lblEscogeLaSala;
-	private JComboBox<String> comboBox;
+	private JComboBox<String> cbSala;
 	private Paciente p;
 	private Cita cita;
 	private JTextField textSurname;
 	private JButton btnNameSurname;
 	private JButton btnNewButton;
 
+	private VentanaVerCita vvc;
 
 	/**
 	 * Create the dialog.
@@ -101,7 +102,8 @@ public class ModificarCita extends JDialog {
 	 * 
 	 * @throws SQLException
 	 */
-	public ModificarCita(Paciente p, Cita cita) throws SQLException {
+	public ModificarCita(VentanaVerCita vvc, Paciente p, Cita cita) throws SQLException {
+		this.vvc = vvc;
 		this.p=p;
 		this.cita=cita;
 		setTitle("Administrativo: Modificar cita");
@@ -293,7 +295,7 @@ public class ModificarCita extends JDialog {
 	private JDateChooser getDateCita() {
 		if (dateCita == null) {
 			dateCita = new JDateChooser();
-			dateCita.setBounds(432, 60, 117, 22);
+			dateCita.setBounds(432, 60, 105, 26);
 			dateCita.setDateFormatString("yyyy-MM-dd");
 			dateCita.setDate(new Date());
 		}
@@ -314,7 +316,10 @@ public class ModificarCita extends JDialog {
 								Email.enviarCorreo("raulalvarezips@gmail.com", "sbeiaolebhiewuzz", "UO266007@uniovi.es", pacienteCita, cita);
 							}
 							JOptionPane.showMessageDialog(null, "Su cita se ha modificado con éxito");
+							
+							vvc.añadirFilas(false);
 							dispose();
+							
 						}
 					}
 				}
@@ -457,27 +462,43 @@ public class ModificarCita extends JDialog {
 
 		Date date = getDateCita().getDate();
 		java.sql.Date sDate = new java.sql.Date(date.getTime());
-			if(comboBox.getSelectedIndex()!=-1) {
-		combo=comboBox.getModel().getElementAt(comboBox.getSelectedIndex());
+			if(cbSala.getSelectedIndex()!=-1) {
+		combo=cbSala.getModel().getElementAt(cbSala.getSelectedIndex());
 			}
-				
-		for (int i = 0; i < medicos.size(); i++) {
+		
+			
+		if(medicos.size() > 0) {
+			for (int i = 0; i < medicos.size(); i++) {
 
-			Cita c;
+				Cita c = null;
+				try {
+					
+					c = new Cita(cita.getCodCita(),p.getCodePaciente(), medicos.get(i).getCodeEmpleado(), timeInicio, timeFin, sDate,combo,
+							chckbxEsUrgente.isSelected());
+					pbd.updateCita(c,cita.getCodMed());
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		else {
+			Cita c = null;
 			try {
-				
-				c = new Cita(cita.getCodCita(),p.getCodePaciente(), medicos.get(i).getCodeEmpleado(), timeInicio, timeFin, sDate,combo,
-						chckbxEsUrgente.isSelected());
-				pbd.updateCita(c,cita.getCodMed());
+						
+				c = new Cita(cita.getCodCita(),p.getCodePaciente(), cita.getCodMed(), timeInicio, timeFin, sDate,combo,
+					chckbxEsUrgente.isSelected());
+					pbd.updateCita(c,cita.getCodMed());
 
-			} catch (SQLException e) {
+		} catch (SQLException e) {
 				e.printStackTrace();
 			}
-
 		}
+		
 	}
-
-
+		
+		
 
 
 	private JPanel getPanel() {
@@ -550,7 +571,7 @@ public class ModificarCita extends JDialog {
 			panel_1 = new JPanel();
 			panel_1.setLayout(new MigLayout("", "[109px][grow][][][][][][][][][][][][][][][][][][][][][][][]", "[25px][][]"));
 			panel_1.add(getLblEscogeLaSala(), "cell 0 1,alignx trailing");
-			panel_1.add(getComboBox(), "cell 1 1 5 1");
+			panel_1.add(getCbSala(), "cell 1 1 5 1");
 			panel_1.add(getBtnModificar(), "cell 23 2,alignx left,aligny top");
 		}
 		return panel_1;
@@ -561,17 +582,17 @@ public class ModificarCita extends JDialog {
 		}
 		return lblEscogeLaSala;
 	}
-	private JComboBox<String> getComboBox() {
-		if (comboBox == null) {
-			comboBox = new JComboBox<String>();
+	private JComboBox<String> getCbSala() {
+		if (cbSala == null) {
+			cbSala = new JComboBox<String>();
 			List<String> salas= rellenarSalas();
 			String[] array = salas.toArray( new String[salas.size()] );
 			 Arrays.sort(array);
-			comboBox.setModel(new DefaultComboBoxModel<String>(array));
-			comboBox.setBounds(54, 47, 236, 22);
+			cbSala.setModel(new DefaultComboBoxModel<String>(array));
+			cbSala.setBounds(54, 47, 236, 22);
 			
 		}
-		return comboBox;
+		return cbSala;
 	}
 	
 	private List<String> rellenarSalas() {

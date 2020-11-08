@@ -39,6 +39,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JTextField;
+import java.awt.FlowLayout;
 
 public class VentanaMedicoCita extends JDialog {
 
@@ -60,7 +61,6 @@ public class VentanaMedicoCita extends JDialog {
 	private List<Cita> codcitas= new ArrayList<Cita>();
 	private JPanel panelBotones;
 	private JButton btnhistorial;
-	private JButton btncita;
 	private JButton btnmodifica;
 	private JButton btnTodas;
 	private JTextField textHistorial;
@@ -116,7 +116,6 @@ public class VentanaMedicoCita extends JDialog {
 				tablacita.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
-						btncita.setEnabled(true);
 						btnhistorial.setEnabled(true);
 						btnmodifica.setEnabled(true);
 					}
@@ -203,6 +202,7 @@ public class VentanaMedicoCita extends JDialog {
 	private JPanel getPanelCita() {
 		if (panelCita == null) {
 			panelCita = new JPanel();
+			panelCita.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 			panelCita.add(getLblNewLabel());
 			panelCita.add(getDateChooser());
 			panelCita.add(getBtnIr());
@@ -241,7 +241,6 @@ public class VentanaMedicoCita extends JDialog {
 		if (panelBotones == null) {
 			panelBotones = new JPanel();
 			panelBotones.add(getBtnhistorial());
-			panelBotones.add(getBtncita());
 			panelBotones.add(getBtnmodifica());
 		}
 		return panelBotones;
@@ -280,37 +279,9 @@ public class VentanaMedicoCita extends JDialog {
 		}
 		}
 	}
-	
-	
-	
-	private JButton getBtncita() {
-		if (btncita == null) {
-			btncita = new JButton("Ver cita");
-			btncita.setEnabled(false);
-			btncita.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-				
-				int fila=tablacita.getSelectedRow();
-				if(fila!=-1) {
-					
-						
-							try {
-								Paciente p=pbd.devolverPacientesMedico((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 7));
-								
-								//FALTA PASARLE EL PACIENTE A LA VENTANA
-							} catch (SQLException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-				}
-				}
-			});
-		}
-		return btncita;
-	}
 	private JButton getBtnmodifica() {
 		if (btnmodifica == null) {
-			btnmodifica = new JButton("Modificar cita");
+			btnmodifica = new JButton("Atender consulta");
 			btnmodifica.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					int fila=tablacita.getSelectedRow();
