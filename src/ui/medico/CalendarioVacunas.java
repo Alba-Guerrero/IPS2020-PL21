@@ -54,6 +54,7 @@ public class CalendarioVacunas extends JDialog {
 	 * Create the frame.
 	 */
 	public CalendarioVacunas(Paciente p) {
+		paciente = p;
 		setTitle("Calendario de vacunas");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1106, 466);
@@ -63,7 +64,7 @@ public class CalendarioVacunas extends JDialog {
 		setContentPane(contentPane);
 		contentPane.add(getPanel(), BorderLayout.NORTH);
 		contentPane.add(getScrollPane(), BorderLayout.CENTER);
-		paciente = p;
+		
 	}
 	private JPanel getPanel() {
 		if (panel == null) {
