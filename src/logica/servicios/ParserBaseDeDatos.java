@@ -84,7 +84,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
 	private final static String INSERT_ASIGNA_CAUSA = "INSERT into asignacausa (codasigcausa, nombrecausa, historial, codempleado, fecha, hora) values(?,?,?,?,?,?)";
 	
-	private final static String ACTUALIZAR_CITA = "UPDATE cita set hinicio = ?, hfin = ?, acudio = ? where codcita = ?";
+	private final static String ACTUALIZAR_CITA = "UPDATE cita set hinicioempleado = ?, hfinempleado = ?, acudio = ?, noAcudio = ? where codcita = ?";
 
 	private final static String UPDATE_JORNADA = "UPDATE empleado SET hinicio=?, hfin=?, dinicio=?, dfin=?, djornada=? WHERE codempleado=?";
 	
@@ -954,17 +954,19 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 
 	/**
 	 * Método para actualizar la cita cuando la modifica el médico
+	 * @param b 
 	 * @param cita
 	 * @throws SQLException
 	 */
-	public void actualizarCita(Time hInicio, Time hFin, boolean acudio, String codigo) throws SQLException{
+	public void actualizarCita(Time hInicioEmpleado, Time hFinEmpleado, boolean acudio, boolean noAcudio, String codigo) throws SQLException{
 		Connection con = new Conexion().getConnectionJDBC(); // Esto siempre asi
 		PreparedStatement pst=con.prepareStatement(ACTUALIZAR_CITA);
 		
-		pst.setTime(1, hInicio);
-		pst.setTime(2, hFin);
+		pst.setTime(1, hInicioEmpleado);
+		pst.setTime(2, hFinEmpleado);
 		pst.setBoolean(3, acudio);
-		pst.setString(4, codigo);
+		pst.setBoolean(4, noAcudio);
+		pst.setString(5, codigo);
 		
 		pst.executeUpdate();
 	
@@ -1374,7 +1376,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 
 	 pst.setString(1, codasigvac);
 	 pst.setString(2, nombreVacuna);
-	 pst.setString(3, codHistorial);
+	 pst.setString(3, historial);
 	 pst.setString(4, codEmpleado);
 	 pst.setDate(5, fecha);
 	 pst.setTime(6, hour);

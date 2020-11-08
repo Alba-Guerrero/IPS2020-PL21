@@ -374,7 +374,7 @@ public class ModificarCitaMedico extends JDialog {
 			
 			
 			// Guardamos en la base de datos
-			pbd.actualizarCita(horaDeInicio, horaDeFin, cita.isAcudio(), cita.getCodCita());
+			//pbd.actualizarCita(horaDeInicio, horaDeFin, cita.isAcudio(), cita.getCodCita());
 		
 		modificarCausas();
 		

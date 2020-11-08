@@ -59,11 +59,13 @@ import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
+import javax.swing.SpinnerDateModel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.SystemColor;
 
 public class ModificarMedicosNuevoCard extends JDialog {
 
@@ -94,6 +96,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private List<AsignaVacuna> asignaVacunasPaciente = new ArrayList<AsignaVacuna>();
 	private List <AsignaDiagnostico> asignaDiagnosticosPaciente = new ArrayList<AsignaDiagnostico>();
 	private Paciente paciente;
+	private Time horaInicioCita; // La hora que le puede asignar el medico 
+	private Time horaFinCita; // La hora que le puede asignar el médico
 
 	private Causas causa;
 	private List<Causas> causas;
@@ -227,7 +231,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel getPanel() {
 		if (panel == null) {
 			panel = new JPanel();
-			panel.setBackground(Color.WHITE);
+			panel.setBackground(SystemColor.menu);
 			panel.add(getButton());
 			panel.add(getButton_1());
 		}
@@ -236,6 +240,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getButton() {
 		if (button == null) {
 			button = new JButton("Guardar");
+			button.setFont(new Font("Tahoma", Font.PLAIN, 16));
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
@@ -253,6 +258,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getButton_1() {
 		if (button_1 == null) {
 			button_1 = new JButton("Cancelar");
+			button_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
 			button_1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					dispose();
@@ -1115,7 +1121,10 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		guardarVacunas();
 		guardarDiagnosticos();
+		guardarInfoCita(); // Método que me guarda si acabó y si cambio la hora, la guarda también
 	}
+
+
 
 
 
@@ -1564,7 +1573,16 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 	private JSpinner getSpinnerHInicioR() {
 		if (spinnerHInicioR == null) {
-			spinnerHInicioR = new JSpinner();
+			spinnerHInicioR = new JSpinner(new SpinnerDateModel());
+						
+			spinnerHInicioR.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			
+			JSpinner.DateEditor de_timeSpinnerInicio = new JSpinner.DateEditor(spinnerHInicioR, "HH:mm");
+			spinnerHInicioR.setEditor(de_timeSpinnerInicio);
+			
+			spinnerHInicioR.setValue(cita.gethInicio()); // Le ponemos la hora que tenía asignada del administrador
+			
+			return spinnerHInicioR;			
 		}
 		return spinnerHInicioR;
 	}
@@ -1595,22 +1613,61 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getBtnModificar() {
 		if (btnModificar == null) {
 			btnModificar = new JButton("Modificar");
+			btnModificar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					activarModificarHoraInicio();
+				}
+			});
 		}
 		return btnModificar;
 	}
+	
+	
+	/**
+	 * Método que me activa para cambiar la hora de inicio
+	 */
+	private void activarModificarHoraInicio() {
+		if (!spinnerHInicioNueva.isEnabled()) { // Primero comprobamos que no está ya enabled
+			spinnerHInicioNueva.setEnabled(true);
+		}	
+		if (btnModificar.isEnabled()) {
+			btnModificar.setEnabled(false);
+		}
+	}
+	
+	
+	
 	private JSpinner getSpinnerHInicioNueva() {
 		if (spinnerHInicioNueva == null) {
-			spinnerHInicioNueva = new JSpinner();
+			spinnerHInicioNueva = new JSpinner(new SpinnerDateModel());
 			spinnerHInicioNueva.setEnabled(false);
+			spinnerHInicioNueva.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			
+			JSpinner.DateEditor de_timeSpinnerInicio = new JSpinner.DateEditor(spinnerHInicioNueva, "HH:mm");
+			spinnerHInicioNueva.setEditor(de_timeSpinnerInicio);
+			
+			// La hora y fecha actuales
+			Date fecha = new Date();	
+			Time hora = new Time(new Date().getTime());
+			
+			spinnerHInicioNueva.setValue(hora); // Le ponemos la hora actual del sistema
+			
+			return spinnerHInicioNueva;
 		}
 		return spinnerHInicioNueva;
 	}
 	private JButton getBtnGuardarInicio() {
 		if (btnGuardarInicio == null) {
 			btnGuardarInicio = new JButton("Guardar");
+			btnGuardarInicio.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					guardarHoraInicioCita();
+				}
+			});
 		}
 		return btnGuardarInicio;
 	}
+
 	private JLabel getLblHorasalida() {
 		if (lblHorasalida == null) {
 			lblHorasalida = new JLabel("HoraSalida:");
@@ -1641,7 +1698,17 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 	private JSpinner getSpinnerHFinR() {
 		if (spinnerHFinR == null) {
-			spinnerHFinR = new JSpinner();
+			spinnerHFinR = new JSpinner(new SpinnerDateModel());
+					
+			spinnerHFinR.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			
+			JSpinner.DateEditor de_timeSpinnerInicio = new JSpinner.DateEditor(spinnerHFinR, "HH:mm");
+			spinnerHFinR.setEditor(de_timeSpinnerInicio);
+			
+			spinnerHFinR.setValue(cita.gethFin()); // Le ponemos la hora que tenía asignada del administrador
+			
+			return spinnerHFinR;
+			
 		}
 		return spinnerHFinR;
 	}
@@ -1670,13 +1737,46 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getBtnModificarFin() {
 		if (btnModificarFin == null) {
 			btnModificarFin = new JButton("Modificar");
+			btnModificarFin.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					activarModificarHoraFin();
+				}
+			});
 		}
 		return btnModificarFin;
 	}
+	
+	
+	/**
+	 * Método para activar que pueda cambiar la hora de fin
+	 */
+	protected void activarModificarHoraFin() {
+		
+		if (!spinnerHFinNueva.isEnabled()) { // Si no estaba anteriormente enabled
+			spinnerHFinNueva.setEnabled(true);
+		}
+		
+		if (btnModificarFin.isEnabled()) {
+			btnModificarFin.setEnabled(false);
+		}
+	}
+
 	private JSpinner getSpinnerHFinNueva() {
 		if (spinnerHFinNueva == null) {
-			spinnerHFinNueva = new JSpinner();
+			spinnerHFinNueva = new JSpinner(new SpinnerDateModel());
 			spinnerHFinNueva.setEnabled(false);
+			spinnerHFinNueva.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			
+			JSpinner.DateEditor de_timeSpinnerInicio = new JSpinner.DateEditor(spinnerHFinNueva, "HH:mm");
+			spinnerHFinNueva.setEditor(de_timeSpinnerInicio);
+			
+			// La hora y fecha actuales
+			Date fecha = new Date();	
+			Time hora = new Time(new Date().getTime());
+			
+			spinnerHFinNueva.setValue(hora); // Le ponemos la hora actual del sistema
+			
+			return spinnerHFinNueva;
 		}
 		return spinnerHFinNueva;
 	}
@@ -1691,7 +1791,53 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getBtnGuardarFin() {
 		if (btnGuardarFin == null) {
 			btnGuardarFin = new JButton("Guardar");
+			btnGuardarFin.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					guardarHoraFinCita();
+				}
+			});
 		}
 		return btnGuardarFin;
 	}
+	
+	
+
+	/**
+	 * Método que me guarda localmente la hora de inicio de la cita que ha querido poner el médico
+	 */
+	protected void guardarHoraInicioCita() {
+		if (spinnerHInicioNueva.isEnabled()) { // Si le ha dado a modificar la hora
+			Date dateInicio = (Date) spinnerHInicioNueva.getValue();
+			Time horaDeInicio = new Time(dateInicio.getTime());
+			
+			horaInicioCita = horaDeInicio;
+		}
+		
+	}
+	
+	/**
+	 * Método que me guarda localmente la hora de fin de la cita que ha querido poner el médico
+	 */
+	protected void guardarHoraFinCita() {
+		if (spinnerHFinNueva.isEnabled()) { // Si le ha dado a modificar la hora
+			Date dateInicio = (Date) spinnerHFinNueva.getValue();
+			Time horaDeInicio = new Time(dateInicio.getTime());
+			
+			horaFinCita = horaDeInicio;
+		}
+		
+	}
+
+	
+	/**
+	 * Método que me guarda las información de la cita si se ha actualizado (si acudió o no y la hora de entrada y salida si la hubiese
+	 * @throws SQLException 
+	 */
+	private void guardarInfoCita() throws SQLException {
+		
+		// Guardamos en la base de datos
+		pbd.actualizarCita(horaInicioCita, horaFinCita, cita.isAcudio(), cita.isNoAcudio(), cita.getCodCita());
+		
+	}
+
 }

@@ -24,11 +24,16 @@ public class Cita {
 	private Date date;
 	private String ubicacion;
 	private boolean  acudio;
+	private boolean noAcudio;
 	private boolean urgente;
+	private Time hInicioR;
+	private Time hFinR;
+	
+	
 	private ParserBaseDeDatos pbd=new ParserBaseDeDatos();
 	
 	public Cita(String codPaciente, String codMed, Time hInicio, Time hFin,Date date, String ubicacion,
-			boolean acudio, boolean urgente) throws SQLException {
+			boolean acudio, boolean noAcudio, boolean urgente, Time hInicioR, Time hFinR) throws SQLException {
 		super();
 		
 		this.codPaciente = codPaciente;
@@ -39,6 +44,11 @@ public class Cita {
 		this.ubicacion = ubicacion;
 		this.acudio	 = acudio;
 		this.urgente = urgente;
+		this.noAcudio = noAcudio;
+		this.hInicioR = hInicioR;
+		this.hFinR = hFinR;
+
+		
 		generateRandomCodCita();
 	}
 	
@@ -62,6 +72,114 @@ public class Cita {
 			this.hFin = hFin;
 			this.date=date;
 			this.ubicacion=ubicacion;
+	}
+
+	
+	
+	
+	/**
+	 * @param codPaciente the codPaciente to set
+	 */
+	public void setCodPaciente(String codPaciente) {
+		this.codPaciente = codPaciente;
+	}
+
+	/**
+	 * @param codMed the codMed to set
+	 */
+	public void setCodMed(String codMed) {
+		this.codMed = codMed;
+	}
+
+	/**
+	 * @param hInicio the hInicio to set
+	 */
+	public void sethInicio(Time hInicio) {
+		this.hInicio = hInicio;
+	}
+
+	/**
+	 * @param hFin the hFin to set
+	 */
+	public void sethFin(Time hFin) {
+		this.hFin = hFin;
+	}
+
+	/**
+	 * @param date the date to set
+	 */
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	/**
+	 * @param ubicacion the ubicacion to set
+	 */
+	public void setUbicacion(String ubicacion) {
+		this.ubicacion = ubicacion;
+	}
+
+	/**
+	 * @param noAcudio the noAcudio to set
+	 */
+	public void setNoAcudio(boolean noAcudio) {
+		this.noAcudio = noAcudio;
+	}
+
+	/**
+	 * @param urgente the urgente to set
+	 */
+	public void setUrgente(boolean urgente) {
+		this.urgente = urgente;
+	}
+
+	/**
+	 * @param hInicioR the hInicioR to set
+	 */
+	public void sethInicioR(Time hInicioR) {
+		this.hInicioR = hInicioR;
+	}
+
+	/**
+	 * @param hFinR the hFinR to set
+	 */
+	public void sethFinR(Time hFinR) {
+		this.hFinR = hFinR;
+	}
+
+	/**
+	 * @param pbd the pbd to set
+	 */
+	public void setPbd(ParserBaseDeDatos pbd) {
+		this.pbd = pbd;
+	}
+
+	/**
+	 * @return the noAcudio
+	 */
+	public boolean isNoAcudio() {
+		return noAcudio;
+	}
+
+	/**
+	 * @return the hInicioR
+	 */
+	public Time gethInicioR() {
+		return hInicioR;
+	}
+
+	/**
+	 * @return the hFinR
+	 */
+	public Time gethFinR() {
+		return hFinR;
+	}
+
+	/**
+	 * @return the pbd
+	 */
+	public ParserBaseDeDatos getPbd() {
+		return pbd;
 	}
 
 	private void setCodCita(String codCita) {
