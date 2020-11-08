@@ -34,7 +34,7 @@ public class AsignaVacuna {
 	 * @param date
 	 * @param time
 	 */
-	public AsignaVacuna(String codVacuna, String nombreVacuna, String codEmpleado, String codHistorial, Date date, Time time) {
+	public AsignaVacuna(String codVacuna, String nombreVacuna, String codHistorial, String codEmpleado, Date date, Time time) {
 		this.codVacuna = codVacuna;
 		this.nombreVacuna = nombreVacuna;
 		this.codEmpleado = codEmpleado;

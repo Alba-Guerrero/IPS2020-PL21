@@ -10,7 +10,7 @@ package logica;
 public class Vacuna {
 
 	
-	private String codVacuna;
+	
 	private String nombreVacuna;
 	
 	
@@ -22,19 +22,12 @@ public class Vacuna {
 	 * @param codEmpleado
 	 * @param nombreVacuna
 	 */
-	public Vacuna(String codVacuna, String nombreVacuna) {
-		this.codVacuna = codVacuna;
+	public Vacuna(String nombreVacuna) {
 		this.nombreVacuna = nombreVacuna;
 	}
 
 
 
-	/**
-	 * @return the codVacuna
-	 */
-	public String getCodVacuna() {
-		return codVacuna;
-	}
 
 
 	/**

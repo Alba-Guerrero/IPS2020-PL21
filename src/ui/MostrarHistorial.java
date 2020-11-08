@@ -206,7 +206,6 @@ public class MostrarHistorial extends JDialog {
 			panelPreinscripciones = new JPanel();
 			panelPreinscripciones.setLayout(new BorderLayout(0, 0));
 			panelPreinscripciones.add(getScrollPanePreinscripciones());
-			//panelPreinscripciones.add(getTextAreaPreinscripciones());
 		}
 		return panelPreinscripciones;
 	}
@@ -244,8 +243,8 @@ public class MostrarHistorial extends JDialog {
 	private JPanel getPanelDiagnosticos() throws SQLException {
 		if (panelDiagnosticos == null) {
 			panelDiagnosticos = new JPanel();
+			panelDiagnosticos.setLayout(new BorderLayout(0, 0));
 			panelDiagnosticos.add(getScrollPaneDiagnosticos());
-			//panelDiagnosticos.add(getTextAreaDiagnosticos());
 		}
 		return panelDiagnosticos;
 	}

@@ -15,8 +15,8 @@ public class AsignaDiagnostico {
 
 	private String codAsigDiagnostico;
 	private String nombreDiagnostico;
-	private String nHistorial; // El número de historial del paciente a quien le hemos asignado el diagnostico
 	private String nDiagnostico; // El identificador del diagnostico
+	private String nHistorial; // El número de historial del paciente a quien le hemos asignado el diagnostico
 	private String codMedico;
 	private Date fecha;
 	private Time hora;
@@ -33,7 +33,7 @@ public class AsignaDiagnostico {
 	 * @param fecha
 	 * @param hora
 	 */
-	public AsignaDiagnostico(String codAsigDiagnostico, String nombreDiagnostico, String nHistorial, String nDiagnostico, String codMedico, Date fecha, Time hora) {
+	public AsignaDiagnostico(String codAsigDiagnostico, String nombreDiagnostico, String nDiagnostico, String nHistorial, String codMedico, Date fecha, Time hora) {
 		this.codAsigDiagnostico = codAsigDiagnostico;
 		this.nombreDiagnostico = nombreDiagnostico;
 		this.nHistorial = nHistorial;
