@@ -26,6 +26,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.JSpinner;
 
+import logica.Acompañante;
 import logica.Cita;
 import logica.Email;
 import logica.Paciente;
@@ -96,6 +97,7 @@ public class PanelCitas extends JDialog {
 	private JButton btnEditarTelefonoDatos;
 	private JButton btnEditarCorreoDatos;
 	private Paciente pacienteCita;
+	private Acompañante acompañante;
 	
 	List<String> salas;
 
@@ -547,7 +549,7 @@ public class PanelCitas extends JDialog {
 	private JPanel getPanel() {
 		if (panel == null) {
 			panel = new JPanel();
-			panel.setBorder(new TitledBorder(null, "Datos del paciente", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			panel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "Datos de contacto", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 			panel.setLayout(null);
 			panel.add(getLabel_1());
 			panel.add(getLabel_5());
@@ -569,28 +571,28 @@ public class PanelCitas extends JDialog {
 	private JLabel getLabel_1() {
 		if (lblNombreDatos == null) {
 			lblNombreDatos = new JLabel("Nombre: ");
-			lblNombreDatos.setBounds(13, 28, 54, 16);
+			lblNombreDatos.setBounds(25, 28, 54, 16);
 		}
 		return lblNombreDatos;
 	}
 	private JLabel getLabel_2() {
 		if (lblApellidosDatos == null) {
 			lblApellidosDatos = new JLabel("Apellidos:");
-			lblApellidosDatos.setBounds(13, 57, 56, 16);
+			lblApellidosDatos.setBounds(23, 63, 56, 16);
 		}
 		return lblApellidosDatos;
 	}
 	private JLabel getLabel_3() {
 		if (lblTelefonoDatos == null) {
 			lblTelefonoDatos = new JLabel("Tel\u00E9fono:");
-			lblTelefonoDatos.setBounds(13, 98, 55, 16);
+			lblTelefonoDatos.setBounds(23, 98, 55, 16);
 		}
 		return lblTelefonoDatos;
 	}
 	private JLabel getLabel_4() {
 		if (lblCorreoDatos == null) {
 			lblCorreoDatos = new JLabel("Correo electr\u00F3nico:");
-			lblCorreoDatos.setBounds(0, 130, 110, 16);
+			lblCorreoDatos.setBounds(10, 130, 110, 16);
 		}
 		return lblCorreoDatos;
 	}
@@ -690,18 +692,20 @@ public class PanelCitas extends JDialog {
 		if(!(pacienteCita instanceof Paciente))
 			return false;
 		
-		return Integer.parseInt(getTxtFieldTelefonoDatos().getText()) != pacienteCita.getMovil() ||
-		!(getTxtFieldCorreoDatos().getText().equals(pacienteCita.getEmail()));
-		
+		if(!getTxtFieldTelefonoDatos().getText().equals(""))
+			return Integer.parseInt(getTxtFieldTelefonoDatos().getText()) != pacienteCita.getMovil() ||
+			!(getTxtFieldCorreoDatos().getText().equals(pacienteCita.getEmail()));
+		return false;
 	}
 	
 	private void setContactData()  {
-		if(pacienteCita instanceof Paciente) {
-			getTxtFieldNombreDatos().setText(pacienteCita.getNombre());
-			getTxtFieldApellidosDatos().setText(pacienteCita.getApellido());
-			getTxtFieldTelefonoDatos().setText(pacienteCita.getMovil()+"");
-			getTxtFieldCorreoDatos().setText(pacienteCita.getEmail());
-			getTextArea_1_1().setText(pacienteCita.getInfo());
+		if(acompañante instanceof Acompañante) {
+			
+			getTxtFieldNombreDatos().setText(acompañante.getNombre());
+			getTxtFieldApellidosDatos().setText(acompañante.getApellido());
+			getTxtFieldTelefonoDatos().setText(acompañante.getMovil()+"");
+			getTxtFieldCorreoDatos().setText(acompañante.getEmail());
+			//getTextArea_1_1().setText(acompañante.getInfo());
 		}
 	
 	}
@@ -745,6 +749,7 @@ public class PanelCitas extends JDialog {
 							
 						
 							try {
+								if(!getTxtFieldTelefonoDatos().getText().equals(""))
 								ParserBaseDeDatos.updateDatosContacto(Integer.parseInt(getTxtFieldTelefonoDatos().getText()), getTxtFieldCorreoDatos().getText(),
 										getTextArea_1_1().getText(),pacienteCita.getCodePaciente());
 							} catch (NumberFormatException | SQLException e1) {
@@ -1053,6 +1058,11 @@ public class PanelCitas extends JDialog {
 				public void mouseClicked(MouseEvent arg0) {
 					
 					 pacienteCita= listPaciente.getSelectedValue();
+					 try {
+						acompañante = pbd.getAcompañante(pacienteCita.getCodePaciente());
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 					 setContactData();
 				}
 			

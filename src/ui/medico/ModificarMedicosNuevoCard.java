@@ -39,6 +39,7 @@ import javax.swing.SortOrder;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -1960,8 +1961,12 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			
 			for(int i = 0; i < vacunas.size(); i++) {
 				if (vacunas.get(i).getNombreVacuna().toLowerCase().equals(buscador)) { // Si lo que está buscando lo hay en la lista de vacunas
+
 					cbVacunas.setSelectedIndex(i); // Lo mostramos en el cb
 					encontrada = true; // la encontró
+
+					//vacunaBuscada
+
 				}
 			}
 			
@@ -2109,6 +2114,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		cv.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
 		cv.setVisible(true);	
 	}
+
 	
 	
 	/**
@@ -2196,4 +2202,55 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 	
 	
+	/*
+	
+	protected boolean isVacunado(String vacuna) {
+		List<AsignaVacuna> vacunasHechas = new ArrayList<AsignaVacuna>();
+		try {
+			vacunasHechas = pbd.verVacunasPaciente(paciente.getHistorial());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		for(int i = 1; i<getTable().getColumnCount(); i++) {
+			for(int j = 0; j<getTable().getRowCount(); j++) {
+				for(int k = 0; k<vacunasHechas.size(); k++) {
+					if(vacuna.equals(vacunasHechas.get(k).getNombreVacuna())) {
+						
+					}
+				}
+			}
+		}
+		
+	}
+	*/
+
+	/**
+	 * Clase para colorear las vacunas que ya han sido 
+	 * @author roloa
+	 *
+	 */
+	/*
+	public class ColorearVacuna extends DefaultTableCellRenderer{
+		public Component getTableCellRendererComponent(JTable table,
+			      Object value,
+			      boolean isSelected,
+			      boolean hasFocus,
+			      int row,
+			      int column)
+			   {
+			      super.getTableCellRendererComponent (table, value, isSelected, hasFocus, row, column);
+			      if ( isVacunado() )
+			      {
+			         this.setOpaque(true);
+			         this.setBackground(Color.RED);
+			         this.setForeground(Color.YELLOW);
+			      } else {
+			         // Restaurar los valores por defecto
+			      }
+
+			      return this;
+			   }
+	}
+	*/
 }

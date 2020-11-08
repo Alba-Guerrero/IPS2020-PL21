@@ -93,5 +93,4 @@ public class Paciente {
 		return movil;
 	}
 	
-	
 }
