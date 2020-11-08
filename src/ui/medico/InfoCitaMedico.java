@@ -119,11 +119,7 @@ public class InfoCitaMedico extends JDialog {
 				JButton button = new JButton("+");
 				button.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						try {
-							modificarCita();
-						} catch (SQLException e1) {
-							e1.printStackTrace();
-						}
+						abrirModificarCita();
 					}
 				});
 				panel.add(button);
@@ -193,5 +189,20 @@ protected void modificarCita() throws SQLException {
 			JOptionPane.showConfirmDialog(null, "No existe historial médico");
 	}
 
+	protected void abrirModificarCita() {
+		try {
+			cita = pbd.verCita(paciente.getCodePaciente());
+			ModificarMedicosNuevoCard mc = new ModificarMedicosNuevoCard(paciente, cita);
+			mc.setLocationRelativeTo(this);
+			mc.setResizable(true);
+			mc.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+			mc.setVisible(true);
+		}  catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+
+	}
 	
 }
