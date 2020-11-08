@@ -64,7 +64,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 
 	private final static String VER_HORA_CITA ="SELECT hinicio FROM cita where codpaciente=?";
 	
-	private final static String VER_HISTORIAL ="SELECT nhistorial FROM historial where nHistorial =?";
+	private final static String VER_HISTORIAL ="SELECT * FROM historial where nHistorial =?";
 	
 	private final static String VER_VACUNAS ="SELECT nombreVacuna, fecha FROM vacuna where codvacuna  = ?";
 	
@@ -121,7 +121,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	private final static String FIND_PACIENTE_BY_SURNAME = "Select * from paciente where apellido=?";
 	
 	private final static String ADD_ASIGNA_VACUNA = "INSERT INTO ASIGNAVACUNA (codasigvac, nombrevacuna, historial, codempleado,FECHA, HORA) VALUES (?,?,?,?,?,?)";
-	
+	private final static String HISTORIAL_CITA="select nhistorial from cita c,paciente p where c.codpaciente=p.codpaciente and c.codCita=? and c.codpaciente=? and c.codmedico=?";
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
 		Connection con =new Conexion().getConnectionJDBC();
@@ -412,6 +412,8 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
 		
 	while(rs.next()) {
+		
+		
 		pacientes= new Paciente( rs.getString("codpaciente"),rs.getString("nombre"),rs.getString("apellido"),rs.getInt("movil"), rs.getString("email"),rs.getString("info"),rs.getString("nhistorial"));
 		
 	}
@@ -595,12 +597,12 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
 	
 
-	public List<Cita> devolvercitasHistorial(String historial) throws SQLException {
+	public List<Cita> devolvercitasHistorial(String codhistorial) throws SQLException {
 		List<Cita> citas = new ArrayList<Cita>();
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst=con.prepareStatement(GET_CITA_HISTORIAL);
 		boolean res=false;
-		pst.setString(1, historial);
+		pst.setString(1, codhistorial);
 
 	
 		ResultSet rs = pst.executeQuery();
@@ -622,12 +624,12 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	return citas;
 }
 	
-	public List<Cita> devolvercitasHistorialMed(String historial,String codMedico) throws SQLException {
+	public List<Cita> devolvercitasHistorialMed(String codhistorial,String codMedico) throws SQLException {
 		List<Cita> citas = new ArrayList<Cita>();
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst=con.prepareStatement(GET_CITA_HISTORIAL_MED);
 		boolean res=false;
-		pst.setString(1, historial);
+		pst.setString(1, codhistorial);
 		pst.setString(2, codMedico);
 
 	
@@ -877,6 +879,9 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		if(rs.next()) {
 			historial = new HistorialMedico(rs.getString(1));
 		}
+		
+		
+		boolean res= rs.next();
 		
 		
 		rs.close();
@@ -1369,7 +1374,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 
 	 pst.setString(1, codasigvac);
 	 pst.setString(2, nombreVacuna);
-	 pst.setString(3, historial);
+	 pst.setString(3, codHistorial);
 	 pst.setString(4, codEmpleado);
 	 pst.setDate(5, fecha);
 	 pst.setTime(6, hour);
@@ -1535,5 +1540,25 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	return citas;
 	}
 
+	public HistorialMedico HistorialCita(String codcita, String codPaciente, String codMedico) throws SQLException {
+		HistorialMedico hs=null;
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(HISTORIAL_CITA);
+	
+	
+		pst.setString(1, codcita);
+		pst.setString(2,codPaciente);
+		pst.setString(3, codMedico);
+		ResultSet rs = pst.executeQuery();
+	if(rs.next()) {
+		
+			 hs=new HistorialMedico(rs.getString(1));
+		
+	}
+	rs.close();
+	pst.close();
+	con.close();
+	return hs;
+	}
 	
 }
