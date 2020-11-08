@@ -19,6 +19,7 @@ import javax.swing.UIManager;
 
 import logica.servicios.ParserBaseDeDatos;
 import ui.admin.PanelCitas;
+import ui.medico.VentanaMedicoCita;
 import ui.medico.VerCitasMedico;
 
 
@@ -88,7 +89,7 @@ public class VentanaInicio extends JFrame {
 						if(pbd.buscarMedicoCod(getTextField().getText())) {
 						dispose();
 
-						panelMedico();
+						verCitas();
 						}
 						else {
 							getTextField().setText("");
@@ -108,6 +109,21 @@ public class VentanaInicio extends JFrame {
 		return btnMedico;
 	}
 	
+	
+	
+	/**
+	 * Método para pasar a la ventana de ver citas
+	 */
+	protected void verCitas() {
+		VentanaMedicoCita vmc =new VentanaMedicoCita(textField.getText());
+		vmc.setLocationRelativeTo(null);
+		vmc.setResizable(true);
+		vmc.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+		vmc.setVisible(true);
+		
+	
+		
+	}
 	
 	private void panelMedico() {
 		VentanaMedico vm = new VentanaMedico(getTextField().getText());

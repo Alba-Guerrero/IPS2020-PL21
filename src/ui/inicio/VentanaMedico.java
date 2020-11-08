@@ -85,7 +85,7 @@ public class VentanaMedico extends JDialog {
 			pnCentro.add(getPanel4());
 			pnCentro.add(getPanel5());
 			pnCentro.add(getPanel6());
-			pnCentro.add(getBtnCitasPaciente());
+			//pnCentro.add(getBtnCitasPaciente());
 			pnCentro.add(getPanel7());
 			pnCentro.add(getBtnVerCitas());
 			pnCentro.add(getPanel8());
@@ -119,23 +119,23 @@ public class VentanaMedico extends JDialog {
 		}
 		return panel1;
 	}
-	private JButton getBtnCitasPaciente() {
-		if (btnCitasPaciente == null) {
-			btnCitasPaciente = new JButton("Ver citas por paciente");
-			btnCitasPaciente.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					
-					try {
-						asignarCitas();
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
-					
-				}
-			});
-		}
-		return btnCitasPaciente;
-	}
+//	private JButton getBtnCitasPaciente() {
+//		if (btnCitasPaciente == null) {
+//			btnCitasPaciente = new JButton("Ver citas por paciente");
+//			btnCitasPaciente.addActionListener(new ActionListener() {
+//				public void actionPerformed(ActionEvent arg0) {
+//					
+//					try {
+//						asignarCitas();
+//					} catch (SQLException e) {
+//						e.printStackTrace();
+//					}
+//					
+//				}
+//			});
+//		}
+//		return btnCitasPaciente;
+//	}
 
 
 	private JPanel getPanel2() {

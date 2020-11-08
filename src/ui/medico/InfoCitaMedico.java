@@ -162,7 +162,7 @@ public class InfoCitaMedico extends JDialog {
 	}
 protected void modificarCita() throws SQLException {
 		
-		cita = pbd.verCita(paciente.getCodePaciente());
+		//cita = pbd.verCita(paciente.getCodePaciente());
 		
 		ModificarCitaMedico mc = new ModificarCitaMedico(paciente, cita);
 		mc.setLocationRelativeTo(this);
@@ -191,7 +191,7 @@ protected void modificarCita() throws SQLException {
 
 	protected void abrirModificarCita() {
 		try {
-			cita = pbd.verCita(paciente.getCodePaciente());
+			//cita = pbd.verCita(paciente.getCodePaciente());
 			ModificarMedicosNuevoCard mc = new ModificarMedicosNuevoCard(paciente, cita);
 			mc.setLocationRelativeTo(this);
 			mc.setResizable(true);
