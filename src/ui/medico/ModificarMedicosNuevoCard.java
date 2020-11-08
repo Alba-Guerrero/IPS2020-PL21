@@ -924,10 +924,14 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			tablaLista = true;
 		}
 		
-		añadirFilas();
+		añadirFilas(); // Añadimos a la tabla que nos muestra las preinscripciones que ya le hemos asignado
+		
+		limpiarPanel(); // Para ponerlo todo de 0
+		
 	}
 	
-	
+
+
 	/**
 	 * Método que me crea un asigna preinscripcion y me lo añade a la lista de preinscripciones que va a tener el paciente
 	 * @param p
@@ -1231,6 +1235,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			btnAsignarVacuna.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					anadirVacuna();
+					restaurarCb();
 				}
 
 
@@ -1238,6 +1243,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		return btnAsignarVacuna;
 	}
+
+
 	private JScrollPane getScrollPanTabla() {
 		if (scrollPanTabla == null) {
 			scrollPanTabla = new JScrollPane();
@@ -1467,5 +1474,24 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 	
 	
+	/**
+	 * Método para restaurar todos los valores por defecto de la preinscripcion cuando añado una
+	 */
+	private void limpiarPanel() {
+		
+		cbNombre.setSelectedIndex(0);
+		spinnerCantidad.setValue(1);
+		spinnerDuracion.setValue(1);
+		spinnerIntervalo.setValue(0);
+		textArea.setText("");
+	}
+	
+	/**
+	 * 	Método para poner el valor del cb en su valor actual
+	 */
+	protected void restaurarCb() {
+		cbVacunas.setSelectedIndex(0);
+		
+	}
 	
 }

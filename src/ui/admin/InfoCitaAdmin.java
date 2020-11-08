@@ -149,7 +149,7 @@ public class InfoCitaAdmin extends JDialog {
 //		String nombreEnfermPrevia = pbd.verNombreEnfermedadPrevias(hm.getCodEnfermPrevia());
 //		String causas = pbd.verCausas(hm.getCodCausas());
 		
-		MostrarHistorial mh = new MostrarHistorial(hm,cita);
+		MostrarHistorial mh = new MostrarHistorial(hm);
 		mh.setLocationRelativeTo(null);
 		mh.setResizable(true);
 		mh.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
