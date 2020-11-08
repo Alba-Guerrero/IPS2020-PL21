@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import javax.swing.text.TabableView;
 
 import logica.Cita;
 import logica.HistorialMedico;
@@ -93,7 +94,7 @@ public class VentanaMedicoCita extends JDialog {
 	}
 	private JTable getTableCita() {
 			if (tablacita == null) {
-				String[] nombreColumnas= {"Nombre "," Apellido  ","Hora inicio"," Hora fin","Fecha ","Sala","Urgencia"};
+				String[] nombreColumnas= {"Nombre "," Apellido  ","Hora inicio"," Hora fin","Fecha ","Sala","Urgencia","Codcita","CodPaciente","CodMed"};
 				modeloTabla= new ModeloNoEditable(nombreColumnas,0);
 				tablacita = new JTable(modeloTabla);
 				tablacita.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
@@ -107,6 +108,9 @@ public class VentanaMedicoCita extends JDialog {
 				sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
 				
 				sorter.setSortKeys(sortKeys);
+				tablacita.removeColumn(tablacita.getColumnModel().getColumn(7));
+				tablacita.removeColumn(tablacita.getColumnModel().getColumn(7));
+				tablacita.removeColumn(tablacita.getColumnModel().getColumn(7));
 				añadirFilas(false);
 				
 				tablacita.addMouseListener(new MouseAdapter() {
@@ -137,7 +141,7 @@ public class VentanaMedicoCita extends JDialog {
 	
 	private void añadirFilas(boolean dia)  {
 		borrarModeloTabla();
-		Object[] nuevaFila=new Object[7];
+		Object[] nuevaFila=new Object[10];
 		List<Cita> citas = new ArrayList<Cita>();
 	if(dia) {
 
@@ -176,8 +180,11 @@ public class VentanaMedicoCita extends JDialog {
 			nuevaFila[4] =c.getDate();
 			nuevaFila[5]=c.getUbicacion();
 			nuevaFila[6] = c.isUrgente();
+			nuevaFila[7]=c.getCodCita();
+			nuevaFila[8]=c.getCodPaciente();
+			nuevaFila[9]=c.getCodMed();
 			modeloTabla.addRow(nuevaFila);
-			codcitas.add(c);
+			
 		}
 		
 		}
@@ -255,9 +262,14 @@ public class VentanaMedicoCita extends JDialog {
 	protected void mostrarHistorial() {
 		int fila=tablacita.getSelectedRow();
 		if(fila!=-1) {
+			String codcita=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 7);
+			String codPaciente=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 8);
+			String codMedico=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 9);
+			
 		try {
-			Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()).getCodCita());
-			HistorialMedico hm = pbd.verHistorial(p.getHistorial());
+			
+			
+			HistorialMedico hm = pbd.HistorialCita(codcita,codPaciente,codMedico);
 			MostrarHistorial mh = new MostrarHistorial(hm);
 			mh.setLocationRelativeTo(null);
 			mh.setResizable(true);
@@ -268,6 +280,12 @@ public class VentanaMedicoCita extends JDialog {
 			e.printStackTrace();
 		}
 		}
+	}
+	
+	private String getPacienteHistorial(){
+		String aux= (String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 6);
+		
+		return  aux;
 	}
 	
 	private JButton getBtncita() {
@@ -372,7 +390,7 @@ public class VentanaMedicoCita extends JDialog {
 	}
 	private void añadirFilasHistorial()  {
 		borrarModeloTabla();
-		Object[] nuevaFila=new Object[7];
+		Object[] nuevaFila=new Object[10];
 		List<Cita> citas = new ArrayList<Cita>();
 		try {
 			citas = pbd.devolvercitasHistorialMed(textHistorial.getText(),codmedico);
@@ -401,14 +419,17 @@ public class VentanaMedicoCita extends JDialog {
 			nuevaFila[4] =c.getDate();
 			nuevaFila[5] =c.getUbicacion();
 			nuevaFila[6] = c.isUrgente();
+			nuevaFila[7]=c.getCodCita();
+			nuevaFila[8]=c.getCodPaciente();
+			nuevaFila[9]=c.getCodMed();
 			modeloTabla.addRow(nuevaFila);
-			codcitas.add(c);
+			
 		}
 		
 		}
 	private void añadirFilasHistorialFecha()  {
 		borrarModeloTabla();
-		Object[] nuevaFila=new Object[8];
+		Object[] nuevaFila=new Object[10];
 		List<Cita> citas = new ArrayList<Cita>();
 		try {
 			citas = pbd.devolvercitasHistorialFechasMedico(textHistorial.getText(),dateChooser.getDate(),codmedico);
@@ -437,8 +458,11 @@ public class VentanaMedicoCita extends JDialog {
 			nuevaFila[4] =c.getDate();
 			nuevaFila[5] =c.getUbicacion();
 			nuevaFila[6] = c.isUrgente();
+			nuevaFila[7]=c.getCodCita();
+			nuevaFila[8]=c.getCodPaciente();
+			nuevaFila[9]=c.getCodMed();
 			modeloTabla.addRow(nuevaFila);
-			codcitas.add(c);
+			
 		}
 		
 		}

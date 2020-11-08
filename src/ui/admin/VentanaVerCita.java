@@ -285,6 +285,7 @@ public class VentanaVerCita extends JDialog {
 						
 							try {
 								Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()).getCodCita());
+								System.err.println(p.getNombre());
 								VentanaModificarCita(p,codcitas.get(tablacita.getSelectedRow()));
 								
 							} catch (SQLException e) {
@@ -393,6 +394,7 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 			nuevaFila[5] =c.getUbicacion();
 			nuevaFila[6] = empleado.getNombre()+"  " +empleado.getApellido();
 			nuevaFila[7] = c.isUrgente();
+			
 			modeloTabla.addRow(nuevaFila);
 			codcitas.add(c);
 		}
