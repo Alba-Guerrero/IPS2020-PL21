@@ -1933,12 +1933,17 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	protected void buscarVacuna() {
 		if (!getTxtFiltrarVacunas().getText().equals("")) { // Si hay algo escrito en el campo de texto
 			String buscador = getTxtFiltrarVacunas().getText().toLowerCase(); // Lo que ha buscado (lo pasamos a minuscula)
-			Vacuna vacunaBuscada = null;
+			boolean encontrada = false; // Para saber si encontró o no la vacuna buscada
 			
 			for(int i = 0; i < vacunas.size(); i++) {
 				if (vacunas.get(i).getNombreVacuna().toLowerCase().equals(buscador)) { // Si lo que está buscando lo hay en la lista de vacunas
-					//vacunaBuscada
+					cbVacunas.setSelectedIndex(i); // Lo mostramos en el cb
+					encontrada = true; // la encontró
 				}
+			}
+			
+			if (!encontrada) { // Si no encontró la vacuna
+				JOptionPane.showMessageDialog(null, "No hemos podido encontrar su vacuna en este momento");
 			}
 		}
 		else {
@@ -2024,12 +2029,19 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getBtnFiltrarDiagnosticos() {
 		if (btnFiltrarDiagnosticos == null) {
 			btnFiltrarDiagnosticos = new JButton("Buscar");
+			btnFiltrarDiagnosticos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					buscarDiagnostico();
+				}
+			});
 			btnFiltrarDiagnosticos.setEnabled(false);
 		}
 		return btnFiltrarDiagnosticos;
 	}
 	
 	
+
+
 	/**
 	 * Método para activar el buscador de los diagnosticos
 	 */
@@ -2073,5 +2085,33 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		cv.setResizable(true);
 		cv.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
 		cv.setVisible(true);	
+	}
+	
+	
+	/**
+	 * Método que me busca si hay el diagnostico que quiere el médico. 
+	 * 		- Si lo hay, lo pone en el comboBox automáticamente
+	 * 		- Si no lo hay, muestra un mensaje al usuario diciendole que no existe
+	 */
+	protected void buscarDiagnostico() {
+		if (!getTxtFiltrarDiagnosticos().getText().equals("")) { // Si hay algo escrito en el campo de texto
+			String buscador = getTxtFiltrarDiagnosticos().getText().toLowerCase(); // Lo que ha buscado (lo pasamos a minuscula)
+			boolean encontrado = false; // Para saber si encontró o no el diagnóstico buscado
+			
+			for(int i = 0; i < diagnosticos.size(); i++) {
+				if (diagnosticos.get(i).getNombre().toLowerCase().equals(buscador)) { // Si lo que está buscando lo hay en la lista de diagnosticos
+					cbDiagnosticos.setSelectedIndex(i); // Lo mostramos en el cb
+					encontrado = true; // lo encontró
+				}
+			}
+			
+			if (!encontrado) { // Si no encontró el diagnostico
+				JOptionPane.showMessageDialog(null, "No hemos podido encontrar su diagnóstico en este momento");
+			}
+		}
+		else {
+			JOptionPane.showMessageDialog(null, "No ha introducido nada en el buscador");		
+		}
+		
 	}
 }
