@@ -210,9 +210,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel pnVacio20;
 	private JPanel pnVacio21;
 	private JButton btnCalendarioVacunas;
-=======
 	private JButton btnNewButton;
->>>>>>> refs/heads/ramaRaul
+
 
 	/**
 	 * Create the frame.
