@@ -281,11 +281,7 @@ public class VentanaMedicoCita extends JDialog {
 		}
 	}
 	
-	private String getPacienteHistorial(){
-		String aux= (String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 6);
-		
-		return  aux;
-	}
+	
 	
 	private JButton getBtncita() {
 		if (btncita == null) {
@@ -330,9 +326,8 @@ public class VentanaMedicoCita extends JDialog {
 	
 	protected void abrirModificarCita() {
 		try {
-			Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()).getCodCita());
-			Cita cita = pbd.verCita(p.getCodePaciente());
-			Date date = pbd.verHoraCita(p.getHistorial());
+			Paciente p=pbd.devolverPacientesMedico((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 7));
+			Cita cita = pbd.verCita((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 8));
 			ModificarMedicosNuevoCard mc = new ModificarMedicosNuevoCard(p, cita);
 			mc.setLocationRelativeTo(this);
 			mc.setResizable(true);
