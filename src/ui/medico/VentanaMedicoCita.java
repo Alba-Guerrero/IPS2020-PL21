@@ -108,9 +108,11 @@ public class VentanaMedicoCita extends JDialog {
 				sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
 				
 				sorter.setSortKeys(sortKeys);
-				tablacita.removeColumn(tablacita.getColumnModel().getColumn(7));
-				tablacita.removeColumn(tablacita.getColumnModel().getColumn(7));
-				tablacita.removeColumn(tablacita.getColumnModel().getColumn(7));
+				for (int i = 7; i < 10; i++) {
+					tablacita.getColumnModel().getColumn(i).setMinWidth(0);
+					tablacita.getColumnModel().getColumn(i).setMaxWidth(0);
+					tablacita.getColumnModel().getColumn(i).setWidth(0);
+				}
 				añadirFilas(false);
 				
 				tablacita.addMouseListener(new MouseAdapter() {
