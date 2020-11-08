@@ -602,6 +602,7 @@ public class PanelCitas extends JDialog {
 			txtFieldCorreoDatos.setBounds(127, 127, 180, 22);
 			txtFieldCorreoDatos.setEditable(false);
 			txtFieldCorreoDatos.setColumns(10);
+			
 		}
 		return txtFieldCorreoDatos;
 	}
@@ -611,7 +612,7 @@ public class PanelCitas extends JDialog {
 			txtFieldTelefonoDatos.setBounds(127, 95, 180, 22);
 			txtFieldTelefonoDatos.setEditable(false);
 			txtFieldTelefonoDatos.setColumns(10);
-			
+		
 		}
 		return txtFieldTelefonoDatos;
 	}
@@ -621,6 +622,7 @@ public class PanelCitas extends JDialog {
 			txtFieldApellidosDatos.setBounds(127, 60, 180, 22);
 			txtFieldApellidosDatos.setEditable(false);
 			txtFieldApellidosDatos.setColumns(10);
+			
 		}
 		return txtFieldApellidosDatos;
 	}
@@ -630,7 +632,6 @@ public class PanelCitas extends JDialog {
 			txtFieldNombreDatos.setBounds(127, 25, 180, 22);
 			txtFieldNombreDatos.setEditable(false);
 			txtFieldNombreDatos.setColumns(10);
-			//txtFieldNombreDatos.setText(((Paciente)comboBox.getSelectedItem()).getNombre());
 		}
 		return txtFieldNombreDatos;
 	}
@@ -1045,6 +1046,7 @@ public class PanelCitas extends JDialog {
 				public void mouseClicked(MouseEvent arg0) {
 					
 					 pacienteCita= listPaciente.getSelectedValue();
+					 setContactData();
 				}
 			
 		});
