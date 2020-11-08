@@ -90,7 +90,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	
 	private final static String ADD_ASIGNA_PPREINSCRIPCION = "INSERT INTO ASIGNAPRESCRIPCION (CODASIGPRESCRIPCION, NOMBREPRESCRIPCION, NHISTORIAL, CODEMPLEADO, CANTIDAD, INTERVALO, DURACION, INSTRUCCIONES, FECHA, HORA ) VALUES(?,?,?,?,?,?,?,?,?,?)";    
 
-	private final static String ADD_ASIGNA_DIAGNOSTICO = "INSERT INTO ASIGNADIAGNOSTICO (CODASIGDIAGNOSTICO, NHISTORIAL, NDIAGNOSTICO, CODMEDICO, FECHA, HORA) VALUES (?,?,?,?,?,?)";
+	private final static String ADD_ASIGNA_DIAGNOSTICO = "INSERT INTO ASIGNADIAGNOSTICO (CODASIGDIAGNOSTICO, CODDIAGNOSTICO, HISTORIAL, CODEMPLEADO, FECHA, HORA) VALUES (?,?,?,?,?,?)";
 	
 	private final static String ADD_PREINSCRIPCION = "INSERT INTO PRESCRIPCION (NOMBREPRESCRIPCION, MEDICAMENTO)" + " VALUES(?,?)";
 	
@@ -120,7 +120,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	private final static String FIND_PACIENTE_BY_NAME = "Select * from paciente where nombre=?";
 	private final static String FIND_PACIENTE_BY_SURNAME = "Select * from paciente where apellido=?";
 	
-	private final static String ADD_ASIGNA_VACUNA = "INSERT INTO ASIGNAVACUNA (CODVACUNA, CODEMPLEADO, historial, FECHA, HORA) VALUES (?,?,?,?,?)";
+	private final static String ADD_ASIGNA_VACUNA = "INSERT INTO ASIGNAVACUNA (codasigvac, nombrevacuna, historial, codempleado,FECHA, HORA) VALUES (?,?,?,?,?,?)";
 	
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
@@ -1335,7 +1335,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		ResultSet rs = pst.executeQuery(); // Creo el resultSet
 
 		while(rs.next()) {
-			vacunas.add(new Vacuna(rs.getString("codVacuna"), rs.getString("nombreVacuna")));
+			vacunas.add(new Vacuna(rs.getString("nombreVacuna")));
 		}
 
 		rs.close();
@@ -1346,50 +1346,38 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		return vacunas;
 	}
 	
+	
+	
 	/**
-
 	 * Método para guardar las vacunas que se le han asignado a un paciente
-
 	 * @param av
-
 	 * @throws SQLException
-
 	 */
-
 	 public void nuevaAsignaVacuna(AsignaVacuna av) throws SQLException {
 	 Connection con = new Conexion().getConnectionJDBC();
 
 	 PreparedStatement pst=con.prepareStatement(ADD_ASIGNA_VACUNA);
 
 
-	 String codVacuna = av.getCodVacuna();
-
-	 String codEmpleado = av.getCodEmpleado();
-
+	 String codasigvac = av.getCodVacuna();
+	 String nombreVacuna = av.getNombreVacuna();
 	 String historial = av.getCodHistorial();
-
+	 String codEmpleado = av.getCodEmpleado();
 	 java.sql.Date fecha = new java.sql.Date(av.getDate().getTime());
-
 	 Time hour = new Time(fecha.getTime());
 
 
-	 pst.setString(1, codVacuna);
-
-	 pst.setString(2, codEmpleado);
-
+	 pst.setString(1, codasigvac);
+	 pst.setString(2, nombreVacuna);
 	 pst.setString(3, historial);
-
-	 pst.setDate(4, fecha);
-
-	 pst.setTime(5, hour);
+	 pst.setString(4, codEmpleado);
+	 pst.setDate(5, fecha);
+	 pst.setTime(6, hour);
 
 
 
 	 pst.executeUpdate();
-
-
 	 pst.close();
-
 	 con.close();
 
 	 }
@@ -1441,7 +1429,7 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		
 		while(rs.next()) {
 			
-			diagnosticos.add(new Diagnostico(rs.getString("numeroDiagnostico"), rs.getString("nombre") ));
+			diagnosticos.add(new Diagnostico(rs.getString("codDiagnostico"), rs.getString("nombreDiagnostico") ));
 		}
 		
 		
@@ -1463,21 +1451,24 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		 Connection con = new Conexion().getConnectionJDBC();
 		 PreparedStatement pst=con.prepareStatement(ADD_ASIGNA_DIAGNOSTICO);
 
-		 
+		
 		 String codAsigDiagnostico = ad.getCodAsigDiagnostico();
-		 String nHistorial = ad.getnHistorial();
-		 String nDiagnostico = ad.getnDiagnostico();
-		 String codMedico = ad.getCodMedico();
+		 String nombreDiagnostico = ad.getNombreDiagnostico();
+		 String codDiagnostico = ad.getnDiagnostico();
+		 String historial = ad.getnHistorial();
+		 String codempleado = ad.getCodMedico();
 		 java.sql.Date fecha = new java.sql.Date(ad.getFecha().getTime());
 		 Time hora = new Time(fecha.getTime());
 
+		 
 
 		 pst.setString(1, codAsigDiagnostico);
-		 pst.setString(2, nHistorial);
-		 pst.setString(3, nDiagnostico);
-		 pst.setString(4, codMedico);
-		 pst.setDate(5, fecha);
-		 pst.setTime(6, hora);
+		 pst.setString(2, nombreDiagnostico);
+		 pst.setString(3, codDiagnostico);
+		 pst.setString(4, historial);
+		 pst.setString(5, codempleado);
+		 pst.setDate(6, fecha);
+		 pst.setTime(7, hora);
 
 		 pst.executeUpdate();
 

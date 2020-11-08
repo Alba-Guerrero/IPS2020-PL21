@@ -33,6 +33,7 @@ import javax.swing.JTextField;
 import java.awt.GridLayout;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -955,8 +956,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		String codigoPreinscripcion = preinscripcion.getNombre();
 		
 		// El codigo del empleado (medico)
-		//String codempleado = cita.getCodMed();
-		String codempleado = "1a";
+		String codempleado = cita.getCodMed();
+		//String codempleado = "1a";
 		
 		
 		// Si es medicamento o no
@@ -1084,8 +1085,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		if(isCausaSeleccionada()) {
 			guardarCausas();
 		}
-		//guardarVacunas();
-		//guardarDiagnosticos();
+		guardarVacunas();
+		guardarDiagnosticos();
 	}
 
 
@@ -1216,7 +1217,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			
 			String[] nombreVacunas = new String[vacunas.size()];
 			for (int i = 0; i < vacunas.size(); i++) {
-				nombreVacunas[i] = vacunas.get(i).getCodVacuna();
+				nombreVacunas[i] = vacunas.get(i).getNombreVacuna();
 			}
 			
 			cbVacunas.setModel(new DefaultComboBoxModel<String>(nombreVacunas));	
@@ -1264,15 +1265,17 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			contador = contador + 1;
 		}
 		
-		String codVacuna = vacuna.getCodVacuna();	
+		Random r = new Random();
+		String codVacuna = "" + r.nextInt(999);
+		
 		String nombreVacuna = vacuna.getNombreVacuna();
-		String codEmpleado = cita.getCodMed();
 		String codHistorial = paciente.getHistorial();
+		String codEmpleado = cita.getCodMed();		
 		Date fecha = new Date();	
 		Time hora = new Time(new Date().getTime());		
 		
 		
-		AsignaVacuna av = new AsignaVacuna(codVacuna, nombreVacuna, codEmpleado, codHistorial, fecha, hora);
+		AsignaVacuna av = new AsignaVacuna(codVacuna, nombreVacuna, codHistorial, codEmpleado, fecha, hora);
 		
 		asignaVacunasPaciente.add(av);
 	}
@@ -1420,6 +1423,10 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		
 		
+		
+		
+
+		
 		Random r = new Random();
 		String codAsigDiagnostico = "" + r.nextInt(999); // El código es aleatorio
 		
@@ -1428,11 +1435,9 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		String nDiagnostico = diagnostico.getNumeroDiagnostico(); // El identificador del diagnostico
 		String codMedico = cita.getCodMed();
 		Date fecha = new Date();	
-		Time hora = new Time(new Date().getTime());		
-		
-		
-		AsignaDiagnostico ad = new AsignaDiagnostico(codAsigDiagnostico, nombreDiagnostico, nHistorial, nDiagnostico, nDiagnostico, fecha, hora);
-		
+		Time hora = new Time(new Date().getTime());
+		AsignaDiagnostico ad = new AsignaDiagnostico(codAsigDiagnostico, nombreDiagnostico, nDiagnostico, nHistorial, codMedico, fecha, hora);
+
 		asignaDiagnosticosPaciente.add(ad);
 		
 	}
