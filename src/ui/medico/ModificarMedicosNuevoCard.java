@@ -1,10 +1,43 @@
 package ui.medico;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
-import javax.swing.JFrame;
+import javax.swing.Box;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
+import javax.swing.SpinnerDateModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -15,57 +48,10 @@ import logica.AsignaVacuna;
 import logica.Causas;
 import logica.Cita;
 import logica.Diagnostico;
-import logica.HistorialMedico;
 import logica.Paciente;
 import logica.Preinscripcion;
 import logica.Vacuna;
 import logica.servicios.ParserBaseDeDatos;
-
-import java.awt.Color;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.SpinnerModel;
-import java.awt.Font;
-import javax.swing.JTextField;
-import java.awt.GridLayout;
-import java.sql.SQLException;
-import java.sql.Time;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.CardLayout;
-import java.awt.Component;
-import javax.swing.Box;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import java.awt.FlowLayout;
-import javax.swing.BoxLayout;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.JTree;
-import javax.swing.ListSelectionModel;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
-import javax.swing.SpinnerDateModel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.SystemColor;
 
 public class ModificarMedicosNuevoCard extends JDialog {
 
@@ -82,7 +68,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel panelCentro;
 	private JTabbedPane panelPestañas;
 	private JPanel panelCausas;
-	private JPanel panelEnfermedPrevia;
 	private JPanel panelVacunas;
 
 	private ParserBaseDeDatos pbd=new ParserBaseDeDatos();
@@ -104,11 +89,9 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel panel_1;
 	private JPanel panIz;
 	private JLabel label;
-	private JLabel label_1;
 	private JLabel lblAcudi;
 	private JPanel panDe;
-	private JTextField textField;
-	private JTextField textField_1;
+	private JTextField txtName;
 	private JPanel panel_5;
 	private JPanel panel_6;
 	private JPanel pnHoraEntrada;
@@ -201,12 +184,15 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JSpinner spinnerHFinNueva;
 	private JPanel pnGuardarHFin;
 	private JButton btnGuardarFin;
+	private JLabel label_1;
+	private JTextField txtApellido;
 
 	/**
 	 * Create the frame.
 	 * @throws SQLException 
 	 */
 	public ModificarMedicosNuevoCard(Paciente paciente, Cita cita) throws SQLException {
+		setTitle("Modificar cita.");
 		mm = this;
 		this.paciente = paciente;
 		this.cita = cita;
@@ -281,7 +267,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		if (panelPestañas == null) {
 			panelPestañas = new JTabbedPane(JTabbedPane.TOP);
 			panelPestañas.addTab("Causas", null, getPanelCausas(), null);
-			panelPestañas.addTab("Enferm previas", null, getPanelEnfermedPrevia(), null);
 			panelPestañas.addTab("Vacunas", null, getPanelVacunas(), null);
 			panelPestañas.addTab("Preinscripciones", null, getPnPreinscripciones(), null);
 			panelPestañas.addTab("Diagnosticos", null, getPnDiagnosticos(), null);
@@ -296,16 +281,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			panelCausas.add(getPanel_2(), BorderLayout.NORTH);
 		}
 		return panelCausas;
-	}
-
-
-
-	private JPanel getPanelEnfermedPrevia() throws SQLException{
-		if (panelEnfermedPrevia == null) {
-			panelEnfermedPrevia = new JPanel();
-			panelEnfermedPrevia.setLayout(new BorderLayout(0, 0));
-		}
-		return panelEnfermedPrevia;
 	}
 	private JPanel getPanelVacunas() throws SQLException {
 		if (panelVacunas == null) {
@@ -384,14 +359,9 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JLabel getLabel_4() {
 		if (label == null) {
 			label = new JLabel("Nombre:");
+			label.setBounds(10, 21, 86, 26);
 		}
 		return label;
-	}
-	private JLabel getLabel_1_1() {
-		if (label_1 == null) {
-			label_1 = new JLabel("Apellidos:");
-		}
-		return label_1;
 	}
 	private JLabel getLblAcudi_1() {
 		if (lblAcudi == null) {
@@ -410,36 +380,31 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		return panDe;
 	}
 	private JTextField getTextField_2() {
-		if (textField == null) {
-			textField = new JTextField();
-			textField.setText((String) null);
-			textField.setEditable(false);
-			textField.setColumns(10);
+		if (txtName == null) {
+			txtName = new JTextField();
+			txtName.setBounds(74, 14, 203, 41);
+			txtName.setText((String) null);
+			txtName.setEditable(false);
+			txtName.setColumns(10);
+			txtName.setText(paciente.getNombre());
 		}
-		return textField;
-	}
-	private JTextField getTextField_1_1() {
-		if (textField_1 == null) {
-			textField_1 = new JTextField();
-			textField_1.setText((String) null);
-			textField_1.setEditable(false);
-			textField_1.setColumns(10);
-		}
-		return textField_1;
+		return txtName;
 	}
 	private JPanel getPanel_5() {
 		if (panel_5 == null) {
 			panel_5 = new JPanel();
+			panel_5.setLayout(null);
 			panel_5.add(getLabel_4());
 			panel_5.add(getTextField_2());
+			panel_5.add(getLabel_1());
+			panel_5.add(getTxtApellido());
 		}
 		return panel_5;
 	}
 	private JPanel getPanel_6() {
 		if (panel_6 == null) {
 			panel_6 = new JPanel();
-			panel_6.add(getLabel_1_1());
-			panel_6.add(getTextField_1_1());
+			panel_6.setLayout(null);
 		}
 		return panel_6;
 	}
@@ -1840,4 +1805,22 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		
 	}
 
+	private JLabel getLabel_1() {
+		if (label_1 == null) {
+			label_1 = new JLabel("Apellidos:");
+			label_1.setBounds(315, 21, 68, 26);
+		}
+		return label_1;
+	}
+	private JTextField getTxtApellido() {
+		if (txtApellido == null) {
+			txtApellido = new JTextField();
+			txtApellido.setText((String) null);
+			txtApellido.setEditable(false);
+			txtApellido.setColumns(10);
+			txtApellido.setBounds(381, 13, 203, 41);
+			txtApellido.setText(paciente.getApellido());
+		}
+		return txtApellido;
+	}
 }
