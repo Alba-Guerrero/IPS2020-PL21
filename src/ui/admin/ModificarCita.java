@@ -13,6 +13,7 @@ import ui.inicio.VentanaInicio;
 
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -564,11 +565,11 @@ public class ModificarCita extends JDialog {
 		if (comboBox == null) {
 			comboBox = new JComboBox<String>();
 			List<String> salas= rellenarSalas();
-			//comboBox.setModel(new DefaultComboBoxModel<String>(new String[] {"Sala 1", "Sala 2", "Sala 3", "Sala de rayos 1", "Sala de curas 1", "Quir\u00F3fano 1", "Quir\u00F3fano 2"}));
+			String[] array = salas.toArray( new String[salas.size()] );
+			 Arrays.sort(array);
+			comboBox.setModel(new DefaultComboBoxModel<String>(array));
 			comboBox.setBounds(54, 47, 236, 22);
-			for (int i = 0; i < salas.size(); i++) {
-				comboBox.insertItemAt(salas.get(i), i);
-			}
+			
 		}
 		return comboBox;
 	}
@@ -583,7 +584,7 @@ public class ModificarCita extends JDialog {
 
 		salas.add("Digestivo");
 		salas.add("Oncología");
-		salas.add("Uroología");
+		salas.add("Urología");
 		salas.add("Cardiología");
 		return salas;
 	}

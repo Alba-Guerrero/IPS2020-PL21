@@ -93,7 +93,7 @@ public class VentanaVerCita extends JDialog {
 	}
 	private JTable getTableCita() {
 			if (tablacita == null) {
-				String[] nombreColumnas= {"Nombre paciente "," Apellido paciente  ","Hora inicio"," Hora fin","Fecha ","Ubicación ","Nombre médico","Urgencia"};
+				String[] nombreColumnas= {"Nombre paciente "," Apellido paciente  ","Hora inicio"," Hora fin","Fecha ","Ubicación ","Nombre médico","Urgencia","Codcita","CodPaciente","CodMed"};
 				modeloTabla= new ModeloNoEditable(nombreColumnas,0);
 				tablacita = new JTable(modeloTabla);
 				tablacita.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
@@ -109,6 +109,9 @@ public class VentanaVerCita extends JDialog {
 				sortKeys.add(new RowSorter.SortKey(2, SortOrder.ASCENDING));
 				sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
 				sorter.setSortKeys(sortKeys);
+				tablacita.removeColumn(tablacita.getColumnModel().getColumn(8));
+				tablacita.removeColumn(tablacita.getColumnModel().getColumn(8));
+				tablacita.removeColumn(tablacita.getColumnModel().getColumn(8));
 				añadirFilas(false);
 				
 				tablacita.addMouseListener(new MouseAdapter() {
@@ -120,7 +123,7 @@ public class VentanaVerCita extends JDialog {
 							btnEliminar.setEnabled(true);
 							btnModificar.setEnabled(true);
 								try {
-									Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()).getCodCita());
+									Paciente p=pbd.devolverPacientesMedico((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 9));
 								} catch (SQLException e) {
 									e.printStackTrace();
 								}
@@ -147,7 +150,7 @@ public class VentanaVerCita extends JDialog {
 	
 	private void añadirFilas(boolean dia)  {
 		borrarModeloTabla();
-		Object[] nuevaFila=new Object[8];
+		Object[] nuevaFila=new Object[11];
 		List<Cita> citas = new ArrayList<Cita>();
 	if(dia) {
 		
@@ -186,8 +189,11 @@ public class VentanaVerCita extends JDialog {
 			nuevaFila[5] =c.getUbicacion();
 			nuevaFila[6] = empleado.getNombre()+"  " +empleado.getApellido();
 			nuevaFila[7] = c.isUrgente();
+			nuevaFila[8]=c.getCodCita();
+			nuevaFila[9]=c.getCodPaciente();
+			nuevaFila[10]=c.getCodMed();
 			modeloTabla.addRow(nuevaFila);
-			codcitas.add(c);
+		
 		}
 		
 		}
@@ -260,7 +266,7 @@ public class VentanaVerCita extends JDialog {
 					int res=JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea borrar la cita?","Mensaje de confirmación",JOptionPane.YES_NO_OPTION);
 					if(res==JOptionPane.YES_OPTION) {
 						try {
-							pbd.BorrarCita(codcitas.get(tablacita.getSelectedRow()).getCodCita());
+							pbd.BorrarCita((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 9));
 							añadirFilas(false);
 						} catch (SQLException e1) {
 							e1.printStackTrace();
@@ -288,9 +294,11 @@ public class VentanaVerCita extends JDialog {
 					if(fila!=-1) {
 						
 							try {
-								Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()).getCodCita());
+								Paciente p=pbd.devolverPacientesMedico((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 8));
 								System.err.println(p.getNombre());
-								VentanaModificarCita(p,codcitas.get(tablacita.getSelectedRow()));
+								Cita c=pbd.citaCod((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 8),
+										(String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 9));
+								VentanaModificarCita(p,c);
 								
 							} catch (SQLException e) {
 								e.printStackTrace();
@@ -329,7 +337,7 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 	
 	private void añadirFilasHistorial()  {
 		borrarModeloTabla();
-		Object[] nuevaFila=new Object[8];
+		Object[] nuevaFila=new Object[11];
 		List<Cita> citas = new ArrayList<Cita>();
 		try {
 			citas = pbd.devolvercitasHistorial(txtNDeHistorial.getText());
@@ -359,8 +367,10 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 			nuevaFila[5] =c.getUbicacion();
 			nuevaFila[6] = empleado.getNombre()+"  " +empleado.getApellido();
 			nuevaFila[7] = c.isUrgente();
+			nuevaFila[8]=c.getCodCita();
+			nuevaFila[9]=c.getCodPaciente();
+			nuevaFila[10]=c.getCodMed();
 			modeloTabla.addRow(nuevaFila);
-			codcitas.add(c);
 		}
 		
 		}
@@ -368,7 +378,7 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 	
 	private void añadirFilasHistorialFecha()  {
 		borrarModeloTabla();
-		Object[] nuevaFila=new Object[8];
+		Object[] nuevaFila=new Object[11];
 		List<Cita> citas = new ArrayList<Cita>();
 		try {
 			citas = pbd.devolvercitasHistorialFechas(txtNDeHistorial.getText(),dateChooser.getDate());
@@ -398,9 +408,11 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 			nuevaFila[5] =c.getUbicacion();
 			nuevaFila[6] = empleado.getNombre()+"  " +empleado.getApellido();
 			nuevaFila[7] = c.isUrgente();
+			nuevaFila[8]=c.getCodCita();
+			nuevaFila[9]=c.getCodPaciente();
+			nuevaFila[10]=c.getCodMed();
 			
 			modeloTabla.addRow(nuevaFila);
-			codcitas.add(c);
 		}
 		
 		}
@@ -470,7 +482,7 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 		int fila=tablacita.getSelectedRow();
 		if(fila!=-1) {
 		try {
-			Paciente p=pbd.devolverPacientesMedico(codcitas.get(tablacita.getSelectedRow()).getCodCita());
+			Paciente p=pbd.devolverPacientesMedico((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 9));
 			System.out.println(p.getNombre());
 			System.out.println(p.getHistorial());
 			HistorialMedico hm = pbd.verHistorial(p.getHistorial());
