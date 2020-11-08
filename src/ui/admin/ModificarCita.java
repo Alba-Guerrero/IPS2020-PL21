@@ -299,7 +299,7 @@ public class ModificarCita extends JDialog {
 	private JDateChooser getDateCita() {
 		if (dateCita == null) {
 			dateCita = new JDateChooser();
-			dateCita.setBounds(432, 60, 105, 26);
+			dateCita.setBounds(432, 60, 120, 27);
 			dateCita.setDateFormatString("yyyy-MM-dd");
 			dateCita.setDate(new Date());
 		}

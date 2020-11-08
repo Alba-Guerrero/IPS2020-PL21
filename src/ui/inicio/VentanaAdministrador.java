@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.SystemColor;
 
 public class VentanaAdministrador extends JDialog {
 
@@ -68,6 +69,7 @@ public class VentanaAdministrador extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1225, 667);
 		contentPane = new JPanel();
+		contentPane.setBackground(SystemColor.controlHighlight);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
@@ -79,7 +81,7 @@ public class VentanaAdministrador extends JDialog {
 	private JPanel getPnSur() {
 		if (pnSur == null) {
 			pnSur = new JPanel();
-			pnSur.setBackground(Color.WHITE);
+			pnSur.setBackground(SystemColor.controlHighlight);
 			FlowLayout flowLayout = (FlowLayout) pnSur.getLayout();
 			flowLayout.setAlignment(FlowLayout.RIGHT);
 			pnSur.add(getBtnCancelar());
@@ -89,7 +91,7 @@ public class VentanaAdministrador extends JDialog {
 	private JPanel getPnCentro() {
 		if (pnCentro == null) {
 			pnCentro = new JPanel();
-			pnCentro.setBackground(Color.WHITE);
+			pnCentro.setBackground(SystemColor.controlHighlight);
 			pnCentro.setLayout(new GridLayout(0, 9, 0, 0));
 			pnCentro.add(getPanel1());
 			pnCentro.add(getPanel2());
@@ -100,10 +102,10 @@ public class VentanaAdministrador extends JDialog {
 			pnCentro.add(getPanel7());
 			pnCentro.add(getPanel_4());
 			pnCentro.add(getPanel_5());
-			pnCentro.add(getBtnAsignarCitas());
 			pnCentro.add(getPanel8());
-			pnCentro.add(getBtnNewButton_1_1());
+			pnCentro.add(getBtnAsignarCitas());
 			pnCentro.add(getPanel_6());
+			pnCentro.add(getBtnNewButton_1_1());
 			pnCentro.add(getPanel9());
 			pnCentro.add(getBtnJornada());
 			pnCentro.add(getPanel10());
@@ -135,7 +137,7 @@ public class VentanaAdministrador extends JDialog {
 	}
 	private JButton getBtnJornada() {
 		if (btnJornada == null) {
-			btnJornada = new JButton("Asignar Jornada Laboral");
+			btnJornada = new JButton("Asignar jornada");
 			btnJornada.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					
@@ -154,7 +156,7 @@ public class VentanaAdministrador extends JDialog {
 	private JPanel getPanel1() {
 		if (panel1 == null) {
 			panel1 = new JPanel();
-			panel1.setBackground(Color.WHITE);
+			panel1.setBackground(SystemColor.controlHighlight);
 		}
 		return panel1;
 	}
@@ -180,7 +182,7 @@ public class VentanaAdministrador extends JDialog {
 	private JPanel getPanel2() {
 		if (panel2 == null) {
 			panel2 = new JPanel();
-			panel2.setBackground(Color.WHITE);
+			panel2.setBackground(SystemColor.controlHighlight);
 		}
 		return panel2;
 	}
@@ -189,70 +191,70 @@ public class VentanaAdministrador extends JDialog {
 	private JPanel getPanel3() {
 		if (panel3 == null) {
 			panel3 = new JPanel();
-			panel3.setBackground(Color.WHITE);
+			panel3.setBackground(SystemColor.controlHighlight);
 		}
 		return panel3;
 	}
 	private JPanel getPanel4() {
 		if (panel4 == null) {
 			panel4 = new JPanel();
-			panel4.setBackground(Color.WHITE);
+			panel4.setBackground(SystemColor.controlHighlight);
 		}
 		return panel4;
 	}
 	private JPanel getPanel5() {
 		if (panel5 == null) {
 			panel5 = new JPanel();
-			panel5.setBackground(Color.WHITE);
+			panel5.setBackground(SystemColor.controlHighlight);
 		}
 		return panel5;
 	}
 	private JPanel getPanel7() {
 		if (panel7 == null) {
 			panel7 = new JPanel();
-			panel7.setBackground(Color.WHITE);
+			panel7.setBackground(SystemColor.controlHighlight);
 		}
 		return panel7;
 	}
 	private JPanel getPanel9() {
 		if (panel9 == null) {
 			panel9 = new JPanel();
-			panel9.setBackground(Color.WHITE);
+			panel9.setBackground(SystemColor.controlHighlight);
 		}
 		return panel9;
 	}
 	private JPanel getPanel10() {
 		if (panel10 == null) {
 			panel10 = new JPanel();
-			panel10.setBackground(Color.WHITE);
+			panel10.setBackground(SystemColor.controlHighlight);
 		}
 		return panel10;
 	}
 	private JPanel getPanel11() {
 		if (panel11 == null) {
 			panel11 = new JPanel();
-			panel11.setBackground(Color.WHITE);
+			panel11.setBackground(SystemColor.controlHighlight);
 		}
 		return panel11;
 	}
 	private JPanel getPanel12() {
 		if (panel12 == null) {
 			panel12 = new JPanel();
-			panel12.setBackground(Color.WHITE);
+			panel12.setBackground(SystemColor.controlHighlight);
 		}
 		return panel12;
 	}
 	private JPanel getPanel6() {
 		if (panel6 == null) {
 			panel6 = new JPanel();
-			panel6.setBackground(Color.WHITE);
+			panel6.setBackground(SystemColor.controlHighlight);
 		}
 		return panel6;
 	}
 	private JPanel getPanel8() {
 		if (panel8 == null) {
 			panel8 = new JPanel();
-			panel8.setBackground(Color.WHITE);
+			panel8.setBackground(SystemColor.controlHighlight);
 		}
 		return panel8;
 	}
@@ -309,41 +311,41 @@ protected void verCalendarioCitas() {
 	private JPanel getPanel8_1() {
 		if (panel8_1 == null) {
 			panel8_1 = new JPanel();
-			panel8_1.setBackground(Color.WHITE);
+			panel8_1.setBackground(SystemColor.controlHighlight);
 		}
 		return panel8_1;
 	}
 	private JPanel getPanel() {
 		if (panel == null) {
 			panel = new JPanel();
-			panel.setBackground(Color.WHITE);
+			panel.setBackground(SystemColor.controlHighlight);
 		}
 		return panel;
 	}
 	private JPanel getPanel_1() {
 		if (panel_1 == null) {
 			panel_1 = new JPanel();
-			panel_1.setBackground(Color.WHITE);
+			panel_1.setBackground(SystemColor.controlHighlight);
 		}
 		return panel_1;
 	}
 	private JPanel getPanel_2() {
 		if (panel_2 == null) {
 			panel_2 = new JPanel();
-			panel_2.setBackground(Color.WHITE);
+			panel_2.setBackground(SystemColor.controlHighlight);
 		}
 		return panel_2;
 	}
 	private JPanel getPanel_3() {
 		if (panel_3 == null) {
 			panel_3 = new JPanel();
-			panel_3.setBackground(Color.WHITE);
+			panel_3.setBackground(SystemColor.controlHighlight);
 		}
 		return panel_3;
 	}
 	private JButton getBtnNewButton() {
 		if (btnNewButton == null) {
-			btnNewButton = new JButton("Ver calendario\r\n de citas");
+			btnNewButton = new JButton("Calendario citas");
 			btnNewButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					verCalendarioCitas();
@@ -355,20 +357,20 @@ protected void verCalendarioCitas() {
 	private JPanel getPanel_4() {
 		if (panel_4 == null) {
 			panel_4 = new JPanel();
-			panel_4.setBackground(Color.WHITE);
+			panel_4.setBackground(SystemColor.controlHighlight);
 		}
 		return panel_4;
 	}
 	private JPanel getPanel_5() {
 		if (panel_5 == null) {
 			panel_5 = new JPanel();
-			panel_5.setBackground(Color.WHITE);
+			panel_5.setBackground(SystemColor.controlHighlight);
 		}
 		return panel_5;
 	}
 	private JButton getBtnNewButton_1_1() {
 		if (btnNewButton_1 == null) {
-			btnNewButton_1 = new JButton("Asignar vacaciones");
+			btnNewButton_1 = new JButton("Dar vacaciones");
 			btnNewButton_1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
@@ -393,21 +395,21 @@ protected void verCalendarioCitas() {
 	private JPanel getPanel_6() {
 		if (panel_6 == null) {
 			panel_6 = new JPanel();
-			panel_6.setBackground(Color.WHITE);
+			panel_6.setBackground(SystemColor.controlHighlight);
 		}
 		return panel_6;
 	}
 	private JPanel getPanel_7() {
 		if (panel_7 == null) {
 			panel_7 = new JPanel();
-			panel_7.setBackground(Color.WHITE);
+			panel_7.setBackground(SystemColor.controlHighlight);
 		}
 		return panel_7;
 	}
 	private JPanel getPanel_8() {
 		if (panel_8 == null) {
 			panel_8 = new JPanel();
-			panel_8.setBackground(Color.WHITE);
+			panel_8.setBackground(SystemColor.controlHighlight);
 		}
 		return panel_8;
 	}

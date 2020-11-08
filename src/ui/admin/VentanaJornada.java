@@ -168,7 +168,7 @@ public class VentanaJornada extends JDialog{
 	private JLabel getLblHInicio() {
 		if (lblHInicio == null) {
 			lblHInicio = new JLabel("Hora inicio:");
-			lblHInicio.setBounds(10, 29, 67, 14);
+			lblHInicio.setBounds(10, 32, 67, 14);
 			
 		}
 		return lblHInicio;
@@ -189,7 +189,7 @@ public class VentanaJornada extends JDialog{
 			});
 			
 			
-			spinnerHInicio.setBounds(81, 26, 67, 20);
+			spinnerHInicio.setBounds(81, 26, 63, 27);
 			JSpinner.DateEditor de_spinnerHInicio = new JSpinner.DateEditor(spinnerHInicio, "HH:mm");
 			spinnerHInicio.setEditor(de_spinnerHInicio);
 			spinnerHInicio.setValue(new Date());
@@ -200,7 +200,7 @@ public class VentanaJornada extends JDialog{
 	private JLabel getLblHFin() {
 		if (lblHFin == null) {
 			lblHFin = new JLabel("Hora fin:");
-			lblHFin.setBounds(227, 29, 67, 14);
+			lblHFin.setBounds(222, 32, 67, 14);
 		}
 		return lblHFin;
 	}
@@ -220,7 +220,7 @@ public class VentanaJornada extends JDialog{
 			});
 			
 			
-			spinnerHFin.setBounds(289, 26, 67, 20);
+			spinnerHFin.setBounds(289, 26, 63, 27);
 			JSpinner.DateEditor de_spinnerHFin = new JSpinner.DateEditor(spinnerHFin, "HH:mm");
 			spinnerHFin.setEditor(de_spinnerHFin);
 			spinnerHFin.setValue(new Date());
@@ -244,7 +244,7 @@ public class VentanaJornada extends JDialog{
 			});
 			
 			
-			chooseDFin.setBounds(289, 26, 94, 20);
+			chooseDFin.setBounds(289, 26, 120, 27);
 			chooseDFin.setDateFormatString("yyyy-MM-dd");
 			chooseDFin.setDate(new Date());
 			
@@ -445,8 +445,7 @@ public class VentanaJornada extends JDialog{
 			});
 			
 			
-			chooseDInicio.setBounds(410, 29, 94, 20);
-			chooseDInicio.setBounds(80, 26, 94, 20);
+			chooseDInicio.setBounds(80, 26, 120, 27);
 			chooseDInicio.setDateFormatString("yyyy-MM-dd");
 			chooseDInicio.setDate(new Date());
 		}

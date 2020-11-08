@@ -131,7 +131,7 @@ public class PanelCitas extends JDialog {
 			panelArriba.add(getPnMedico());
 		}
 		contentPanel.add(getPanelAbajo());
-		setContactData();
+		//setContactData();
 	}
 
 	
@@ -707,6 +707,12 @@ public class PanelCitas extends JDialog {
 			getTxtFieldCorreoDatos().setText(acompañante.getEmail());
 			//getTextArea_1_1().setText(acompañante.getInfo());
 		}
+		else {
+			getTxtFieldNombreDatos().setText(pacienteCita.getNombre());
+			getTxtFieldApellidosDatos().setText(pacienteCita.getApellido());
+			getTxtFieldTelefonoDatos().setText(pacienteCita.getMovil()+"");
+			getTxtFieldCorreoDatos().setText(pacienteCita.getEmail());
+			}
 	
 	}
 	
