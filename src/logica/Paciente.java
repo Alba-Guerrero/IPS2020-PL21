@@ -85,7 +85,7 @@ public class Paciente {
 
 	@Override
 	public String toString() {
-		return "CódPaciente " + codePaciente +" Nombre:  "+  nombre +" "+ apellido ;
+		return " Paciente: "+   nombre +" "+ apellido + "  Nº historial; " + historial;
 	}
 
 

@@ -279,11 +279,16 @@ public class PanelCitas extends JDialog {
 
 	private DefaultListModel<Medico> modeloListaM(List<Medico> medico) throws SQLException {
 		modeloListaM = new DefaultListModel<Medico>();
+		if(medico!=null) {
 		List<Medico> medicos = medico;
 		for (int i = 0; i < medicos.size(); i++) {
 			modeloListaM.addElement(medicos.get(i));
 
 		}
+		list.setModel(modeloListaM);
+		}
+		if(modeloListaM.getSize()==0)
+			JOptionPane.showMessageDialog(null, "No se ha encontrado ningún médico con esas características");
 		return modeloListaM;
 	}
 	
@@ -297,6 +302,9 @@ public class PanelCitas extends JDialog {
 		}
 		listPaciente.setModel(modeloListaPaciente);
 		}
+	if(modeloListaPaciente.getSize()==0)
+			JOptionPane.showMessageDialog(null, "No se ha encontrado ningún paciente con esas características");
+		
 		return modeloListaPaciente;
 	}
 
@@ -411,9 +419,9 @@ public class PanelCitas extends JDialog {
 
 	private JList<Medico> getList_1() throws SQLException {
 		if (list == null) {
-			modeloListaM(pbd.buscarMedico(""));
 			list = new JList<Medico>();
-			list.setOpaque(false);
+			list.setBackground(Color.WHITE);
+			modeloListaM(pbd.buscarMedico(""));
 			list.setModel(modeloListaM);
 			list.addMouseListener(new MouseAdapter() {
 				@Override
@@ -938,11 +946,14 @@ public class PanelCitas extends JDialog {
 	private JTextField getTextField_2() {
 		if (txtFieldNombreMedicoFiltro == null) {
 			txtFieldNombreMedicoFiltro = new JTextField();
-			txtFieldNombreMedicoFiltro.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
+			txtFieldNombreMedicoFiltro.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
 					btnFiltrarNombreMedico.setEnabled(true);
 				}
 			});
+				
+			
 			
 			txtFieldNombreMedicoFiltro.setColumns(10);
 		}
@@ -974,6 +985,8 @@ public class PanelCitas extends JDialog {
 					
 						try {
 							modeloListaM(pbd.devolverMedicoNombre(txtFieldNombreMedicoFiltro.getText()));
+							txtFieldNombreMedicoFiltro.setText("");
+							
 						} catch (SQLException e1) {
 							e1.printStackTrace();
 						}
@@ -992,12 +1005,13 @@ public class PanelCitas extends JDialog {
 			btnFiltrarApellidoMedico.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					
-					if(txtFieldApellidoFiltro.getText().equals(""))
+					if(txtFieldApellidoMedicoFiltro.getText().equals(""))
 					JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
 				else {	
 				
 					try {
-						modeloListaM(pbd.devolverMedicoApellido(txtFieldApellidoFiltro.getText()));
+						modeloListaM(pbd.devolverMedicoApellido(txtFieldApellidoMedicoFiltro.getText()));
+						txtFieldApellidoMedicoFiltro.setText("");
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
@@ -1013,6 +1027,12 @@ public class PanelCitas extends JDialog {
 		if (listPaciente == null) {
 			listPaciente = new JList<Paciente>();
 			modeloListaPaciente=new DefaultListModel<Paciente>();
+			try {
+				modeloListaPaciente(pbd.buscarPaciente(""));
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			listPaciente.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			try {
 				modeloListaPaciente(pbd.buscarPaciente(""));

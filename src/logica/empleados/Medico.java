@@ -34,7 +34,7 @@ public class Medico extends Empleado{
 
 	@Override
 	public String toString() {
-		return "Código de empleado: " + codeEmpleado +"		 " +"Dr/Dra " + nombre + apellido ;
+		return "Dr/Dra " + nombre +"  " + apellido ;
 	}
 	
 	public String getCodEmpleado() {
