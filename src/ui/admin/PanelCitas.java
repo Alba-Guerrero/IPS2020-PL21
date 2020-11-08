@@ -52,6 +52,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
 import javax.swing.ListSelectionModel;
 import net.miginfocom.swing.MigLayout;
+import javax.swing.SwingConstants;
 
 public class PanelCitas extends JDialog {
 	/**
@@ -96,6 +97,7 @@ public class PanelCitas extends JDialog {
 	private JButton btnEditarCorreoDatos;
 	private Paciente pacienteCita;
 	
+	List<String> salas;
 
 	
 	/**
@@ -183,6 +185,9 @@ public class PanelCitas extends JDialog {
 			panelAbajo2.add(getChckbxEsUrgente());
 			panelAbajo2.add(getCbSala());
 			panelAbajo2.add(getLblNewLabel());
+			panelAbajo2.add(getLblNombreSala());
+			panelAbajo2.add(getTxtNombreSala());
+			panelAbajo2.add(getBtnFiltrar());
 
 			
 
@@ -724,6 +729,9 @@ public class PanelCitas extends JDialog {
 	private JButton btnFiltrarNombreMedico;
 	private JButton btnFiltrarApellidoMedico;
 	private JList<Paciente> listPaciente;
+	private JLabel lblNombreSala;
+	private JTextField txtNombreSala;
+	private JButton btnFiltrar;
 	
 	
 	private JButton getBtnActualizarDatos() {
@@ -753,9 +761,8 @@ public class PanelCitas extends JDialog {
 		if (cbSala == null) {
 			cbSala = new JComboBox<String>();
 			cbSala.setBounds(90, 103, 236, 22);
-			List<String> salas= rellenarSalas();
+			salas= rellenarSalas();
 			String[] array = salas.toArray( new String[salas.size()] );
-			 Arrays.sort(array);
 			cbSala.setModel(new DefaultComboBoxModel<String>(array));
 			
 			
@@ -774,7 +781,7 @@ public class PanelCitas extends JDialog {
 
 		salas.add("Digestivo");
 		salas.add("Oncología");
-		salas.add("Uroología");
+		salas.add("Urología");
 		salas.add("Cardiología");
 		return salas;
 	}
@@ -1052,5 +1059,45 @@ public class PanelCitas extends JDialog {
 		});
 		}
 		return listPaciente;
+	}
+	private JLabel getLblNombreSala() {
+		if (lblNombreSala == null) {
+			lblNombreSala = new JLabel("Nombre sala");
+			lblNombreSala.setBounds(438, 103, 72, 22);
+		}
+		return lblNombreSala;
+	}
+	private JTextField getTxtNombreSala() {
+		if (txtNombreSala == null) {
+			txtNombreSala = new JTextField();
+			txtNombreSala.setBounds(533, 102, 147, 25);
+			txtNombreSala.setColumns(10);
+		}
+		return txtNombreSala;
+	}
+	private JButton getBtnFiltrar() {
+		if (btnFiltrar == null) {
+			btnFiltrar = new JButton("Filtrar");
+			btnFiltrar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if(txtNombreSala.getText().equals(""))
+						JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
+					else {	
+						filtrarPorNombre(txtNombreSala.getText());
+				}
+				}
+			});
+			btnFiltrar.setHorizontalAlignment(SwingConstants.RIGHT);
+			btnFiltrar.setBounds(708, 103, 66, 23);
+		}
+		return btnFiltrar;
+	}
+	
+	private void filtrarPorNombre(String name) {
+		for(int i=0; i < salas.size(); i++) {
+			if(salas.get(i).equals(name)) {
+				cbSala.setSelectedIndex(i);
+			}
+		}
 	}
 }

@@ -56,10 +56,6 @@ import logica.servicios.ParserBaseDeDatos;
 import ui.MostrarHistorial;
 
 import javax.swing.ButtonGroup;
-import javax.swing.border.TitledBorder;
-import javax.swing.UIManager;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class ModificarMedicosNuevoCard extends JDialog {
 
@@ -70,7 +66,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 
 	
 	private JPanel contentPane;
-	private JPanel panelSur;
+	private JPanel panel;
 	private JButton button;
 	private JButton button_1;
 	private JPanel panelCentro;
@@ -94,13 +90,14 @@ public class ModificarMedicosNuevoCard extends JDialog {
 
 	private Causas causa;
 	private List<Causas> causas;
-	private JPanel pnDatosHoraAcudio;
-	private JPanel pnIz;
+	private JPanel panel_1;
+	private JPanel panIz;
 	private JLabel label;
-	private JPanel pnDch;
+	private JLabel lblAcudi;
+	private JPanel panDe;
 	private JTextField txtName;
-	private JPanel pnDatosPaciente;
-	private JPanel pnHistorial;
+	private JPanel panel_5;
+	private JPanel panel_6;
 	private JPanel pnHoraEntrada;
 	private JPanel pnHoraSalida;
 	private JPanel panel_2;
@@ -137,26 +134,38 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JScrollPane scrollPane_2;
 	private JButton btnAadirPreinscripcin;
 	private JTable table;
-	private JPanel pnAcudio;
+	private JPanel panel_3;
 	private JRadioButton rdbtnAcudio;
 	private JRadioButton rdbtnNoAcudio;
 	private Component horizontalStrut;
-	private JPanel pnMostrarVacunas;
-	private JPanel pnVacio14;
+	private JPanel pn1;
+	private JPanel pn2;
+	private JPanel pn4;
+	private JPanel pn5;
+	private JPanel pn6;
+	private JPanel pn7;
+	private JPanel pn8;
 	private JLabel lblVacuna;
 	private JPanel pn3;
 	private JComboBox<String> cbVacunas;
 	private JButton btnAsignarVacuna;
 	private JScrollPane scrollPanTabla;
 	private JPanel pnDiagnosticos;
+	private JPanel pn1d;
+	private JPanel pn2d;
 	private JPanel pn3d;
-	private JPanel pnMostrarDiagnosticos;
-	private JPanel pnVacio22;
+	private JPanel pn4d;
+	private JPanel pn5d;
+	private JPanel pn6d;
+	private JPanel pn7d;
+	private JPanel pn8d;
 	private JLabel lblDiagnosticos;
 	private JComboBox<String> cbDiagnosticos;
 	private JButton btnDiagnosticar;
 	
 	private boolean causaSeleccionada;
+	private JLabel lblHoraInicio;
+	private JPanel pnVacio3;
 	private JPanel pnHoraInicio;
 	private JPanel pnVacio;
 	private JPanel pnVacio2;
@@ -167,6 +176,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton btnModificar;
 	private JSpinner spinnerHInicioNueva;
 	private JButton btnGuardarInicio;
+	private JLabel lblHorasalida;
+	private JPanel pnVacio5;
 	private JPanel pnHoraFin;
 	private JPanel pnVacio6;
 	private JSpinner spinnerHFinR;
@@ -181,36 +192,10 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JTextField txtApellido;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JButton btnMostrarHistorial;
-	private JPanel pnVacio11;
-	private JPanel pnVacio8;
-	private JPanel pnMostrarHistorialVacunas;
-	private JPanel pnVacio9;
-	private JPanel pnMostrar;
-	private JPanel pnVacio10;
-	private JPanel pnVacio12;
-	private JPanel pnSeleccionAcudio;
-	private JPanel pnVacio13;
-	private JPanel pnFiltrarVacunas;
-	private JPanel pnBuscarVacunaAsignar;
-	private JPanel pnV1;
-	private JPanel pnFiltrarV;
-	private JPanel pnV2;
-	private JTextField txtFiltrarVacunas;
-	private JButton btnFiltrarVacunas;
-	private JPanel pnVacio15;
-	private JPanel pnVacio16;
-	private JPanel pnFiltrarDiagnosticos;
-	private JPanel pnBuscarDiagnosticosAsignar;
-	private JPanel pnFiltrarD;
-	private JPanel pnVacio18;
-	private JPanel pnVacio19;
-	private JTextField txtFiltrarDiagnosticos;
-	private JButton btnFiltrarDiagnosticos;
-	private JPanel pnVacio20;
-	private JPanel pnVacio21;
-	private JButton btnCalendarioVacunas;
-	private JButton btnNewButton;
-
+	private JPanel panel_4;
+	private JLabel lblNewLabel;
+	private JTextField txtNombreCausa;
+	private JButton btnFiltrar;
 
 	/**
 	 * Create the frame.
@@ -235,18 +220,18 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
-		contentPane.add(getPanelSur(), BorderLayout.SOUTH);
+		contentPane.add(getPanel(), BorderLayout.SOUTH);
 		contentPane.add(getPanelCentro(), BorderLayout.CENTER);
 	}
 
-	private JPanel getPanelSur() {
-		if (panelSur == null) {
-			panelSur = new JPanel();
-			panelSur.setBackground(SystemColor.menu);
-			panelSur.add(getButton());
-			panelSur.add(getButton_1());
+	private JPanel getPanel() {
+		if (panel == null) {
+			panel = new JPanel();
+			panel.setBackground(SystemColor.menu);
+			panel.add(getButton());
+			panel.add(getButton_1());
 		}
-		return panelSur;
+		return panel;
 	}
 	private JButton getButton() {
 		if (button == null) {
@@ -288,7 +273,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		if (panelCentro == null) {
 			panelCentro = new JPanel();
 			panelCentro.setLayout(new GridLayout(0, 1, 0, 0));
-			panelCentro.add(getPnDatosHoraAcudio());
+			panelCentro.add(getPanel_1());
 			panelCentro.add(getPanelPestañas());
 		}
 		return panelCentro;
@@ -310,15 +295,22 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			panelCausas = new JPanel();
 			panelCausas.setLayout(new BorderLayout(0, 0));
 			panelCausas.add(getPanel_2(), BorderLayout.NORTH);
+			panelCausas.add(getPanel_4(), BorderLayout.CENTER);
 		}
 		return panelCausas;
 	}
 	private JPanel getPanelVacunas() throws SQLException {
 		if (panelVacunas == null) {
 			panelVacunas = new JPanel();
-			panelVacunas.setLayout(new GridLayout(1, 2, 0, 0));
-			panelVacunas.add(getPanel_8());
-			panelVacunas.add(getPanel_9());
+			panelVacunas.setLayout(new GridLayout(4, 0, 2, 0));
+			panelVacunas.add(getPn1());
+			panelVacunas.add(getPn2());
+			panelVacunas.add(getPn3());
+			panelVacunas.add(getPn4());
+			panelVacunas.add(getPn5());
+			panelVacunas.add(getPn6());
+			panelVacunas.add(getPn7());
+			panelVacunas.add(getPn8());
 			
 		}
 		return panelVacunas;
@@ -362,24 +354,24 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	public void setPaciente(Paciente paciente) {
 		this.paciente = paciente;
 	}
-	private JPanel getPnDatosHoraAcudio() {
-		if (pnDatosHoraAcudio == null) {
-			pnDatosHoraAcudio = new JPanel();
-			pnDatosHoraAcudio.setLayout(new GridLayout(0, 2, 0, 0));
-			pnDatosHoraAcudio.add(getPanIz_1());
-			pnDatosHoraAcudio.add(getPanDe_1());
+	private JPanel getPanel_1() {
+		if (panel_1 == null) {
+			panel_1 = new JPanel();
+			panel_1.setLayout(new GridLayout(0, 2, 0, 0));
+			panel_1.add(getPanIz_1());
+			panel_1.add(getPanDe_1());
 		}
-		return pnDatosHoraAcudio;
+		return panel_1;
 	}
 	private JPanel getPanIz_1() {
-		if (pnIz == null) {
-			pnIz = new JPanel();
-			pnIz.setLayout(new GridLayout(0, 1, 0, 0));
-			pnIz.add(getPnDatosPaciente());
-			pnIz.add(getPnHoraEntrada());
-			pnIz.add(getPnVacio11());
+		if (panIz == null) {
+			panIz = new JPanel();
+			panIz.setLayout(new GridLayout(0, 1, 0, 0));
+			panIz.add(getPanel_5());
+			panIz.add(getPnHoraEntrada());
+			panIz.add(getLblAcudi_1());
 		}
-		return pnIz;
+		return panIz;
 	}
 	private JLabel getLabel_4() {
 		if (label == null) {
@@ -388,15 +380,21 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		return label;
 	}
-	private JPanel getPanDe_1() {
-		if (pnDch == null) {
-			pnDch = new JPanel();
-			pnDch.setLayout(new GridLayout(0, 1, 0, 0));
-			pnDch.add(getPnHistorial());
-			pnDch.add(getPnHoraSalida());
-			pnDch.add(getPnAcudio());
+	private JLabel getLblAcudi_1() {
+		if (lblAcudi == null) {
+			lblAcudi = new JLabel("Acudi\u00F3");
 		}
-		return pnDch;
+		return lblAcudi;
+	}
+	private JPanel getPanDe_1() {
+		if (panDe == null) {
+			panDe = new JPanel();
+			panDe.setLayout(new GridLayout(0, 1, 0, 0));
+			panDe.add(getPanel_6());
+			panDe.add(getPnHoraSalida());
+			panDe.add(getPanel_3());
+		}
+		return panDe;
 	}
 	private JTextField getTextField_2() {
 		if (txtName == null) {
@@ -409,32 +407,31 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		return txtName;
 	}
-	private JPanel getPnDatosPaciente() {
-		if (pnDatosPaciente == null) {
-			pnDatosPaciente = new JPanel();
-			pnDatosPaciente.setBorder(new TitledBorder(null, "Paciente: ", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			pnDatosPaciente.setLayout(null);
-			pnDatosPaciente.add(getLabel_4());
-			pnDatosPaciente.add(getTextField_2());
-			pnDatosPaciente.add(getLabel_1());
-			pnDatosPaciente.add(getTxtApellido());
+	private JPanel getPanel_5() {
+		if (panel_5 == null) {
+			panel_5 = new JPanel();
+			panel_5.setLayout(null);
+			panel_5.add(getLabel_4());
+			panel_5.add(getTextField_2());
+			panel_5.add(getLabel_1());
+			panel_5.add(getTxtApellido());
 		}
-		return pnDatosPaciente;
+		return panel_5;
 	}
-	private JPanel getPnHistorial() {
-		if (pnHistorial == null) {
-			pnHistorial = new JPanel();
-			pnHistorial.setLayout(new GridLayout(0, 2, 0, 0));
-			pnHistorial.add(getPanel_5_1());
-			pnHistorial.add(getPanel_5_2());
+	private JPanel getPanel_6() {
+		if (panel_6 == null) {
+			panel_6 = new JPanel();
+			panel_6.setLayout(null);
+			panel_6.add(getBtnMostrarHistorial());
 		}
-		return pnHistorial;
+		return panel_6;
 	}
 	private JPanel getPnHoraEntrada() {
 		if (pnHoraEntrada == null) {
 			pnHoraEntrada = new JPanel();
-			pnHoraEntrada.setBorder(new TitledBorder(null, "Hora inicio:", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			pnHoraEntrada.setLayout(new GridLayout(2, 2, 0, 0));
+			pnHoraEntrada.setLayout(new GridLayout(3, 2, 0, 0));
+			pnHoraEntrada.add(getLblHoraInicio());
+			pnHoraEntrada.add(getPnVacio3());
 			pnHoraEntrada.add(getPnHoraInicio());
 			pnHoraEntrada.add(getPnVacio());
 			pnHoraEntrada.add(getPnHoraInicioF());
@@ -445,8 +442,9 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel getPnHoraSalida() {
 		if (pnHoraSalida == null) {
 			pnHoraSalida = new JPanel();
-			pnHoraSalida.setBorder(new TitledBorder(null, "Hora salida:", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			pnHoraSalida.setLayout(new GridLayout(0, 2, 0, 0));
+			pnHoraSalida.setLayout(new GridLayout(3, 2, 0, 0));
+			pnHoraSalida.add(getLblHorasalida());
+			pnHoraSalida.add(getPnVacio5());
 			pnHoraSalida.add(getPnHoraFin());
 			pnHoraSalida.add(getPnVacio7());
 			pnHoraSalida.add(getPnHoraFinF());
@@ -501,6 +499,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		if (cbCausas == null) {
 			cbCausas = new JComboBox<Causas>();
 			rellenarCBCausas();
+			cbCausas.setSelectedIndex(0);
 		}
 		return cbCausas;
 	}
@@ -1115,22 +1114,18 @@ public class ModificarMedicosNuevoCard extends JDialog {
 
 
 
-	private JPanel getPnAcudio() {
-		if (pnAcudio == null) {
-			pnAcudio = new JPanel();
-			pnAcudio.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Acudi\u00F3: ", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
-			pnAcudio.setLayout(new GridLayout(3, 1, 0, 0));
-			pnAcudio.add(getPanel_5());
-			pnAcudio.add(getPanel_6());
-			pnAcudio.add(getPanel_7());
+	private JPanel getPanel_3() {
+		if (panel_3 == null) {
+			panel_3 = new JPanel();
+			panel_3.add(getRdbtnAcudio());
+			panel_3.add(getHorizontalStrut());
+			panel_3.add(getRdbtnNoAcudio());
 		}
-		return pnAcudio;
+		return panel_3;
 	}
 	private JRadioButton getRdbtnAcudio() {
 		if (rdbtnAcudio == null) {
 			rdbtnAcudio = new JRadioButton("Acudio");
-			rdbtnAcudio.setFont(new Font("Tahoma", Font.PLAIN, 13));
-			rdbtnAcudio.setBounds(248, 5, 67, 25);
 			buttonGroup.add(rdbtnAcudio);
 		}
 		return rdbtnAcudio;
@@ -1138,7 +1133,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JRadioButton getRdbtnNoAcudio() {
 		if (rdbtnNoAcudio == null) {
 			rdbtnNoAcudio = new JRadioButton("No acudio");
-			rdbtnNoAcudio.setBounds(376, 5, 85, 25);
 			buttonGroup.add(rdbtnNoAcudio);
 		}
 		return rdbtnNoAcudio;
@@ -1146,7 +1140,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private Component getHorizontalStrut() {
 		if (horizontalStrut == null) {
 			horizontalStrut = Box.createHorizontalStrut(60);
-			horizontalStrut.setBounds(319, 17, 60, 12);
 		}
 		return horizontalStrut;
 	}
@@ -1181,34 +1174,62 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			nombresCausas.add(causas.get(i));
 		}
 	}
-	private JPanel getPnMostrarVacunas() {
-		if (pnMostrarVacunas == null) {
-			pnMostrarVacunas = new JPanel();
-			pnMostrarVacunas.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-			pnMostrarVacunas.add(getCbVacunas());
-			pnMostrarVacunas.add(getBtnAsignarVacuna());
+	
+	private JPanel getPn1() {
+		if (pn1 == null) {
+			pn1 = new JPanel();
 		}
-		return pnMostrarVacunas;
+		return pn1;
 	}
-	private JPanel getPnVacio14() {
-		if (pnVacio14 == null) {
-			pnVacio14 = new JPanel();
+	private JPanel getPn2() {
+		if (pn2 == null) {
+			pn2 = new JPanel();
 		}
-		return pnVacio14;
+		return pn2;
+	}
+	private JPanel getPn4() {
+		if (pn4 == null) {
+			pn4 = new JPanel();
+			pn4.setLayout(new GridLayout(0, 2, 0, 0));
+			pn4.add(getCbVacunas());
+		}
+		return pn4;
+	}
+	private JPanel getPn5() {
+		if (pn5 == null) {
+			pn5 = new JPanel();
+		}
+		return pn5;
+	}
+	private JPanel getPn6() {
+		if (pn6 == null) {
+			pn6 = new JPanel();
+		}
+		return pn6;
+	}
+	private JPanel getPn7() {
+		if (pn7 == null) {
+			pn7 = new JPanel();
+		}
+		return pn7;
+	}
+	private JPanel getPn8() {
+		if (pn8 == null) {
+			pn8 = new JPanel();
+			pn8.add(getBtnAsignarVacuna());
+		}
+		return pn8;
 	}
 	private JLabel getLabel_4_8() {
 		if (lblVacuna == null) {
 			lblVacuna = new JLabel("Vacuna:");
-			lblVacuna.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblVacuna.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		}
 		return lblVacuna;
 	}
 	private JPanel getPn3() {
 		if (pn3 == null) {
 			pn3 = new JPanel();
-			pn3.setLayout(new GridLayout(3, 1, 0, 0));
-			pn3.add(getPanel_1());
-			pn3.add(getPanel_3());
 			pn3.add(getLabel_4_8());
 		}
 		return pn3;
@@ -1315,36 +1336,69 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel getPnDiagnosticos() {
 		if (pnDiagnosticos == null) {
 			pnDiagnosticos = new JPanel();
-			pnDiagnosticos.setLayout(new GridLayout(1, 2, 0, 0));
-			pnDiagnosticos.add(getPanel_4());
-			pnDiagnosticos.add(getPanel_13());
+			pnDiagnosticos.setLayout(new GridLayout(4, 0, 2, 0));
+			pnDiagnosticos.add(getPn1d());
+			pnDiagnosticos.add(getPn2d());
+			pnDiagnosticos.add(getPn3d());
+			pnDiagnosticos.add(getPn4d());
+			pnDiagnosticos.add(getPn5d());
+			pnDiagnosticos.add(getPn6d());
+			pnDiagnosticos.add(getPn7d());
+			pnDiagnosticos.add(getPn8d());
 		}
 		return pnDiagnosticos;
+	}
+	private JPanel getPn1d() {
+		if (pn1d == null) {
+			pn1d = new JPanel();
+		}
+		return pn1d;
+	}
+	private JPanel getPn2d() {
+		if (pn2d == null) {
+			pn2d = new JPanel();
+		}
+		return pn2d;
 	}
 	private JPanel getPn3d() {
 		if (pn3d == null) {
 			pn3d = new JPanel();
-			pn3d.setLayout(new GridLayout(3, 1, 0, 0));
-			pn3d.add(getPnVacio20());
-			pn3d.add(getPnVacio21());
 			pn3d.add(getLabel_4_9());
 		}
 		return pn3d;
 	}
-	private JPanel getPnMostrarDiagnosticos() {
-		if (pnMostrarDiagnosticos == null) {
-			pnMostrarDiagnosticos = new JPanel();
-			pnMostrarDiagnosticos.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-			pnMostrarDiagnosticos.add(getCbDiagnosticos());
-			pnMostrarDiagnosticos.add(getBtnDiagnosticar());
+	private JPanel getPn4d() {
+		if (pn4d == null) {
+			pn4d = new JPanel();
+			pn4d.setLayout(new GridLayout(0, 2, 0, 0));
+			pn4d.add(getCbDiagnosticos());
 		}
-		return pnMostrarDiagnosticos;
+		return pn4d;
 	}
-	private JPanel getPnVacio22() {
-		if (pnVacio22 == null) {
-			pnVacio22 = new JPanel();
+	private JPanel getPn5d() {
+		if (pn5d == null) {
+			pn5d = new JPanel();
 		}
-		return pnVacio22;
+		return pn5d;
+	}
+	private JPanel getPn6d() {
+		if (pn6d == null) {
+			pn6d = new JPanel();
+		}
+		return pn6d;
+	}
+	private JPanel getPn7d() {
+		if (pn7d == null) {
+			pn7d = new JPanel();
+		}
+		return pn7d;
+	}
+	private JPanel getPn8d() {
+		if (pn8d == null) {
+			pn8d = new JPanel();
+			pn8d.add(getBtnDiagnosticar());
+		}
+		return pn8d;
 	}
 	private JLabel getLabel_4_9() {
 		if (lblDiagnosticos == null) {
@@ -1463,6 +1517,20 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	protected void restaurarCbDiagnosticos() {
 		cbDiagnosticos.setSelectedIndex(0);		
 	}
+	
+	private JLabel getLblHoraInicio() {
+		if (lblHoraInicio == null) {
+			lblHoraInicio = new JLabel("Hora Inicio:");
+			lblHoraInicio.setFont(new Font("Dialog", Font.PLAIN, 15));
+		}
+		return lblHoraInicio;
+	}
+	private JPanel getPnVacio3() {
+		if (pnVacio3 == null) {
+			pnVacio3 = new JPanel();
+		}
+		return pnVacio3;
+	}
 	private JPanel getPnHoraInicio() {
 		if (pnHoraInicio == null) {
 			pnHoraInicio = new JPanel();
@@ -1579,6 +1647,20 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			});
 		}
 		return btnGuardarInicio;
+	}
+
+	private JLabel getLblHorasalida() {
+		if (lblHorasalida == null) {
+			lblHorasalida = new JLabel("HoraSalida:");
+			lblHorasalida.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		}
+		return lblHorasalida;
+	}
+	private JPanel getPnVacio5() {
+		if (pnVacio5 == null) {
+			pnVacio5 = new JPanel();
+		}
+		return pnVacio5;
 	}
 	private JPanel getPnHoraFin() {
 		if (pnHoraFin == null) {
@@ -1778,6 +1860,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 					}
 				}
 			});
+			btnMostrarHistorial.setBounds(38, 40, 157, 23);
 		}
 		return btnMostrarHistorial;
 	}
@@ -1790,328 +1873,55 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		mh.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
 		mh.setVisible(true);
 	}
-	private JPanel getPnVacio11() {
-		if (pnVacio11 == null) {
-			pnVacio11 = new JPanel();
-		}
-		return pnVacio11;
-	}
-	private JPanel getPanel_5_1() {
-		if (pnVacio8 == null) {
-			pnVacio8 = new JPanel();
-		}
-		return pnVacio8;
-	}
-	private JPanel getPanel_5_2() {
-		if (pnMostrarHistorialVacunas == null) {
-			pnMostrarHistorialVacunas = new JPanel();
-			pnMostrarHistorialVacunas.setLayout(new GridLayout(3, 1, 0, 0));
-			pnMostrarHistorialVacunas.add(getPanel_5_3());
-			pnMostrarHistorialVacunas.add(getPanel_5_4());
-			pnMostrarHistorialVacunas.add(getPanel_5_5());
-		}
-		return pnMostrarHistorialVacunas;
-	}
-	private JPanel getPanel_5_3() {
-		if (pnVacio9 == null) {
-			pnVacio9 = new JPanel();
-		}
-		return pnVacio9;
-	}
-	private JPanel getPanel_5_4() {
-		if (pnMostrar == null) {
-			pnMostrar = new JPanel();
-			pnMostrar.add(getBtnMostrarHistorial());
-			pnMostrar.add(getBtnCalendarioVacunas());
-		}
-		return pnMostrar;
-	}
-	private JPanel getPanel_5_5() {
-		if (pnVacio10 == null) {
-			pnVacio10 = new JPanel();
-		}
-		return pnVacio10;
-	}
-	private JPanel getPanel_5() {
-		if (pnVacio12 == null) {
-			pnVacio12 = new JPanel();
-		}
-		return pnVacio12;
-	}
-	private JPanel getPanel_6() {
-		if (pnSeleccionAcudio == null) {
-			pnSeleccionAcudio = new JPanel();
-			pnSeleccionAcudio.setLayout(null);
-			pnSeleccionAcudio.add(getRdbtnAcudio());
-			pnSeleccionAcudio.add(getHorizontalStrut());
-			pnSeleccionAcudio.add(getRdbtnNoAcudio());
-		}
-		return pnSeleccionAcudio;
-	}
-	private JPanel getPanel_7() {
-		if (pnVacio13 == null) {
-			pnVacio13 = new JPanel();
-		}
-		return pnVacio13;
-	}
-	private JPanel getPanel_8() {
-		if (pnFiltrarVacunas == null) {
-			pnFiltrarVacunas = new JPanel();
-			pnFiltrarVacunas.setLayout(new GridLayout(3, 0, 0, 0));
-			pnFiltrarVacunas.add(getPanel_10());
-			pnFiltrarVacunas.add(getPanel_11());
-			pnFiltrarVacunas.add(getPanel_12());
-		}
-		return pnFiltrarVacunas;
-	}
-	private JPanel getPanel_9() {
-		if (pnBuscarVacunaAsignar == null) {
-			pnBuscarVacunaAsignar = new JPanel();
-			pnBuscarVacunaAsignar.setLayout(new GridLayout(3, 1, 0, 0));
-			pnBuscarVacunaAsignar.add(getPn3());
-			pnBuscarVacunaAsignar.add(getPnMostrarVacunas());
-			pnBuscarVacunaAsignar.add(getPnVacio14());
-		}
-		return pnBuscarVacunaAsignar;
-	}
-	private JPanel getPanel_10() {
-		if (pnV1 == null) {
-			pnV1 = new JPanel();
-		}
-		return pnV1;
-	}
-	private JPanel getPanel_11() {
-		if (pnFiltrarV == null) {
-			pnFiltrarV = new JPanel();
-			pnFiltrarV.add(getTxtFiltrarVacunas());
-			pnFiltrarV.add(getBtnFiltrarVacunas());
-		}
-		return pnFiltrarV;
-	}
-	private JPanel getPanel_12() {
-		if (pnV2 == null) {
-			pnV2 = new JPanel();
-		}
-		return pnV2;
-	}
-	private JTextField getTxtFiltrarVacunas() {
-		if (txtFiltrarVacunas == null) {
-			txtFiltrarVacunas = new JTextField();
-			txtFiltrarVacunas.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent arg0) {
-					activarBotonFiltrarVacunas();
-				}
-			});
-			txtFiltrarVacunas.setToolTipText("Introduzca el nombre de la vacuna para buscarla");
-			txtFiltrarVacunas.setColumns(10);
-		}
-		return txtFiltrarVacunas;
-	}
-
-
-	private JButton getBtnFiltrarVacunas() {
-		if (btnFiltrarVacunas == null) {
-			btnFiltrarVacunas = new JButton("Buscar");
-			btnFiltrarVacunas.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					buscarVacuna();
-				}
-			});
-			btnFiltrarVacunas.setEnabled(false);
-		}
-		return btnFiltrarVacunas;
-	}
-	
-	
-	
-	/**
-	 * Método que me busca si hay la vacuna que quiere el médico. 
-	 * 		- Si la hay, la pone en el comboBox automáticamente
-	 * 		- Si no la hay, muestra un mensaje al usuario diciendole que no existe
-	 */
-	protected void buscarVacuna() {
-		if (!getTxtFiltrarVacunas().getText().equals("")) { // Si hay algo escrito en el campo de texto
-			String buscador = getTxtFiltrarVacunas().getText().toLowerCase(); // Lo que ha buscado (lo pasamos a minuscula)
-			boolean encontrada = false; // Para saber si encontró o no la vacuna buscada
-			
-			for(int i = 0; i < vacunas.size(); i++) {
-				if (vacunas.get(i).getNombreVacuna().toLowerCase().equals(buscador)) { // Si lo que está buscando lo hay en la lista de vacunas
-					cbVacunas.setSelectedIndex(i); // Lo mostramos en el cb
-					encontrada = true; // la encontró
-				}
-			}
-			
-			if (!encontrada) { // Si no encontró la vacuna
-				JOptionPane.showMessageDialog(null, "No hemos podido encontrar su vacuna en este momento");
-			}
-		}
-		else {
-			JOptionPane.showMessageDialog(null, "No ha introducido nada en el buscador");		
-		}
-	}
-
-	/**
-	 * Método que me activa el botón para buscar al filtrar vacunas
-	 */
-	protected void activarBotonFiltrarVacunas() {
-		if (!btnFiltrarVacunas.isEnabled()) { // Si no estaba activado lo activamos
-			btnFiltrarVacunas.setEnabled(true);
-		}
-	}
-	private JPanel getPanel_1() {
-		if (pnVacio15 == null) {
-			pnVacio15 = new JPanel();
-		}
-		return pnVacio15;
-	}
-	private JPanel getPanel_3() {
-		if (pnVacio16 == null) {
-			pnVacio16 = new JPanel();
-		}
-		return pnVacio16;
-	}
 	private JPanel getPanel_4() {
-		if (pnFiltrarDiagnosticos == null) {
-			pnFiltrarDiagnosticos = new JPanel();
-			pnFiltrarDiagnosticos.setLayout(new GridLayout(3, 0, 0, 0));
-			pnFiltrarDiagnosticos.add(getPanel_15());
-			pnFiltrarDiagnosticos.add(getPanel_14());
-			pnFiltrarDiagnosticos.add(getPanel_16());
+		if (panel_4 == null) {
+			panel_4 = new JPanel();
+			panel_4.setLayout(null);
+			panel_4.add(getLblNewLabel());
+			panel_4.add(getTxtNombreCausa());
+			panel_4.add(getBtnFiltrar());
 		}
-		return pnFiltrarDiagnosticos;
+		return panel_4;
 	}
-	private JPanel getPanel_13() {
-		if (pnBuscarDiagnosticosAsignar == null) {
-			pnBuscarDiagnosticosAsignar = new JPanel();
-			pnBuscarDiagnosticosAsignar.setLayout(new GridLayout(3, 1, 0, 0));
-			pnBuscarDiagnosticosAsignar.add(getPn3d());
-			pnBuscarDiagnosticosAsignar.add(getPnMostrarDiagnosticos());
-			pnBuscarDiagnosticosAsignar.add(getPnVacio22());
+	private JLabel getLblNewLabel() {
+		if (lblNewLabel == null) {
+			lblNewLabel = new JLabel("Filtrar causa");
+			lblNewLabel.setBounds(11, 26, 77, 24);
 		}
-		return pnBuscarDiagnosticosAsignar;
+		return lblNewLabel;
 	}
-	private JPanel getPanel_14() {
-		if (pnFiltrarD == null) {
-			pnFiltrarD = new JPanel();
-			pnFiltrarD.add(getTxtFiltrarDiagnosticos());
-			pnFiltrarD.add(getBtnFiltrarDiagnosticos());
+	private JTextField getTxtNombreCausa() {
+		if (txtNombreCausa == null) {
+			txtNombreCausa = new JTextField();
+			txtNombreCausa.setBounds(98, 24, 197, 29);
+			txtNombreCausa.setColumns(10);
 		}
-		return pnFiltrarD;
+		return txtNombreCausa;
 	}
-	private JPanel getPanel_15() {
-		if (pnVacio18 == null) {
-			pnVacio18 = new JPanel();
-		}
-		return pnVacio18;
-	}
-	private JPanel getPanel_16() {
-		if (pnVacio19 == null) {
-			pnVacio19 = new JPanel();
-		}
-		return pnVacio19;
-	}
-	private JTextField getTxtFiltrarDiagnosticos() {
-		if (txtFiltrarDiagnosticos == null) {
-			txtFiltrarDiagnosticos = new JTextField();
-			txtFiltrarDiagnosticos.setToolTipText("Introduzca el nombre del diagn\u00F3stico para buscarlo");
-			txtFiltrarDiagnosticos.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					activarBotonFiltrarDiagnosticos();
-				}
-			});
-			txtFiltrarDiagnosticos.setColumns(10);
-		}
-		return txtFiltrarDiagnosticos;
-	}
-
-	private JButton getBtnFiltrarDiagnosticos() {
-		if (btnFiltrarDiagnosticos == null) {
-			btnFiltrarDiagnosticos = new JButton("Buscar");
-			btnFiltrarDiagnosticos.addActionListener(new ActionListener() {
+	private JButton getBtnFiltrar() {
+		if (btnFiltrar == null) {
+			btnFiltrar = new JButton("Filtrar");
+			btnFiltrar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					buscarDiagnostico();
+					if(txtNombreCausa.getText().equals(""))
+						JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
+					else {	
+						filtrarPorNombre(txtNombreCausa.getText());
+				}
 				}
 			});
-			btnFiltrarDiagnosticos.setEnabled(false);
+			btnFiltrar.setBounds(316, 27, 89, 23);
 		}
-		return btnFiltrarDiagnosticos;
+		return btnFiltrar;
 	}
 	
-	
-
-
-	/**
-	 * Método para activar el buscador de los diagnosticos
-	 */
-	protected void activarBotonFiltrarDiagnosticos() {
-		if (!btnFiltrarDiagnosticos.isEnabled()) { // Si no estaba ya activado
-			btnFiltrarDiagnosticos.setEnabled(true);
-		}
-		
-	}
-
-	private JPanel getPnVacio20() {
-		if (pnVacio20 == null) {
-			pnVacio20 = new JPanel();
-		}
-		return pnVacio20;
-	}
-	private JPanel getPnVacio21() {
-		if (pnVacio21 == null) {
-			pnVacio21 = new JPanel();
-		}
-		return pnVacio21;
-	}
-	private JButton getBtnCalendarioVacunas() {
-		if (btnCalendarioVacunas == null) {
-			btnCalendarioVacunas = new JButton("Calendario vacunas");
-			btnCalendarioVacunas.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					verCalendarioVacunas();
-				}
-			});
-		}
-		return btnCalendarioVacunas;
-	}
-
-	/**
-	 *Método para ver el calendario de vacunas del paciente
-	 */
-	protected void verCalendarioVacunas() {
-		CalendarioVacunas cv = new CalendarioVacunas(paciente);
-		cv.setLocationRelativeTo(null);
-		cv.setResizable(true);
-		cv.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
-		cv.setVisible(true);	
-	}
-	
-	
-	/**
-	 * Método que me busca si hay el diagnostico que quiere el médico. 
-	 * 		- Si lo hay, lo pone en el comboBox automáticamente
-	 * 		- Si no lo hay, muestra un mensaje al usuario diciendole que no existe
-	 */
-	protected void buscarDiagnostico() {
-		if (!getTxtFiltrarDiagnosticos().getText().equals("")) { // Si hay algo escrito en el campo de texto
-			String buscador = getTxtFiltrarDiagnosticos().getText().toLowerCase(); // Lo que ha buscado (lo pasamos a minuscula)
-			boolean encontrado = false; // Para saber si encontró o no el diagnóstico buscado
-			
-			for(int i = 0; i < diagnosticos.size(); i++) {
-				if (diagnosticos.get(i).getNombre().toLowerCase().equals(buscador)) { // Si lo que está buscando lo hay en la lista de diagnosticos
-					cbDiagnosticos.setSelectedIndex(i); // Lo mostramos en el cb
-					encontrado = true; // lo encontró
-				}
-			}
-			
-			if (!encontrado) { // Si no encontró el diagnostico
-				JOptionPane.showMessageDialog(null, "No hemos podido encontrar su diagnóstico en este momento");
+	private void filtrarPorNombre(String name) {
+		for(int i=0; i < nombresCausas.size(); i++) {
+			if(nombresCausas.get(i).equals(name)) {
+				cbCausas.setSelectedIndex(i);
 			}
 		}
-		else {
-			JOptionPane.showMessageDialog(null, "No ha introducido nada en el buscador");		
-		}
-		
 	}
+	
+	
 }
