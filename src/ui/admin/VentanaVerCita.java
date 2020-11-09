@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import javax.swing.text.TabableView;
 
 import logica.Cita;
 import logica.HistorialMedico;
@@ -128,7 +129,7 @@ public class VentanaVerCita extends JDialog {
 							btnModificar.setEnabled(true);
 							btnVerHistorial.setEnabled(true);
 								try {
-									Paciente p=pbd.devolverPacientesMedico((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 9));
+									Paciente p=pbd.devolverPacientesMedico((String)tablacita.getValueAt(tablacita.getSelectedRow(), 9));
 								} catch (SQLException e) {
 									e.printStackTrace();
 								}
@@ -272,7 +273,7 @@ public class VentanaVerCita extends JDialog {
 					int res=JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea borrar la cita?","Mensaje de confirmación",JOptionPane.YES_NO_OPTION);
 					if(res==JOptionPane.YES_OPTION) {
 						try {
-							pbd.BorrarCita((String)modeloTabla.getValueAt(tablacita.getSelectedRow(), 8));
+							pbd.BorrarCita((String)tablacita.getValueAt(tablacita.getSelectedRow(), 8));
 							añadirFilas(false);
 						} catch (SQLException e1) {
 							e1.printStackTrace();
@@ -491,16 +492,15 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 	protected void mostrarHistorial() {
 		int fila=tablacita.getSelectedRow();
 		if(fila!=-1) {
-//			String codcita=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 8);
-//			String codPaciente=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 9);
-//			String codMedico=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 10);
+
+			String codcita=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 8);
+			String codPaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 9);
+			String codMedico=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 10);
 			
 		try {
-			Paciente p=pbd.devolverPacientesMedico((String)tablacita.getValueAt(tablacita.getSelectedRow(),8));
-			System.err.println(p.getNombre() +" "+p.getApellido()+" "+p.getCodePaciente());
-			Cita c=pbd.citaCod((String)tablacita.getValueAt(tablacita.getSelectedRow(),8),
-					(String)tablacita.getValueAt(tablacita.getSelectedRow(),9));
-			HistorialMedico hm = pbd.HistorialCita(c.getCodCita(),p.getCodePaciente(),c.getCodMed());
+				
+		
+			HistorialMedico hm = pbd.HistorialCita(codcita,codPaciente,codMedico);
 			MostrarHistorial mh = new MostrarHistorial(hm);
 			mh.setLocationRelativeTo(null);
 			mh.setResizable(true);
