@@ -263,13 +263,17 @@ public class VentanaMedicoCita extends JDialog {
 	protected void mostrarHistorial() {
 		int fila=tablacita.getSelectedRow();
 		if(fila!=-1) {
-			String codcita=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 7);
-			String codPaciente=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 8);
-			String codMedico=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 9);
+			
+//			String codcita=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 7);
+//			String codPaciente=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 8);
+//			String codMedico=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 9);
 			
 		try {
+			Paciente p=pbd.devolverPacientesMedico((String)tablacita.getValueAt(tablacita.getSelectedRow(),7));
 			
-			HistorialMedico hm = pbd.HistorialCita(codcita,codPaciente,codMedico);
+			Cita c=pbd.citaCod((String)tablacita.getValueAt(tablacita.getSelectedRow(),7),
+					(String)tablacita.getValueAt(tablacita.getSelectedRow(),8));
+			HistorialMedico hm = pbd.HistorialCita(c.getCodCita(),p.getCodePaciente(),c.getCodMed());
 			MostrarHistorial mh = new MostrarHistorial(hm);
 			mh.setLocationRelativeTo(null);
 			mh.setResizable(true);

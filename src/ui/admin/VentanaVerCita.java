@@ -491,13 +491,16 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 	protected void mostrarHistorial() {
 		int fila=tablacita.getSelectedRow();
 		if(fila!=-1) {
-			String codcita=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 8);
-			String codPaciente=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 9);
-			String codMedico=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 10);
+//			String codcita=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 8);
+//			String codPaciente=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 9);
+//			String codMedico=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 10);
 			
 		try {
-			
-			HistorialMedico hm = pbd.HistorialCita(codcita,codPaciente,codMedico);
+			Paciente p=pbd.devolverPacientesMedico((String)tablacita.getValueAt(tablacita.getSelectedRow(),8));
+			System.err.println(p.getNombre() +" "+p.getApellido()+" "+p.getCodePaciente());
+			Cita c=pbd.citaCod((String)tablacita.getValueAt(tablacita.getSelectedRow(),8),
+					(String)tablacita.getValueAt(tablacita.getSelectedRow(),9));
+			HistorialMedico hm = pbd.HistorialCita(c.getCodCita(),p.getCodePaciente(),c.getCodMed());
 			MostrarHistorial mh = new MostrarHistorial(hm);
 			mh.setLocationRelativeTo(null);
 			mh.setResizable(true);
