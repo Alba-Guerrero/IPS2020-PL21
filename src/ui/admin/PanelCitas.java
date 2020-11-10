@@ -347,9 +347,11 @@ public class PanelCitas extends JDialog {
 						if(hora()) {
 
 							if (checkMedico()) {
-								crearCita();
-								JOptionPane.showMessageDialog(null, "Su cita se ha generado con exito");
-								dispose();
+								if(checkSala()) {
+									crearCita();
+									JOptionPane.showMessageDialog(null, "Su cita se ha generado con exito");
+									dispose();
+								}
 							}
 						}
 				}
@@ -406,6 +408,40 @@ public class PanelCitas extends JDialog {
 		return true;
 
 	}
+	
+	private boolean checkSala(){
+		Date dateIncio = (Date) timeSpinnerInicio.getValue();
+		Time timeInicio = new Time(dateIncio.getTime());
+		
+		Date date = getDateCita().getDate();
+		java.sql.Date sDate = new java.sql.Date(date.getTime());
+		
+		String sala = cbSala.getSelectedItem().toString();
+		
+		boolean haySala = false;
+		
+		int res = -1;
+		
+		try {
+			haySala = pbd.buscarSalasIguales(timeInicio, sDate, sala);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(haySala) {
+			System.out.println("sala igual");
+			res = JOptionPane.showConfirmDialog(null,
+					"No hay sala disponible en el hueco seleccionada, ¿Desea crear la cita igualmente? ",
+					"Advertencia: Creación cita", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+		}
+		
+		if(res == 1) {
+			return false;
+		}
+		return true;
+		
+	}
 
 	private JCheckBox getChckbxEsUrgente() {
 		if (chckbxEsUrgente == null) {
@@ -433,11 +469,12 @@ public class PanelCitas extends JDialog {
 			list.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent arg0) {
+					medicos = new ArrayList<Medico>();
 					@SuppressWarnings("deprecation")
 					Object[] selectedValues = list.getSelectedValues();
 					if (selectedValues.length >= 0) {
 						for (int i = 0; i < selectedValues.length; i++) {
-							medicos = new ArrayList<Medico>();
+							
 							medicos.add((Medico) selectedValues[i]);
 
 						}

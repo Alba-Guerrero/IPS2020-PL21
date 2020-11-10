@@ -65,6 +65,8 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 
 	private final static String VER_HORA_CITA ="SELECT hinicio FROM cita where codpaciente=?";
 	
+	private final static String VER_SALA_CITA ="SELECT ubicacion FROM cita where hinicio=? and fecha=? and ubicacion=?";
+	
 	private final static String VER_HISTORIAL ="SELECT * FROM historial where nHistorial =?";
 	
 	private final static String VER_VACUNAS ="SELECT nombreVacuna, fecha FROM vacuna where codvacuna  = ?";
@@ -1642,4 +1644,26 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		
 		return acompañante;
 	}
+
+
+	
+	public boolean buscarSalasIguales(Time timeInicio, Date sDate, String sala) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(VER_SALA_CITA);
+		pst.setTime(1, timeInicio);
+		pst.setDate(2,sDate);
+		pst.setString(3, sala);
+		ResultSet rs=pst.executeQuery();
+		
+		
+		
+		boolean res= rs.next();
+	
+		
+		rs.close();
+		pst.close();
+		con.close();
+		return res;
+	
+		}
 }
