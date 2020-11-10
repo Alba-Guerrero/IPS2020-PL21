@@ -74,7 +74,12 @@ public class Cita {
 			this.ubicacion=ubicacion;
 	}
 
-	
+	public Cita (Time hInicio, Date date,String ubicacion){
+		this.hInicio = hInicio;
+		this.date=date;
+		this.ubicacion=ubicacion;
+}
+
 	
 	
 	/**
