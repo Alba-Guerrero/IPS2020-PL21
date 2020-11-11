@@ -138,7 +138,7 @@ public class ParserBaseDeDatos {
 
 
 //ACCIONES
-	private final static String LISTAR_NACCIONES = "SELECT naccion FROM accion";
+	
 
 	private final static String NOMBRE_APELLIDO_EMPLEADO = "SELECT nombre, apellido FROM empleado where codempleado = ?";
 
