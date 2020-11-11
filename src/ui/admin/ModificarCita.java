@@ -254,7 +254,8 @@ public class ModificarCita extends JDialog {
 		modeloListaM = new DefaultListModel<Medico>();
 		List<Medico> medicos = pbd.buscarMedico("");
 		for (int i = 0; i < medicos.size(); i++) {
-			modeloListaM.addElement(medicos.get(i));
+			if(!modeloListaM.contains(medicos))
+				modeloListaM.addElement(medicos.get(i));
 
 		}
 		return modeloListaM;
