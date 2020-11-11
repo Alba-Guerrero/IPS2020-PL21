@@ -12,6 +12,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.text.TabableView;
 
+import logica.Accion;
 import logica.Cita;
 import logica.HistorialMedico;
 import logica.Paciente;
@@ -23,9 +24,11 @@ import ui.medico.ModeloNoEditable;
 import javax.swing.JScrollPane;
 import java.awt.GridLayout;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -67,6 +70,7 @@ public class VentanaVerCita extends JDialog {
 	private JButton irHistorial;
 	private JButton btnBuscarPorFecha;
 	private JButton btnVerHistorial;
+	private String codAdmin;
 	
 
 
@@ -74,7 +78,8 @@ public class VentanaVerCita extends JDialog {
 	 * Create the frame.
 	 * @param codmedico 
 	 */
-	public VentanaVerCita() {
+	public VentanaVerCita(String codAdmin) {
+		this.codAdmin = codAdmin;
 		setTitle("M\u00E9dico: Ver citas");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 870, 515);
@@ -274,6 +279,7 @@ public class VentanaVerCita extends JDialog {
 					if(res==JOptionPane.YES_OPTION) {
 						try {
 							pbd.BorrarCita((String)tablacita.getValueAt(tablacita.getSelectedRow(), 8));
+							guardarAccionElimCita();
 							añadirFilas(false);
 						} catch (SQLException e1) {
 							e1.printStackTrace();
@@ -284,6 +290,30 @@ public class VentanaVerCita extends JDialog {
 						
 					}
 					
+					
+				}
+
+				private void guardarAccionElimCita() throws SQLException {
+					Random r = new Random();
+					String naccion = "" + r.nextInt(3000);
+					//String naccion = "" + (numeroAcciones.size() + 1);
+					System.out.println("Numero acciones " + naccion);
+					
+					String nombrePaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 0);
+					String apellidoPaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 1);
+					
+					String nombreMedico=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 6);
+					
+					Date fecha = new Date();	
+					Time hora = new Time(new Date().getTime());	
+					
+					
+					String mensajeAccion = "El aministrador " + codAdmin + " ha eliminado la cita del paciente " + nombrePaciente + " " + apellidoPaciente
+							+ " con el médico " + nombreMedico;
+					
+					Accion a = new Accion(naccion, codAdmin,  fecha, hora, mensajeAccion);
+					
+					pbd.guardarAccion(a);
 					
 				}
 			});
@@ -506,11 +536,33 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 			mh.setResizable(true);
 			mh.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
 			mh.setVisible(true);
+			guardarAccionHist();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		}
+	}
+
+	private void guardarAccionHist() throws SQLException {
+		Random r = new Random();
+		String naccion = "" + r.nextInt(3000);
+		//String naccion = "" + (numeroAcciones.size() + 1);
+		System.out.println("Numero acciones " + naccion);
+		
+		String nombrePaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 0);
+		String apellidoPaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 1);
+		
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());	
+		
+		
+		String mensajeAccion = "El aministrador " + codAdmin + " ha visto el historial del paciente " + nombrePaciente + " " + apellidoPaciente;
+		
+		Accion a = new Accion(naccion, codAdmin,  fecha, hora, mensajeAccion);
+		
+		pbd.guardarAccion(a);
+		
 	}
 	
 }

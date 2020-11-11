@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -26,10 +27,12 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.JSpinner;
 
+import logica.Accion;
 import logica.Acompañante;
 import logica.Cita;
 import logica.Email;
 import logica.Paciente;
+import logica.empleados.Empleado;
 import logica.empleados.Medico;
 
 import javax.swing.JComboBox;
@@ -102,14 +105,16 @@ public class PanelCitas extends JDialog {
 	private DefaultListModel<Medico> modeloMedSelec;
 	
 	List<String> salas;
-
+	private String codAdmin;
+	
 	
 	/**
 	 * Create the dialog.
 	 * 
 	 * @throws SQLException
 	 */
-	public PanelCitas() throws SQLException {
+	public PanelCitas(String codAdmin) throws SQLException {
+		this.codAdmin = codAdmin;
 		setTitle("Administrativo: citas");
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -584,6 +589,7 @@ public class PanelCitas extends JDialog {
 				c = new Cita(pacienteCita.getCodePaciente(), medicos.get(i).getCodeEmpleado(), timeInicio, timeFin, sDate, sala,
 						chckbxEsUrgente.isSelected());
 				pbd.crearCita(c);
+				guardarAccion();
 				if(c.isUrgente())
 					Email.enviarCorreo("roloalvarez7@gmail.com", "sbeiaolebhiewuzz", "UO266007@uniovi.es", pacienteCita, c);
 
@@ -592,6 +598,35 @@ public class PanelCitas extends JDialog {
 			}
 
 		}
+		
+		
+	}
+	
+	private void guardarAccion() throws SQLException {
+//		List<Accion> numeroAcciones = new ArrayList<Accion>();
+//		numeroAcciones = pbd.calcularNAcciones();
+		Random r = new Random();
+		String naccion = "" + r.nextInt(3000);
+		//String naccion = "" + (numeroAcciones.size() + 1);
+		//System.out.println("Numero acciones " + naccion);
+		
+		String nombrePaciente = pacienteCita.getNombre();
+		String apellidoPaciente = pacienteCita.getApellido();
+		
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());	
+		
+		String infoMedicos  ="";
+		
+		for(int i =0; i<medicos.size(); i++) {
+			infoMedicos += medicos.get(i).getNombre() + " " + medicos.get(i).getApellido() +",";
+		}
+		
+		String mensajeAccion = "Cita asignada a " + nombrePaciente + " " + apellidoPaciente + " con " + infoMedicos;
+		
+		Accion a = new Accion(naccion, codAdmin,  fecha, hora, mensajeAccion);
+		
+		pbd.guardarAccion(a);
 	}
 
 	

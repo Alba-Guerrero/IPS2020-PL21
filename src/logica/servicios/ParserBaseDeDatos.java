@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import conexion.Conexion;
+import logica.Accion;
+import logica.AccionEmpleado;
 import logica.Acompañante;
 import logica.AsignaDiagnostico;
 import logica.AsignaPreinscripcion;
@@ -130,6 +132,15 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 
 	private final static String VACUNAS_PERSONA="SELECT * FROM asignaVacuna WHERE nHistorial=?";
 	private final static String GET_ACOMPAÑANTE = "SELECT * FROM acompañantePaciente WHERE codpaciente=?";
+	
+	//ACCIONES
+	private final static String LISTAR_NACCIONES = "SELECT naccion FROM accion";
+	
+	private final static String NOMBRE_APELLIDO_EMPLEADO = "SELECT nombre, apellido FROM empleado where codempleado = ?";
+	
+	private final static String INSERT_ACCION = "INSERT into accion (naccion, codadmin, fecha, hora, nombreaccion) values (?, ?, ?, ?, ?)";
+	
+	private final static String INSERT_ACCION_EMPLEADO = "INSERT into accionempleado (naccion, codempleado, fecha, hora, nombreaccion) values (?, ?, ?, ?, ?)";
 	
 	
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
@@ -1666,4 +1677,67 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		return res;
 	
 		}
+	
+	//ACCIONES
+
+	public List<String> calcularNAcciones() throws SQLException {
+		List<String> listaAcciones = new ArrayList<String>();
+		
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(LISTAR_NACCIONES);
+		ResultSet rs = pst.executeQuery();
+		if(rs.next()) {
+			listaAcciones.add(rs.getString(1));
+		}
+		
+		rs.close();
+		pst.close();
+		con.close();
+		
+		 return listaAcciones;
+		 
+	}
+
+	public void guardarAccion(Accion a) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(INSERT_ACCION);
+		
+		java.sql.Date fecha = new java.sql.Date(a.getDate().getTime());
+		 Time hour = new Time(fecha.getTime());
+		pst.setString(1,a.getNaccion());
+		pst.setString(2,a.getCodaccion());
+		pst.setDate(3,fecha);
+		pst.setTime(4,hour);
+		pst.setString(5,a.getMensajeAccion());
+		
+		pst.executeUpdate();
+			
+			
+		pst.close();
+		con.close();
+		
+	}
+	
+	public void guardarAccionEmpleado(AccionEmpleado a) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(INSERT_ACCION_EMPLEADO);
+		
+		java.sql.Date fecha = new java.sql.Date(a.getDate().getTime());
+		 Time hour = new Time(fecha.getTime());
+		pst.setString(1,a.getNaccion());
+		pst.setString(2,a.getCodempleado());
+		pst.setDate(3,fecha);
+		pst.setTime(4,hour);
+		pst.setString(5,a.getMensajeAccion());
+		
+		pst.executeUpdate();
+			
+			
+		pst.close();
+		con.close();
+		
+	}
+
+	
+
 }

@@ -11,6 +11,8 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.text.TabableView;
 
+import logica.Accion;
+import logica.AccionEmpleado;
 import logica.Cita;
 import logica.HistorialMedico;
 import logica.Paciente;
@@ -21,9 +23,11 @@ import ui.MostrarHistorial;
 import javax.swing.JScrollPane;
 import java.awt.GridLayout;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -276,12 +280,39 @@ public class VentanaMedicoCita extends JDialog {
 			mh.setResizable(true);
 			mh.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
 			mh.setVisible(true);
+			guardarAccionHist();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		}
 	}
+	
+	private void guardarAccionHist() throws SQLException {
+		Random r = new Random();
+		String naccion = "" + r.nextInt(3000);
+		//String naccion = "" + (numeroAcciones.size() + 1);
+		System.out.println("Numero acciones " + naccion);
+		
+		String nombrePaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 0);
+		String apellidoPaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 1);
+		String codMed = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 9);
+		
+		String nombre =pbd.devolverEmpleado(codMed).getNombre();
+		String apellido =pbd.devolverEmpleado(codMed).getApellido();
+		
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());	
+		
+		
+		String mensajeAccion = "El médico " + nombre + " " +apellido  + " ha visto el historial del paciente " + nombrePaciente + " " + apellidoPaciente;
+		
+		AccionEmpleado a = new AccionEmpleado(naccion, codMed,  fecha, hora, mensajeAccion);
+		
+		pbd.guardarAccionEmpleado(a);
+		
+	}
+	
 	private JButton getBtnmodifica() {
 		if (btnmodifica == null) {
 			btnmodifica = new JButton("Atender consulta");

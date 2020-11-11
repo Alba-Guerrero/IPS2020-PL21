@@ -274,7 +274,7 @@ public class VentanaAdministrador extends JDialog {
 	 */
 	protected void asignarJornadaLaboral() throws SQLException {
 		
-		VentanaJornada vj = new VentanaJornada();
+		VentanaJornada vj = new VentanaJornada(codAdmin);
 		vj.setLocationRelativeTo(null);
 		vj.setResizable(true);
 		vj.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
@@ -289,7 +289,7 @@ public class VentanaAdministrador extends JDialog {
 	 */
 	protected void asignarCitas() throws SQLException {
 		
-		PanelCitas pc = new PanelCitas();
+		PanelCitas pc = new PanelCitas(codAdmin);
 		pc.setLocationRelativeTo(null);
 		pc.setResizable(true);
 		pc.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
@@ -303,7 +303,7 @@ public class VentanaAdministrador extends JDialog {
 	
 protected void verCalendarioCitas() {
 		
-		VentanaVerCita vca = new VentanaVerCita();
+		VentanaVerCita vca = new VentanaVerCita(codAdmin);
 		vca.setVisible(true);
 		vca.setLocationRelativeTo(this);
 		

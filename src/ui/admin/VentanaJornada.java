@@ -5,9 +5,11 @@ import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import com.toedter.calendar.JDateChooser;
 
+import logica.Accion;
 import logica.Paciente;
 import logica.empleados.Empleado;
 import logica.empleados.Enfermero;
@@ -72,27 +74,15 @@ public class VentanaJornada extends JDialog{
 	//private final ButtonGroup buttonGroup = new ButtonGroup();
 	private List<JToggleButton> diasSeleccionados = new ArrayList<JToggleButton>();
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					VentanaJornada frame = new VentanaJornada();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private String codAdmin;
+
 
 	/**
 	 * Create the frame.
 	 * @throws SQLException 
 	 */
-	public VentanaJornada() throws SQLException {
+	public VentanaJornada(String codAdmin) throws SQLException {
+		this.codAdmin = codAdmin;
 		setTitle("Asignar Jornada");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 650, 590);
@@ -463,7 +453,32 @@ public class VentanaJornada extends JDialog{
 			
 			pbd.updateJornada(inicio, fin, new java.sql.Date(getChooseDInicio().getDate().getTime()), new java.sql.Date(getchooseDFin().getDate().getTime()),
 					selectDates(), getSelectedEmpleadoCodigo());
+			
+			guardarAccion(getSelectedEmpleadoCodigo());
 		
+	}
+	
+	private void guardarAccion(String codEmpleado) throws SQLException {
+//		List<Accion> numeroAcciones = new ArrayList<Accion>();
+//		numeroAcciones = pbd.calcularNAcciones();
+		Random r = new Random();
+		String naccion = "" + r.nextInt(3000);
+		//String naccion = "" + (numeroAcciones.size() + 1);
+		System.out.println("Numero acciones " + naccion);
+		Empleado empleado = pbd.devolverEmpleado(codEmpleado);
+		String nombre = empleado.getNombre();
+		String apellido = empleado.getApellido();
+		
+		
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());	
+		
+		
+		String mensajeAccion = "Jornada laboral asignada a " + nombre + " " + apellido;
+		
+		Accion a = new Accion(naccion, codAdmin,  fecha, hora, mensajeAccion);
+		
+		pbd.guardarAccion(a);
 	}
 
 	private boolean comprobarEmpleadoSelected() throws SQLException {
