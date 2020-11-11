@@ -110,6 +110,7 @@ public class PanelCitas extends JDialog {
 	 * @throws SQLException
 	 */
 	public PanelCitas() throws SQLException {
+	
 		setTitle("Administrativo: citas");
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -302,11 +303,23 @@ public class PanelCitas extends JDialog {
 		return modeloListaM;
 	}
 	
-	private void  modeloListaSeleccionados(){
+	private void  modeloListaSeleccionados(List<Medico>medicos){
+		if(medicos!=null) {
 		
+		 
+		for (int i = 0; i < medicos.size(); i++) {
+			if(!modeloMedSelec.contains(medicos.get(i)))
+			modeloMedSelec.addElement(medicos.get(i));
+			
+		}
 		list.setModel(modeloMedSelec);
+		
+		}
+		
+		
 	
 	}
+	
 	
 	private DefaultListModel<Paciente> modeloListaPaciente(List<Paciente> pacientes) throws SQLException {
 		modeloListaPaciente = new DefaultListModel<Paciente>();
@@ -374,6 +387,13 @@ public class PanelCitas extends JDialog {
 	private boolean checkMedico() {
 		Date dateIncio = (Date) timeSpinnerInicio.getValue();
 		Time timeInicio = new Time(dateIncio.getTime());
+		List<Medico> medico= medicos= new ArrayList<Medico>();
+		Object [] obj=modeloMedSelec.toArray();
+		for (int i = 0; i < modeloMedSelec.getSize(); i++) {
+			medico.add((Medico)obj[i]);
+			
+		}
+		
 		
 		Date dateFin = (Date) timeSpinnerFin.getValue();
 		Time timeFin = new Time(dateFin.getTime());
@@ -382,10 +402,10 @@ public class PanelCitas extends JDialog {
 		int citares = -1;
 		boolean jornada = false;
 
-		for (int i = 0; i < medicos.size(); i++) {
+		for (int i = 0; i < medico.size(); i++) {
 
 			try {
-				jornada = pbd.checkMedicoJornada(medicos.get(i).getCodeEmpleado(), timeInicio, timeFin);
+				jornada = pbd.checkMedicoJornada(medico.get(i).getCodeEmpleado(), timeInicio, timeFin);
 			} catch (SQLException e1) {
 	
 				e1.printStackTrace();
@@ -400,7 +420,7 @@ public class PanelCitas extends JDialog {
 				return false;
 			try {
 
-				cita = pbd.checkMedicoCita(medicos.get(i).getCodeEmpleado(), timeInicio, timeFin);
+				cita = pbd.checkMedicoCita(medico.get(i).getCodeEmpleado(), timeInicio, timeFin);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -477,19 +497,19 @@ public class PanelCitas extends JDialog {
 			listMedicos.setModel(modeloListaM);
 			listMedicos.addMouseListener(new MouseAdapter() {
 				@Override
-				public void mouseClicked(MouseEvent arg0) {
+				public void mouseClicked(MouseEvent event) {
 					medicos = new ArrayList<Medico>();
 					@SuppressWarnings("deprecation")
 					Object[] selectedValues = listMedicos.getSelectedValues();
 					if (selectedValues.length >= 0) {
 						for (int i = 0; i < selectedValues.length; i++) {
 							medicos.add((Medico) selectedValues[i]);
-							modeloMedSelec.addElement((Medico) selectedValues[i]);
+							
 
 						}
 
 				
-						modeloListaSeleccionados();
+						modeloListaSeleccionados(medicos);
 					
 
 					camposCubiertos();
@@ -1213,6 +1233,19 @@ public class PanelCitas extends JDialog {
 		if (list == null) {
 			list = new JList<Medico>();
 			modeloMedSelec= new DefaultListModel<Medico>();
+			list.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if(e.getClickCount()==2) {
+						
+							Medico med=(Medico) list.getSelectedValue();
+							int res=JOptionPane.showConfirmDialog(null, "¿Esta seguro de que desea borrar este médico?","Confirmación de eliminación", JOptionPane.YES_NO_OPTION);
+							if(res==JOptionPane.YES_OPTION)	
+								modeloMedSelec.removeElement(med);
+				}
+					}
+			});
+		
 		}
 		return list;
 	}
