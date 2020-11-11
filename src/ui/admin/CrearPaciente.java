@@ -83,6 +83,7 @@ public class CrearPaciente extends JDialog {
 			CrearPaciente dialog = new CrearPaciente();
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
+			dialog.setResizable(false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
