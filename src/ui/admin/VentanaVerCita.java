@@ -294,10 +294,12 @@ public class VentanaVerCita extends JDialog {
 				}
 
 				private void guardarAccionElimCita() throws SQLException {
-					Random r = new Random();
-					String naccion = "" + r.nextInt(3000);
-					//String naccion = "" + (numeroAcciones.size() + 1);
-					System.out.println("Numero acciones " + naccion);
+					List<Accion> devolverAccionesAdmin = pbd.devolverAccionesAdmin();
+					int numeroAccion = 1;
+					if(devolverAccionesAdmin.size()>0) {
+						numeroAccion = devolverAccionesAdmin.size() + 1;
+					}
+					String naccion = "" +numeroAccion;
 					
 					String nombrePaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 0);
 					String apellidoPaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 1);
@@ -545,10 +547,12 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 	}
 
 	private void guardarAccionHist() throws SQLException {
-		Random r = new Random();
-		String naccion = "" + r.nextInt(3000);
-		//String naccion = "" + (numeroAcciones.size() + 1);
-		System.out.println("Numero acciones " + naccion);
+		List<Accion> devolverAccionesAdmin = pbd.devolverAccionesAdmin();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" +numeroAccion;
 		
 		String nombrePaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 0);
 		String apellidoPaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 1);

@@ -319,12 +319,12 @@ public class AsignarVacaciones extends JDialog{
 	
 	
 	private void guardarAccion(String codEmpleado) throws SQLException {
-//		List<Accion> numeroAcciones = new ArrayList<Accion>();
-//		numeroAcciones = pbd.calcularNAcciones();
-		Random r = new Random();
-		String naccion = "" + r.nextInt(3000);
-		//String naccion = "" + (numeroAcciones.size() + 1);
-		System.out.println("Numero acciones " + naccion);
+		List<Accion> devolverAccionesAdmin = pbd.devolverAccionesAdmin();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" +numeroAccion;
 		Empleado empleado = pbd.devolverEmpleado(codEmpleado);
 		String nombre = empleado.getNombre();
 		String apellido = empleado.getApellido();

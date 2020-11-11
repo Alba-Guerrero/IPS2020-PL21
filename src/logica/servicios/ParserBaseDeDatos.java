@@ -134,7 +134,9 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 	private final static String GET_ACOMPAÑANTE = "SELECT * FROM acompañantePaciente WHERE codpaciente=?";
 	
 	//ACCIONES
-	private final static String LISTAR_NACCIONES = "SELECT naccion FROM accion";
+	private final static String LISTAR_NACCIONES = "SELECT * FROM accion";
+	
+	private final static String LISTAR_NACCIONES_EMPLEADO = "SELECT * FROM accionempleado";
 	
 	private final static String NOMBRE_APELLIDO_EMPLEADO = "SELECT nombre, apellido FROM empleado where codempleado = ?";
 	
@@ -1737,6 +1739,50 @@ private final static String VER_CITA ="SELECT * FROM cita where codpaciente=?";
 		con.close();
 		
 	}
+	
+	public List<Accion> devolverAccionesAdmin() throws SQLException {
+		List<Accion> acciones = new ArrayList<Accion>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(LISTAR_NACCIONES);
+//		java.util.Date fecha = new java.util.Date();
+//		java.sql.Date date = new java.sql.Date(fecha.getTime());
+//		pst.setDate(1, date);
+		ResultSet rs = pst.executeQuery();
+		
+	while(rs.next()) {
+		acciones.add(new Accion(rs.getString(1),rs.getString(2),rs.getDate(3),rs.getTime(4), rs.getString(5)));
+	}
+	
+	
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return acciones;
+}
+	
+	public List<AccionEmpleado> devolverAccionesEmlpeado() throws SQLException {
+		List<AccionEmpleado> acciones = new ArrayList<AccionEmpleado>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(LISTAR_NACCIONES_EMPLEADO);
+//		java.util.Date fecha = new java.util.Date();
+//		java.sql.Date date = new java.sql.Date(fecha.getTime());
+//		pst.setDate(1, date);
+		ResultSet rs = pst.executeQuery();
+		
+	while(rs.next()) {
+		acciones.add(new AccionEmpleado(rs.getString(1),rs.getString(2),rs.getDate(3),rs.getTime(4), rs.getString(5)));
+	}
+	
+	
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return acciones;
+}
 
 	
 

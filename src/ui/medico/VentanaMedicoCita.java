@@ -289,9 +289,12 @@ public class VentanaMedicoCita extends JDialog {
 	}
 	
 	private void guardarAccionHist() throws SQLException {
-		Random r = new Random();
-		String naccion = "" + r.nextInt(3000);
-		//String naccion = "" + (numeroAcciones.size() + 1);
+		List<AccionEmpleado> devolverAccionesAdmin = pbd.devolverAccionesEmlpeado();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" + numeroAccion;
 		System.out.println("Numero acciones " + naccion);
 		
 		String nombrePaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 0);
