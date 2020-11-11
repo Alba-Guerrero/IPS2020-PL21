@@ -194,7 +194,7 @@ public class Cita {
 	public void generateRandomCodCita() throws SQLException {
 		String cod;
 		do {
-		 cod=new Random().nextInt()+"";
+		 cod=new Random().nextInt(100000)+"";
 		}while(pbd.checkCode(cod));
 		
 		
