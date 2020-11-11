@@ -37,6 +37,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Rectangle;
 import javax.swing.JTextPane;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
 
 public class CrearPaciente extends JDialog {
 
@@ -53,7 +57,7 @@ public class CrearPaciente extends JDialog {
 	private JTextField txtPnumero;
 	private JLabel lblPTelfono;
 	private JCheckBox chcbkAcompañante;
-	private JLabel lnAnombre;
+	private JLabel lbAnombre;
 	private JTextField txtAnombre;
 	private JLabel lblAApellidos;
 	private JTextField txtAtelefono;
@@ -79,6 +83,7 @@ public class CrearPaciente extends JDialog {
 			CrearPaciente dialog = new CrearPaciente();
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
+			dialog.setResizable(false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -131,15 +136,15 @@ public class CrearPaciente extends JDialog {
 			panelAcompañante.setEnabled(false);
 			panelAcompañante.setBorder(new TitledBorder(null, "A\u00F1adir acompa\u00F1ante", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			panelAcompañante.setLayout(null);
-			panelAcompañante.add(getLnAnombre());
+			panelAcompañante.add(getLbAnombre());
 			panelAcompañante.add(getTxtAnombre());
 			panelAcompañante.add(getLblAApellidos());
 			panelAcompañante.add(getTxtAtelefono());
 			panelAcompañante.add(getLblATelfono());
 			panelAcompañante.add(getTxtAApellido());
-			panelAcompañante.add(getBtnAadirAcompaante());
 			panelAcompañante.add(getLbAEmail());
 			panelAcompañante.add(getTxtAEmail());
+			panelAcompañante.add(getBtnAadirAcompaante());
 		}
 		return panelAcompañante;
 	}
@@ -153,7 +158,7 @@ public class CrearPaciente extends JDialog {
 	private JTextField getTxtPNombre() {
 		if (txtPNombre == null) {
 			txtPNombre = new JTextField();
-			txtPNombre.setBounds(69, 27, 140, 22);
+			txtPNombre.setBounds(69, 27, 160, 25);
 			txtPNombre.setColumns(10);
 		}
 		return txtPNombre;
@@ -168,7 +173,7 @@ public class CrearPaciente extends JDialog {
 	private JTextField getTxtPApellidos() {
 		if (txtPApellidos == null) {
 			txtPApellidos = new JTextField();
-			txtPApellidos.setBounds(304, 27, 279, 22);
+			txtPApellidos.setBounds(304, 27, 341, 25);
 			txtPApellidos.setColumns(10);
 		}
 		return txtPApellidos;
@@ -184,7 +189,7 @@ public class CrearPaciente extends JDialog {
 		if (txtPEmail == null) {
 			txtPEmail = new JTextField();
 			txtPEmail.setColumns(10);
-			txtPEmail.setBounds(295, 79, 288, 22);
+			txtPEmail.setBounds(295, 79, 350, 25);
 		}
 		return txtPEmail;
 	}
@@ -192,7 +197,7 @@ public class CrearPaciente extends JDialog {
 		if (txtPnumero == null) {
 			txtPnumero = new JTextField();
 			txtPnumero.setColumns(10);
-			txtPnumero.setBounds(69, 79, 140, 22);
+			txtPnumero.setBounds(69, 79, 160, 25);
 		}
 		return txtPnumero;
 	}
@@ -227,19 +232,19 @@ public class CrearPaciente extends JDialog {
 		}
 		return chcbkAcompañante;
 	}
-	private JLabel getLnAnombre() {
-		if (lnAnombre == null) {
-			lnAnombre = new JLabel("Nombre:");
-			lnAnombre.setEnabled(false);
-			lnAnombre.setBounds(12, 36, 50, 16);
+	private JLabel getLbAnombre() {
+		if (lbAnombre == null) {
+			lbAnombre = new JLabel("Nombre:");
+			lbAnombre.setBounds(18, 36, 50, 16);
+			lbAnombre.setEnabled(false);
 		}
-		return lnAnombre;
+		return lbAnombre;
 	}
 	private JTextField getTxtAnombre() {
 		if (txtAnombre == null) {
 			txtAnombre = new JTextField();
+			txtAnombre.setBounds(80, 33, 150, 22);
 			txtAnombre.setEnabled(false);
-			txtAnombre.setBounds(74, 33, 140, 22);
 			txtAnombre.setColumns(10);
 		}
 		return txtAnombre;
@@ -247,16 +252,16 @@ public class CrearPaciente extends JDialog {
 	private JLabel getLblAApellidos() {
 		if (lblAApellidos == null) {
 			lblAApellidos = new JLabel("Apellidos:");
+			lblAApellidos.setBounds(244, 36, 56, 16);
 			lblAApellidos.setEnabled(false);
-			lblAApellidos.setBounds(243, 36, 56, 16);
 		}
 		return lblAApellidos;
 	}
 	private JTextField getTxtAtelefono() {
 		if (txtAtelefono == null) {
 			txtAtelefono = new JTextField();
+			txtAtelefono.setBounds(80, 89, 150, 22);
 			txtAtelefono.setEnabled(false);
-			txtAtelefono.setBounds(84, 77, 140, 22);
 			txtAtelefono.setColumns(10);
 		}
 		return txtAtelefono;
@@ -264,38 +269,42 @@ public class CrearPaciente extends JDialog {
 	private JLabel getLblATelfono() {
 		if (lblATelfono == null) {
 			lblATelfono = new JLabel("Tel\u00E9fono: ");
+			lblATelfono.setBounds(18, 92, 59, 16);
 			lblATelfono.setEnabled(false);
-			lblATelfono.setBounds(12, 80, 59, 16);
 		}
 		return lblATelfono;
 	}
 	private JTextField getTxtAApellido() {
 		if (txtAApellido == null) {
 			txtAApellido = new JTextField();
+			txtAApellido.setBounds(319, 33, 329, 22);
 			txtAApellido.setEnabled(false);
 			txtAApellido.setColumns(10);
-			txtAApellido.setBounds(311, 33, 279, 22);
 		}
 		return txtAApellido;
 	}
 	private JButton getBtnAadirAcompaante() {
 		if (btnAadirAcompaante == null) {
 			btnAadirAcompaante = new JButton("A\u00F1adir acompa\u00F1ante");
+			btnAadirAcompaante.setBounds(482, 124, 166, 25);
 			btnAadirAcompaante.setEnabled(false);
-			btnAadirAcompaante.setBounds(474, 117, 166, 25);
 			btnAadirAcompaante.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(checkCamposAcomapñante()) {
-						if(checkSoloLetras(txtAnombre.getText())||checkSoloLetras(txtAApellido.getText()))
+						if(checkSoloLetras(txtAnombre.getText())||checkSoloLetras(txtAApellido.getText())) {
 									añadirAcompañante();
+						lblAApellidos.setForeground(Color.BLACK);
+						lbAEmail.setForeground(Color.BLACK);
+						lbAnombre.setForeground(Color.BLACK);
+						}
 						else
 							JOptionPane.showConfirmDialog(null, "El nombre o apellido no puede contener caracteres distintos de letras");
 					}
 					else {
 						JOptionPane.showConfirmDialog(null, "Por favor,rellene todos los campos obligatorios");
-						lblPApellidos.setForeground(Color.RED);
+						lblAApellidos.setForeground(Color.RED);
 						lbAEmail.setForeground(Color.RED);
-						lbPNombre.setForeground(Color.RED);
+						lbAnombre.setForeground(Color.RED);
 					}
 				}
 				
@@ -409,8 +418,13 @@ public class CrearPaciente extends JDialog {
 				public void actionPerformed(ActionEvent arg0) {
 					
 					if(checkCamposPaciente()) {
-						if(checkSoloLetras(txtPNombre.getText())||checkSoloLetras(txtPNombre.getText()))
+						if(checkSoloLetras(txtPNombre.getText())||checkSoloLetras(txtPNombre.getText())) {
 									crearPaciente();
+									lbPNombre.setForeground(Color.BLACK);
+									lbPEmail.setForeground(Color.BLACK);
+									lblPApellidos.setForeground(Color.BLACK);
+						
+						}
 						else
 							JOptionPane.showMessageDialog(null, "El nombre o apellido no puede contener caracteres distintos de letras");
 					}
@@ -500,16 +514,16 @@ private boolean checkSoloNumeros(String cadena) {
 	private JLabel getLbAEmail() {
 		if (lbAEmail == null) {
 			lbAEmail = new JLabel("Email:");
+			lbAEmail.setBounds(250, 92, 70, 16);
 			lbAEmail.setEnabled(false);
-			lbAEmail.setBounds(257, 80, 56, 16);
 		}
 		return lbAEmail;
 	}
 	private JTextField getTxtAEmail() {
 		if (txtAEmail == null) {
 			txtAEmail = new JTextField();
+			txtAEmail.setBounds(319, 89, 329, 22);
 			txtAEmail.setEnabled(false);
-			txtAEmail.setBounds(311, 77, 279, 22);
 			txtAEmail.setColumns(10);
 		}
 		return txtAEmail;
