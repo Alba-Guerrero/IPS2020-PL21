@@ -19,6 +19,7 @@ import javax.swing.UIManager;
 
 import logica.servicios.ParserBaseDeDatos;
 import ui.admin.PanelCitas;
+import ui.auditor.VerAccionesAdmin;
 import ui.medico.VentanaMedicoCita;
 import ui.medico.VerCitasMedico;
 
@@ -35,6 +36,7 @@ public class VentanaInicio extends JFrame {
 	private JLabel lblIntroduceElCodigo;
 	private JTextField textField;
 	private ParserBaseDeDatos pbd=new ParserBaseDeDatos();
+	private JButton btnAuditor;
 	
 	/**
 	 * Launch the application.
@@ -65,6 +67,7 @@ public class VentanaInicio extends JFrame {
 		getContentPane().add(getLblIniciaSesin());
 		getContentPane().add(getLblIntroduceElCodigo());
 		getContentPane().add(getTextField());
+		getContentPane().add(getBtnAuditor());
 	}
 	private JPanel getPanel_1() {
 		if (panel_1 == null) {
@@ -192,5 +195,24 @@ public class VentanaInicio extends JFrame {
 			
 		}
 		return textField;
+	}
+	private JButton getBtnAuditor() {
+		if (btnAuditor == null) {
+			btnAuditor = new JButton("Auditor");
+			btnAuditor.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					abrirAuditor();
+				}
+			});
+			btnAuditor.setBounds(722, 378, 90, 28);
+		}
+		return btnAuditor;
+	}
+
+	protected void abrirAuditor() {
+		VerAccionesAdmin vaa = new VerAccionesAdmin();
+		vaa.setVisible(true);
+		vaa.setLocationRelativeTo(null);
+		vaa.setResizable(true);
 	}
 }

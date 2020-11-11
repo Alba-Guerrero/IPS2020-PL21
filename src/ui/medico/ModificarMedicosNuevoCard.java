@@ -1198,10 +1198,12 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 	
 	private void guardarAccionCausa(String causas) throws SQLException {
-		Random r = new Random();
-		String naccion = "" + r.nextInt(3000);
-		//String naccion = "" + (numeroAcciones.size() + 1);
-		System.out.println("Numero acciones " + naccion);
+		List<AccionEmpleado> devolverAccionesAdmin = pbd.devolverAccionesEmlpeado();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" +numeroAccion;
 		
 		String nombrePaciente = paciente.getNombre();
 		String apellidoPaciente= paciente.getApellido();
@@ -1351,10 +1353,12 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	
 	
 	private void guardarAccionVacunas() throws SQLException {
-		Random r = new Random();
-		String naccion = "" + r.nextInt(3000);
-		//String naccion = "" + (numeroAcciones.size() + 1);
-		System.out.println("Numero acciones " + naccion);
+		List<AccionEmpleado> devolverAccionesAdmin = pbd.devolverAccionesEmlpeado();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" +numeroAccion;
 		
 		String nombrePaciente = paciente.getNombre();
 		String apellidoPaciente= paciente.getApellido();
@@ -1392,9 +1396,12 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}		
 	}
 	private void guardarAccionPreins() throws SQLException {
-		Random r = new Random();
-		String naccion = "" + r.nextInt(3000);
-		//String naccion = "" + (numeroAcciones.size() + 1);
+		List<AccionEmpleado> devolverAccionesAdmin = pbd.devolverAccionesEmlpeado();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" + numeroAccion;
 		System.out.println("Numero acciones " + naccion);
 		
 		String nombrePaciente = paciente.getNombre();
@@ -1540,10 +1547,12 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 	
 	private void guardarAccionDiagnosticos() throws SQLException {
-		Random r = new Random();
-		String naccion = "" + r.nextInt(3000);
-		//String naccion = "" + (numeroAcciones.size() + 1);
-		System.out.println("Numero acciones " + naccion);
+		List<AccionEmpleado> devolverAccionesAdmin = pbd.devolverAccionesEmlpeado();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" + numeroAccion;
 		
 		String nombrePaciente = paciente.getNombre();
 		String apellidoPaciente= paciente.getApellido();
@@ -2265,8 +2274,12 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 	
 	private void guardarAccionHist() throws SQLException {
-		Random r = new Random();
-		String naccion = "" + r.nextInt(3000);
+		List<AccionEmpleado> devolverAccionesAdmin = pbd.devolverAccionesEmlpeado();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" +numeroAccion;
 		//String naccion = "" + (numeroAcciones.size() + 1);
 		System.out.println("Numero acciones " + naccion);
 		
