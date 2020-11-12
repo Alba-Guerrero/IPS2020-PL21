@@ -144,13 +144,21 @@ public class ParserBaseDeDatos {
 
 //ACCIONES
 	
-
-	private final static String NOMBRE_APELLIDO_EMPLEADO = "SELECT nombre, apellido FROM empleado where codempleado = ?";
-
 	private final static String INSERT_ACCION = "INSERT into accion (naccion, codadmin, fecha, hora, nombreaccion) values (?, ?, ?, ?, ?)";
 
 	private final static String INSERT_ACCION_EMPLEADO = "INSERT into accionempleado (naccion, codempleado, fecha, hora, nombreaccion) values (?, ?, ?, ?, ?)";
 	
+	private final static String GET_ACCIONES_DATE_ADM = "select * from accion where fecha >= ? and fecha <= ?";
+	
+	private final static String GET_ACCIONESEMPLEADO_DATE_ADM = "select * from accionempleado where fecha >= ? and fecha <= ?";
+	
+	private final static String GET_ACCIONES_NAME_ADM = "select * from accion where codadmin = ?";	
+	
+	private final static String GET_ACCIONESEMPLEADO_NAME = "select * from accionempleado where codempleado = ?";	
+	
+	private final static String GET_ACCIONES_NAME_DATE_ADM = "select * from accion where codadmin = ? and fecha >= ? and fecha <= ?";	
+	
+	private final static String GET_ACCIONESEMPLEADO_NAME_DATE_ADM = "select * from accionempleado where codempleado = ? and fecha >= ? and fecha <= ?";
 	
 	private final static String INSERT_PACIENTE = "INSERT into paciente (codpaciente, nombre, apellido, movil, email,info,nhistorial) values (?, ?, ?, ?, ?,?,?)";
 	private final static String INSERT_ACOMPAÑANTE = "INSERT into acompañantepaciente (codacompañante,codpaciente, nombre, apellido, movil, correo) values (?, ?, ?, ?, ?,?)";
@@ -1638,20 +1646,18 @@ public class ParserBaseDeDatos {
 
 	}
 	
-	public List<Accion> devolverAccionesAdmin() throws SQLException {
+	public List<Accion> devolverAccionesAdminPorFecha(Date dinicio, Date dfin) throws SQLException {
 		List<Accion> acciones = new ArrayList<Accion>();
 		Connection con = new Conexion().getConnectionJDBC();
-		PreparedStatement pst=con.prepareStatement(LISTAR_NACCIONES);
-//		java.util.Date fecha = new java.util.Date();
-//		java.sql.Date date = new java.sql.Date(fecha.getTime());
-//		pst.setDate(1, date);
+		PreparedStatement pst=con.prepareStatement(GET_ACCIONES_DATE_ADM);
+		pst.setDate(1, dinicio);
+		pst.setDate(2, dfin);
 		ResultSet rs = pst.executeQuery();
+		
 		
 	while(rs.next()) {
 		acciones.add(new Accion(rs.getString(1),rs.getString(2),rs.getDate(3),rs.getTime(4), rs.getString(5)));
 	}
-	
-	
 	
 	//CERRAR EN ESTE ORDEN
 	rs.close();
@@ -1660,13 +1666,47 @@ public class ParserBaseDeDatos {
 	return acciones;
 }
 	
+	public List<AccionEmpleado> devolverAccionesEmpleadoPorFecha(Date dinicio, Date dfin) throws SQLException {
+		List<AccionEmpleado> acciones = new ArrayList<AccionEmpleado>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(GET_ACCIONES_DATE_ADM);
+		pst.setDate(1, dinicio);
+		pst.setDate(2, dfin);
+		ResultSet rs = pst.executeQuery();
+		
+		
+	while(rs.next()) {
+		acciones.add(new AccionEmpleado(rs.getString(1),rs.getString(2),rs.getDate(3),rs.getTime(4), rs.getString(5)));
+	}
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return acciones;
+}
+	
+	public List<Accion> devolverAccionesAdmin() throws SQLException {
+		List<Accion> acciones = new ArrayList<Accion>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(LISTAR_NACCIONES);
+		ResultSet rs = pst.executeQuery();
+		
+	while(rs.next()) {
+		acciones.add(new Accion(rs.getString(1),rs.getString(2),rs.getDate(3),rs.getTime(4), rs.getString(5)));
+	}
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return acciones;
+	}
+	
 	public List<AccionEmpleado> devolverAccionesEmlpeado() throws SQLException {
 		List<AccionEmpleado> acciones = new ArrayList<AccionEmpleado>();
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst=con.prepareStatement(LISTAR_NACCIONES_EMPLEADO);
-//		java.util.Date fecha = new java.util.Date();
-//		java.sql.Date date = new java.sql.Date(fecha.getTime());
-//		pst.setDate(1, date);
 		ResultSet rs = pst.executeQuery();
 		
 	while(rs.next()) {
@@ -1831,5 +1871,85 @@ public class ParserBaseDeDatos {
 		
 		return nombreMedico;	
 	}
+
+	public List<Accion> devolverAccionesAdminNombre(String nombre) throws SQLException {
+		List<Accion> acciones = new ArrayList<Accion>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(GET_ACCIONES_NAME_ADM);
+		pst.setString(1, nombre);
+		ResultSet rs = pst.executeQuery();
+		
+		
+	while(rs.next()) {
+		acciones.add(new Accion(rs.getString(1),rs.getString(2),rs.getDate(3),rs.getTime(4), rs.getString(5)));
+	}
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return acciones;
+	}
+	
+	public List<AccionEmpleado> devolverAccionesEmpleadoNombre(String nombre) throws SQLException {
+		List<AccionEmpleado> acciones = new ArrayList<AccionEmpleado>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(GET_ACCIONESEMPLEADO_NAME);
+		pst.setString(1, nombre);
+		ResultSet rs = pst.executeQuery();
+		
+		
+	while(rs.next()) {
+		acciones.add(new AccionEmpleado(rs.getString(1),rs.getString(2),rs.getDate(3),rs.getTime(4), rs.getString(5)));
+	}
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return acciones;
+	}
+	
+	public List<Accion> devolverAccionesAdminFechaNombre(String name, Date dinicio, Date dfin) throws SQLException {
+		List<Accion> acciones = new ArrayList<Accion>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(GET_ACCIONES_NAME_DATE_ADM);
+		pst.setString(1, name);
+		pst.setDate(2, dinicio);
+		pst.setDate(3, dfin);
+		ResultSet rs = pst.executeQuery();
+		
+		
+	while(rs.next()) {
+		acciones.add(new Accion(rs.getString(1),rs.getString(2),rs.getDate(3),rs.getTime(4), rs.getString(5)));
+	}
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return acciones;
+}
+	
+	public List<AccionEmpleado> devolverAccionesEmpleadoFechaNombre(String name, Date dinicio, Date dfin) throws SQLException {
+		List<AccionEmpleado> acciones = new ArrayList<AccionEmpleado>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(GET_ACCIONESEMPLEADO_NAME_DATE_ADM);
+		pst.setString(1, name);
+		pst.setDate(2, dinicio);
+		pst.setDate(3, dfin);
+		ResultSet rs = pst.executeQuery();
+		
+		
+	while(rs.next()) {
+		acciones.add(new AccionEmpleado(rs.getString(1),rs.getString(2),rs.getDate(3),rs.getTime(4), rs.getString(5)));
+	}
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return acciones;
+}
 
 }

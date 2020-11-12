@@ -3,6 +3,8 @@ package ui.auditor;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
@@ -10,8 +12,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -19,28 +30,13 @@ import javax.swing.table.TableRowSorter;
 import com.toedter.calendar.JDateChooser;
 
 import logica.Accion;
+import logica.AccionEmpleado;
 import logica.Cita;
-import logica.Paciente;
-import logica.empleados.Empleado;
 import logica.servicios.ParserBaseDeDatos;
 import ui.medico.ModeloNoEditable;
-
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.GridLayout;
 import javax.swing.JTextField;
 
-public class VerAccionesAdmin extends JDialog {
+public class VerAccionesEmpleado extends JDialog {
 
 	private JPanel contentPane;
 	private JPanel panelBotones;
@@ -63,13 +59,13 @@ public class VerAccionesAdmin extends JDialog {
 	private JTextField txtNombreDeUsuario;
 
 
+
 	/**
 	 * Create the frame.
 	 */
-	public VerAccionesAdmin() {
-		setTitle("Registro de acciones");
+	public VerAccionesEmpleado() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 870, 515);
+		setBounds(100, 100, 870, 515);;
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -78,7 +74,7 @@ public class VerAccionesAdmin extends JDialog {
 		contentPane.add(getPanelFiltros(), BorderLayout.NORTH);
 		contentPane.add(getScrollPane(), BorderLayout.CENTER);
 	}
-
+	
 	private JPanel getPanelBotones() {
 		if (panelBotones == null) {
 			panelBotones = new JPanel();
@@ -89,7 +85,6 @@ public class VerAccionesAdmin extends JDialog {
 	private JPanel getPanelFiltros() {
 		if (panelFiltros == null) {
 			panelFiltros = new JPanel();
-			panelFiltros.setLayout(new GridLayout(0, 9, 0, 0));
 			panelFiltros.add(getLblFechaIn());
 			panelFiltros.add(getDateChooser());
 			panelFiltros.add(getLblFechaIn_1());
@@ -155,22 +150,18 @@ public class VerAccionesAdmin extends JDialog {
 		return tablaCita;
 	}
 	
-
 	public void añadirFilas(boolean dia)  {
 		borrarModeloTabla();
 		Object[] nuevaFila=new Object[11];
-		List<Accion> acciones = new ArrayList<Accion>();
-		
+		List<AccionEmpleado> accionesEmpleados = new ArrayList<AccionEmpleado>();
 	if(dia) {
-		
 		Date dateIn = getDateChooser().getDate();
 		java.sql.Date sDateIn = new java.sql.Date(dateIn.getTime());
 		
 		Date dateFin = getDateChooser_1().getDate();
 		java.sql.Date sDateFin = new java.sql.Date(dateFin.getTime());
-		
 		try {
-			acciones = pbd.devolverAccionesAdminPorFecha(sDateIn, sDateFin);
+			accionesEmpleados = pbd.devolverAccionesEmpleadoPorFecha(sDateIn, sDateFin);
 		} catch (SQLException e) {
 
 			e.printStackTrace();
@@ -178,14 +169,14 @@ public class VerAccionesAdmin extends JDialog {
 	}
 	else {
 		try {
-			acciones = pbd.devolverAccionesAdmin();
+			accionesEmpleados = pbd.devolverAccionesEmlpeado();
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
 	}
-		for(Accion a:acciones) {
+		for(AccionEmpleado a:accionesEmpleados) {
 			nuevaFila[0]= a.getNaccion();
-			nuevaFila[1]= a.getCodaccion();
+			nuevaFila[1]= a.getCodempleado();
 			nuevaFila[2] = a.getDate();
 			nuevaFila[3] =a.getHora();
 			nuevaFila[4] =a.getMensajeAccion();
@@ -220,7 +211,7 @@ public class VerAccionesAdmin extends JDialog {
 	}
 	private JDateChooser getDateChooser_1() {
 		if (dateChooser_1 == null) {
-			dateChooser_1 = new JDateChooser(new Date() );
+			dateChooser_1 = new JDateChooser(new Date());
 		}
 		return dateChooser_1;
 	}
@@ -271,23 +262,24 @@ public class VerAccionesAdmin extends JDialog {
 	protected void añadirFilasNombre() {
 		borrarModeloTabla();
 		Object[] nuevaFila=new Object[11];
-		List<Accion> acciones = new ArrayList<Accion>();
+		List<AccionEmpleado> acciones = new ArrayList<AccionEmpleado>();
 		try {
-			acciones = pbd.devolverAccionesAdminNombre(txtNombreDeUsuario.getText());
+			acciones = pbd.devolverAccionesEmpleadoNombre(txtNombreDeUsuario.getText());
 		} catch (SQLException e) {
 
 			e.printStackTrace();
 		}
 	
-		for(Accion a:acciones) {
+		for(AccionEmpleado a:acciones) {
 			nuevaFila[0]= a.getNaccion();
-			nuevaFila[1]= a.getCodaccion();
+			nuevaFila[1]= a.getCodempleado();
 			nuevaFila[2] = a.getDate();
 			nuevaFila[3] =a.getHora();
 			nuevaFila[4] =a.getMensajeAccion();
 			modeloTabla.addRow(nuevaFila);
 		
 		}
+		
 	}
 
 	private JButton getBtnNewButton_2() {
@@ -309,22 +301,22 @@ public class VerAccionesAdmin extends JDialog {
 	protected void añadirFilasNombreFecha() {
 		borrarModeloTabla();
 		Object[] nuevaFila=new Object[11];
-		List<Accion> acciones = new ArrayList<Accion>();
+		List<AccionEmpleado> acciones = new ArrayList<AccionEmpleado>();
 		Date dateIn = getDateChooser().getDate();
 		java.sql.Date sDateIn = new java.sql.Date(dateIn.getTime());
 		
 		Date dateFin = getDateChooser_1().getDate();
 		java.sql.Date sDateFin = new java.sql.Date(dateFin.getTime());
 		try {
-			acciones = pbd.devolverAccionesAdminFechaNombre(txtNombreDeUsuario.getText(), sDateIn, sDateFin);
+			acciones = pbd.devolverAccionesEmpleadoFechaNombre(txtNombreDeUsuario.getText(), sDateIn, sDateFin);
 		} catch (SQLException e) {
 
 			e.printStackTrace();
 		}
 	
-		for(Accion a:acciones) {
+		for(AccionEmpleado a:acciones) {
 			nuevaFila[0]= a.getNaccion();
-			nuevaFila[1]= a.getCodaccion();
+			nuevaFila[1]= a.getCodempleado();
 			nuevaFila[2] = a.getDate();
 			nuevaFila[3] =a.getHora();
 			nuevaFila[4] =a.getMensajeAccion();
@@ -340,11 +332,11 @@ public class VerAccionesAdmin extends JDialog {
 			txtNombreDeUsuario.setText("Nombre de usuario");
 			txtNombreDeUsuario.setColumns(10);
 			txtNombreDeUsuario.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				txtNombreDeUsuario.setText("");
-			}
-			});
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+					txtNombreDeUsuario.setText("");
+				}
+				});
 		}
 		return txtNombreDeUsuario;
 	}

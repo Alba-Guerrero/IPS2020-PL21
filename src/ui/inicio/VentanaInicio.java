@@ -210,7 +210,7 @@ public class VentanaInicio extends JFrame {
 	}
 
 	protected void abrirAuditor() {
-		VerAccionesAdmin vaa = new VerAccionesAdmin();
+		EscogerOpcionAuditor vaa = new EscogerOpcionAuditor();
 		vaa.setVisible(true);
 		vaa.setLocationRelativeTo(null);
 		vaa.setResizable(true);
