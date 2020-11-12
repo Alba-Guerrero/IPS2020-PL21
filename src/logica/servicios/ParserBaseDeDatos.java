@@ -9,6 +9,7 @@ import java.sql.Time;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import conexion.Conexion;
 import logica.Accion;
@@ -19,6 +20,7 @@ import logica.AsignaPreinscripcion;
 import logica.AsignaVacuna;
 import logica.Causas;
 import logica.Cita;
+import logica.Correo;
 import logica.Diagnostico;
 import logica.HistorialMedico;
 import logica.Paciente;
@@ -57,7 +59,8 @@ public class ParserBaseDeDatos {
 	private final static String GET_CITA_FECHA_HISTORIAL = "select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.codpaciente= p.codpaciente and c.fecha=? and p.nhistorial =?";
 	private final static String GET_CITA_FECHA_HISTORIAL_MED = "select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.codpaciente= p.codpaciente and c.fecha=? and p.nhistorial =? and c.codmedico=?";
 	private final static String GET_ADMINISTRATIVO = "Select * from administrativo where codAdmin=?";
-	private final static String GET_MEDICO = "Select * from medico where codmedico=?";
+	private final static String GET_MEDICO = "Select * from medico where codmedico=?"; 
+	private final static String GET_MEDICO_NOMBRE = "Select * from empleado where codempleado=?";
 
 	private final static String VER_CITA = "SELECT * FROM cita where codpaciente=?";
 
@@ -129,6 +132,8 @@ public class ParserBaseDeDatos {
 	private final static String VACUNAS_PERSONA = "SELECT * FROM asignaVacuna WHERE nHistorial=?";
 	private final static String GET_ACOMPAÑANTE = "SELECT * FROM acompañantePaciente WHERE codpaciente=?";
 
+	
+	private final static String VER_CORREOS = "SELECT * FROM correo where codMedicoDestino = ?";
 	
 	//ACCIONES
 	private final static String LISTAR_NACCIONES = "SELECT * FROM accion";
@@ -1755,6 +1760,76 @@ public class ParserBaseDeDatos {
 		con.close();
 		return res;
 
+	}
+
+	
+	
+	/**
+	 * Método para sacar todos los correos que tiene un médico
+	 * @return
+	 * @throws SQLException 
+	 */
+	public List<Correo> buscarCorreos(String codMedicoDestino) throws SQLException {
+		List<Correo> correos = new ArrayList<Correo>();
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VER_CORREOS);
+
+		pst.setString(1, codMedicoDestino); // busco por codigo médico que tiene que recibir los correos
+		
+		ResultSet rs = pst.executeQuery(); // Creo el resultSet
+
+		while (rs.next()) {
+
+			String codCorreo = rs.getString(1);
+			String codMedicoOrigen = rs.getString(3);
+			String asunto = rs.getString(4);
+			String mensaje = rs.getString(5);
+			Date date = rs.getDate(6);
+			Time time = rs.getTime(7);
+			
+			Correo correo = new Correo(codCorreo, codMedicoDestino, codMedicoOrigen, asunto, mensaje, date, time); // Creo mi objeto
+			
+			correos.add(correo); // Añado el correo a mi lista
+		}
+		
+
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		
+		return correos;
+	}
+	
+	
+	
+	
+	
+	
+	public String buscarNombreMedico (String codMedico) throws SQLException {
+		String nombreMedico = null;
+		
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_MEDICO_NOMBRE);
+		
+		pst.setString(1, codMedico);
+		
+		ResultSet rs = pst.executeQuery();
+		
+		
+		if (rs.next()) {
+			nombreMedico = rs.getString("nombre");
+		}
+		
+		
+
+		rs.close();
+		pst.close();
+		con.close();
+		
+		return nombreMedico;	
 	}
 
 }
