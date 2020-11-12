@@ -70,6 +70,7 @@ public class VentanaMedicoCita extends JDialog {
 	private JTextField textHistorial;
 	private JButton irHistorial;
 	private JButton btnBuscarPorFecha;
+	private JButton btnCorreo;
 	
 
 
@@ -248,6 +249,7 @@ public class VentanaMedicoCita extends JDialog {
 			panelBotones = new JPanel();
 			panelBotones.add(getBtnhistorial());
 			panelBotones.add(getBtnmodifica());
+			panelBotones.add(getBtnCorreo());
 		}
 		return panelBotones;
 	}
@@ -493,5 +495,31 @@ public class VentanaMedicoCita extends JDialog {
 			});
 		}
 		return btnBuscarPorFecha;
+	}
+	private JButton getBtnCorreo() {
+		if (btnCorreo == null) {
+			btnCorreo = new JButton("Correo");
+			btnCorreo.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					abrirCorreo();
+				}
+			});
+		}
+		return btnCorreo;
+	}
+
+	
+	/**
+	 * Método para abrir la ventana de correo, donde podrá:
+	 * 		- Ver los mensajes recibidos
+	 * 		- Borrar mensajes
+	 * 		- Redactar y enviar mensajes
+	 */
+	protected void abrirCorreo() {
+		VentanaCorreo vc = new VentanaCorreo(codmedico);
+		vc.setLocationRelativeTo(this);
+		vc.setResizable(true);
+		vc.setModal(true);
+		vc.setVisible(true);
 	}
 }
