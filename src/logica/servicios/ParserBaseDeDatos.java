@@ -61,7 +61,8 @@ public class ParserBaseDeDatos {
 	private final static String GET_ADMINISTRATIVO = "Select * from administrativo where codAdmin=?";
 	private final static String GET_MEDICO = "Select * from medico where codmedico=?"; 
 	private final static String GET_MEDICO_NOMBRE = "Select * from empleado where codempleado=?";
-
+	private final static String GET_MEDICO_CODIGO = "Select * from empleado where nombre=?";
+	
 	private final static String VER_CITA = "SELECT * FROM cita where codpaciente=?";
 
 	private final static String VER_HORA_CITA = "SELECT hinicio FROM cita where codpaciente=?";
@@ -98,6 +99,8 @@ public class ParserBaseDeDatos {
 
 	private final static String ADD_PREINSCRIPCION = "INSERT INTO PRESCRIPCION (NOMBREPRESCRIPCION, MEDICAMENTO)"
 			+ " VALUES(?,?)";
+	
+	private final static String ADD_CORREO = "INSERT INTO CORREO (CODCORREO, CODMEDICODESTINO, CODMEDICOORIGEN, ASUNTO, MENSAJE, FECHA, HORA) VALUES (?,?,?,?,?,?,?)";
 
 	private final static String LIST_PREINSCRIPCIONES = "Select * from prescripcion";
 
@@ -143,18 +146,13 @@ public class ParserBaseDeDatos {
 
 
 //ACCIONES
+	private final static String NOMBRE_APELLIDO_EMPLEADO = "SELECT nombre, apellido FROM empleado where codempleado = ?";
+
 	
 	private final static String INSERT_ACCION = "INSERT into accion (naccion, codadmin, fecha, hora, nombreaccion) values (?, ?, ?, ?, ?)";
 
 	private final static String INSERT_ACCION_EMPLEADO = "INSERT into accionempleado (naccion, codempleado, fecha, hora, nombreaccion) values (?, ?, ?, ?, ?)";
 	
-	private final static String GET_ACCIONES_DATE_ADM = "select * from accion where fecha >= ? and fecha <= ?";
-	
-	private final static String GET_ACCIONESEMPLEADO_DATE_ADM = "select * from accionempleado where fecha >= ? and fecha <= ?";
-	
-	private final static String GET_ACCIONES_NAME_ADM = "select * from accion where codadmin = ?";	
-	
-	private final static String GET_ACCIONESEMPLEADO_NAME = "select * from accionempleado where codempleado = ?";	
 	
 	private final static String GET_ACCIONES_NAME_DATE_ADM = "select * from accion where codadmin = ? and fecha >= ? and fecha <= ?";	
 	
@@ -1951,5 +1949,73 @@ public class ParserBaseDeDatos {
 	con.close();
 	return acciones;
 }
+	
+	
+	/**
+	 * Método que me guarda un correo nuevo en la base de datos
+	 * @param nuevoCorreo
+	 * @throws SQLException 
+	 */
+	public void crearCorreo(Correo nuevoCorreo) throws SQLException {
+		
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(ADD_CORREO);
+		
+		String codCorreo = nuevoCorreo.getCodCorreo();
+		String codMedicoDestino = nuevoCorreo.getCodMedicoDestino();
+		String codMedicoOrigen = nuevoCorreo.getCodMedicoOrigen();
+		String asunto = nuevoCorreo.getAsunto();
+		String mensaje = nuevoCorreo.getMensaje();
+		java.sql.Date fecha = new java.sql.Date(nuevoCorreo.getDate().getTime());
+		Time hora = new Time(fecha.getTime());
+		
+
+		
+		pst.setString(1, codCorreo);
+		pst.setString(2, codMedicoDestino);
+		pst.setString(3, codMedicoOrigen);
+		pst.setString(4, asunto);
+		pst.setString(5, mensaje);
+		pst.setDate(6, fecha);
+		pst.setTime(7, hora);
+
+		pst.executeUpdate();
+
+		pst.close();
+		con.close();
+		
+	}
+	
+	/**
+	 * Método para buscar el código de un médico a partir de su nombre
+	 * @param codMedico
+	 * @return
+	 * @throws SQLException
+	 */
+	public String buscarCodigoMedico(String nombre) throws SQLException {
+		String codEmpleado = null;
+		
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_MEDICO_CODIGO);
+		
+		pst.setString(1, nombre);
+		
+		ResultSet rs = pst.executeQuery();
+		
+		
+		if (rs.next()) {
+			codEmpleado = rs.getString("codEmpleado");
+		}
+		
+		
+
+		rs.close();
+		pst.close();
+		con.close();
+		
+		return codEmpleado;	
+	}
+	
+	
 
 }

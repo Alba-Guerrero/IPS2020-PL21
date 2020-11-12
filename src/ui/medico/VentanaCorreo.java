@@ -32,8 +32,8 @@ public class VentanaCorreo extends JDialog{
 
 	private ParserBaseDeDatos pbd=new ParserBaseDeDatos();
 	private List<Correo> correos; // Los correos que ha recibido el médico
-	
 	private String codMedico;
+	
 	private JPanel pnIzquierda;
 	private JPanel pnSur;
 	private JPanel pnCentro;
@@ -129,9 +129,19 @@ public class VentanaCorreo extends JDialog{
 	private JButton getBtnRedactar() {
 		if (btnRedactar == null) {
 			btnRedactar = new JButton("Redactar");
+			btnRedactar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					redactarNuevoCorreo();
+				}
+			});
 		}
 		return btnRedactar;
 	}
+
+
+
+
+
 	private JScrollPane getScrollPRecibidos() {
 		if (scrollPRecibidos == null) {
 			scrollPRecibidos = new JScrollPane();
@@ -200,5 +210,25 @@ public class VentanaCorreo extends JDialog{
 		// Lo vuelvo a repintar
 		pnCentro.revalidate();
 		pnCentro.repaint();
+	}
+	
+	
+	/**
+	 * Método para redactar un nuevo correo
+	 */
+	protected void redactarNuevoCorreo() {
+		Component[] componentes = pnCentro.getComponents(); // Los componentes que tiene el panel
+		
+		// Borramos todos los componentes que tenga
+		for (Component c : componentes) {
+			pnCentro.remove(c);
+		}
+		
+		pnCentro.add(new PanelRedactarCorreo(codMedico, this)); // Añadimos el panel para ver el correo
+
+		
+		// Lo vuelvo a repintar
+		pnCentro.revalidate();
+		pnCentro.repaint();	
 	}
 }

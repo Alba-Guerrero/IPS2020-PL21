@@ -40,6 +40,11 @@ public class PanelLeerCorreo extends JPanel {
 	private JLabel lblRemitente;
 	private JScrollPane scrollPane;
 	private JTextArea textArea;
+	private JPanel pnNombreRemitente;
+	private JPanel pnFechaYHora;
+	private JLabel lblFecha;
+	private JLabel lblHora;
+	private JPanel panel;
 
 
 	/**
@@ -114,9 +119,8 @@ public class PanelLeerCorreo extends JPanel {
 	private JPanel getPnRemitente() {
 		if (pnRemitente == null) {
 			pnRemitente = new JPanel();
-			FlowLayout flowLayout = (FlowLayout) pnRemitente.getLayout();
-			flowLayout.setAlignment(FlowLayout.LEFT);
-			pnRemitente.add(getLblRemitente());
+			pnRemitente.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+			pnRemitente.add(getPnNombreRemitente());
 		}
 		return pnRemitente;
 	}
@@ -132,10 +136,9 @@ public class PanelLeerCorreo extends JPanel {
 	private JPanel getPnAsunto() {
 		if (pnAsunto == null) {
 			pnAsunto = new JPanel();
-			FlowLayout flowLayout = (FlowLayout) pnAsunto.getLayout();
-			flowLayout.setAlignment(FlowLayout.LEFT);
-			pnAsunto.add(getLblAsunto());
-			pnAsunto.add(getLblElAsunto());
+			pnAsunto.setLayout(new GridLayout(0, 2, 0, 0));
+			pnAsunto.add(getPanel());
+			pnAsunto.add(getPnFechaYHora());
 		}
 		return pnAsunto;
 	}
@@ -210,5 +213,50 @@ public class PanelLeerCorreo extends JPanel {
 	protected void atras() {
 		
 		ventanaCorreo.limpiarPanelCentro();
+	}
+	private JPanel getPnNombreRemitente() {
+		if (pnNombreRemitente == null) {
+			pnNombreRemitente = new JPanel();
+			FlowLayout fl_pnNombreRemitente = (FlowLayout) pnNombreRemitente.getLayout();
+			fl_pnNombreRemitente.setAlignment(FlowLayout.LEFT);
+			pnNombreRemitente.add(getLblRemitente());
+		}
+		return pnNombreRemitente;
+	}
+	private JPanel getPnFechaYHora() {
+		if (pnFechaYHora == null) {
+			pnFechaYHora = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnFechaYHora.getLayout();
+			flowLayout.setAlignment(FlowLayout.LEFT);
+			pnFechaYHora.add(getLblFecha());
+			pnFechaYHora.add(getLblHora());
+		}
+		return pnFechaYHora;
+	}
+	private JLabel getLblFecha() {
+		if (lblFecha == null) {
+			lblFecha = new JLabel("");
+			
+			lblFecha.setText("" + correo.getDate() + "  ");
+		}
+		return lblFecha;
+	}
+	private JLabel getLblHora() {
+		if (lblHora == null) {
+			lblHora = new JLabel("");
+			
+			lblHora.setText("" + correo.getTime());
+		}
+		return lblHora;
+	}
+	private JPanel getPanel() {
+		if (panel == null) {
+			panel = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) panel.getLayout();
+			flowLayout.setAlignment(FlowLayout.LEFT);
+			panel.add(getLblAsunto());
+			panel.add(getLblElAsunto());
+		}
+		return panel;
 	}
 }

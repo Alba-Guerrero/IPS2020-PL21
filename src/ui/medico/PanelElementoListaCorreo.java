@@ -6,6 +6,8 @@ package ui.medico;
 import javax.swing.JPanel;
 
 import logica.Correo;
+import logica.servicios.ParserBaseDeDatos;
+
 import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.JButton;
@@ -13,6 +15,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Panel;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 
 /**
@@ -21,6 +24,10 @@ import java.awt.event.ActionEvent;
  */
 public class PanelElementoListaCorreo extends JPanel{
 
+	
+	private ParserBaseDeDatos pbd=new ParserBaseDeDatos();
+
+	
 	private Correo correo;
 	private VentanaCorreo ventanaCorreo; // La ventana anterior
 	
@@ -71,10 +78,18 @@ public class PanelElementoListaCorreo extends JPanel{
 		if (lblMedicoOrigen == null) {
 			lblMedicoOrigen = new JLabel("");
 			
-			lblMedicoOrigen.setText(correo.getCodMedicoOrigen());
+			try {
+				lblMedicoOrigen.setText(nombreMedico());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return lblMedicoOrigen;
 	}
+
+
+
+
 	private JPanel getPnVerMensaje() {
 		if (pnVerMensaje == null) {
 			pnVerMensaje = new JPanel();
@@ -111,5 +126,17 @@ public class PanelElementoListaCorreo extends JPanel{
 	 */
 	protected void verCorreo() {
 		ventanaCorreo.verCorreo(correo); // Le paso el correo que seleccionó para que se visualice
+	}
+	
+	
+	/**
+	 * Método para poner el nombre del médico
+	 * @return
+	 * @throws SQLException 
+	 */
+	private String nombreMedico() throws SQLException {
+		String nombreMedico = pbd.buscarNombreMedico(correo.getCodMedicoOrigen());
+		
+		return nombreMedico;				
 	}
 }
