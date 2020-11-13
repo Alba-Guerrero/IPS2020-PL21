@@ -131,6 +131,7 @@ public class PanelCitas extends JDialog {
 			panelArriba.add(getPnMedico());
 		}
 		contentPanel.add(getPanelAbajo());
+		getContentPane().add(getScrollPane_1_3());
 		//setContactData();
 	}
 
@@ -742,6 +743,7 @@ public class PanelCitas extends JDialog {
 	private JLabel lblNombreSala;
 	private JTextField txtNombreSala;
 	private JButton btnFiltrar;
+	private JScrollPane scrollPane_1;
 	
 	
 	private JButton getBtnActualizarDatos() {
@@ -1115,5 +1117,12 @@ public class PanelCitas extends JDialog {
 				cbSala.setSelectedIndex(i);
 			}
 		}
+	}
+	private JScrollPane getScrollPane_1_3() {
+		if (scrollPane_1 == null) {
+			scrollPane_1 = new JScrollPane();
+			scrollPane_1.setViewportView(contentPanel);
+		}
+		return scrollPane_1;
 	}
 }
