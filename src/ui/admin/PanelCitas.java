@@ -121,10 +121,11 @@ public class PanelCitas extends JDialog {
 		setTitle("Administrativo: citas");
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 956, 823);
+		setBounds(100, 100, 1055, 823);
 		getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
+		getContentPane().add(getScrollPane_1_3());
 		contentPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Citas", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		getContentPane().add(contentPanel);
+		getContentPane().add(scrollPane_1);
 		contentPanel.setLayout(new GridLayout(2, 2, 0, 0));
 		{
 			JPanel pnPacienteMedico = new JPanel();
@@ -141,7 +142,6 @@ public class PanelCitas extends JDialog {
 			pnPacienteMedico.add(getPnMedico());
 		}
 		contentPanel.add(getPnContactoFecha());
-		getContentPane().add(getScrollPane_1_3());
 		//setContactData();
 	}
 
@@ -289,7 +289,7 @@ public class PanelCitas extends JDialog {
 	private JScrollPane getScrollPane_1() throws SQLException {
 		if (scrollPaneListaMedicos == null) {
 			scrollPaneListaMedicos = new JScrollPane();
-			scrollPaneListaMedicos.setBounds(39, 23, 406, 130);
+			scrollPaneListaMedicos.setBounds(21, 23, 453, 178);
 			scrollPaneListaMedicos.setOpaque(false);
 			scrollPaneListaMedicos.setViewportView(getList_1());
 		}
@@ -855,6 +855,7 @@ public class PanelCitas extends JDialog {
 	private JPanel pnMedicosSeleccionados;
 	private JScrollPane scrollPane;
 	private JList<Medico> list;
+	private JScrollPane scrollPane_1;
 	
 	
 	private JButton getBtnActualizarDatos() {
@@ -1262,7 +1263,7 @@ public class PanelCitas extends JDialog {
 	private JScrollPane getScrollPane() {
 		if (scrollPane == null) {
 			scrollPane = new JScrollPane();
-			scrollPane.setBounds(new Rectangle(12, 23, 416, 58));
+			scrollPane.setBounds(new Rectangle(12, 23, 476, 72));
 			scrollPane.setViewportView(getList());
 		}
 		return scrollPane;
@@ -1286,5 +1287,12 @@ public class PanelCitas extends JDialog {
 		
 		}
 		return list;
+	}
+	private JScrollPane getScrollPane_1_3() {
+		if (scrollPane_1 == null) {
+			scrollPane_1 = new JScrollPane();
+			scrollPane_1.setViewportView(contentPanel);
+		}
+		return scrollPane_1;
 	}
 }

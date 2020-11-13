@@ -1562,16 +1562,15 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		return pacientes;
 	}
 
-	public List<AsignaVacuna> verVacunasPaciente(String nHistorial) throws SQLException {
-		List<AsignaVacuna> listaVacunas = new ArrayList<AsignaVacuna>();
+	public List<String> verVacunasPaciente(String nHistorial) throws SQLException {
+		List<String> listaVacunas = new ArrayList<String>();
 
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst = con.prepareStatement(VACUNAS_PERSONA);
 		pst.setString(1, nHistorial);
 		ResultSet rs = pst.executeQuery();
 		if (rs.next()) {
-			listaVacunas.add(new AsignaVacuna(rs.getString("codasigvac"), rs.getString("codvacuna"),
-					rs.getString("nhistorial"), rs.getString("codempleado"), rs.getDate("fecha"), rs.getTime("hora")));
+			listaVacunas.add(rs.getString("codVacuna"));
 		}
 
 		rs.close();
