@@ -17,6 +17,7 @@ import logica.Cita;
 import logica.HistorialMedico;
 import logica.Paciente;
 import logica.empleados.Empleado;
+import logica.servicios.Historial;
 import logica.servicios.ParserBaseDeDatos;
 import ui.MostrarHistorial;
 import ui.medico.ModeloNoEditable;
@@ -513,6 +514,7 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 			btnVerHistorial.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					mostrarHistorial();
+					
 				}
 			});
 		}
@@ -530,7 +532,10 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 			String codMedico=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 10);
 			
 		try {
-				
+			
+			Paciente p=pbd.devolverPacientesMedico(codcita);
+			Historial h= new Historial();
+			h.escribirhistorial(p);
 		
 			HistorialMedico hm = pbd.HistorialCita(codcita,codPaciente,codMedico);
 			MostrarHistorial mh = new MostrarHistorial(hm);
