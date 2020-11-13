@@ -231,4 +231,65 @@ public class VentanaCorreo extends JDialog{
 		pnCentro.revalidate();
 		pnCentro.repaint();	
 	}
+
+
+
+
+	/**
+	 * Método para actualizar la lógica después de borrar un correo
+	 * @throws SQLException 
+	 */
+	public void actualizarLogica() throws SQLException {
+		correos = pbd.buscarCorreos(codMedico); // Cargo los correos que van dirigidos a mi médico de la base de datos		
+	}
+
+
+
+
+	/**
+	 * Método para repintar todos los correos que me salen en recibidos (para que ya no me salga el que acabo de borrar)
+	 */
+	public void repintar() {
+		Component[] componentes = pnCorreosRecibidos.getComponents(); // Los componentes que tiene el panel
+		
+		// Borramos todos los componentes que tenga
+		for (Component c : componentes) {
+			pnCorreosRecibidos.remove(c);
+		}
+		
+		for (Correo correo : correos) {
+			
+			pnCorreosRecibidos.add(new PanelElementoListaCorreo(correo, this));
+			//pnCorreosRecibidos.add(new JSeparator());
+		}
+		pnCorreosRecibidos.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		// Lo vuelvo a repintar
+		pnCorreosRecibidos.revalidate();
+		pnCorreosRecibidos.repaint();		
+	}
+
+
+
+
+	/**
+	 * Método para responder un correo
+	 * @param correo
+	 */
+	public void responderCorreo(Correo correo) {
+		Component[] componentes = pnCentro.getComponents(); // Los componentes que tiene el panel
+		
+		// Borramos todos los componentes que tenga
+		for (Component c : componentes) {
+			pnCentro.remove(c);
+		}
+		
+		pnCentro.add(new PanelResponderCorreo(correo.getCodMedicoOrigen(), codMedico, this)); // Añadimos el panel para responder el correo
+
+		
+		// Lo vuelvo a repintar
+		pnCentro.revalidate();
+		pnCentro.repaint();	
+		
+	}
 }

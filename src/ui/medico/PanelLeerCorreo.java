@@ -6,11 +6,14 @@ import logica.Correo;
 import logica.servicios.ParserBaseDeDatos;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -94,15 +97,32 @@ public class PanelLeerCorreo extends JPanel {
 	private JButton getBtnResponder() {
 		if (btnResponder == null) {
 			btnResponder = new JButton("Responder");
+			btnResponder.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					responderCorreo();
+				}
+			});
 		}
 		return btnResponder;
 	}
+
 	private JButton getBtnEliminar() {
 		if (btnEliminar == null) {
 			btnEliminar = new JButton("Eliminar");
+			btnEliminar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						eliminarCorreo();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}
+			});
 		}
 		return btnEliminar;
 	}
+
+
 	private JButton getBtnAtras() {
 		if (btnAtras == null) {
 			btnAtras = new JButton("Atr\u00E1s");
@@ -259,4 +279,62 @@ public class PanelLeerCorreo extends JPanel {
 		}
 		return panel;
 	}
+	
+	
+	
+	/**
+	 * Método para eliminar un correo
+	 * @throws SQLException 
+	 */
+	protected void eliminarCorreo() throws SQLException {
+		int dialogResult = JOptionPane.showConfirmDialog (null, "¿Desea eliminar el mensaje definitivamente?", "Eliminar Mensaje", JOptionPane.YES_NO_OPTION);
+		
+		if(dialogResult == JOptionPane.YES_OPTION){
+		  	eliminar();
+		}
+		else if (dialogResult == JOptionPane.NO_OPTION){
+			JOptionPane.showMessageDialog(null, "Su mensaje no ha sido eliminado");
+		}
+		
+	}
+
+	/**
+	 * Método para eliminar definitivamente el correo
+	 * 		1) Eliminarlo en la base de datos
+	 * 		2) Actualizar los datos de lógica
+	 * 	 	3) Quitar la vista del mensaje actual
+	 * 		4) Despintarlo del panel de mensajes recibidos
+	 * 		5) Decir que se ha eliminado con exito
+	 * @throws SQLException 
+	 */
+	private void eliminar() throws SQLException {
+		// 1
+		pbd.eliminarMensaje(correo); // borramos de la base de datos
+
+		
+		// 2
+		ventanaCorreo.actualizarLogica();
+		
+		
+		// 3
+		ventanaCorreo.limpiarPanelCentro();
+		
+		
+		// 4
+		ventanaCorreo.repintar();
+		
+		
+		// 5
+		JOptionPane.showMessageDialog(null, "El mensaje ha sido eliminado con éxito.");
+		
+	}
+	
+	
+	/**
+	 * Método para responder un correo
+	 */
+	protected void responderCorreo() {
+		ventanaCorreo.responderCorreo(correo);	
+	}
+
 }

@@ -109,6 +109,7 @@ public class ParserBaseDeDatos {
 	private final static String GET_CITA_HISTORIAL = "select * from cita c,paciente p,historial h where c.codpaciente=p.codpaciente and h.nhistorial=?";
 	private final static String GET_CITA_HISTORIAL_MED = "select * from cita c,paciente p,historial h where c.codpaciente=p.codpaciente  and h.nhistorial=? and c.codmedico=?";
 	private final static String DELETE_CITA = "delete from cita where codcita=?;";
+	private final static String DELETE_CORREO = "delete from correo where codcorreo=?";
 	private final static String FIND_MED_BY_NAME = "select *  from medico m,empleado e where e.codempleado=m.codmedico and  e.nombre=? ;";
 	private final static String FIND_MED_BY_SURNAME = "select *  from medico m,empleado e where e.codempleado=m.codmedico and  e.apellido=? ;";
 	private final static String FIND_MED_BY_NAME_SURNAME = "select *  from medico m,empleado e where e.codempleado=m.codmedico and e.nombre=? and  e.apellido=? ;";
@@ -161,6 +162,16 @@ public class ParserBaseDeDatos {
 	private final static String INSERT_PACIENTE = "INSERT into paciente (codpaciente, nombre, apellido, movil, email,info,nhistorial) values (?, ?, ?, ?, ?,?,?)";
 	private final static String INSERT_ACOMPAÑANTE = "INSERT into acompañantepaciente (codacompañante,codpaciente, nombre, apellido, movil, correo) values (?, ?, ?, ?, ?,?)";
 	private final static String INSERT_HISTORIAL = "INSERT into historial (nhistorial) values (?);";
+	
+	
+private final static String GET_ACCIONES_DATE_ADM = "select * from accion where fecha >= ? and fecha <= ?";
+	
+	private final static String GET_ACCIONESEMPLEADO_DATE_ADM = "select * from accionempleado where fecha >= ? and fecha <= ?";
+	
+	private final static String GET_ACCIONES_NAME_ADM = "select * from accion where codadmin = ?";	
+	
+	private final static String GET_ACCIONESEMPLEADO_NAME = "select * from accionempleado where codempleado = ?";	
+	
 
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
@@ -2014,6 +2025,26 @@ public class ParserBaseDeDatos {
 		con.close();
 		
 		return codEmpleado;	
+	}
+
+	
+	/**
+	 * Método para eliminar un correo de la lista de correos
+	 * @param correo
+	 * @throws SQLException 
+	 */
+	public void eliminarMensaje(Correo correo) throws SQLException {
+		String codCorreo = correo.getCodCorreo(); // El código del correo que queremos eliminar
+		
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(DELETE_CORREO);
+		
+		pst.setString(1, codCorreo);
+		
+		pst.executeUpdate();		
+		pst.close();
+		con.close();
+		
 	}
 	
 	
