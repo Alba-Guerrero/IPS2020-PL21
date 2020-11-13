@@ -43,6 +43,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import logica.AccionEmpleado;
 import logica.AsignaDiagnostico;
 import logica.AsignaPreinscripcion;
 import logica.AsignaVacuna;
@@ -1174,6 +1175,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 	
 	protected void guardarCausas() throws SQLException {
+		
 			String causas = getCbCausas().getSelectedItem().toString();
 			String nHistorial = "" + mm.getPaciente().getHistorial();
 			Time hora =  cita.gethInicio();
@@ -1192,7 +1194,32 @@ public class ModificarMedicosNuevoCard extends JDialog {
 				String codcausa = "" + r.nextInt(300);
 				pbd.actualizarAsignaCausa(codcausa,causas, nHistorial, sDate, hour, cita.getCodMed());
 			}
+			guardarAccionCausa(causas);
+	}
+	
+	private void guardarAccionCausa(String causas) throws SQLException {
+		List<AccionEmpleado> devolverAccionesAdmin = pbd.devolverAccionesEmlpeado();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" +numeroAccion;
 		
+		String nombrePaciente = paciente.getNombre();
+		String apellidoPaciente= paciente.getApellido();
+		String codMed = cita.getCodMed();
+		
+		String nombre =pbd.devolverEmpleado(codMed).getNombre();
+		String apellido =pbd.devolverEmpleado(codMed).getApellido();
+		
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());	
+		
+		String mensajeAccion = "El médico " + nombre + " " +apellido  + " ha asignado al paciente " + nombrePaciente + " " 
+		+ apellidoPaciente + " la siguiente causa" + causas;
+				
+		AccionEmpleado a = new AccionEmpleado(naccion, codMed,  fecha, hora, mensajeAccion);
+		pbd.guardarAccionEmpleado(a);
 		
 	}
 	
@@ -1317,6 +1344,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private void guardarVacunas() throws SQLException {
 		
 		if (!asignaVacunasPaciente.isEmpty()) { // Que le hayamos asignado alguna vacuna
+			guardarAccionVacunas();
 			for (AsignaVacuna av : asignaVacunasPaciente) { // Voy guardando cada una de las vacunas que le he asignado
 				pbd.nuevaAsignaVacuna(av);
 			}
@@ -1324,6 +1352,35 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 	
 	
+	private void guardarAccionVacunas() throws SQLException {
+		List<AccionEmpleado> devolverAccionesAdmin = pbd.devolverAccionesEmlpeado();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" +numeroAccion;
+		
+		String nombrePaciente = paciente.getNombre();
+		String apellidoPaciente= paciente.getApellido();
+		String codMed = cita.getCodMed();
+		
+		String nombre =pbd.devolverEmpleado(codMed).getNombre();
+		String apellido =pbd.devolverEmpleado(codMed).getApellido();
+		
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());	
+		
+		String mensajePreinscripciones = "";
+		for(int i =0;i <asignaVacunasPaciente.size();i++ ) {
+			mensajePreinscripciones += asignaVacunasPaciente.get(i).getCodVacuna() + ", ";
+		}
+		String mensajeAccion = "El médico " + nombre + " " +apellido  + " ha asignado al paciente " + nombrePaciente + " " 
+		+ apellidoPaciente + " la siguiente vacuna" + mensajePreinscripciones;
+				
+		AccionEmpleado a = new AccionEmpleado(naccion, codMed,  fecha, hora, mensajeAccion);
+		pbd.guardarAccionEmpleado(a);
+		
+	}
 	/**
 	 * Método para guardar las preinscripciones que se le han asignado a un paciente
 	 * @throws SQLException 
@@ -1331,10 +1388,42 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private void guardarPreinscripciones() throws SQLException {
 		// Guardo las preinscripciones que le he asignado al paciente
 		if (!asignaPreinscripcionesPaciente.isEmpty()) { // Que le hayamos asignado algo
+			guardarAccionPreins();
 			for (AsignaPreinscripcion ap : asignaPreinscripcionesPaciente) { // Voy guardando cada una de las preinscripciones que le he asignado
 				pbd.nuevaAsignaPreinscripcion(ap);
+				
 			}
 		}		
+	}
+	private void guardarAccionPreins() throws SQLException {
+		List<AccionEmpleado> devolverAccionesAdmin = pbd.devolverAccionesEmlpeado();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" + numeroAccion;
+		System.out.println("Numero acciones " + naccion);
+		
+		String nombrePaciente = paciente.getNombre();
+		String apellidoPaciente= paciente.getApellido();
+		String codMed = cita.getCodMed();
+		
+		String nombre =pbd.devolverEmpleado(codMed).getNombre();
+		String apellido =pbd.devolverEmpleado(codMed).getApellido();
+		
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());	
+		
+		String mensajePreinscripciones = "";
+		for(int i =0;i <asignaPreinscripcionesPaciente.size();i++ ) {
+			mensajePreinscripciones += asignaPreinscripcionesPaciente.get(i).getCodigoPreinscripcion() + ", ";
+		}
+		String mensajeAccion = "El médico " + nombre + " " +apellido  + " ha asignado al paciente " + nombrePaciente + " " 
+		+ apellidoPaciente + " la siguiente preinscripción" + mensajePreinscripciones;
+				
+		AccionEmpleado a = new AccionEmpleado(naccion, codMed,  fecha, hora, mensajeAccion);
+		pbd.guardarAccionEmpleado(a);
+		
 	}
 	private JPanel getPnDiagnosticos() {
 		if (pnDiagnosticos == null) {
@@ -1450,10 +1539,41 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	 */
 	private void guardarDiagnosticos() throws SQLException {
 		if (!asignaDiagnosticosPaciente.isEmpty()) { // Que le hayamos asignado algun diagnostico
+			guardarAccionDiagnosticos();
 			for (AsignaDiagnostico ad : asignaDiagnosticosPaciente) { // Voy guardando cada uno de los diagnosticos
 				pbd.nuevaAsignaDiagnostico(ad);
 			}
 		}	
+	}
+	
+	private void guardarAccionDiagnosticos() throws SQLException {
+		List<AccionEmpleado> devolverAccionesAdmin = pbd.devolverAccionesEmlpeado();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" + numeroAccion;
+		
+		String nombrePaciente = paciente.getNombre();
+		String apellidoPaciente= paciente.getApellido();
+		String codMed = cita.getCodMed();
+		
+		String nombre =pbd.devolverEmpleado(codMed).getNombre();
+		String apellido =pbd.devolverEmpleado(codMed).getApellido();
+		
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());	
+		
+		String mensajePreinscripciones = "";
+		for(int i =0;i <asignaDiagnosticosPaciente.size();i++ ) {
+			mensajePreinscripciones += asignaDiagnosticosPaciente.get(i).getnHistorial() + ", ";
+		}
+		String mensajeAccion = "El médico " + nombre + " " +apellido  + " ha asignado al paciente " + nombrePaciente + " " 
+		+ apellidoPaciente + " la siguiente preinscripción" + mensajePreinscripciones;
+				
+		AccionEmpleado a = new AccionEmpleado(naccion, codMed,  fecha, hora, mensajeAccion);
+		pbd.guardarAccionEmpleado(a);
+		
 	}
 
 	public boolean isCausaSeleccionada() {
@@ -2144,6 +2264,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		
 	}
 	private void mostrarHistorial() throws SQLException {
+		guardarAccionHist();
 		HistorialMedico hm = pbd.HistorialCita(cita.getCodCita(),paciente.getCodePaciente(),cita.getCodMed());
 		MostrarHistorial mh = new MostrarHistorial(hm);
 		mh.setLocationRelativeTo(null);
@@ -2151,6 +2272,36 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		mh.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
 		mh.setVisible(true);
 	}
+	
+	private void guardarAccionHist() throws SQLException {
+		List<AccionEmpleado> devolverAccionesAdmin = pbd.devolverAccionesEmlpeado();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" +numeroAccion;
+		//String naccion = "" + (numeroAcciones.size() + 1);
+		System.out.println("Numero acciones " + naccion);
+		
+		String nombrePaciente = paciente.getNombre();
+		String apellidoPaciente= paciente.getApellido();
+		String codMed = cita.getCodMed();
+		
+		String nombre =pbd.devolverEmpleado(codMed).getNombre();
+		String apellido =pbd.devolverEmpleado(codMed).getApellido();
+		
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());	
+		
+		
+		String mensajeAccion = "El médico " + nombre + " " +apellido  + " ha visto el historial del paciente " + nombrePaciente + " " + apellidoPaciente;
+		
+		AccionEmpleado a = new AccionEmpleado(naccion, codMed,  fecha, hora, mensajeAccion);
+		
+		pbd.guardarAccionEmpleado(a);
+		
+	}
+	
 	private JPanel getPanel_4() {
 		if (panel_4 == null) {
 			panel_4 = new JPanel();

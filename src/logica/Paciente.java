@@ -3,13 +3,18 @@
  */
 package logica;
 
+import java.sql.SQLException;
+import java.util.Random;
+
+import logica.servicios.ParserBaseDeDatos;
+
 /**
  * @author María
  *
  */
 public class Paciente {
 
-	
+	private ParserBaseDeDatos pbd;
 	private String codePaciente;
 	private String nombre;
 	private String apellido;
@@ -38,6 +43,29 @@ public class Paciente {
 	}
 	
 	
+	public Paciente( String nombre, String apellido, int movil, String email, String historial) {
+		pbd=new ParserBaseDeDatos();
+
+		try {
+			this.codePaciente = generaCodPaciente();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.movil = movil;
+		this.email = email;
+		this.historial = historial;
+	}
+
+	public String generaCodPaciente() throws SQLException {
+		String cod="";
+		do {
+			 cod= new Random().nextInt(100000)+"";
+			}while(pbd.checkCodePaciente(cod));
+		return cod;
+				
+	}
 	public String getEmail() {
 		return email;
 	}

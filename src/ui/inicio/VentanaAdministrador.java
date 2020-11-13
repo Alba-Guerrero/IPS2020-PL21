@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import ui.admin.AsignarVacaciones;
+import ui.admin.CrearPaciente;
 import ui.admin.PanelCitas;
 import ui.admin.VentanaJornada;
 import ui.admin.VentanaVerCita;
@@ -59,6 +60,7 @@ public class VentanaAdministrador extends JDialog {
 	private JPanel panel_6;
 	private JPanel panel_7;
 	private JPanel panel_8;
+	private JButton btnAadirPaciente;
 
 	/**
 	 * Create the frame.
@@ -92,7 +94,7 @@ public class VentanaAdministrador extends JDialog {
 		if (pnCentro == null) {
 			pnCentro = new JPanel();
 			pnCentro.setBackground(SystemColor.controlHighlight);
-			pnCentro.setLayout(new GridLayout(0, 9, 0, 0));
+			pnCentro.setLayout(new GridLayout(0, 11, 0, 0));
 			pnCentro.add(getPanel1());
 			pnCentro.add(getPanel2());
 			pnCentro.add(getPanel3());
@@ -103,22 +105,23 @@ public class VentanaAdministrador extends JDialog {
 			pnCentro.add(getPanel_4());
 			pnCentro.add(getPanel_5());
 			pnCentro.add(getPanel8());
-			pnCentro.add(getBtnAsignarCitas());
 			pnCentro.add(getPanel_6());
+			pnCentro.add(getPanel_7());
 			pnCentro.add(getBtnNewButton_1_1());
 			pnCentro.add(getPanel9());
 			pnCentro.add(getBtnJornada());
 			pnCentro.add(getPanel10());
 			pnCentro.add(getBtnNewButton());
 			pnCentro.add(getPanel11());
-			pnCentro.add(getPanel12());
+			pnCentro.add(getBtnAsignarCitas());
 			pnCentro.add(getPanel8_1());
+			pnCentro.add(getBtnAadirPaciente());
 			pnCentro.add(getPanel());
 			pnCentro.add(getPanel_1());
 			pnCentro.add(getPanel_8());
-			pnCentro.add(getPanel_7());
 			pnCentro.add(getPanel_2());
 			pnCentro.add(getPanel_3());
+			pnCentro.add(getPanel12());
 		}
 		return pnCentro;
 	}
@@ -274,7 +277,7 @@ public class VentanaAdministrador extends JDialog {
 	 */
 	protected void asignarJornadaLaboral() throws SQLException {
 		
-		VentanaJornada vj = new VentanaJornada();
+		VentanaJornada vj = new VentanaJornada(codAdmin);
 		vj.setLocationRelativeTo(null);
 		vj.setResizable(true);
 		vj.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
@@ -289,7 +292,7 @@ public class VentanaAdministrador extends JDialog {
 	 */
 	protected void asignarCitas() throws SQLException {
 		
-		PanelCitas pc = new PanelCitas();
+		PanelCitas pc = new PanelCitas(codAdmin);
 		pc.setLocationRelativeTo(null);
 		pc.setResizable(true);
 		pc.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
@@ -303,7 +306,7 @@ public class VentanaAdministrador extends JDialog {
 	
 protected void verCalendarioCitas() {
 		
-		VentanaVerCita vca = new VentanaVerCita();
+		VentanaVerCita vca = new VentanaVerCita(codAdmin);
 		vca.setVisible(true);
 		vca.setLocationRelativeTo(this);
 		
@@ -412,5 +415,27 @@ protected void verCalendarioCitas() {
 			panel_8.setBackground(SystemColor.controlHighlight);
 		}
 		return panel_8;
+	}
+	private JButton getBtnAadirPaciente() {
+		if (btnAadirPaciente == null) {
+			btnAadirPaciente = new JButton("A\u00F1adir Paciente");
+			btnAadirPaciente.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					añdirPaciente();
+					
+				}
+			});
+		}
+		return btnAadirPaciente;
+	}
+	
+protected void añdirPaciente() {
+		
+		CrearPaciente cp= new CrearPaciente();
+cp.setLocationRelativeTo(null);
+		cp.setResizable(true);
+		cp.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+		cp.setVisible(true);
+		
 	}
 }

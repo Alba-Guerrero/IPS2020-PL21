@@ -46,6 +46,12 @@ public abstract class Empleado {
 		this.dFin = dFin;
 		this.dJornada = dJornada;
 	}
+	
+	public Empleado(String nombre,String apellido) {
+		
+		this.nombre=nombre;
+		this.apellido=apellido;
+	}
 
 
 

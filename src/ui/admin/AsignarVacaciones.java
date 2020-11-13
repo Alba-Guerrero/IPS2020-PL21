@@ -8,6 +8,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -30,6 +31,8 @@ import javax.swing.border.TitledBorder;
 
 import com.toedter.calendar.JDateChooser;
 
+import logica.Accion;
+import logica.AsignaVacuna;
 import logica.Cita;
 import logica.Paciente;
 import logica.Vacaciones;
@@ -309,10 +312,34 @@ public class AsignarVacaciones extends JDialog{
 		Vacaciones vacaciones = new Vacaciones(codVac, codEmpleado, codAdmin, dIn, dFin);
 				
 		pbd.asignarVacaciones(vacaciones);
+		
+		//guardar accion realizada
+		guardarAccion(codEmpleado);
 	}
 	
 	
-
+	private void guardarAccion(String codEmpleado) throws SQLException {
+		List<Accion> devolverAccionesAdmin = pbd.devolverAccionesAdmin();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" +numeroAccion;
+		Empleado empleado = pbd.devolverEmpleado(codEmpleado);
+		String nombre = empleado.getNombre();
+		String apellido = empleado.getApellido();
+		
+		
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());	
+		
+		
+		String mensajeAccion = "Vacaciones asignadas a " + nombre + " " + apellido;
+		
+		Accion a = new Accion(naccion, codAdmin,  fecha, hora, mensajeAccion);
+		
+		pbd.guardarAccion(a);
+	}
 
 
 	

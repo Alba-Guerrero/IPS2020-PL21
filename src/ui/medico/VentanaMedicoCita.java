@@ -11,6 +11,8 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.text.TabableView;
 
+import logica.Accion;
+import logica.AccionEmpleado;
 import logica.Cita;
 import logica.HistorialMedico;
 import logica.Paciente;
@@ -21,9 +23,11 @@ import ui.MostrarHistorial;
 import javax.swing.JScrollPane;
 import java.awt.GridLayout;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -66,6 +70,7 @@ public class VentanaMedicoCita extends JDialog {
 	private JTextField textHistorial;
 	private JButton irHistorial;
 	private JButton btnBuscarPorFecha;
+	private JButton btnCorreo;
 	
 
 
@@ -244,6 +249,7 @@ public class VentanaMedicoCita extends JDialog {
 			panelBotones = new JPanel();
 			panelBotones.add(getBtnhistorial());
 			panelBotones.add(getBtnmodifica());
+			panelBotones.add(getBtnCorreo());
 		}
 		return panelBotones;
 	}
@@ -263,9 +269,10 @@ public class VentanaMedicoCita extends JDialog {
 	protected void mostrarHistorial() {
 		int fila=tablacita.getSelectedRow();
 		if(fila!=-1) {
-			String codcita=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 7);
-			String codPaciente=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 8);
-			String codMedico=(String) modeloTabla.getValueAt(tablacita.getSelectedRow(), 9);
+			
+			String codcita=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 7);
+			String codPaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 8);
+			String codMedico=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 9);
 			
 		try {
 			
@@ -275,12 +282,42 @@ public class VentanaMedicoCita extends JDialog {
 			mh.setResizable(true);
 			mh.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
 			mh.setVisible(true);
+			guardarAccionHist();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		}
 	}
+	
+	private void guardarAccionHist() throws SQLException {
+		List<AccionEmpleado> devolverAccionesAdmin = pbd.devolverAccionesEmlpeado();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" + numeroAccion;
+		System.out.println("Numero acciones " + naccion);
+		
+		String nombrePaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 0);
+		String apellidoPaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 1);
+		String codMed = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 9);
+		
+		String nombre =pbd.devolverEmpleado(codMed).getNombre();
+		String apellido =pbd.devolverEmpleado(codMed).getApellido();
+		
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());	
+		
+		
+		String mensajeAccion = "El médico " + nombre + " " +apellido  + " ha visto el historial del paciente " + nombrePaciente + " " + apellidoPaciente;
+		
+		AccionEmpleado a = new AccionEmpleado(naccion, codMed,  fecha, hora, mensajeAccion);
+		
+		pbd.guardarAccionEmpleado(a);
+		
+	}
+	
 	private JButton getBtnmodifica() {
 		if (btnmodifica == null) {
 			btnmodifica = new JButton("Atender consulta");
@@ -458,5 +495,31 @@ public class VentanaMedicoCita extends JDialog {
 			});
 		}
 		return btnBuscarPorFecha;
+	}
+	private JButton getBtnCorreo() {
+		if (btnCorreo == null) {
+			btnCorreo = new JButton("Correo");
+			btnCorreo.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					abrirCorreo();
+				}
+			});
+		}
+		return btnCorreo;
+	}
+
+	
+	/**
+	 * Método para abrir la ventana de correo, donde podrá:
+	 * 		- Ver los mensajes recibidos
+	 * 		- Borrar mensajes
+	 * 		- Redactar y enviar mensajes
+	 */
+	protected void abrirCorreo() {
+		VentanaCorreo vc = new VentanaCorreo(codmedico);
+		vc.setLocationRelativeTo(this);
+		vc.setResizable(true);
+		vc.setModal(true);
+		vc.setVisible(true);
 	}
 }
