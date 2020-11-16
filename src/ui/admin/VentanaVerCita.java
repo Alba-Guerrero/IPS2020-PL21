@@ -19,6 +19,7 @@ import logica.Paciente;
 import logica.empleados.Empleado;
 import logica.servicios.Historial;
 import logica.servicios.ParserBaseDeDatos;
+import logica.servicios.PrescripcionesDownload;
 import ui.MostrarHistorial;
 import ui.medico.ModeloNoEditable;
 
@@ -535,7 +536,10 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 			
 			Paciente p=pbd.devolverPacientesMedico(codcita);
 			Historial h= new Historial();
-			h.escribirhistorial(p);
+			PrescripcionesDownload pd= new PrescripcionesDownload();
+			pd.escribirhistorial(p);
+			
+		//	h.escribirhistorial(p);
 		
 			HistorialMedico hm = pbd.HistorialCita(codcita,codPaciente,codMedico);
 			MostrarHistorial mh = new MostrarHistorial(hm);

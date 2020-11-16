@@ -37,11 +37,12 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 
 import logica.AsignaDiagnostico;
+import logica.AsignaPreinscripcion;
 import logica.Paciente;
 import logica.asignar.Asigna;
 
 
-public class Historial {
+public class PrescripcionesDownload {
 	private ParserBaseDeDatos pbd;
 	private PDPageContentStream pcs;
 	
@@ -51,7 +52,7 @@ public class Historial {
 			+ " divulgación y/o copia sin autorización está prohibida en virtud de la legislación vigente";
 	
 	
-	public Historial() {
+	public PrescripcionesDownload() {
 		super();
 		pbd=new ParserBaseDeDatos();
 	}
@@ -60,7 +61,7 @@ public class Historial {
 	public void escribirhistorial(Paciente p) {
 		if(p instanceof Paciente) {
 	try {
-		InputStream inputStream       = new FileInputStream("TemplateH.pdf");
+		InputStream inputStream       = new FileInputStream("pr.pdf");
 	
 	    PDDocument pDDocument = PDDocument.load(inputStream);
 	    PDPage page1 = pDDocument.getPage(0);
@@ -81,7 +82,7 @@ public class Historial {
                 .getDictionaryObject(COSName.DA);
         if (defaultAppearance != null)
         {
-            dict.setString(COSName.DA, "/Helv 10 Tf 0 g");
+            dict.setString(COSName.DA, "/Helv 9.5 Tf 0 g");
         }
 	   
 	    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -94,7 +95,7 @@ public class Historial {
 	    
 	    nhistorial.setValue(p.getHistorial());
 	    
-	    PDField motivo = pDAcroForm.getField("motivo");
+	    PDField motivo = pDAcroForm.getField("informe");
 	    motivo.setValue("A petición");
 
 	    PDField fieldName = pDAcroForm.getField("nombre");
@@ -102,7 +103,7 @@ public class Historial {
 	    PDField apellido = pDAcroForm.getField("apellido");
 	    apellido.setValue(p.getApellido());
 	    
-	    PDField codPaciente = pDAcroForm.getField("codpaciente");
+	    PDField codPaciente = pDAcroForm.getField("codigo");
 	    codPaciente.setValue(p.getCodePaciente());
 	    
 	    PDField movil = pDAcroForm.getField("movil");
@@ -115,15 +116,26 @@ public class Historial {
 	    historial.setValue(p.getHistorial());
 	    
 	   
-	    PDField tabla1 = pDAcroForm.getField("tabla1");
-	    PDField tablafecha = pDAcroForm.getField("tablafecha");
-	    List<StringBuilder>sbs=datosDiagnostico(p.getHistorial());
-	    tabla1.setValue(sbs.get(0).toString());
-	 		tablafecha.setValue(sbs.get(1).toString());
+	    PDField fechatabla = pDAcroForm.getField("fechatabla");
+	    PDField prescripcion = pDAcroForm.getField("pres");
+	    PDField cantidad = pDAcroForm.getField("cantidad");
+	    PDField intervalo = pDAcroForm.getField("intervalo");
+	    PDField duracion = pDAcroForm.getField("duracion");
+	    PDField instrucciones = pDAcroForm.getField("instrucciones");
+	    List<StringBuilder>pres=datos(p.getHistorial());
+	  
+	    	fechatabla.setValue(pres.get(0).toString());
+	 		prescripcion.setValue(pres.get(1).toString());
+	 		cantidad.setValue(pres.get(2).toString());
+	 		intervalo.setValue(pres.get(3).toString());
+	 		duracion.setValue(pres.get(4).toString());
+	 		instrucciones.setValue(pres.get(5).toString());
+		
+	    
         
         }
-      
-	    pDDocument.save(p.getHistorial()+"2.pdf");
+       // addFooter(pDDocument);
+	    pDDocument.save(p.getHistorial()+"Receta.pdf");
 	    pDDocument.close();
 	} catch (IOException e) {
 	    e.printStackTrace();
@@ -138,38 +150,48 @@ public class Historial {
 	}
 	
 	
-	private  List<StringBuilder> datosDiagnostico(String historial){
-		List<String> diagnosticos= new ArrayList<String>();
-		StringBuilder sb= new StringBuilder();
-		StringBuilder fechas= new StringBuilder();
-		List<StringBuilder>sbs=new ArrayList<StringBuilder>();
+	private  List<StringBuilder> datos(String historial){
+		List<StringBuilder> sbs= new ArrayList<StringBuilder>();
+		List<AsignaPreinscripcion> pres= new ArrayList<AsignaPreinscripcion>();
+		StringBuilder sbfecha=new StringBuilder();
+		StringBuilder sbprescripcion=new StringBuilder();
+		StringBuilder sbcantidad=new StringBuilder();
+		StringBuilder sbintervalo=new StringBuilder();
+		StringBuilder sbduracion=new StringBuilder();
+		StringBuilder sbinstrucciones=new StringBuilder();
+		
 		
 		try {
-			diagnosticos=pbd.buscarDiagnosticosAsignados(historial);
+			pres=pbd.asignaPrescricpionesFechaHistorial(historial);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		for (int i = 0; i < diagnosticos.size(); i++) {
-			String[]aux=diagnosticos.get(i).split("\t");
-			String[]fecha=aux[1].split(" ");
-			sb.append(aux[0]);
-			sb.append("\n");
-			fechas.append(fecha[1]);
-			fechas.append("\n");
-			System.err.println(sb);
-		}
+		 for (int i = 0; i < pres.size(); i++) {
+			 sbfecha.append(pres.get(i).getFecha().toString()+"\n");
+			 sbprescripcion.append(pres.get(i).getCodigoPreinscripcion()+"\n");
+			 sbcantidad.append(pres.get(i).getCantidad()+""+"\n");
+			 sbintervalo.append(pres.get(i).getIntervalo()+""+"\n");
+			 sbduracion.append(pres.get(i).getDuracion()+""+"\n");
+			 sbinstrucciones.append(pres.get(i).getInstrucciones()+"\n");
+			}
+		    
+
+		 sbs.add(sbfecha);
+		 sbs.add(sbprescripcion);
+		 sbs.add(sbcantidad);
+		 sbs.add(sbintervalo);
+		 sbs.add(sbduracion);
+		 sbs.add(sbinstrucciones);
 		
-		sbs.add(sb);
-		sbs.add(fechas);
 		
-		return sbs;
+		return sbs ;
 		
 		
 	}
 	
 	
-	private void addFooter(final PDDocument doc, final String reportName) throws IOException {
+	private void addFooter(final PDDocument doc) throws IOException {
 
 		PDPageContentStream stream = null;
 		try {
@@ -183,8 +205,7 @@ public class Historial {
 		stream = new PDPageContentStream(doc, page);
 		stream.beginText();
 		stream.setFont(PDType1Font.HELVETICA, 10);
-		stream.newLineAtOffset(10f, PDRectangle.A4.getLowerLeftY());
-		stream.showText(reportName);
+		stream.newLineAtOffset(20f, PDRectangle.A4.getLowerLeftY());
 		if(i==pages.getCount()-1)
 		stream.showText(CONFIDENTIAL);
 		
