@@ -17,7 +17,7 @@ import logica.Cita;
 import logica.HistorialMedico;
 import logica.Paciente;
 import logica.empleados.Empleado;
-import logica.servicios.Historial;
+
 import logica.servicios.ParserBaseDeDatos;
 import logica.servicios.PrescripcionesToPDF;
 import net.sf.jasperreports.engine.JRException;
@@ -539,7 +539,7 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 			PrescripcionesToPDF pdf= new PrescripcionesToPDF();
 			
 			Paciente p=pbd.devolverPacientesMedico(codcita);
-			Historial h= new Historial();
+			
 			//PrescripcionesDownload pd= new PrescripcionesDownload();
 			try {
 				pdf.createPDF(p);
