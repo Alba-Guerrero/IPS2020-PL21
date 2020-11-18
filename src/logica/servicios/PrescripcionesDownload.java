@@ -145,7 +145,7 @@ public class PrescripcionesDownload {
 	    
         
         }
-       // addFooter(pDDocument);
+        addFooter(pDDocument);
 	    pDDocument.save(p.getHistorial()+"Receta.pdf");
 	    pDDocument.close();
 	} catch (IOException e) {
@@ -217,6 +217,7 @@ public class PrescripcionesDownload {
 			 
 			}
 		// pres.get(i).getInstrucciones();
+		 if(pres.size()>0)
 		   for (int i = 0; i < 44; i++) {
 			   pres.remove(i);
 			

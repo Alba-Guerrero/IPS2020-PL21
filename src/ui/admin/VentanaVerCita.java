@@ -19,7 +19,8 @@ import logica.Paciente;
 import logica.empleados.Empleado;
 import logica.servicios.Historial;
 import logica.servicios.ParserBaseDeDatos;
-import logica.servicios.PrescripcionesDownload;
+import logica.servicios.PrescripcionesToPDF;
+import net.sf.jasperreports.engine.JRException;
 import ui.MostrarHistorial;
 import ui.medico.ModeloNoEditable;
 
@@ -45,6 +46,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileNotFoundException;
+
 import javax.swing.JTextField;
 
 public class VentanaVerCita extends JDialog {
@@ -533,11 +536,18 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 			String codMedico=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 10);
 			
 		try {
+			PrescripcionesToPDF pdf= new PrescripcionesToPDF();
 			
 			Paciente p=pbd.devolverPacientesMedico(codcita);
 			Historial h= new Historial();
-			PrescripcionesDownload pd= new PrescripcionesDownload();
-			pd.receta(p);
+			//PrescripcionesDownload pd= new PrescripcionesDownload();
+			try {
+				pdf.createPDF(p);
+			} catch (FileNotFoundException | JRException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//pd.receta(p);
 			
 		//	h.escribirhistorial(p);
 		
