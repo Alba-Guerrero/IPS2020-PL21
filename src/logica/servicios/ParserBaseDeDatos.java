@@ -181,6 +181,9 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	private final static String LISTAR_EQUIPOS = "SELECT * FROM equipo";
 	
+	private final static String FILTRAR_EMPLEADO_NOMBRE = "SELECT * FROM empleado WHERE nombre LIKE '%?%'";
+	private final static String FILTRAR_EMPLEADO_APELLIDO = "SELECT * FROM empleado WHERE apellido LIKE '%?%'";
+	
 
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
@@ -805,7 +808,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		while (rsE.next()) {
 			// int inicio=rs.findColumn("dinicio");
 			// int fin=rs.findColumn("dfin");
-			Enfermero e = new Enfermero(rsE.getString(1), rsE.getString(2), rsE.getTime(5), rsE.getTime(6),
+			Enfermero e = new Enfermero(rsE.getString(1), rsE.getString(2), rsE.getString(3), rsE.getString(4), rsE.getTime(5), rsE.getTime(6),
 					rsE.getDate(7), rsE.getDate(8), rsE.getString(9));
 			empleados.add(DtoMapper.toDto(e));
 			// medicos.add(new Medico( rs.getString(1)));
@@ -2130,5 +2133,62 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		
 	}
 	
+	public List<Enfermero> listarEnfermero() throws SQLException{
+		List<Enfermero> enfermeros = new ArrayList<Enfermero>();
+		Connection con = new Conexion().getConnectionJDBC();
+		Statement st = con.createStatement();
+		ResultSet rs = st.executeQuery(ENFERMERO_LISTALL);
 
+		while (rs.next()) {
+			Enfermero e = new Enfermero(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getTime(5), rs.getTime(6),
+					rs.getDate(7), rs.getDate(8), rs.getString(9));
+			enfermeros.add(e);
+			
+		}
+
+		rs.close();
+		st.close();
+		con.close();
+		return enfermeros;
+	}
+	
+	public List<Enfermero> filtrarNombreEnfermero(String cadena) throws SQLException{
+		List<Enfermero> enfermeros = new ArrayList<Enfermero>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(FILTRAR_EMPLEADO_NOMBRE);
+		pst.setString(1, cadena);
+		ResultSet rs = pst.executeQuery();
+		
+		while (rs.next()) {
+			Enfermero e = new Enfermero(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getTime(5), rs.getTime(6),
+					rs.getDate(7), rs.getDate(8), rs.getString(9));
+			enfermeros.add(e);
+			
+		}
+
+		rs.close();
+		pst.close();
+		con.close();
+		return enfermeros;
+	}
+	
+	public List<Enfermero> filtrarApellidoEnfermero(String cadena) throws SQLException{
+		List<Enfermero> enfermeros = new ArrayList<Enfermero>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(FILTRAR_EMPLEADO_APELLIDO);
+		pst.setString(1, cadena);
+		ResultSet rs = pst.executeQuery();
+		
+		while (rs.next()) {
+			Enfermero e = new Enfermero(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getTime(5), rs.getTime(6),
+					rs.getDate(7), rs.getDate(8), rs.getString(9));
+			enfermeros.add(e);
+			
+		}
+
+		rs.close();
+		pst.close();
+		con.close();
+		return enfermeros;
+	}
 }
