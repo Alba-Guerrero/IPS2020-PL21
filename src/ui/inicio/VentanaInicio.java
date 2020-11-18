@@ -37,6 +37,7 @@ public class VentanaInicio extends JFrame {
 	private JTextField textField;
 	private ParserBaseDeDatos pbd=new ParserBaseDeDatos();
 	private JButton btnAuditor;
+	private JButton btnGerente;
 	
 	/**
 	 * Launch the application.
@@ -68,6 +69,7 @@ public class VentanaInicio extends JFrame {
 		getContentPane().add(getLblIntroduceElCodigo());
 		getContentPane().add(getTextField());
 		getContentPane().add(getBtnAuditor());
+		getContentPane().add(getBtnGerente());
 	}
 	private JPanel getPanel_1() {
 		if (panel_1 == null) {
@@ -214,5 +216,16 @@ public class VentanaInicio extends JFrame {
 		vaa.setVisible(true);
 		vaa.setLocationRelativeTo(null);
 		vaa.setResizable(true);
+	}
+	private JButton getBtnGerente() {
+		if (btnGerente == null) {
+			btnGerente = new JButton("Gerente");
+			btnGerente.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				}
+			});
+			btnGerente.setBounds(606, 378, 90, 28);
+		}
+		return btnGerente;
 	}
 }

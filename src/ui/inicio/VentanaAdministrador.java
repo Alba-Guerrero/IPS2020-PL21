@@ -8,7 +8,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import logica.servicios.ParserBaseDeDatos;
 import ui.admin.AsignarVacaciones;
+import ui.admin.CrearEquipo;
 import ui.admin.CrearPaciente;
 import ui.admin.PanelCitas;
 import ui.admin.VentanaJornada;
@@ -61,6 +63,7 @@ public class VentanaAdministrador extends JDialog {
 	private JPanel panel_7;
 	private JPanel panel_8;
 	private JButton btnAadirPaciente;
+	private JButton btnCrearEquipo;
 
 	/**
 	 * Create the frame.
@@ -244,6 +247,7 @@ public class VentanaAdministrador extends JDialog {
 		if (panel12 == null) {
 			panel12 = new JPanel();
 			panel12.setBackground(SystemColor.controlHighlight);
+			panel12.add(getBtnCrearEquipo());
 		}
 		return panel12;
 	}
@@ -437,5 +441,29 @@ cp.setLocationRelativeTo(null);
 		cp.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
 		cp.setVisible(true);
 		
+	}
+	private JButton getBtnCrearEquipo() {
+		if (btnCrearEquipo == null) {
+			btnCrearEquipo = new JButton("CrearEquipo");
+			btnCrearEquipo.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						abrirCrearEquipo();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			});
+		}
+		return btnCrearEquipo;
+	}
+	
+	private void abrirCrearEquipo() throws SQLException {
+		CrearEquipo cp= new CrearEquipo();
+		cp.setLocationRelativeTo(null);
+		cp.setResizable(true);
+		cp.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+		cp.setVisible(true);
 	}
 }

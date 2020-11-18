@@ -22,6 +22,7 @@ import logica.Causas;
 import logica.Cita;
 import logica.Correo;
 import logica.Diagnostico;
+import logica.Equipo;
 import logica.HistorialMedico;
 import logica.Paciente;
 import logica.Preinscripcion;
@@ -171,6 +172,12 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	private final static String GET_ACCIONES_NAME_ADM = "select * from accion where codadmin = ?";	
 	
 	private final static String GET_ACCIONESEMPLEADO_NAME = "select * from accionempleado where codempleado = ?";	
+	
+	private final static String INSERT_EQUIPO = "INSERT into equipo (numequipo) values (?)";
+	
+	private final static String INSERT_ASIGNA_EQUIPO = "INSERT into asignaequipo (codequipo, numequipo, codempleado) values (?,?,?)";
+	
+	private final static String LISTAR_EQUIPOS = "SELECT * FROM equipo";
 	
 
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
@@ -2046,6 +2053,50 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		
 	}
 	
+	public void nuevoEquipo(String numequipo) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(INSERT_EQUIPO);
+
+		pst.setString(1, numequipo);
+
+		pst.executeUpdate();
+
+		pst.close();
+		con.close();
+	}
+	
+	public List<Equipo> calcularEquipos() throws SQLException {
+		List<Equipo> listaEquipos = new ArrayList<Equipo>();
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(LISTAR_EQUIPOS);
+		ResultSet rs = pst.executeQuery();
+		if (rs.next()) {
+			listaEquipos.add(new Equipo(rs.getString(1)));
+		}
+
+		rs.close();
+		pst.close();
+		con.close();
+
+		return listaEquipos;
+
+	}
+
+	public void asignarEquipo(String codequipo, String numEquipo, String codEmpleado) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(INSERT_ASIGNA_EQUIPO);
+		
+		pst.setString(1, codequipo);
+		pst.setString(2, numEquipo);
+		pst.setString(3, codEmpleado);
+
+		pst.executeUpdate();
+
+		pst.close();
+		con.close();
+		
+	}
 	
 
 }
