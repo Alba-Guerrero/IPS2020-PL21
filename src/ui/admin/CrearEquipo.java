@@ -372,8 +372,7 @@ public class CrearEquipo extends JDialog {
 
 	protected void crearEquipo() throws SQLException {
 		List<Equipo> devolverEquipos = pbd.calcularEquipos();
-		int numeroEquipos = devolverEquipos.size() + 2;
-		System.out.println(numeroEquipos);
+		int numeroEquipos = devolverEquipos.size() + 1;
 		 String numEquipo = "Equipo " +numeroEquipos ;
 		 pbd.nuevoEquipo(numEquipo);
 		 for(int i =0;i< medicos.size() ; i++) {
