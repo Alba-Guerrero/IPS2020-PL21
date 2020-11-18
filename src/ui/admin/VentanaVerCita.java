@@ -537,7 +537,7 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 			Paciente p=pbd.devolverPacientesMedico(codcita);
 			Historial h= new Historial();
 			PrescripcionesDownload pd= new PrescripcionesDownload();
-			pd.escribirhistorial(p);
+			pd.receta(p);
 			
 		//	h.escribirhistorial(p);
 		

@@ -24,6 +24,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.pdmodel.PDResources;
+import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
@@ -45,6 +46,11 @@ import logica.asignar.Asigna;
 public class PrescripcionesDownload {
 	private ParserBaseDeDatos pbd;
 	private PDPageContentStream pcs;
+	private int contador=0;
+	private int inicio=0;
+	private int fin=44;
+	private PDDocument pDDocument ;
+	private  PDAcroForm pDAcroForm;
 	
 	private String CONFIDENTIAL ="Este documento(s) se dirige exclusivamente a su(s) destinatario(s) y puede contener"
 			+ " información privilegiada o confidencial. El acceso a esta información por otras personas distintas a "
@@ -58,17 +64,17 @@ public class PrescripcionesDownload {
 	}
 
 
-	public void escribirhistorial(Paciente p) {
+	public void receta(Paciente p) {
 		if(p instanceof Paciente) {
 	try {
 		InputStream inputStream       = new FileInputStream("pr.pdf");
 	
-	    PDDocument pDDocument = PDDocument.load(inputStream);
-	    PDPage page1 = pDDocument.getPage(0);
+	     pDDocument = PDDocument.load(inputStream);
+	   
 	    
 	   
 	    PDAcroForm pDAcroForm = pDDocument.getDocumentCatalog().getAcroForm();
-        
+	   
         
         FileInputStream fontFile = new FileInputStream(new File("Calibri.ttf"));
         PDFont font = PDType0Font.load(pDDocument, fontFile, false);
@@ -117,6 +123,7 @@ public class PrescripcionesDownload {
 	    
 	   
 	    PDField fechatabla = pDAcroForm.getField("fechatabla");
+	    fechatabla.setAlternateFieldName("fechatabla1");
 	    PDField prescripcion = pDAcroForm.getField("pres");
 	    PDField cantidad = pDAcroForm.getField("cantidad");
 	    PDField intervalo = pDAcroForm.getField("intervalo");
@@ -130,7 +137,11 @@ public class PrescripcionesDownload {
 	 		intervalo.setValue(pres.get(3).toString());
 	 		duracion.setValue(pres.get(4).toString());
 	 		instrucciones.setValue(pres.get(5).toString());
-		
+	 		while(contador>45) {
+	 			pres=datos(p.getHistorial());
+	 			nuevaPagina(pres);
+	 			contador=-44;
+	 		}
 	    
         
         }
@@ -150,6 +161,31 @@ public class PrescripcionesDownload {
 	}
 	
 	
+	private void nuevaPagina(List<StringBuilder>pres) throws IOException {
+		 PDPage page1 = new PDPage();
+		 
+		 pDDocument.addPage(page1);
+		 PDAcroForm form = pDAcroForm;
+		 
+		 PDField fechatabla = form.getField("fechatabla");
+		 
+		    PDField prescripcion = form.getField("pres");
+		    PDField cantidad = form.getField("cantidad");
+		    PDField intervalo = form.getField("intervalo");
+		    PDField duracion = form.getField("duracion");
+		    PDField instrucciones = form.getField("instrucciones");
+		    
+		    	fechatabla.setValue(pres.get(0).toString());
+		 		prescripcion.setValue(pres.get(1).toString());
+		 		cantidad.setValue(pres.get(2).toString());
+		 		intervalo.setValue(pres.get(3).toString());
+		 		duracion.setValue(pres.get(4).toString());
+		 		instrucciones.setValue(pres.get(5).toString());
+		 
+		
+	}
+
+
 	private  List<StringBuilder> datos(String historial){
 		List<StringBuilder> sbs= new ArrayList<StringBuilder>();
 		List<AsignaPreinscripcion> pres= new ArrayList<AsignaPreinscripcion>();
@@ -164,18 +200,27 @@ public class PrescripcionesDownload {
 		try {
 			pres=pbd.asignaPrescricpionesFechaHistorial(historial);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 for (int i = 0; i < pres.size(); i++) {
+		if(inicio==0)
+		contador=pres.size();
+		
+		
+		 for (int i = 0; i <pres.size(); i++) {
+			 System.err.println(i);
 			 sbfecha.append(pres.get(i).getFecha().toString()+"\n");
 			 sbprescripcion.append(pres.get(i).getCodigoPreinscripcion()+"\n");
 			 sbcantidad.append(pres.get(i).getCantidad()+""+"\n");
 			 sbintervalo.append(pres.get(i).getIntervalo()+""+"\n");
 			 sbduracion.append(pres.get(i).getDuracion()+""+"\n");
-			 sbinstrucciones.append(pres.get(i).getInstrucciones()+"\n");
+			 sbinstrucciones.append(+i+"\n");
+			 
 			}
-		    
+		// pres.get(i).getInstrucciones();
+		   for (int i = 0; i < 44; i++) {
+			   pres.remove(i);
+			
+		}
 
 		 sbs.add(sbfecha);
 		 sbs.add(sbprescripcion);
@@ -184,7 +229,8 @@ public class PrescripcionesDownload {
 		 sbs.add(sbduracion);
 		 sbs.add(sbinstrucciones);
 		
-		
+		this.inicio=this.fin;
+		this.fin=+45;
 		return sbs ;
 		
 		
@@ -202,7 +248,7 @@ public class PrescripcionesDownload {
 
 
 		PDPage page = (pages.get(i));
-		stream = new PDPageContentStream(doc, page);
+		stream = new PDPageContentStream(doc, page, AppendMode.APPEND, true, true);
 		stream.beginText();
 		stream.setFont(PDType1Font.HELVETICA, 10);
 		stream.newLineAtOffset(20f, PDRectangle.A4.getLowerLeftY());
