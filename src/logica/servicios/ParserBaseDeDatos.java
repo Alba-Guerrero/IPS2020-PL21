@@ -15,6 +15,7 @@ import conexion.Conexion;
 import logica.Accion;
 import logica.AccionEmpleado;
 import logica.Acompañante;
+import logica.AsignaCausa;
 import logica.AsignaDiagnostico;
 import logica.AsignaPreinscripcion;
 import logica.AsignaVacuna;
@@ -79,7 +80,8 @@ public class ParserBaseDeDatos {
 	private final static String VER_ENFERM = "SELECT nombreEnfermedad from enfermedadprevia";
 
 	private final static String VER_ASIGNA_CAUSAS = "SELECT nombreCausa, fecha FROM asignacausa where historial  = ?";
-
+	
+	private final static String VER_CAUSAS_ASIGNADAS = "SELECT *  FROM asignacausa where historial  = ?";
 	private final static String VER_CAUSAS = "SELECT nombreCausa from causa";
 
 	private final static String VER_NOMBRE_CAUSA = "SELECT  nombrecausa FROM causa";
@@ -180,6 +182,9 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	private final static String INSERT_ASIGNA_EQUIPO = "INSERT into asignaequipo (codequipo, numequipo, codempleado) values (?,?,?)";
 	
 	private final static String LISTAR_EQUIPOS = "SELECT * FROM equipo";
+	
+	
+	
 	
 
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
@@ -1303,6 +1308,104 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		return preinscripciones;
 	}
 
+	public List<AsignaPreinscripcion> asignaPrescripcionesHistorial(String nhistorial) throws SQLException {
+		List<AsignaPreinscripcion> preinscripciones = new ArrayList<AsignaPreinscripcion>();
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VER_PREINSCRIPCIONES_ASIGNADAS);
+
+		pst.setString(1, nhistorial); 
+
+		ResultSet rs = pst.executeQuery(); 
+
+		while (rs.next()) {
+			preinscripciones.add(new AsignaPreinscripcion(rs.getString("codasigprescripcion"), rs.getString("nhistorial"),
+					rs.getString("codempleado"),rs.getString("nombreprescripcion"),
+				rs.getInt("cantidad"),rs.getInt("intervalo"),rs.getInt("duracion"),rs.getString("instrucciones"),
+				rs.getDate("fecha"),rs.getTime("hora")));
+					
+			
+		}
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return preinscripciones;
+	}
+	public List<AsignaDiagnostico> asignaDiagnosticoHistorial(String nhistorial) throws SQLException {
+		List<AsignaDiagnostico> diagnsoticos = new ArrayList<AsignaDiagnostico>();
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VER_DIAGNOSTICOS_ASIGNADOS);
+
+		pst.setString(1, nhistorial); 
+
+		ResultSet rs = pst.executeQuery(); 
+
+		while (rs.next()) {
+			diagnsoticos.add(new AsignaDiagnostico(rs.getString("codAsigDiagnostico"), rs.getString("nombreDiagnostico"),
+					rs.getString("coddiagnostico"),rs.getString("historial"),
+				rs.getString("codempleado"),rs.getDate("fecha"),rs.getTime("hora")));
+					
+			
+		}
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return diagnsoticos;
+	}
+	public List<AsignaVacuna> asignaVacunaHistorial(String nhistorial) throws SQLException {
+		List<AsignaVacuna> vacuna = new ArrayList<AsignaVacuna>();
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VER_VACUNAS_ASIGNADAS);
+
+		pst.setString(1, nhistorial); 
+
+		ResultSet rs = pst.executeQuery(); 
+
+		while (rs.next()) {
+			vacuna.add(new AsignaVacuna(rs.getString("codAsigVac"), rs.getString("nombreVacuna"),rs.getString("historial"),
+				rs.getString("codempleado"),rs.getDate("fecha"),rs.getTime("hora")));
+					
+			
+		}
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return vacuna;
+	}
+	public List<AsignaCausa> asignaCausaHistorial(String nhistorial) throws SQLException {
+		List<AsignaCausa> causa = new ArrayList<AsignaCausa>();
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VER_CAUSAS_ASIGNADAS);
+
+		pst.setString(1, nhistorial); 
+
+		ResultSet rs = pst.executeQuery(); 
+
+		while (rs.next()) {
+			causa.add(new AsignaCausa(rs.getString("codAsigCausa"), rs.getString("nombreCausa"),rs.getString("historial"),
+				rs.getString("codempleado"),rs.getDate("fecha"),rs.getTime("hora")));
+					
+			
+		}
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return causa;
+	}
+	
+	
+	
 	public List<String> buscarNombreTodasCausas() throws SQLException {
 		List<String> nombresCausas = new ArrayList<String>();
 		Connection con = new Conexion().getConnectionJDBC();
