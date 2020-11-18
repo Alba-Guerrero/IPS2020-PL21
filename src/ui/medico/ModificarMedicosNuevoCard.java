@@ -991,7 +991,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		
 		// El codigo de la preinscripcion
 		Random r = new Random();
-		String codAsignaPreinscripcion = "" + r.nextInt(800);
+		String codAsignaPreinscripcion = "" + r.nextInt(800000);
 		
 		// El código del historial del paciente
 		String codigoHistorial = paciente.getHistorial();
@@ -1422,7 +1422,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		+ apellidoPaciente + " la siguiente preinscripción" + mensajePreinscripciones;
 				
 		AccionEmpleado a = new AccionEmpleado(naccion, codMed,  fecha, hora, mensajeAccion);
-		pbd.guardarAccionEmpleado(a);
+		//pbd.guardarAccionEmpleado(a);
 		
 	}
 	private JPanel getPnDiagnosticos() {

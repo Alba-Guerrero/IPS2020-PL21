@@ -118,6 +118,8 @@ public class ParserBaseDeDatos {
 	private final static String UPDATE_CITA = "UPDATE cita set hinicio = ?, hfin = ?, fecha = ? ,codmedico=?,ubicacion =?, urgencia=? where codcita=? and codpaciente=? and codmedico =?";
 
 	private final static String VER_PREINSCRIPCIONES_ASIGNADAS = "SELECT * FROM asignaprescripcion where nhistorial = ?";
+	
+	private final static String VER_ASIGNA_PREINSCRIPCIONES = "SELECT * FROM asignaprescripcion where nhistorial = ? and fecha=?";
 
 	private final static String VER_VACUNAS_ASIGNADAS = "SELECT * FROM asignavacuna where historial = ?";
 
@@ -1269,6 +1271,36 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		pst.close();
 		con.close();
 		return nombrePreinscripciones;
+	}
+	
+	
+	
+	public List<AsignaPreinscripcion> asignaPrescricpionesFechaHistorial(String nhistorial) throws SQLException {
+		List<AsignaPreinscripcion> preinscripciones = new ArrayList<AsignaPreinscripcion>();
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VER_ASIGNA_PREINSCRIPCIONES);
+
+		pst.setString(1, nhistorial); 
+		java.sql.Date fecha = new java.sql.Date(new java.util.Date().getTime());
+		pst.setDate(2,fecha ); 
+
+		ResultSet rs = pst.executeQuery(); 
+
+		while (rs.next()) {
+			preinscripciones.add(new AsignaPreinscripcion(rs.getString("codasigprescripcion"), rs.getString("nhistorial"),
+					rs.getString("codempleado"),rs.getString("nombreprescripcion"),
+				rs.getInt("cantidad"),rs.getInt("intervalo"),rs.getInt("duracion"),rs.getString("instrucciones"),
+				rs.getDate("fecha"),rs.getTime("hora")));
+					
+			
+		}
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return preinscripciones;
 	}
 
 	public List<String> buscarNombreTodasCausas() throws SQLException {
