@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +42,7 @@ public class PrescripcionesToPDF {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-	InputStream stream = PrescripcionesToPDF.class.getResourceAsStream("../report/prescripciones.japser");
+	InputStream stream = PrescripcionesToPDF.class.getResourceAsStream("../resource/prescripciones.jrxml");
 	
 	//Lista a coleccion de jasper
 	JRBeanCollectionDataSource prescripciones= new JRBeanCollectionDataSource(pres);
@@ -52,7 +54,8 @@ public class PrescripcionesToPDF {
 	
 	
 	//leemos el jrcml 
-	InputStream input =new FileInputStream(new File("/Sprint1_ULTIMA/report/prescripciones.jrxml"));
+	InputStream input = null;
+	input = new FileInputStream(new File("resources/prescripciones.jrxml"));
 	JasperDesign jasperDesign =JRXmlLoader.load(input);
 	
 	//COMPILASMOS EL JASPER XRML
@@ -61,9 +64,13 @@ public class PrescripcionesToPDF {
 	
 	//Sacamso el objeto a pdf
 	JasperPrint jp =JasperFillManager.fillReport(jr, parameters,new JREmptyDataSource());
-	JasperExportManager.exportReportToPdfStream(jp, new FileOutputStream("/rectas/"+p.getHistorial()+"receta.pdf"));
+	JasperExportManager.exportReportToPdfStream(jp, new FileOutputStream("Recetas/"+p.getHistorial()+"receta.pdf"));
+	
 	//FileOutputStream output= new FileOutputStream(new File(p.getHistorial()+"receta.pdf"));
 	
 	
 	}
+	
+	
+	
 }
