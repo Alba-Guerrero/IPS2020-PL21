@@ -13,7 +13,9 @@ import javax.swing.text.TabableView;
 
 import logica.Accion;
 import logica.AccionEmpleado;
+import logica.AsignaEquipo;
 import logica.Cita;
+import logica.Equipo;
 import logica.HistorialMedico;
 import logica.Paciente;
 import logica.empleados.Empleado;
@@ -99,7 +101,7 @@ public class VentanaMedicoCita extends JDialog {
 	}
 	private JTable getTableCita() {
 			if (tablacita == null) {
-				String[] nombreColumnas= {"Nombre "," Apellido  ","Hora inicio"," Hora fin","Fecha ","Sala","Urgencia","Codcita","CodPaciente","CodMed"};
+				String[] nombreColumnas= {"Nombre "," Apellido  ","Hora inicio"," Hora fin","Fecha ","Sala","Urgencia","Codcita","CodPaciente","CodMed","Numequipo"};
 				modeloTabla= new ModeloNoEditable(nombreColumnas,0);
 				tablacita = new JTable(modeloTabla);
 				tablacita.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
@@ -147,7 +149,7 @@ public class VentanaMedicoCita extends JDialog {
 	
 	private void añadirFilas(boolean dia)  {
 		borrarModeloTabla();
-		Object[] nuevaFila=new Object[10];
+		Object[] nuevaFila=new Object[11];
 		List<Cita> citas = new ArrayList<Cita>();
 	if(dia) {
 
@@ -169,11 +171,23 @@ public class VentanaMedicoCita extends JDialog {
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
+		try {
+			añadirCitasDeEquipo(citas);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 		for(Cita c:citas) {
 			Paciente p = null;
+			Equipo equipo = null;
 			try {
-				p = pbd.devolverPacientesMedico(c.getCodCita());
+				if(c.getCodMed()==null) {
+					p = pbd.devolverPacientesEquipo(c.getCodPaciente());
+					equipo = pbd.devolverEquipo(c.getNumequipo());
+				}
+				else {
+					p = pbd.devolverPacientesMedico(c.getCodCita());
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -188,7 +202,13 @@ public class VentanaMedicoCita extends JDialog {
 			nuevaFila[6] = c.isUrgente();
 			nuevaFila[7]=c.getCodCita();
 			nuevaFila[8]=c.getCodPaciente();
-			nuevaFila[9]=c.getCodMed();
+			nuevaFila[9]=codmedico;
+			if(equipo!=null) {
+				nuevaFila[10] = equipo.getNumEquipo();
+			}
+			else {
+				nuevaFila[10] = "";
+			}
 			modeloTabla.addRow(nuevaFila);
 			
 		}
@@ -196,6 +216,23 @@ public class VentanaMedicoCita extends JDialog {
 		}
 		
 	
+	private void añadirCitasDeEquipo(List<Cita> citas) throws SQLException {
+		List<AsignaEquipo> asignaequipo = pbd.buscarAsignaEquipoPorCodMed(codmedico);
+		for(int i=0; i<asignaequipo.size(); i++) {
+			System.out.println(asignaequipo.get(i).getNumequipo());
+			añadirCitas(asignaequipo.get(i).getNumequipo(), citas);
+		}
+		
+	}
+
+	private void añadirCitas(String numequipo, List<Cita> citas) throws SQLException {
+		List<Cita> citasEquipo = pbd.devolverCitasEquipoNumEquip(numequipo);
+		for(int i=0; i<citasEquipo.size(); i++) {
+			System.out.println(citasEquipo.get(i).getCodCita());
+			citas.add(citasEquipo.get(i));
+		}
+	}
+
 	private JPanel getPanel() {
 		if (panel == null) {
 			panel = new JPanel();
@@ -272,11 +309,13 @@ public class VentanaMedicoCita extends JDialog {
 			
 			String codcita=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 7);
 			String codPaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 8);
-			String codMedico=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 9);
-			
+			System.out.println("codcita" + codcita);
+			System.out.println("codPaciente" + codPaciente);
+			System.out.println("codmedico" + codmedico);
 		try {
 			
-			HistorialMedico hm = pbd.HistorialCita(codcita,codPaciente,codMedico);
+			HistorialMedico hm = pbd.HistorialCita(codcita,codPaciente);
+			System.out.println("Historial" + hm.getHistorial());
 			MostrarHistorial mh = new MostrarHistorial(hm);
 			mh.setLocationRelativeTo(null);
 			mh.setResizable(true);
@@ -335,9 +374,18 @@ public class VentanaMedicoCita extends JDialog {
 	}
 	
 	protected void abrirModificarCita() {
+		Paciente p;
 		try {
 			
-			Paciente p=pbd.devolverPacientesMedico((String)tablacita.getValueAt(tablacita.getSelectedRow(),7));
+			if(!tablacita.getValueAt(tablacita.getSelectedRow(),10).equals("")) {
+				String numequipo = (String)tablacita.getValueAt(tablacita.getSelectedRow(),10);
+				System.out.println("Equipin" + numequipo);
+				p=pbd.devolverPacientesEquipo((String)tablacita.getValueAt(tablacita.getSelectedRow(),8));
+				System.out.println("Paciente " + p.getNombre());
+			}
+			else {
+				p=pbd.devolverPacientesMedico((String)tablacita.getValueAt(tablacita.getSelectedRow(),7));
+			}
 			
 			Cita c=pbd.citaCod((String)tablacita.getValueAt(tablacita.getSelectedRow(),7),
 					(String)tablacita.getValueAt(tablacita.getSelectedRow(),8));
