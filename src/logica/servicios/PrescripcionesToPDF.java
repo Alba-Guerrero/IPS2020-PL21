@@ -52,7 +52,7 @@ public class PrescripcionesToPDF {
 	
 	
 	//leemos el jrcml 
-	InputStream input =new FileInputStream(new File("/Sprint1_ULTIMA/report/prescripciones.jrxml"));
+	InputStream input =new FileInputStream(new File("prescripciones.jrxml"));
 	JasperDesign jasperDesign =JRXmlLoader.load(input);
 	
 	//COMPILASMOS EL JASPER XRML
@@ -61,7 +61,7 @@ public class PrescripcionesToPDF {
 	
 	//Sacamso el objeto a pdf
 	JasperPrint jp =JasperFillManager.fillReport(jr, parameters,new JREmptyDataSource());
-	JasperExportManager.exportReportToPdfStream(jp, new FileOutputStream("/rectas/"+p.getHistorial()+"receta.pdf"));
+	JasperExportManager.exportReportToPdfStream(jp, new FileOutputStream("Recetas/"+p.getHistorial()+"receta.pdf"));
 	//FileOutputStream output= new FileOutputStream(new File(p.getHistorial()+"receta.pdf"));
 	
 	
