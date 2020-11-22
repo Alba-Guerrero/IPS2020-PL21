@@ -19,6 +19,7 @@ import java.util.Random;
 import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -56,6 +57,7 @@ import logica.Preinscripcion;
 import logica.Vacuna;
 import logica.servicios.ParserBaseDeDatos;
 import logica.servicios.PrescripcionesToPDF;
+import logica.servicios.Printer;
 import net.sf.jasperreports.engine.JRException;
 import ui.MostrarHistorial;
 
@@ -64,7 +66,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 
 public class ModificarMedicosNuevoCard extends JDialog {
@@ -265,6 +269,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			panelSur.add(getButton());
 			panelSur.add(getButton_1());
 			panelSur.add(getButtonPrescricpcion());
+			panelSur.add(getButtonPrintPres());
 		}
 		return panelSur;
 	}
@@ -319,21 +324,32 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	
 	private JButton getButtonPrintPres() {
 		if (btnprintpres == null) {
-			btnprintpres = new JButton("Descargar prescripción");
+			btnprintpres = new JButton();
+			btnprintpres.setIcon(new ImageIcon("C:\\Users\\Alba\\Downloads\\interface+multimedia+print+printer+icon-1320185667007730348_24.png"));
 			btnprintpres.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					descargarPrescricpiones();
+					imprimirPrescripciones();
 				}
 			});
-			buttonpres.setFont(new Font("Tahoma", Font.PLAIN, 16));
+			btnprintpres.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		}
-			return buttonpres;
+			return btnprintpres;
 	}
 	
-	//void imprimirPrescripciones(){
+	void imprimirPrescripciones(){
+		Printer printer= new Printer();
+		try {
+			File archivo = new File("Recetas/"+paciente.getHistorial()+"receta.pdf");
+			if (!archivo.exists()) {
+				descargarPrescricpiones();
+			}
+			printer.print("Recetas/"+paciente.getHistorial()+"receta.pdf");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 		
-		
-	//}
+	}
 	
 	private JButton getButton_1() {
 		if (button_1 == null) {

@@ -15,11 +15,14 @@ import logica.Paciente;
 import logica.Preinscripcion;
 import logica.servicios.HistorialToPDF;
 import logica.servicios.ParserBaseDeDatos;
+import logica.servicios.Printer;
 import net.sf.jasperreports.engine.JRException;
 
 import java.awt.CardLayout;
 import javax.swing.JTabbedPane;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
+
 import java.awt.GridLayout;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -30,7 +33,9 @@ import javax.swing.JTextArea;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
 
 public class MostrarHistorial extends JDialog {
@@ -318,19 +323,31 @@ public class MostrarHistorial extends JDialog {
 			e.printStackTrace();
 		}
 		
+		JOptionPane.showConfirmDialog(null, "Se ha generado su historial con éxito");
+		
 		
 		
 	}
 	private JButton getBtnNewButton_1() {
 		if (btnNewButton_1 == null) {
 			btnNewButton_1 = new JButton("");
+			btnNewButton_1.setIcon(new ImageIcon("C:\\Users\\Alba\\Downloads\\interface+multimedia+print+printer+icon-1320185667007730348_24.png"));
 			btnNewButton_1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					
+					Printer printer= new Printer();
+					try {
+						File archivo = new File("historial/"+hm.getHistorial()+"Historial.pdf");
+						if (!archivo.exists()) {
+							descargarHistorial();
+						}
+						printer.print("historial/"+hm.getHistorial()+"Historial.pdf");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 				}
 			});
-			btnNewButton_1.setIcon(new ImageIcon(MostrarHistorial.class.getResource("/javax/swing/plaf/metal/icons/Error.gif")));
 		}
 		return btnNewButton_1;
 	}
