@@ -267,9 +267,9 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			panelSur = new JPanel();
 			panelSur.setBackground(SystemColor.menu);
 			panelSur.add(getButton());
-			panelSur.add(getButton_1());
 			panelSur.add(getButtonPrescricpcion());
 			panelSur.add(getButtonPrintPres());
+			panelSur.add(getButton_1());
 		}
 		return panelSur;
 	}
@@ -325,6 +325,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getButtonPrintPres() {
 		if (btnprintpres == null) {
 			btnprintpres = new JButton();
+			btnprintpres.setText("Prescripci\u00F3n");
 			btnprintpres.setIcon(new ImageIcon("C:\\Users\\Alba\\Downloads\\interface+multimedia+print+printer+icon-1320185667007730348_24.png"));
 			btnprintpres.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
