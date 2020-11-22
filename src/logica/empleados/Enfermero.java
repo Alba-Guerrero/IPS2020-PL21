@@ -23,8 +23,13 @@ public class Enfermero extends Empleado{
 	 * @param dFin
 	 * @param dJornada
 	 */
-	public Enfermero(String codeEmpleado, String pass, Time hInicio, Time hFin, Date dInicio, Date dFin, String dJornada) {
-		super(codeEmpleado, pass, dJornada, dJornada, hInicio, hFin, dInicio, dFin, dJornada);	
+	public Enfermero(String codeEmpleado, String nombre, String apellido, String pass, Time hInicio, Time hFin, Date dInicio, Date dFin, String dJornada) {
+		super(codeEmpleado,nombre, apellido, pass, hInicio, hFin, dInicio, dFin, dJornada);	
+	}
+	
+	@Override
+	public String toString() {
+		return nombre + " " + apellido;
 	}
 
 }

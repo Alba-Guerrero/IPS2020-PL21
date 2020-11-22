@@ -17,6 +17,7 @@ import logica.AccionEmpleado;
 import logica.Acompañante;
 import logica.AsignaCausa;
 import logica.AsignaDiagnostico;
+import logica.AsignaEquipo;
 import logica.AsignaPreinscripcion;
 import logica.AsignaVacuna;
 import logica.Causas;
@@ -134,7 +135,8 @@ public class ParserBaseDeDatos {
 	private final static String FIND_PACIENTE_BY_SURNAME = "Select * from paciente where apellido=?";
 
 	private final static String ADD_ASIGNA_VACUNA = "INSERT INTO ASIGNAVACUNA (codasigvac, nombrevacuna, historial, codempleado,FECHA, HORA) VALUES (?,?,?,?,?,?)";
-	private final static String HISTORIAL_CITA = "select nhistorial from cita c,paciente p where c.codpaciente=p.codpaciente and c.codCita=? and c.codpaciente=? and c.codmedico=?";
+	private final static String HISTORIAL_CITA = "select nhistorial from cita c,paciente p where c.codpaciente=p.codpaciente and c.codCita=? and c.codpaciente=?";
+	//,codmedico   and c.codmedico=?
 	private final static String CITA_CODCITA = "select * from cita  where codCita=? and codpaciente=? ";
 	private final static String PACIENTE_HISTORIAL = "select * from paciente  where nhistorial=? ";
 
@@ -186,6 +188,23 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	
 	
+	private final static String GET_EQUIPO = "SELECT * FROM equipo where numequipo=?";
+	
+	private final static String GET_PACIENTE_NUMEQUIPO = "SELECT * FROM paciente where codpaciente=?";
+	
+	private final static String FILTRAR_EMPLEADO_NOMBRE = "SELECT * FROM empleado WHERE nombre LIKE '%?%'";
+	private final static String FILTRAR_EMPLEADO_APELLIDO = "SELECT * FROM empleado WHERE apellido LIKE '%?%'";
+	
+	private final static String GET_ASIGNAEQUIPO_NAME = "select * from asignaequipo where numequipo = ?";
+	
+	private final static String GET_CITA_NUMEQUIP = "select * from cita where numequipo = ?";
+	
+	private final static String GET_ASIGNAEQUIPO_COD_MED = "select * from asignaequipo where codempleado = ?";
+	
+	private final static String ADD_CITA_EQUIPO = "INSERT INTO CITA(CODCITA,CODPACIENTE,HINICIO,HFIN,FECHA,UBICACION,URGENCIA,NUMEQUIPO)"
+			+ " VALUES(?,?,?,?,?,?,?,?)";
+	
+	private final static String GET_CITA_EQUIPOD = "select * from cita c where c.fecha=? ;";
 
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
@@ -481,6 +500,29 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		@SuppressWarnings("unused")
 		boolean res = false;
 		pst.setString(1, codcita);
+		ResultSet rs = pst.executeQuery();
+
+		while (rs.next()) {
+
+			pacientes = new Paciente(rs.getString("codpaciente"), rs.getString("nombre"), rs.getString("apellido"),
+					rs.getInt("movil"), rs.getString("email"), rs.getString("info"), rs.getString("nhistorial"));
+
+		}
+
+//CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return pacientes;
+	}
+	
+	public Paciente devolverPacientesEquipo(String numequipo) throws SQLException {
+		Paciente pacientes = null;
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_PACIENTE_NUMEQUIPO);
+		@SuppressWarnings("unused")
+		boolean res = false;
+		pst.setString(1, numequipo);
 		ResultSet rs = pst.executeQuery();
 
 		while (rs.next()) {
@@ -810,7 +852,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		while (rsE.next()) {
 			// int inicio=rs.findColumn("dinicio");
 			// int fin=rs.findColumn("dfin");
-			Enfermero e = new Enfermero(rsE.getString(1), rsE.getString(2), rsE.getTime(5), rsE.getTime(6),
+			Enfermero e = new Enfermero(rsE.getString(1), rsE.getString(2), rsE.getString(3), rsE.getString(4), rsE.getTime(5), rsE.getTime(6),
 					rsE.getDate(7), rsE.getDate(8), rsE.getString(9));
 			empleados.add(DtoMapper.toDto(e));
 			// medicos.add(new Medico( rs.getString(1)));
@@ -1648,14 +1690,15 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		return citas;
 	}
 
-	public HistorialMedico HistorialCita(String codcita, String codPaciente, String codMedico) throws SQLException {
+	public HistorialMedico HistorialCita(String codcita, String codPaciente) throws SQLException {
 		HistorialMedico hs = null;
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst = con.prepareStatement(HISTORIAL_CITA);
 
 		pst.setString(1, codcita);
 		pst.setString(2, codPaciente);
-		pst.setString(3, codMedico);
+		
+		//pst.setString(3, codMedico);
 		ResultSet rs = pst.executeQuery();
 		if (rs.next()) {
 
@@ -2206,7 +2249,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst = con.prepareStatement(LISTAR_EQUIPOS);
 		ResultSet rs = pst.executeQuery();
-		if (rs.next()) {
+		while (rs.next()) {
 			listaEquipos.add(new Equipo(rs.getString(1)));
 		}
 
@@ -2233,5 +2276,270 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		
 	}
 	
+	public List<Enfermero> listarEnfermero() throws SQLException{
+		List<Enfermero> enfermeros = new ArrayList<Enfermero>();
+		Connection con = new Conexion().getConnectionJDBC();
+		Statement st = con.createStatement();
+		ResultSet rs = st.executeQuery(ENFERMERO_LISTALL);
 
+		while (rs.next()) {
+			Enfermero e = new Enfermero(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getTime(5), rs.getTime(6),
+					rs.getDate(7), rs.getDate(8), rs.getString(9));
+			enfermeros.add(e);
+			
+		}
+
+		rs.close();
+		st.close();
+		con.close();
+		return enfermeros;
+	}
+	
+	public List<Enfermero> filtrarNombreEnfermero(String cadena) throws SQLException{
+		List<Enfermero> enfermeros = new ArrayList<Enfermero>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(FILTRAR_EMPLEADO_NOMBRE);
+		pst.setString(1, cadena);
+		ResultSet rs = pst.executeQuery();
+		
+		while (rs.next()) {
+			Enfermero e = new Enfermero(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getTime(5), rs.getTime(6),
+					rs.getDate(7), rs.getDate(8), rs.getString(9));
+			enfermeros.add(e);
+			
+		}
+
+		rs.close();
+		pst.close();
+		con.close();
+		return enfermeros;
+	}
+	
+	public List<Enfermero> filtrarApellidoEnfermero(String cadena) throws SQLException{
+		List<Enfermero> enfermeros = new ArrayList<Enfermero>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(FILTRAR_EMPLEADO_APELLIDO);
+		pst.setString(1, cadena);
+		ResultSet rs = pst.executeQuery();
+		
+		while (rs.next()) {
+			Enfermero e = new Enfermero(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getTime(5), rs.getTime(6),
+					rs.getDate(7), rs.getDate(8), rs.getString(9));
+			enfermeros.add(e);
+			
+		}
+
+		rs.close();
+		pst.close();
+		con.close();
+		return enfermeros;
+	}
+	
+	public List<Equipo> buscarEquipo(String buscando) throws SQLException {
+		List<Equipo> equipos = new ArrayList<Equipo>();
+		Connection con = new Conexion().getConnectionJDBC();
+		Statement st = con.createStatement();
+		ResultSet rs = st.executeQuery(LISTAR_EQUIPOS);
+
+		while (rs.next()) {
+			equipos.add(new Equipo(rs.getString("numequipo")));
+
+		}
+
+//CERRAR EN ESTE ORDEN
+		rs.close();
+		st.close();
+		con.close();
+		return equipos;
+	}
+	
+	public List<AsignaEquipo> buscarAsignaEquipo(String numequipo) throws SQLException {
+		List<AsignaEquipo> asignaequipo = new ArrayList<AsignaEquipo>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(GET_ASIGNAEQUIPO_NAME);
+		pst.setString(1, numequipo);
+		ResultSet rs = pst.executeQuery();
+		
+		
+	while(rs.next()) {
+		asignaequipo.add(new AsignaEquipo(rs.getString("codequipo"),rs.getString("numequipo"),rs.getString("codempleado")));
+	}
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return asignaequipo;
+	}
+	
+	public List<AsignaEquipo> buscarAsignaEquipoPorCodMed(String codmed) throws SQLException {
+		List<AsignaEquipo> asignaequipo = new ArrayList<AsignaEquipo>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst=con.prepareStatement(GET_ASIGNAEQUIPO_COD_MED);
+		pst.setString(1, codmed);
+		ResultSet rs = pst.executeQuery();
+		
+		
+	while(rs.next()) {
+		asignaequipo.add(new AsignaEquipo(rs.getString("codequipo"),rs.getString("numequipo"),rs.getString("codempleado")));
+	}
+	
+	//CERRAR EN ESTE ORDEN
+	rs.close();
+	pst.close();
+	con.close();
+	return asignaequipo;
+	}
+	
+	public void crearCitaEquipo(Cita cita) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(ADD_CITA_EQUIPO);
+
+		String codCita = cita.getCodCita();
+		String numequipo = cita.getNumequipo();
+		String codPac = cita.getCodPaciente();
+		Time hInicio = cita.gethInicio();
+		Time hFin = cita.gethFin();
+		Date date = (Date) cita.getDate();
+		String ubicacion = cita.getUbicacion();
+		boolean urgente = cita.isUrgente();
+
+		pst.setString(1, codCita);
+		pst.setString(2, codPac);
+		pst.setTime(3, hInicio);
+		pst.setTime(4, hFin);
+		pst.setDate(5, date);
+		pst.setString(6, ubicacion);
+		pst.setBoolean(7, urgente);
+		pst.setString(8, numequipo);
+
+		pst.executeUpdate();
+
+		pst.close();
+		con.close();
+	}
+	
+	public Equipo devolverEquipo(String numequipo) throws SQLException {
+		Equipo equipo = null;
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_EQUIPO);
+		pst.setString(1, numequipo);
+		ResultSet rs = pst.executeQuery();
+
+		while (rs.next()) {
+
+			equipo = new Equipo(rs.getString("numequipo"));
+
+		}
+
+//CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return equipo;
+	}
+	
+	public List<Cita> devolverCitasConEquipo() throws SQLException {
+		List<Cita> citas = new ArrayList<Cita>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_CITA);
+		boolean res = false;
+		java.util.Date fecha = new java.util.Date();
+		java.sql.Date date = new java.sql.Date(fecha.getTime());
+		pst.setDate(1, date);
+		ResultSet rs = pst.executeQuery();
+
+		while (rs.next()) {
+			if (rs.getByte("urgencia") == 1)
+				res = true;
+			else
+				res = false;
+
+			citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"),
+					rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res, rs.getString("numequipo")));
+
+		}
+
+//CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return citas;
+	}
+	
+	public List<Cita> devolvercitasEquipoPorFecha(Date sDate) throws SQLException {
+		List<Cita> citas = new ArrayList<Cita>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_CITA_EQUIPOD);
+		boolean res = false;
+		pst.setDate(1, sDate);
+
+		ResultSet rs = pst.executeQuery();
+
+		while (rs.next()) {
+			if (rs.getByte("urgencia") == 1)
+				res = true;
+
+			citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"),
+			rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res, rs.getString("numequipo")));
+
+		}
+
+//CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return citas;
+	}
+	
+	
+	public List<Cita> devolverCitasEquipoNumEquip(String numequipo) throws SQLException {
+		List<Cita> citas = new ArrayList<Cita>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement st = con.prepareStatement(GET_CITA_NUMEQUIP);
+		boolean res = false;
+		st.setString(1, numequipo);
+
+		ResultSet rs = st.executeQuery();
+
+		while (rs.next()) {
+			if (rs.getByte("urgencia") == 1)
+				res = true;
+
+			citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"),
+					rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res, rs.getString("numequipo")));
+
+		}
+
+//CERRAR EN ESTE ORDEN
+		rs.close();
+		st.close();
+		con.close();
+		return citas;
+	}
+
+	public List<Cita> devolverCitasConEquipoHist(String codhistorial) throws SQLException {
+		List<Cita> citas = new ArrayList<Cita>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_CITA_HISTORIAL);
+		boolean res = false;
+		pst.setString(1, codhistorial);
+
+		ResultSet rs = pst.executeQuery();
+
+		while (rs.next()) {
+			if (rs.getByte("urgencia") == 0)
+				res = true;
+			
+			citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"),
+			rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res, rs.getString("numequipo")));
+
+		}
+
+//CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return citas;
+	}
 }

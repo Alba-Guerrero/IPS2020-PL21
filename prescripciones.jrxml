@@ -261,7 +261,7 @@
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
-							<textField>
+							<textField isBlankWhenNull="true">
 								<reportElement stretchType="ElementGroupHeight" x="0" y="0" width="140" height="30" uuid="6e232395-33c2-49e7-a38f-27981471da1b"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
 									<font size="11"/>
@@ -282,7 +282,7 @@
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
-							<textField>
+							<textField isBlankWhenNull="true">
 								<reportElement stretchType="ElementGroupHeight" x="0" y="0" width="100" height="30" uuid="12d7c081-74fc-4d55-93ef-4b042b22b44e"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="11"/>
@@ -303,7 +303,7 @@
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
-							<textField>
+							<textField isBlankWhenNull="true">
 								<reportElement stretchType="ElementGroupHeight" x="0" y="0" width="80" height="30" uuid="e8165c8b-395f-4712-8223-c654a9673411"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="11"/>
@@ -324,7 +324,7 @@
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
-							<textField>
+							<textField isBlankWhenNull="true">
 								<reportElement stretchType="ElementGroupHeight" x="0" y="0" width="100" height="30" uuid="1b3bad09-fa62-4c6a-b7ba-80c8e4996ab4"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="11"/>
@@ -345,7 +345,7 @@
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
-							<textField textAdjust="StretchHeight">
+							<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 								<reportElement stretchType="ElementGroupHeight" x="0" y="0" width="129" height="30" uuid="608b6d93-c416-48a0-8a00-486b3a086e13"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="11"/>

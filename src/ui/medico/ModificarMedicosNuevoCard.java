@@ -55,6 +55,8 @@ import logica.Paciente;
 import logica.Preinscripcion;
 import logica.Vacuna;
 import logica.servicios.ParserBaseDeDatos;
+import logica.servicios.PrescripcionesToPDF;
+import net.sf.jasperreports.engine.JRException;
 import ui.MostrarHistorial;
 
 import javax.swing.ButtonGroup;
@@ -62,6 +64,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileNotFoundException;
 
 
 public class ModificarMedicosNuevoCard extends JDialog {
@@ -226,6 +229,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JLabel lblNewLabel;
 	private JTextField txtNombreCausa;
 	private JButton btnFiltrar;
+	private JButton buttonpres;
+	private JButton btnprintpres;
 
 	/**
 	 * Create the frame.
@@ -259,6 +264,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			panelSur.setBackground(SystemColor.menu);
 			panelSur.add(getButton());
 			panelSur.add(getButton_1());
+			panelSur.add(getButtonPrescricpcion());
 		}
 		return panelSur;
 	}
@@ -271,7 +277,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 					try {
 						guardar();
 						consultaAtendida();
-						dispose();
+						
+						//dispose();
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -282,9 +289,51 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		return button;
 	}
 	
+	private JButton getButtonPrescricpcion() {
+		if (buttonpres == null) {
+			buttonpres = new JButton("Descargar prescripción");
+			buttonpres.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					descargarPrescricpiones();
+				}
+			});
+			buttonpres.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		}
+			return buttonpres;
+	}
+	
 	private void consultaAtendida() {
 			JOptionPane.showMessageDialog(null, "Los cambios de la consulta han sido guardados");
 	}
+	
+	private void descargarPrescricpiones() {
+		PrescripcionesToPDF pres= new PrescripcionesToPDF();
+		try {
+			pres.createPDF(paciente);
+		} catch (FileNotFoundException | JRException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		JOptionPane.showMessageDialog(null, "Se ha generado la receta correctamente");
+	}
+	
+	private JButton getButtonPrintPres() {
+		if (btnprintpres == null) {
+			btnprintpres = new JButton("Descargar prescripción");
+			btnprintpres.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					descargarPrescricpiones();
+				}
+			});
+			buttonpres.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		}
+			return buttonpres;
+	}
+	
+	//void imprimirPrescripciones(){
+		
+		
+	//}
 	
 	private JButton getButton_1() {
 		if (button_1 == null) {
@@ -2265,7 +2314,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 	private void mostrarHistorial() throws SQLException {
 		guardarAccionHist();
-		HistorialMedico hm = pbd.HistorialCita(cita.getCodCita(),paciente.getCodePaciente(),cita.getCodMed());
+		HistorialMedico hm = pbd.HistorialCita(cita.getCodCita(),paciente.getCodePaciente());
 		MostrarHistorial mh = new MostrarHistorial(hm);
 		mh.setLocationRelativeTo(null);
 		mh.setResizable(true);

@@ -19,7 +19,7 @@ public class DtoMapper {
 	}
 
 	public static Enfermero toDto(Enfermero arg) {
-		Enfermero e = new Enfermero(arg.getCodeEmpleado(), arg.getPass(), arg.gethInicio(), arg.gethFin(), arg.getdInicio(), arg.getdFin(), arg.getdJornada());
+		Enfermero e = new Enfermero(arg.getCodeEmpleado(), arg.getNombre(), arg.getApellido(), arg.getPass(), arg.gethInicio(), arg.gethFin(), arg.getdInicio(), arg.getdFin(), arg.getdJornada());
 		return e;
 	}
 }
