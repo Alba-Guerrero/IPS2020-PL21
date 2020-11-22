@@ -222,7 +222,6 @@ public class VentanaMedicoCita extends JDialog {
 			System.out.println(asignaequipo.get(i).getNumequipo());
 			añadirCitas(asignaequipo.get(i).getNumequipo(), citas);
 		}
-		
 	}
 
 	private void añadirCitas(String numequipo, List<Cita> citas) throws SQLException {

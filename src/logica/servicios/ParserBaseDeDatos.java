@@ -198,6 +198,8 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	private final static String ADD_CITA_EQUIPO = "INSERT INTO CITA(CODCITA,CODPACIENTE,HINICIO,HFIN,FECHA,UBICACION,URGENCIA,NUMEQUIPO)"
 			+ " VALUES(?,?,?,?,?,?,?,?)";
+	
+	private final static String GET_CITA_EQUIPOD = "select * from cita c where c.fecha=? ;";
 
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
@@ -2362,6 +2364,32 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		return citas;
 	}
 	
+	public List<Cita> devolvercitasEquipoPorFecha(Date sDate) throws SQLException {
+		List<Cita> citas = new ArrayList<Cita>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_CITA_EQUIPOD);
+		boolean res = false;
+		pst.setDate(1, sDate);
+
+		ResultSet rs = pst.executeQuery();
+
+		while (rs.next()) {
+			if (rs.getByte("urgencia") == 1)
+				res = true;
+
+			citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"),
+			rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res, rs.getString("numequipo")));
+
+		}
+
+//CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return citas;
+	}
+	
+	
 	public List<Cita> devolverCitasEquipoNumEquip(String numequipo) throws SQLException {
 		List<Cita> citas = new ArrayList<Cita>();
 		Connection con = new Conexion().getConnectionJDBC();
@@ -2383,6 +2411,31 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 //CERRAR EN ESTE ORDEN
 		rs.close();
 		st.close();
+		con.close();
+		return citas;
+	}
+
+	public List<Cita> devolverCitasConEquipoHist(String codhistorial) throws SQLException {
+		List<Cita> citas = new ArrayList<Cita>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_CITA_HISTORIAL);
+		boolean res = false;
+		pst.setString(1, codhistorial);
+
+		ResultSet rs = pst.executeQuery();
+
+		while (rs.next()) {
+			if (rs.getByte("urgencia") == 0)
+				res = true;
+			
+			citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"),
+			rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res, rs.getString("numequipo")));
+
+		}
+
+//CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
 		con.close();
 		return citas;
 	}
