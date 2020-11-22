@@ -110,7 +110,7 @@ public class ParserBaseDeDatos {
 
 	private final static String LIST_DIAGNOSTICOS = "Select * from diagnostico";
 
-	private final static String GET_CITA_HISTORIAL = "select * from cita c,paciente p,historial h where c.codpaciente=p.codpaciente and h.nhistorial=?";
+	private final static String GET_CITA_HISTORIAL = "select * from cita c,paciente p,historial h where c.codpaciente=p.codpaciente and p.nhistorial=h.nhistorial and h.nhistorial=?";
 	private final static String GET_CITA_HISTORIAL_MED = "select * from cita c,paciente p,historial h where c.codpaciente=p.codpaciente  and h.nhistorial=? and c.codmedico=?";
 	private final static String DELETE_CITA = "delete from cita where codcita=?;";
 	private final static String DELETE_CORREO = "delete from correo where codcorreo=?";

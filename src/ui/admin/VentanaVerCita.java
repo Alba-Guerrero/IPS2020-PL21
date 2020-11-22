@@ -50,6 +50,10 @@ import java.awt.event.MouseEvent;
 import java.io.FileNotFoundException;
 
 import javax.swing.JTextField;
+import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;
+import java.awt.FlowLayout;
+import javax.swing.JComboBox;
 
 public class VentanaVerCita extends JDialog {
 
@@ -77,6 +81,32 @@ public class VentanaVerCita extends JDialog {
 	private JButton btnBuscarPorFecha;
 	private JButton btnVerHistorial;
 	private String codAdmin;
+	private JPanel panelFiltrosMedEn;
+	private JLabel lblFiltrar;
+	private JRadioButton rdbtnMdico;
+	private JRadioButton rdbtnEnfermero;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private JPanel panelMedEnfer;
+	private JPanel pnNombre;
+	private JLabel lblNombre;
+	private JTextField txtNombre;
+	private JButton btnIr_1;
+	private JPanel pnApellido;
+	private JPanel panelVacio;
+	private JLabel lblApellido;
+	private JTextField txtApellido;
+	private JButton BtnApellido;
+	private JPanel pnCodEmpleado;
+	private JLabel lblCodempleado;
+	private JTextField txtEmpleado;
+	private JButton btnCodEmpleado;
+	private JPanel pnNombreApellido;
+	private JButton btnNombreYApellido;
+	private JPanel panelEspecialidad;
+	private JComboBox comboBox;
+	private JPanel panelNomEspe;
+	private JLabel lblEspecialidad;
+	private JTextField txtEspecialidad;
 	
 
 
@@ -88,7 +118,7 @@ public class VentanaVerCita extends JDialog {
 		this.codAdmin = codAdmin;
 		setTitle("M\u00E9dico: Ver citas");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 870, 515);
+		setBounds(100, 100, 1274, 516);
 		setModal(true);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -275,6 +305,7 @@ public class VentanaVerCita extends JDialog {
 		if (panel == null) {
 			panel = new JPanel();
 			panel.setLayout(new BorderLayout(0, 0));
+			panel.add(getPanel_1_1(), BorderLayout.WEST);
 			panel.add(getPanelBotones(), BorderLayout.SOUTH);
 			panel.add(getPanelCita(), BorderLayout.NORTH);
 			panel.add(getScrollPane(), BorderLayout.CENTER);
@@ -691,5 +722,268 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 		pbd.guardarAccion(a);
 		
 	}
+	private JPanel getPanel_1_1() {
+		if (panelFiltrosMedEn == null) {
+			panelFiltrosMedEn = new JPanel();
+			panelFiltrosMedEn.setLayout(new GridLayout(8, 1, 0, 0));
+			panelFiltrosMedEn.add(getPanelVacio());
+			panelFiltrosMedEn.add(getPanelMedEnfer());
+			panelFiltrosMedEn.add(getPnNombre());
+			panelFiltrosMedEn.add(getPnApellido());
+			panelFiltrosMedEn.add(getPnCodEmpleado());
+			panelFiltrosMedEn.add(getPnNombreApellido());
+		}
+		return panelFiltrosMedEn;
+	}
+	private JLabel getLblFiltrar() {
+		if (lblFiltrar == null) {
+			lblFiltrar = new JLabel("Filtrar por:");
+		}
+		return lblFiltrar;
+	}
+	private JRadioButton getRdbtnMdico() {
+		if (rdbtnMdico == null) {
+			rdbtnMdico = new JRadioButton("M\u00E9dico");
+			rdbtnMdico.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+					
+					crearPanelEspecialidad();
+				}
+
+			
+			});
+			buttonGroup.add(rdbtnMdico);
+		}
+		return rdbtnMdico;
+	}
 	
+	
+	
+	private void crearPanelEspecialidad() {
+		if(rdbtnMdico.isSelected()) {
+			panelFiltrosMedEn.add(getPanelNomEspe());
+			panelFiltrosMedEn.add(getPanelEspecialidad());
+			
+			
+		}
+			
+		
+	}
+	
+	
+	private JRadioButton getRdbtnEnfermero() {
+		if (rdbtnEnfermero == null) {
+			rdbtnEnfermero = new JRadioButton("Enfermero");
+			buttonGroup.add(rdbtnEnfermero);
+		}
+		return rdbtnEnfermero;
+	}
+	private JPanel getPanelMedEnfer() {
+		if (panelMedEnfer == null) {
+			panelMedEnfer = new JPanel();
+			panelMedEnfer.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+			panelMedEnfer.add(getLblFiltrar());
+			panelMedEnfer.add(getRdbtnEnfermero());
+			panelMedEnfer.add(getRdbtnMdico());
+		}
+		return panelMedEnfer;
+	}
+	private JPanel getPnNombre() {
+		if (pnNombre == null) {
+			pnNombre = new JPanel();
+			pnNombre.add(getLblNombre());
+			pnNombre.add(getTxtNombre());
+			pnNombre.add(getBtnIr_1());
+		}
+		return pnNombre;
+	}
+	private JLabel getLblNombre() {
+		if (lblNombre == null) {
+			lblNombre = new JLabel("Nombre:");
+		}
+		return lblNombre;
+	}
+	private JTextField getTxtNombre() {
+		if (txtNombre == null) {
+			txtNombre = new JTextField();
+			txtNombre.setColumns(10);
+		}
+		return txtNombre;
+	}
+	private JButton getBtnIr_1() {
+		if (btnIr_1 == null) {
+			btnIr_1 = new JButton("Ir");
+			btnIr_1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					
+				//	buscarPorNombre();
+					
+				}
+
+				
+			});
+		}
+		return btnIr_1;
+	}
+	
+	
+	/*
+	private void buscarPorNombre() {
+		if(txtNombre.getText().equals(""))
+			JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
+		else {	
+			if(rdbtnMdico.isSelected())
+		}
+	}
+		*/	
+			public void añadirFilasMedico()  {
+				borrarModeloTabla();
+				Object[] nuevaFila=new Object[12];
+				List<Cita> citas = new ArrayList<Cita>();
+			
+				try {
+					citas = pbd.devolverCitas();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				
+			}
+			
+				for(Cita c:citas) {
+					Paciente p = null;
+					Empleado empleado=null;
+					
+					try {
+						p = pbd.devolverPacientesMedico(c.getCodCita());
+							empleado=pbd.devolverEmpleado(c.getCodMed());
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+					nuevaFila[0] = p.getNombre();
+					nuevaFila[1]= p.getApellido();
+					nuevaFila[2] = c.gethInicio();
+					nuevaFila[3] =c.gethFin();
+					nuevaFila[4] =c.getDate();
+					nuevaFila[5] =c.getUbicacion();
+					nuevaFila[6] = empleado.getNombre()+"  " +empleado.getApellido();
+					nuevaFila[8] = c.isUrgente();
+					nuevaFila[9]=c.getCodCita();
+					nuevaFila[10]=c.getCodPaciente();
+					nuevaFila[11]=c.getCodMed();
+					modeloTabla.addRow(nuevaFila);
+					}
+				}
+			
+			
+	private JPanel getPnApellido() {
+		if (pnApellido == null) {
+			pnApellido = new JPanel();
+			pnApellido.add(getLblApellido());
+			pnApellido.add(getTxtApellido());
+			pnApellido.add(getBtnApellido());
+		}
+		return pnApellido;
+	}
+	private JPanel getPanelVacio() {
+		if (panelVacio == null) {
+			panelVacio = new JPanel();
+		}
+		return panelVacio;
+	}
+	private JLabel getLblApellido() {
+		if (lblApellido == null) {
+			lblApellido = new JLabel("Apellido:");
+		}
+		return lblApellido;
+	}
+	private JTextField getTxtApellido() {
+		if (txtApellido == null) {
+			txtApellido = new JTextField();
+			txtApellido.setColumns(10);
+		}
+		return txtApellido;
+	}
+	private JButton getBtnApellido() {
+		if (BtnApellido == null) {
+			BtnApellido = new JButton("Ir");
+		}
+		return BtnApellido;
+	}
+	private JPanel getPnCodEmpleado() {
+		if (pnCodEmpleado == null) {
+			pnCodEmpleado = new JPanel();
+			pnCodEmpleado.add(getLblCodempleado());
+			pnCodEmpleado.add(getTxtEmpleado());
+			pnCodEmpleado.add(getBtnCodEmpleado());
+		}
+		return pnCodEmpleado;
+	}
+	private JLabel getLblCodempleado() {
+		if (lblCodempleado == null) {
+			lblCodempleado = new JLabel("CodEmpleado:");
+		}
+		return lblCodempleado;
+	}
+	private JTextField getTxtEmpleado() {
+		if (txtEmpleado == null) {
+			txtEmpleado = new JTextField();
+			txtEmpleado.setColumns(10);
+		}
+		return txtEmpleado;
+	}
+	private JButton getBtnCodEmpleado() {
+		if (btnCodEmpleado == null) {
+			btnCodEmpleado = new JButton("Ir");
+		}
+		return btnCodEmpleado;
+	}
+	private JPanel getPnNombreApellido() {
+		if (pnNombreApellido == null) {
+			pnNombreApellido = new JPanel();
+			pnNombreApellido.add(getBtnNombreYApellido());
+		}
+		return pnNombreApellido;
+	}
+	private JButton getBtnNombreYApellido() {
+		if (btnNombreYApellido == null) {
+			btnNombreYApellido = new JButton("Nombre y apellido");
+		}
+		return btnNombreYApellido;
+	}
+	private JPanel getPanelEspecialidad() {
+		if (panelEspecialidad == null) {
+			panelEspecialidad = new JPanel();
+			panelEspecialidad.setLayout(null);
+			panelEspecialidad.add(getComboBox());
+		}
+		return panelEspecialidad;
+	}
+	private JComboBox getComboBox() {
+		if (comboBox == null) {
+			comboBox = new JComboBox();
+			comboBox.setBounds(12, 13, 216, 22);
+		}
+		return comboBox;
+	}
+	private JPanel getPanelNomEspe() {
+		if (panelNomEspe == null) {
+			panelNomEspe = new JPanel();
+			panelNomEspe.add(getLblEspecialidad());
+			panelNomEspe.add(getTxtEspecialidad());
+		}
+		return panelNomEspe;
+	}
+	private JLabel getLblEspecialidad() {
+		if (lblEspecialidad == null) {
+			lblEspecialidad = new JLabel("Especialidad:");
+		}
+		return lblEspecialidad;
+	}
+	private JTextField getTxtEspecialidad() {
+		if (txtEspecialidad == null) {
+			txtEspecialidad = new JTextField();
+			txtEspecialidad.setColumns(10);
+		}
+		return txtEspecialidad;
+	}
 }
