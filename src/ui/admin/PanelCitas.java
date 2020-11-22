@@ -1417,7 +1417,7 @@ public class PanelCitas extends JDialog {
 			list_1 = new JList<Enfermero>();
 			modeloListEnf = new DefaultListModel<Enfermero>();
 			try {
-				modeloListEnf.addAll(pbd.listarEnfermero());
+				((List<Enfermero>) modeloListEnf).addAll(pbd.listarEnfermero());
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

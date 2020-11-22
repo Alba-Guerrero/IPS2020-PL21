@@ -2265,7 +2265,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 	private void mostrarHistorial() throws SQLException {
 		guardarAccionHist();
-		HistorialMedico hm = pbd.HistorialCita(cita.getCodCita(),paciente.getCodePaciente(),cita.getCodMed());
+		HistorialMedico hm = pbd.HistorialCita(cita.getCodCita(),paciente.getCodePaciente());
 		MostrarHistorial mh = new MostrarHistorial(hm);
 		mh.setLocationRelativeTo(null);
 		mh.setResizable(true);
