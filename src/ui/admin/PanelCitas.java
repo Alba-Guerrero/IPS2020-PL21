@@ -1145,7 +1145,9 @@ public class PanelCitas extends JDialog {
 				public void actionPerformed(ActionEvent e) {
 					
 					try {
-						modeloListaPaciente(pbd.pacienteHistorial(txtFieldCodHistorial.getText()));
+					List<Paciente> p=new ArrayList<Paciente>();
+					p.add(pbd.pacienteHistorial(txtFieldCodHistorial.getText()));
+						modeloListaPaciente(p);
 						txtFieldCodHistorial.setText("");
 					} catch (SQLException e1) {
 						e1.printStackTrace();

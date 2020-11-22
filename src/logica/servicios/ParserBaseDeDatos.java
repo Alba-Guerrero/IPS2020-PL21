@@ -1730,22 +1730,23 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		return cita;
 	}
 
-	public List<Paciente> pacienteHistorial(String historial) throws SQLException {
-		List<Paciente> pacientes = new ArrayList<Paciente>();
+	public Paciente  pacienteHistorial(String historial) throws SQLException {
+		Paciente p = null;
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst = con.prepareStatement(PACIENTE_HISTORIAL);
 		pst.setString(1, historial);
 		ResultSet rs = pst.executeQuery();
 		if (rs.next()) {
 
-			pacientes.add((new Paciente(rs.getString("codpaciente"), rs.getString("nombre"), rs.getString("apellido"),
-					rs.getInt("movil"), rs.getString("email"), rs.getString("info"), rs.getString("nhistorial"))));
+			p=(new Paciente(rs.getString("codpaciente"), rs.getString("nombre"), rs.getString("apellido"),
+					rs.getInt("movil"), rs.getString("email"), rs.getString("info"), rs.getString("nhistorial")));
 		}
 		rs.close();
 		pst.close();
 		con.close();
-		return pacientes;
+		return p;
 	}
+	
 
 	public List<String> verVacunasPaciente(String nHistorial) throws SQLException {
 		List<String> listaVacunas = new ArrayList<String>();
