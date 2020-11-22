@@ -11,8 +11,11 @@ import javax.swing.border.EmptyBorder;
 
 import logica.Cita;
 import logica.HistorialMedico;
+import logica.Paciente;
 import logica.Preinscripcion;
+import logica.servicios.HistorialToPDF;
 import logica.servicios.ParserBaseDeDatos;
+import net.sf.jasperreports.engine.JRException;
 
 import java.awt.CardLayout;
 import javax.swing.JTabbedPane;
@@ -24,6 +27,11 @@ import java.util.List;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JButton;
+import javax.swing.ImageIcon;
+import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.awt.event.ActionEvent;
 
 public class MostrarHistorial extends JDialog {
 
@@ -53,6 +61,8 @@ public class MostrarHistorial extends JDialog {
 	private JPanel panelDiagnosticos;
 	private JScrollPane scrollPaneDiagnosticos;
 	private JTextArea textAreaDiagnosticos;
+	private JButton btnNewButton;
+	private JButton btnNewButton_1;
 
 	/**
 	 * Create the frame.
@@ -74,6 +84,8 @@ public class MostrarHistorial extends JDialog {
 	private JPanel getPanelBotones() {
 		if (panelBotones == null) {
 			panelBotones = new JPanel();
+			panelBotones.add(getBtnNewButton());
+			panelBotones.add(getBtnNewButton_1());
 		}
 		return panelBotones;
 	}
@@ -280,5 +292,46 @@ public class MostrarHistorial extends JDialog {
 			diagnosticos += str + "\n";
 		}
 		return diagnosticos;
+	}
+	private JButton getBtnNewButton() {
+		if (btnNewButton == null) {
+			btnNewButton = new JButton("Descargar Historial");
+			btnNewButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					descargarHistorial();
+				}
+			});
+		}
+		return btnNewButton;
+	}
+	
+	void descargarHistorial() {
+		
+		HistorialToPDF h=  new HistorialToPDF();
+		ParserBaseDeDatos pbd = new ParserBaseDeDatos();
+		Paciente paciente;
+		try {
+			paciente = pbd.pacienteHistorial(hm.getHistorial());
+			h.createPDF(paciente);
+		} catch (SQLException | FileNotFoundException | JRException e) {
+			
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+	private JButton getBtnNewButton_1() {
+		if (btnNewButton_1 == null) {
+			btnNewButton_1 = new JButton("");
+			btnNewButton_1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					
+					
+				}
+			});
+			btnNewButton_1.setIcon(new ImageIcon(MostrarHistorial.class.getResource("/javax/swing/plaf/metal/icons/Error.gif")));
+		}
+		return btnNewButton_1;
 	}
 }

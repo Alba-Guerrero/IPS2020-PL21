@@ -83,7 +83,7 @@ public class HistorialToPDF {
 
 		// Sacamso el objeto a pdf
 		JasperPrint jp = JasperFillManager.fillReport(jr, parameters, new JREmptyDataSource());
-		JasperExportManager.exportReportToPdfStream(jp, new FileOutputStream(p.getHistorial() + "Historial.pdf"));
+		JasperExportManager.exportReportToPdfStream(jp, new FileOutputStream("historial/"+p.getHistorial() + "Historial.pdf"));
 		// FileOutputStream output= new FileOutputStream(new
 		// File(p.getHistorial()+"receta.pdf"));
 

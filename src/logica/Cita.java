@@ -28,6 +28,7 @@ public class Cita {
 	private boolean urgente;
 	private Time hInicioR;
 	private Time hFinR;
+	private String numequipo;
 	
 	
 	private ParserBaseDeDatos pbd=new ParserBaseDeDatos();
@@ -73,6 +74,17 @@ public class Cita {
 			this.date=date;
 			this.ubicacion=ubicacion;
 	}
+	
+	public Cita (String codcita ,String codPaciente, Time hInicio, Time hFin, java.sql.Date date,String ubicacion,boolean urgencia, String numequipo){
+		this.CodCita=codcita;
+		this.codPaciente = codPaciente;
+		this.urgente = urgencia;
+		this.hInicio = hInicio;
+		this.hFin = hFin;
+		this.date=date;
+		this.ubicacion=ubicacion;
+		this.numequipo = numequipo;
+}
 
 	public Cita (Time hInicio, Date date,String ubicacion){
 		this.hInicio = hInicio;
@@ -80,8 +92,28 @@ public class Cita {
 		this.ubicacion=ubicacion;
 }
 
+	public Cita(String codPaciente, Time hInicio, Time hFin,Date date,String ubicacion, boolean selected, String numequipo) throws SQLException {
+		this.codPaciente = codPaciente;
+		this.urgente = selected;
+		this.hInicio = hInicio;
+		this.hFin = hFin;
+		this.date=date;
+		this.ubicacion=ubicacion;
+		this.numequipo = numequipo;
+		generateRandomCodCita();
+		
+	}
 	
 	
+	
+	public String getNumequipo() {
+		return numequipo;
+	}
+
+	public void setNumequipo(String numequipo) {
+		this.numequipo = numequipo;
+	}
+
 	/**
 	 * @param codPaciente the codPaciente to set
 	 */

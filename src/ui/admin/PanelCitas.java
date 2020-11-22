@@ -32,8 +32,10 @@ import logica.AccionEmpleado;
 import logica.Acompañante;
 import logica.Cita;
 import logica.Email;
+import logica.Equipo;
 import logica.Paciente;
 import logica.empleados.Empleado;
+import logica.empleados.Enfermero;
 import logica.empleados.Medico;
 
 import javax.swing.JComboBox;
@@ -59,6 +61,7 @@ import javax.swing.ListSelectionModel;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.SwingConstants;
 import java.awt.Rectangle;
+import javax.swing.border.LineBorder;
 
 public class PanelCitas extends JDialog {
 	/**
@@ -66,6 +69,7 @@ public class PanelCitas extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
+	private JPanel panelArriba_1;
 	private JPanel pnMedico;
 	private JPanel pnContactoFecha;
 	private JPanel panelAbajo1;
@@ -104,11 +108,32 @@ public class PanelCitas extends JDialog {
 	private Paciente pacienteCita;
 	private Acompañante acompañante;
 	private DefaultListModel<Medico> modeloMedSelec;
+	private DefaultListModel<Enfermero> modeloListEnf;
+	private DefaultListModel<Enfermero> modeloEnfSelec;
+	private ArrayList<Enfermero> enfermeros;
 	
 	List<String> salas;
 	private String codAdmin;
 	
-	
+	private JPanel panelEquipo;
+	private JPanel panelDatosEquipoSeleccion;
+	private JPanel pnDatosEquipo;
+	private JPanel pnEquipoSeleccionado;
+	private JPanel pnEquiposLista;
+	private JScrollPane scrollPanelListaEquipos;
+	private JList<Equipo> listEquipos;
+	private JLabel lblNombreMedicoEquip;
+	private JLabel lblNombreEquipo;
+	private JButton btnFiltrarNombreEquipo;
+	private JButton btnNombreMedicoEquip;
+	private JTextField txtNombreEquipo;
+	private JTextField txtNombreMedicoEquip;
+	private ArrayList<Equipo> equipos;
+	private JScrollPane scrollPaneEquipoSeleccionado;
+	private JList<Equipo> listEquipoSeleccionado;
+	private DefaultListModel<Equipo> modeloEquipSelec;
+	private DefaultListModel<Equipo> modeloListaE;
+	 
 	/**
 	 * Create the dialog.
 	 * 
@@ -121,13 +146,13 @@ public class PanelCitas extends JDialog {
 		setTitle("Administrativo: citas");
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 1055, 823);
+		setBounds(100, 100, 1055, 770);
 		getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
 		getContentPane().add(getScrollPane_1_3());
 		contentPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Citas", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		getContentPane().add(scrollPane_1);
-		contentPanel.setLayout(new GridLayout(2, 2, 0, 0));
-		{
+		contentPanel.setLayout(new GridLayout(6, 1, 0, 0));
+		/*{
 			JPanel pnPacienteMedico = new JPanel();
 			contentPanel.add(pnPacienteMedico);
 			pnPacienteMedico.setLayout(new GridLayout(0, 1, 0, 0));
@@ -140,12 +165,31 @@ public class PanelCitas extends JDialog {
 				panelArriba_1.add(getScrollPane_1_2());
 			}
 			pnPacienteMedico.add(getPnMedico());
-		}
-		contentPanel.add(getPnContactoFecha());
+			pnPacienteMedico.add(getPanelEnfermero());
+		}*/
+		contentPanel.add(getPanelArriba_1());
+		contentPanel.add(getPnMedico());
+		contentPanel.add(getPanelEnfermero());
+		contentPanel.add(getPanelEquipo());
+		contentPanel.add(getPanelAbajo1());
+		contentPanel.add(getPanelAbajo2());
+		//contentPanel.add(getPnContactoFecha());
+		
+		
 		//setContactData();
 	}
 
-	
+	private JPanel getPanelArriba_1() {
+		if(panelArriba_1 == null) {
+			panelArriba_1 = new JPanel();
+			panelArriba_1.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "Paciente", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+			panelArriba_1.setLayout(new GridLayout(0, 2, 0, 0));
+			panelArriba_1.add(getPnDatosPaciente());
+			panelArriba_1.add(getScrollPane_1_2());
+		}
+		
+		return panelArriba_1;
+	}
 
 	private JPanel getPnMedico() throws SQLException {
 		if (pnMedico == null) {
@@ -375,13 +419,20 @@ public class PanelCitas extends JDialog {
 						JOptionPane.showMessageDialog(null,"Por favor,revise todos los campos han sido rellenados correctamente");
 					else
 						if(hora()) {
-
-							if (checkMedico()) {
+							if (checkMedico() && medicos.size() >0) {
 								if(checkSala()) {
 									crearCita();
 									JOptionPane.showMessageDialog(null, "Su cita se ha generado con exito");
 									dispose();
 								}
+							}
+							else {
+								if(checkSala()) {
+									crearCitaEquipo();
+									JOptionPane.showMessageDialog(null, "Su cita se ha generado con exito");
+									dispose();
+								}
+								
 							}
 						}
 				}
@@ -536,6 +587,12 @@ public class PanelCitas extends JDialog {
 			return false;
 		return medicos.size() > 0;
 	}
+	
+	private boolean JlistEquipoFill() {
+		if (equipos == null)
+			return false;
+		return equipos.size() > 0;
+	}
 
 	/*
 	private boolean ComboBoxPacientes() {
@@ -575,7 +632,7 @@ public class PanelCitas extends JDialog {
 	 * @throws SQLException
 	 */
 	private boolean camposCubiertos() {
-		if (JlistMedicoFill() &&ComboBoxSala() ) {
+		if ((JlistMedicoFill()||JlistEquipoFill()) &&ComboBoxSala() ) {
 			btnCrearCita.setEnabled(true);
 			return true;
 
@@ -621,6 +678,25 @@ public class PanelCitas extends JDialog {
 			}
 
 		}
+		
+//		for (int i = 0; i < enfermeros.size(); i++) {
+//			System.out.println(enfermeros.size());
+//			
+//			String sala = (String) getCbSala().getSelectedItem();
+//			Cita c;
+//			try {
+//				c = new Cita(pacienteCita.getCodePaciente(), enfermeros.get(i).getCodeEmpleado(), timeInicio, timeFin, sDate, sala,
+//						chckbxEsUrgente.isSelected());
+//				pbd.crearCita(c);
+//				guardarAccion();
+//				if(c.isUrgente())
+//					Email.enviarCorreo("roloalvarez7@gmail.com", "sbeiaolebhiewuzz", "UO266007@uniovi.es", pacienteCita, c);
+//
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			}
+//
+//		}
 		
 		
 	}
@@ -678,42 +754,42 @@ public class PanelCitas extends JDialog {
 	private JLabel getLabel_1() {
 		if (lblNombreDatos == null) {
 			lblNombreDatos = new JLabel("Nombre: ");
-			lblNombreDatos.setBounds(25, 28, 54, 16);
+			lblNombreDatos.setBounds(27, 43, 54, 16);
 		}
 		return lblNombreDatos;
 	}
 	private JLabel getLabel_2() {
 		if (lblApellidosDatos == null) {
 			lblApellidosDatos = new JLabel("Apellidos:");
-			lblApellidosDatos.setBounds(23, 63, 56, 16);
+			lblApellidosDatos.setBounds(25, 86, 56, 16);
 		}
 		return lblApellidosDatos;
 	}
 	private JLabel getLabel_3() {
 		if (lblTelefonoDatos == null) {
 			lblTelefonoDatos = new JLabel("Tel\u00E9fono:");
-			lblTelefonoDatos.setBounds(23, 98, 55, 16);
+			lblTelefonoDatos.setBounds(25, 129, 55, 16);
 		}
 		return lblTelefonoDatos;
 	}
 	private JLabel getLabel_4() {
 		if (lblCorreoDatos == null) {
 			lblCorreoDatos = new JLabel("Correo electr\u00F3nico:");
-			lblCorreoDatos.setBounds(10, 130, 110, 16);
+			lblCorreoDatos.setBounds(10, 173, 110, 16);
 		}
 		return lblCorreoDatos;
 	}
 	private JLabel getLabel_5() {
 		if (lblInfoAdicionalDatos == null) {
 			lblInfoAdicionalDatos = new JLabel("Informaci\u00F3n adicional:");
-			lblInfoAdicionalDatos.setBounds(404, 57, 127, 16);
+			lblInfoAdicionalDatos.setBounds(410, 43, 127, 16);
 		}
 		return lblInfoAdicionalDatos;
 	}
 	private JTextField getTxtFieldCorreoDatos() {
 		if (txtFieldCorreoDatos == null) {
 			txtFieldCorreoDatos = new JTextField();
-			txtFieldCorreoDatos.setBounds(127, 127, 180, 22);
+			txtFieldCorreoDatos.setBounds(127, 170, 180, 22);
 			txtFieldCorreoDatos.setEditable(false);
 			txtFieldCorreoDatos.setColumns(10);
 			
@@ -723,7 +799,7 @@ public class PanelCitas extends JDialog {
 	private JTextField getTxtFieldTelefonoDatos() {
 		if (txtFieldTelefonoDatos == null) {
 			txtFieldTelefonoDatos = new JTextField();
-			txtFieldTelefonoDatos.setBounds(127, 95, 180, 22);
+			txtFieldTelefonoDatos.setBounds(127, 126, 180, 22);
 			txtFieldTelefonoDatos.setEditable(false);
 			txtFieldTelefonoDatos.setColumns(10);
 		
@@ -733,7 +809,7 @@ public class PanelCitas extends JDialog {
 	private JTextField getTxtFieldApellidosDatos() {
 		if (txtFieldApellidosDatos == null) {
 			txtFieldApellidosDatos = new JTextField();
-			txtFieldApellidosDatos.setBounds(127, 60, 180, 22);
+			txtFieldApellidosDatos.setBounds(127, 83, 180, 22);
 			txtFieldApellidosDatos.setEditable(false);
 			txtFieldApellidosDatos.setColumns(10);
 			
@@ -743,7 +819,7 @@ public class PanelCitas extends JDialog {
 	private JTextField getTxtFieldNombreDatos() {
 		if (txtFieldNombreDatos == null) {
 			txtFieldNombreDatos = new JTextField();
-			txtFieldNombreDatos.setBounds(127, 25, 180, 22);
+			txtFieldNombreDatos.setBounds(127, 40, 180, 22);
 			txtFieldNombreDatos.setEditable(false);
 			txtFieldNombreDatos.setColumns(10);
 		}
@@ -752,7 +828,7 @@ public class PanelCitas extends JDialog {
 	private JScrollPane getScrollPane_1_1() {
 		if (scrrlPaneInfoAdicional == null) {
 			scrrlPaneInfoAdicional = new JScrollPane();
-			scrrlPaneInfoAdicional.setBounds(540, 28, 220, 113);
+			scrrlPaneInfoAdicional.setBounds(540, 28, 301, 161);
 			scrrlPaneInfoAdicional.setViewportView(getTextArea_1_1());
 		}
 		return scrrlPaneInfoAdicional;
@@ -768,7 +844,7 @@ public class PanelCitas extends JDialog {
 	private JButton getBtnEditarTelefonoDatos() {
 		if (btnEditarTelefonoDatos == null) {
 			btnEditarTelefonoDatos = new JButton("Editar");
-			btnEditarTelefonoDatos.setBounds(321, 94, 65, 25);
+			btnEditarTelefonoDatos.setBounds(317, 125, 65, 25);
 			btnEditarTelefonoDatos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					txtFieldTelefonoDatos.setEditable(true);
@@ -780,7 +856,7 @@ public class PanelCitas extends JDialog {
 	private JButton getBtnEditarCorreoDatos() {
 		if (btnEditarCorreoDatos == null) {
 			btnEditarCorreoDatos = new JButton("Editar");
-			btnEditarCorreoDatos.setBounds(321, 126, 65, 25);
+			btnEditarCorreoDatos.setBounds(321, 169, 65, 25);
 			btnEditarCorreoDatos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					txtFieldCorreoDatos.setEditable(true);
@@ -856,12 +932,26 @@ public class PanelCitas extends JDialog {
 	private JScrollPane scrollPane;
 	private JList<Medico> list;
 	private JScrollPane scrollPane_1;
+	private JPanel panelEnfermero;
+	private JPanel panelFiltrosSeleccEnfermero;
+	private JScrollPane scrollPaneListaEnfermeros;
+	private JList<Enfermero> list_1;
+	private JPanel panelFiltrosEnf;
+	private JPanel panelEnfSeleccionados;
+	private JScrollPane scrrPaneSeleccionados;
+	private JList listEnfSeleccionados;
+	private JLabel lblNewLabel_1;
+	private JLabel lblNewLabel_2;
+	private JTextField txtFieldFiltroNomEnf;
+	private JTextField txtFieldFiltroApeEmp;
+	private JButton btnFiltroNomEmp;
+	private JButton btnFiltroApeNum;
 	
 	
 	private JButton getBtnActualizarDatos() {
 		if (btnActualizarDatos == null) {
 			btnActualizarDatos = new JButton("Actualizar");
-			btnActualizarDatos.setBounds(805, 126, 89, 25);
+			btnActualizarDatos.setBounds(880, 179, 89, 25);
 			btnActualizarDatos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(checkCambiosInfo()) {
@@ -1055,7 +1145,9 @@ public class PanelCitas extends JDialog {
 				public void actionPerformed(ActionEvent e) {
 					
 					try {
-						modeloListaPaciente(pbd.pacienteHistorial(txtFieldCodHistorial.getText()));
+					List<Paciente> p=new ArrayList<Paciente>();
+					p.add(pbd.pacienteHistorial(txtFieldCodHistorial.getText()));
+						modeloListaPaciente(p);
 						txtFieldCodHistorial.setText("");
 					} catch (SQLException e1) {
 						e1.printStackTrace();
@@ -1292,7 +1384,384 @@ public class PanelCitas extends JDialog {
 		if (scrollPane_1 == null) {
 			scrollPane_1 = new JScrollPane();
 			scrollPane_1.setViewportView(contentPanel);
+			scrollPane_1.getVerticalScrollBar().setUnitIncrement(16);
 		}
 		return scrollPane_1;
 	}
+	private JPanel getPanelEnfermero() {
+		if (panelEnfermero == null) {
+			panelEnfermero = new JPanel();
+			panelEnfermero.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Enfermero", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+			panelEnfermero.setLayout(new GridLayout(0, 2, 0, 0));
+			panelEnfermero.add(getPanelFiltrosSeleccEnfermero());
+			panelEnfermero.add(getScrollPaneListaEnfermeros());
+		}
+		return panelEnfermero;
+	}
+	private JPanel getPanelFiltrosSeleccEnfermero() {
+		if (panelFiltrosSeleccEnfermero == null) {
+			panelFiltrosSeleccEnfermero = new JPanel();
+			panelFiltrosSeleccEnfermero.setLayout(new GridLayout(2, 0, 0, 0));
+			panelFiltrosSeleccEnfermero.add(getPanelFiltrosEnf());
+			panelFiltrosSeleccEnfermero.add(getPanelEnfSeleccionados());
+		}
+		return panelFiltrosSeleccEnfermero;
+	}
+	private JScrollPane getScrollPaneListaEnfermeros() {
+		if (scrollPaneListaEnfermeros == null) {
+			scrollPaneListaEnfermeros = new JScrollPane();
+			scrollPaneListaEnfermeros.setViewportView(getList_1_2());
+		}
+		return scrollPaneListaEnfermeros;
+	}
+	private JList<Enfermero> getList_1_2() {
+		if (list_1 == null) {
+			list_1 = new JList<Enfermero>();
+			modeloListEnf = new DefaultListModel<Enfermero>();
+			try {
+				((List<Enfermero>) modeloListEnf).addAll(pbd.listarEnfermero());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			list_1.setModel(modeloListEnf);
+			list_1.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent event) {
+					enfermeros = new ArrayList<Enfermero>();
+					@SuppressWarnings("deprecation")
+					Object[] selectedValues = list_1.getSelectedValues();
+					if (selectedValues.length >= 0) {
+						for (int i = 0; i < selectedValues.length; i++) {
+							enfermeros.add((Enfermero) selectedValues[i]);
+						}
+
+				
+						for (int i = 0; i < enfermeros.size(); i++) {
+							if(!modeloEnfSelec.contains(enfermeros.get(i)))
+							modeloEnfSelec.addElement(enfermeros.get(i));
+							
+						}
+						listEnfSeleccionados.setModel(modeloEnfSelec);
+						
+						}
+					
+
+					camposCubiertos();
+
+					}
+
+			});
+		}
+		return list_1;
+	}
+	private JPanel getPanelFiltrosEnf() {
+		if (panelFiltrosEnf == null) {
+			panelFiltrosEnf = new JPanel();
+			panelFiltrosEnf.setLayout(new MigLayout("", "[68px][225px][89px]", "[23px][23px][]"));
+			panelFiltrosEnf.add(getLblNewLabel_1(), "cell 0 0,growx,aligny center");
+			panelFiltrosEnf.add(getTxtFieldFiltroNomEnf(), "cell 1 0,growx,aligny center");
+			panelFiltrosEnf.add(getBtnFiltroNomEmp(), "cell 2 0,growx,aligny top");
+			panelFiltrosEnf.add(getLblNewLabel_2(), "cell 0 2,growx,aligny center");
+			panelFiltrosEnf.add(getTxtFieldFiltroApeEmp(), "cell 1 2,growx,aligny center");
+			panelFiltrosEnf.add(getBtnFiltroApeNum(), "cell 2 2,growx,aligny top");
+		}
+		return panelFiltrosEnf;
+	}
+	private JPanel getPanelEnfSeleccionados() {
+		if (panelEnfSeleccionados == null) {
+			panelEnfSeleccionados = new JPanel();
+			panelEnfSeleccionados.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Enfermeros seleccionados", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			panelEnfSeleccionados.setLayout(null);
+			panelEnfSeleccionados.add(getScrrPaneSeleccionados());
+		}
+		return panelEnfSeleccionados;
+	}
+	private JScrollPane getScrrPaneSeleccionados() {
+		if (scrrPaneSeleccionados == null) {
+			scrrPaneSeleccionados = new JScrollPane();
+			scrrPaneSeleccionados.setBounds(10, 21, 478, 74);
+			scrrPaneSeleccionados.setViewportView(getListEnfSeleccionados());
+		}
+		return scrrPaneSeleccionados;
+	}
+	private JList getListEnfSeleccionados() {
+		if (listEnfSeleccionados == null) {
+			listEnfSeleccionados = new JList();
+			modeloEnfSelec= new DefaultListModel<Enfermero>();
+			listEnfSeleccionados.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if(e.getClickCount()==2) {
+						
+							Enfermero enf=(Enfermero) listEnfSeleccionados.getSelectedValue();
+							int res=JOptionPane.showConfirmDialog(null, "¿Esta seguro de que desea borrar este enfermero?","Confirmación de eliminación", JOptionPane.YES_NO_OPTION);
+							if(res==JOptionPane.YES_OPTION)	
+								modeloEnfSelec.removeElement(enf);
+				}
+					}
+			});
+		}
+		return listEnfSeleccionados;
+	}
+	private JLabel getLblNewLabel_1() {
+		if (lblNewLabel_1 == null) {
+			lblNewLabel_1 = new JLabel("Nombre:");
+		}
+		return lblNewLabel_1;
+	}
+	private JLabel getLblNewLabel_2() {
+		if (lblNewLabel_2 == null) {
+			lblNewLabel_2 = new JLabel("Apellidos:");
+		}
+		return lblNewLabel_2;
+	}
+	private JTextField getTxtFieldFiltroNomEnf() {
+		if (txtFieldFiltroNomEnf == null) {
+			txtFieldFiltroNomEnf = new JTextField();
+			txtFieldFiltroNomEnf.setColumns(10);
+		}
+		return txtFieldFiltroNomEnf;
+	}
+	private JTextField getTxtFieldFiltroApeEmp() {
+		if (txtFieldFiltroApeEmp == null) {
+			txtFieldFiltroApeEmp = new JTextField();
+			txtFieldFiltroApeEmp.setColumns(10);
+		}
+		return txtFieldFiltroApeEmp;
+	}
+	private JButton getBtnFiltroNomEmp() {
+		if (btnFiltroNomEmp == null) {
+			btnFiltroNomEmp = new JButton("Filtrar");
+			btnFiltroNomEmp.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					//pbd.filtrarNombreEnfermero()
+					
+				}
+			});
+			btnFiltroNomEmp.setEnabled(false);
+		}
+		return btnFiltroNomEmp;
+	}
+	private JButton getBtnFiltroApeNum() {
+		if (btnFiltroApeNum == null) {
+			btnFiltroApeNum = new JButton("Filtrar");
+			btnFiltroApeNum.setEnabled(false);
+		}
+		return btnFiltroApeNum;
+	}
+	
+	private JPanel getPanelEquipo() throws SQLException {
+		if (panelEquipo == null) {
+			panelEquipo = new JPanel();
+			panelEquipo.setBorder(new TitledBorder(null, "Equipo", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			panelEquipo.setLayout(new GridLayout(1, 0, 0, 0));
+			panelEquipo.add(getPanelDatosEquipoSeleccion());
+			panelEquipo.add(getPnEquiposLista());
+		}
+		return panelEquipo;
+	}
+	private JPanel getPanelDatosEquipoSeleccion() {
+		if (panelDatosEquipoSeleccion == null) {
+			panelDatosEquipoSeleccion = new JPanel();
+			panelDatosEquipoSeleccion.setLayout(new GridLayout(2, 0, 0, 0));
+			panelDatosEquipoSeleccion.add(getPnDatosEquipo());
+			panelDatosEquipoSeleccion.add(getPnEquipoSeleccionado());
+		}
+		return panelDatosEquipoSeleccion;
+	}
+	private JPanel getPnDatosEquipo() {
+		if (pnDatosEquipo == null) {
+			pnDatosEquipo = new JPanel();
+			pnDatosEquipo.setLayout(new MigLayout("", "[152px][152px][152px]", "[17px][17px][17px][17px]"));
+			pnDatosEquipo.add(getLblNombreEquipo(), "flowx,cell 0 1,grow");
+			pnDatosEquipo.add(getTxtNombreEquipo(), "cell 1 1,grow");
+			pnDatosEquipo.add(getBtnFiltrarNombreEquipo(), "cell 2 1,grow");
+			pnDatosEquipo.add(getLblNombreMedicoEquip(), "cell 0 3,grow");
+			pnDatosEquipo.add(getTxtNombreMedicoEquip(), "cell 1 3,grow");
+			pnDatosEquipo.add(getBtnNombreMedicoEquip(), "cell 2 3,grow");
+		}
+		return pnDatosEquipo;
+	}
+	private JPanel getPnEquipoSeleccionado() {
+		if (pnEquipoSeleccionado == null) {
+			pnEquipoSeleccionado = new JPanel();
+			pnEquipoSeleccionado.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "Equipo seleccionado", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+			pnEquipoSeleccionado.setLayout(null);
+			pnEquipoSeleccionado.add(getScrollPaneEquipoSeleccionado());
+		}
+		return pnEquipoSeleccionado;
+	}
+	private JPanel getPnEquiposLista() throws SQLException {
+		if (pnEquiposLista == null) {
+			pnEquiposLista = new JPanel();
+			pnEquiposLista.setBorder(new TitledBorder(null, "Seleccione el equipo", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			pnEquiposLista.setLayout(null);
+			pnEquiposLista.add(getScrollPanelListaEquipos());
+		}
+		return pnEquiposLista;
+	}
+	private JScrollPane getScrollPanelListaEquipos() throws SQLException {
+		if (scrollPanelListaEquipos == null) {
+			scrollPanelListaEquipos = new JScrollPane();
+			scrollPanelListaEquipos.setOpaque(false);
+			scrollPanelListaEquipos.setBounds(21, 23, 453, 178);
+			scrollPanelListaEquipos.setViewportView(getList_1_4());
+		}
+		return scrollPanelListaEquipos;
+	}
+	private JList<Equipo> getList_1_4() throws SQLException {
+		if (listEquipos == null) {
+			listEquipos = new JList<Equipo>();
+			listEquipos.setBackground(Color.WHITE);
+			modeloListaE(pbd.buscarEquipo(""));
+			listEquipos.setModel(modeloListaE);
+			equipos = new ArrayList<Equipo>();
+			listEquipos.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent event) {
+					
+					@SuppressWarnings("deprecation")
+					Object[] selectedValues = listEquipos.getSelectedValues();
+					if (selectedValues.length >= 0) {
+						for (int i = 0; i < selectedValues.length; i++) {
+							equipos.add((Equipo) selectedValues[i]);
+						}
+						modeloListaSeleccionadosEquipos(equipos);
+					camposCubiertos();
+					}}
+			});
+			
+		}
+		return listEquipos;
+	}
+	
+	protected void modeloListaSeleccionadosEquipos(List<Equipo> equipos) {
+		if(equipos!=null) {
+			for (int i = 0; i < equipos.size(); i++) {
+				if(!modeloEquipSelec.contains(equipos.get(i)))
+					modeloEquipSelec.addElement(equipos.get(i));
+				
+			}
+			listEquipoSeleccionado.setModel(modeloEquipSelec);
+			}
+	}
+
+
+
+	private DefaultListModel<Equipo> modeloListaE(List<Equipo> equipo) throws SQLException {
+		modeloListaE = new DefaultListModel<Equipo>();
+		if(equipo!=null) {
+		List<Equipo> equipos = equipo;
+		for (int i = 0; i < equipos.size(); i++) {
+			modeloListaE.addElement(equipos.get(i));
+
+		}
+		listEquipos.setModel(modeloListaE);
+		}
+		if(modeloListaE.getSize()==0)
+			JOptionPane.showMessageDialog(null, "No se ha encontrado ningún equipo con esas características");
+		return modeloListaE;
+	}
+	private JScrollPane getScrollPaneEquipoSeleccionado() {
+		if (scrollPaneEquipoSeleccionado == null) {
+			scrollPaneEquipoSeleccionado = new JScrollPane();
+			scrollPaneEquipoSeleccionado.setBounds(new Rectangle(12, 23, 476, 72));
+			scrollPaneEquipoSeleccionado.setViewportView(getList_1_3());
+			
+		}
+		return scrollPaneEquipoSeleccionado;
+	}
+	
+	
+	private JList<Equipo> getList_1_3() {
+		if (listEquipoSeleccionado == null) {
+			listEquipoSeleccionado = new JList<Equipo>();
+			modeloEquipSelec= new DefaultListModel<Equipo>();
+			listEquipoSeleccionado.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if(e.getClickCount()==2) {
+						
+							Equipo equip=(Equipo) listEquipoSeleccionado.getSelectedValue();
+							int res=JOptionPane.showConfirmDialog(null, "¿Esta seguro de que desea borrar este equipo?","Confirmación de eliminación", JOptionPane.YES_NO_OPTION);
+							if(res==JOptionPane.YES_OPTION)	
+								modeloEquipSelec.removeElement(equip);
+				}
+					}
+			});
+		}
+		return listEquipoSeleccionado;
+	}
+	private JLabel getLblNombreEquipo() {
+		if (lblNombreEquipo == null) {
+			lblNombreEquipo = new JLabel("Nombre equipo:");
+		}
+		return lblNombreEquipo;
+	}
+	private JTextField getTxtNombreEquipo() {
+		if (txtNombreEquipo == null) {
+			txtNombreEquipo = new JTextField();
+			txtNombreEquipo.setColumns(10);
+		}
+		return txtNombreEquipo;
+	}
+	private JButton getBtnFiltrarNombreEquipo() {
+		if (btnFiltrarNombreEquipo == null) {
+			btnFiltrarNombreEquipo = new JButton("Filtrar");
+		}
+		return btnFiltrarNombreEquipo;
+	}
+	private JLabel getLblNombreMedicoEquip() {
+		if (lblNombreMedicoEquip == null) {
+			lblNombreMedicoEquip = new JLabel("Nombre m\u00E9dico:");
+		}
+		return lblNombreMedicoEquip;
+	}
+	private JButton getBtnNombreMedicoEquip() {
+		if (btnNombreMedicoEquip == null) {
+			btnNombreMedicoEquip = new JButton("Filtrar");
+		}
+		return btnNombreMedicoEquip;
+	}
+	private JTextField getTxtNombreMedicoEquip() {
+		if (txtNombreMedicoEquip == null) {
+			txtNombreMedicoEquip = new JTextField();
+			txtNombreMedicoEquip.setColumns(10);
+		}
+		return txtNombreMedicoEquip;
+	}
+	
+	/**
+	 * Metodo que crea la cita si tiene los cmapos cubiertos
+	 * 
+	 * @throws SQLException
+	 */
+	private void crearCitaEquipo() {
+
+		Date dateIncio = (Date) timeSpinnerInicio.getValue();
+		Time timeInicio = new Time(dateIncio.getTime());
+
+		Date dateFin = (Date) timeSpinnerFin.getValue();
+		Time timeFin = new Time(dateFin.getTime());
+
+		Date date = getDateCita().getDate();
+		java.sql.Date sDate = new java.sql.Date(date.getTime());
+
+		for (int i = 0; i < equipos.size(); i++) {
+			String sala = (String) getCbSala().getSelectedItem();
+			Cita c;
+			try {
+				c = new Cita(pacienteCita.getCodePaciente(), timeInicio, timeFin, sDate, sala,
+						chckbxEsUrgente.isSelected(), equipos.get(i).getNumEquipo());
+				pbd.crearCitaEquipo(c);
+				guardarAccion();
+				if(c.isUrgente())
+					Email.enviarCorreo("roloalvarez7@gmail.com", "sbeiaolebhiewuzz", "UO266007@uniovi.es", pacienteCita, c);
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 }
