@@ -19,8 +19,10 @@ import logica.Equipo;
 import logica.HistorialMedico;
 import logica.Paciente;
 import logica.empleados.Empleado;
+import logica.empleados.Medico;
 import logica.servicios.ParserBaseDeDatos;
 import ui.MostrarHistorial;
+import ui.inicio.VentanaInicio;
 
 import javax.swing.JScrollPane;
 import java.awt.GridLayout;
@@ -46,6 +48,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JTextField;
 import java.awt.FlowLayout;
+import java.awt.Font;
 
 public class VentanaMedicoCita extends JDialog {
 
@@ -73,6 +76,10 @@ public class VentanaMedicoCita extends JDialog {
 	private JButton irHistorial;
 	private JButton btnBuscarPorFecha;
 	private JButton btnCorreo;
+	private JPanel panel_1;
+	private JPanel panel_2;
+	private JLabel lblBienvenidoa;
+	private JButton btnCerrarSesin;
 	
 
 
@@ -245,14 +252,9 @@ public class VentanaMedicoCita extends JDialog {
 	private JPanel getPanelCita() {
 		if (panelCita == null) {
 			panelCita = new JPanel();
-			panelCita.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-			panelCita.add(getLblNewLabel());
-			panelCita.add(getDateChooser());
-			panelCita.add(getBtnIr());
-			panelCita.add(getBtnTodas());
-			panelCita.add(getTextHistorial());
-			panelCita.add(getIrHistorial());
-			panelCita.add(getBtnBuscarPorFecha());
+			panelCita.setLayout(new GridLayout(0, 1, 0, 0));
+			panelCita.add(getPanel_2());
+			panelCita.add(getPanel_1());
 		}
 		return panelCita;
 	}
@@ -569,4 +571,70 @@ public class VentanaMedicoCita extends JDialog {
 		vc.setModal(true);
 		vc.setVisible(true);
 	}
+	private JPanel getPanel_1() {
+		if (panel_1 == null) {
+			panel_1 = new JPanel();
+			panel_1.add(getLblNewLabel());
+			panel_1.add(getBtnIr());
+			panel_1.add(getDateChooser());
+			panel_1.add(getBtnTodas());
+			panel_1.add(getTextHistorial());
+			panel_1.add(getIrHistorial());
+			panel_1.add(getBtnBuscarPorFecha());
+		}
+		return panel_1;
+	}
+	private JPanel getPanel_2() {
+		if (panel_2 == null) {
+			panel_2 = new JPanel();
+			panel_2.setLayout(null);
+			panel_2.add(getLblBienvenidoa());
+			panel_2.add(getBtnCerrarSesin());
+		}
+		return panel_2;
+	}
+	private JLabel getLblBienvenidoa() {
+		if (lblBienvenidoa == null) {
+			Medico m=getMedico();
+			if(m!=null) {
+			lblBienvenidoa = new JLabel("Bienvenido/a "+m.getNombre()+", "+m.getApellido());
+			}
+			lblBienvenidoa.setBounds(12, 7, 434, 21);
+			lblBienvenidoa.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		}
+		return lblBienvenidoa;
+	}
+	
+	private Medico getMedico() {
+		Medico m=null;
+		try {
+			m=pbd.buscarMedicoCodigo(codmedico);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return m;
+	}
+	private JButton getBtnCerrarSesin() {
+		if (btnCerrarSesin == null) {
+			btnCerrarSesin = new JButton("Cerrar sesi\u00F3n");
+			btnCerrarSesin.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					ventanaInicio();
+					dispose();
+				}
+			});
+			btnCerrarSesin.setBounds(740, 7, 109, 25);
+		}
+		return btnCerrarSesin;
+	}
+	
+	private void ventanaInicio() {
+		VentanaInicio vmc =new VentanaInicio();
+		vmc.setLocationRelativeTo(null);
+		vmc.setVisible(true);
+	
+
+	
+}
 }

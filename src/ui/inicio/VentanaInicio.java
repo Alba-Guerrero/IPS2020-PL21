@@ -72,7 +72,7 @@ public class VentanaInicio extends JFrame {
 		setResizable(false);
 		getContentPane().setFont(new Font("Tahoma", Font.PLAIN, 20));
 		setTitle("Inicio de sesi\u00F3n");
-		setBounds(100, 100, 1002, 547);
+		setBounds(100, 100, 1002, 566);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(null);
 		getContentPane().add(getPanel_2_1());
@@ -94,13 +94,6 @@ public class VentanaInicio extends JFrame {
 		
 	}
 	
-	private void panelMedico() {
-		VentanaMedico vm = new VentanaMedico(txtCode.getText());
-		vm.setLocationRelativeTo(null);
-		vm.setResizable(true);
-		vm.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
-		vm.setVisible(true);
-	}
 	
 	
 	private void panelCita() {
@@ -153,7 +146,7 @@ public class VentanaInicio extends JFrame {
 		if (lblCdigoDeEmpleado == null) {
 			lblCdigoDeEmpleado = new JLabel("C\u00F3digo de empleado");
 			lblCdigoDeEmpleado.setFont(new Font("SansSerif", Font.PLAIN, 15));
-			lblCdigoDeEmpleado.setBounds(35, 289, 140, 24);
+			lblCdigoDeEmpleado.setBounds(27, 289, 148, 24);
 		}
 		return lblCdigoDeEmpleado;
 	}

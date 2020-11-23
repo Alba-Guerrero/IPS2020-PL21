@@ -817,7 +817,7 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 			btnIr_1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					
-				//	buscarPorNombre();
+				buscarPorNombre();
 					
 				}
 
@@ -828,15 +828,16 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 	}
 	
 	
-	/*
+	
 	private void buscarPorNombre() {
 		if(txtNombre.getText().equals(""))
 			JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
 		else {	
 			if(rdbtnMdico.isSelected())
+				añadirFilasMedico();
 		}
 	}
-		*/	
+		
 			public void añadirFilasMedico()  {
 				borrarModeloTabla();
 				Object[] nuevaFila=new Object[12];

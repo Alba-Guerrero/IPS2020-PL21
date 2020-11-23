@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import logica.Administrativo;
 import logica.servicios.ParserBaseDeDatos;
 import ui.admin.AsignarVacaciones;
 import ui.admin.CrearEquipo;
@@ -15,6 +16,7 @@ import ui.admin.CrearPaciente;
 import ui.admin.PanelCitas;
 import ui.admin.VentanaJornada;
 import ui.admin.VentanaVerCita;
+import ui.medico.VentanaMedicoCita;
 
 import javax.swing.JButton;
 import java.awt.FlowLayout;
@@ -49,6 +51,12 @@ public class VentanaAdministrador extends JDialog {
 	private JPanel panel_1;
 	private JLabel lblOpcionesDePacientes;
 	private JLabel lblOpcionesDeEmpleados;
+	private JPanel panel_2;
+	private JLabel lblBienvenido;
+	private JButton btnNewButton_2;
+	private JPanel panel_3;
+	private JLabel lblNewLabel;
+	private JLabel lblNewLabel_1;
 
 	/**
 	 * Create the frame.
@@ -63,9 +71,9 @@ public class VentanaAdministrador extends JDialog {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		contentPane.add(getPanel_2(), BorderLayout.NORTH);
 		contentPane.add(getPnSur(), BorderLayout.SOUTH);
 		contentPane.add(getPnCentro(), BorderLayout.CENTER);
-		contentPane.add(getLblSelecciona(), BorderLayout.NORTH);
 	}
 
 	private JPanel getPnSur() {
@@ -332,5 +340,81 @@ cp.setLocationRelativeTo(null);
 			lblOpcionesDeEmpleados.setFont(new Font("Tahoma", Font.BOLD, 19));
 		}
 		return lblOpcionesDeEmpleados;
+	}
+	private JPanel getPanel_2() {
+		if (panel_2 == null) {
+			panel_2 = new JPanel();
+			panel_2.setLayout(new GridLayout(0, 3, 0, 0));
+			panel_2.add(getLblSelecciona());
+			panel_2.add(getLblBienvenido());
+			panel_2.add(getPanel_3());
+		}
+		return panel_2;
+	}
+	private JLabel getLblBienvenido() {
+		if (lblBienvenido == null) {
+			Administrativo admin=getAdmin();
+			lblBienvenido = new JLabel("Bienvenido/a "+admin.getNombre()+", "+admin.getApelliod());
+			lblBienvenido.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		}
+		return lblBienvenido;
+	}
+	
+	private Administrativo getAdmin() {
+		Administrativo admin= null;
+		ParserBaseDeDatos pbd = new ParserBaseDeDatos();
+		try {
+			admin =pbd.getAdmin(codAdmin);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.err.println(admin);
+		return admin;
+		
+	}
+	private JButton getBtnNewButton_2() {
+		if (btnNewButton_2 == null) {
+			btnNewButton_2 = new JButton("Cerrar sesi\u00F3n");
+			btnNewButton_2.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					ventanaInicio();
+					dispose();
+							}
+				
+			});
+		}
+		return btnNewButton_2;
+	}
+	
+	
+	
+	private void ventanaInicio() {
+			VentanaInicio vmc =new VentanaInicio();
+			vmc.setLocationRelativeTo(null);
+			vmc.setVisible(true);
+	}
+		
+	private JPanel getPanel_3() {
+		if (panel_3 == null) {
+			panel_3 = new JPanel();
+			panel_3.setLayout(new GridLayout(0, 3, 0, 0));
+			panel_3.add(getLabel_1());
+			panel_3.add(getLabel_2());
+			panel_3.add(getBtnNewButton_2());
+		}
+		return panel_3;
+	}
+	private JLabel getLabel_1() {
+		if (lblNewLabel == null) {
+			lblNewLabel = new JLabel("");
+		}
+		return lblNewLabel;
+	}
+	private JLabel getLabel_2() {
+		if (lblNewLabel_1 == null) {
+			lblNewLabel_1 = new JLabel("");
+		}
+		return lblNewLabel_1;
 	}
 }

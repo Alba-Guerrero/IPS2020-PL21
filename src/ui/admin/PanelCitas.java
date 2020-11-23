@@ -1414,12 +1414,13 @@ public class PanelCitas extends JDialog {
 		}
 		return scrollPaneListaEnfermeros;
 	}
+	
 	private JList<Enfermero> getList_1_2() {
 		if (list_1 == null) {
 			list_1 = new JList<Enfermero>();
 			modeloListEnf = new DefaultListModel<Enfermero>();
 			try {
-				((List<Enfermero>) modeloListEnf).addAll(pbd.listarEnfermero());
+				 modeloListEnf.addAll(pbd.listarEnfermero());
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -1454,6 +1455,7 @@ public class PanelCitas extends JDialog {
 		}
 		return list_1;
 	}
+	
 	private JPanel getPanelFiltrosEnf() {
 		if (panelFiltrosEnf == null) {
 			panelFiltrosEnf = new JPanel();

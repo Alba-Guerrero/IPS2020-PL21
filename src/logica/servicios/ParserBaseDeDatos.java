@@ -15,6 +15,7 @@ import conexion.Conexion;
 import logica.Accion;
 import logica.AccionEmpleado;
 import logica.Acompañante;
+import logica.Administrativo;
 import logica.AsignaCausa;
 import logica.AsignaDiagnostico;
 import logica.AsignaEquipo;
@@ -114,9 +115,9 @@ public class ParserBaseDeDatos {
 	private final static String GET_CITA_HISTORIAL_MED = "select * from cita c,paciente p,historial h where c.codpaciente=p.codpaciente  and h.nhistorial=? and c.codmedico=?";
 	private final static String DELETE_CITA = "delete from cita where codcita=?;";
 	private final static String DELETE_CORREO = "delete from correo where codcorreo=?";
-	private final static String FIND_MED_BY_NAME = "select *  from medico m,empleado e where e.codempleado=m.codmedico and  e.nombre=? ;";
-	private final static String FIND_MED_BY_SURNAME = "select *  from medico m,empleado e where e.codempleado=m.codmedico and  e.apellido=? ;";
-	private final static String FIND_MED_BY_NAME_SURNAME = "select *  from medico m,empleado e where e.codempleado=m.codmedico and e.nombre=? and  e.apellido=? ;";
+	private final static String FIND_MED_BY_NAME = "select *  from medico m,empleado e where e.codempleado=m.codmedico and  e.nombre like ?|| '%' ;";
+	private final static String FIND_MED_BY_SURNAME = "select *  from medico m,empleado e where e.codempleado=m.codmedico and  e.apellido like ? || '%' ;";
+	private final static String FIND_MED_BY_NAME_SURNAME = "select *  from medico m,empleado e where e.codempleado=m.codmedico and e.nombre= like ?|| '%' and  e.apellido like ? || '%';";
 
 	private final static String UPDATE_CITA = "UPDATE cita set hinicio = ?, hfin = ?, fecha = ? ,codmedico=?,ubicacion =?, urgencia=? where codcita=? and codpaciente=? and codmedico =?";
 
@@ -131,8 +132,8 @@ public class ParserBaseDeDatos {
 	private final static String ADD_VACACIONES = "INSERT INTO VACACIONES (CODVACACIONES, CODEMPLEADO, CODADMIN, DINICIO, DFINAL)"
 			+ " VALUES(?,?,?,?,?)";
 	private final static String LIST_VACUNAS = "Select * from vacuna";
-	private final static String FIND_PACIENTE_BY_NAME = "Select * from paciente where nombre=?";
-	private final static String FIND_PACIENTE_BY_SURNAME = "Select * from paciente where apellido=?";
+	private final static String FIND_PACIENTE_BY_NAME = "Select * from paciente where nombre like ? || '%'";
+	private final static String FIND_PACIENTE_BY_SURNAME = "Select * from paciente where apellido like ? || '%'";
 
 	private final static String ADD_ASIGNA_VACUNA = "INSERT INTO ASIGNAVACUNA (codasigvac, nombrevacuna, historial, codempleado,FECHA, HORA) VALUES (?,?,?,?,?,?)";
 	private final static String HISTORIAL_CITA = "select nhistorial from cita c,paciente p where c.codpaciente=p.codpaciente and c.codCita=? and c.codpaciente=?";
@@ -205,6 +206,9 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 			+ " VALUES(?,?,?,?,?,?,?,?)";
 	
 	private final static String GET_CITA_EQUIPOD = "select * from cita c where c.fecha=? ;";
+	
+	
+	private final static String ADMIN_NAME = "select * from Administrativo a where a.codadmin=? ;";
 
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
@@ -818,6 +822,28 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		pst.close();
 		con.close();
 		return res;
+
+	}
+
+	public Medico buscarMedicoCodigo(String text) throws SQLException {
+		Medico m=null;
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_CITAS_MED);
+		
+		pst.setString(1, text);
+		ResultSet rs = pst.executeQuery();
+
+		if( rs.next()) {
+			m= new Medico(rs.getString("codmedico"), rs.getString("nombre"), rs.getString("apellido"),
+					rs.getString("pass"), rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("dinicio"),
+					rs.getDate("dfin"), rs.getString("djornada"));
+		}
+		 
+
+		rs.close();
+		pst.close();
+		con.close();
+		return m;
 
 	}
 
@@ -1782,6 +1808,25 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		con.close();
 
 		return acompañante;
+	}
+	
+	
+	
+	public Administrativo getAdmin(String codAdmin) throws SQLException {
+		Administrativo admin = null;
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(ADMIN_NAME);
+		pst.setString(1, codAdmin);
+		ResultSet rs = pst.executeQuery();
+		if (rs.next()) {
+			admin = new Administrativo(rs.getString("pass"), rs.getString("codadmin"),rs.getString("nombre"), rs.getString("apellido"));
+		}
+
+		rs.close();
+		pst.close();
+		con.close();
+
+		return admin;
 	}
 
 	public boolean buscarSalasIguales(Time timeInicio, Date sDate, String sala) throws SQLException {
