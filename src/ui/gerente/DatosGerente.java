@@ -25,6 +25,7 @@ import logica.AsignaDiagnostico;
 import logica.Cita;
 import logica.Diagnostico;
 import logica.servicios.ParserBaseDeDatos;
+import ui.inicio.VentanaInicio;
 import ui.medico.ModeloNoEditable;
 
 import java.awt.GridLayout;
@@ -339,8 +340,21 @@ public class DatosGerente extends JDialog {
 	private JButton getBtnNewButton_2() {
 		if (btnNewButton_2 == null) {
 			btnNewButton_2 = new JButton("Cerrar sesi\u00F3n");
+			btnNewButton_2.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+					ventanaInicio();
+					dispose();
+				}
+			});
 			btnNewButton_2.setBounds(1108, 4, 152, 27);
 		}
 		return btnNewButton_2;
 	}
+	
+	private void ventanaInicio() {
+		VentanaInicio vmc =new VentanaInicio();
+		vmc.setLocationRelativeTo(null);
+		vmc.setVisible(true);
+} 
 }
