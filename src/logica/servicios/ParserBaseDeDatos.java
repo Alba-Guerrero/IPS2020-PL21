@@ -106,7 +106,8 @@ public class ParserBaseDeDatos {
 
 	private final static String ADD_PREINSCRIPCION = "INSERT INTO PRESCRIPCION (NOMBREPRESCRIPCION, MEDICAMENTO)"
 			+ " VALUES(?,?)";
-	
+	private final static String ADD_DIAGNOSTICO = "INSERT INTO DIAGNOSTICO (CODDIAGNOSTICO, NOMBREDIAGNOSTICO)" + " VALUES(?, ?)";
+
 	private final static String ADD_CORREO = "INSERT INTO CORREO (CODCORREO, CODMEDICODESTINO, CODMEDICOORIGEN, ASUNTO, MENSAJE, FECHA, HORA) VALUES (?,?,?,?,?,?,?)";
 
 	private final static String LIST_PREINSCRIPCIONES = "Select * from prescripcion";
@@ -136,6 +137,7 @@ public class ParserBaseDeDatos {
 	private final static String LIST_VACUNAS = "Select * from vacuna";
 	private final static String FIND_PACIENTE_BY_NAME = "Select * from paciente where nombre like ? || '%'";
 	private final static String FIND_PACIENTE_BY_SURNAME = "Select * from paciente where apellido like ? || '%'";
+	private final static String FIND_DIAGNOSTICO = "Select * from diagnostico where coddiagnostico = ?";
 
 	private final static String ADD_ASIGNA_VACUNA = "INSERT INTO ASIGNAVACUNA (codasigvac, nombrevacuna, historial, codempleado,FECHA, HORA) VALUES (?,?,?,?,?,?)";
 	private final static String HISTORIAL_CITA = "select nhistorial from cita c,paciente p where c.codpaciente=p.codpaciente and c.codCita=? and c.codpaciente=?";
@@ -2718,4 +2720,60 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		con.close();
 		return citas;
 	}
+	
+	
+	/**
+	 * Método para guardar un nuevo diagnostico
+	 * 
+	 * @param p
+	 * @throws SQLException
+	 */
+	public void nuevoDiagnostico(Diagnostico d) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(ADD_DIAGNOSTICO);
+
+		String coddiagnostico = d.getNumeroDiagnostico();
+		String nombrediagnostico = d.getNombre();
+
+		pst.setString(1, coddiagnostico);
+		pst.setString(2, nombrediagnostico);
+
+		pst.executeUpdate();
+		pst.close();
+		con.close();
+	}
+	
+	
+	/**
+	 * Método para saber si se han cargado los diagnósticos del cie10 o no
+	 * @return
+	 * @throws SQLException 
+	 */
+	public boolean diagnosticosCargados() throws SQLException {
+//		Connection con = new Conexion().getConnectionJDBC();
+//		PreparedStatement pst = con.prepareStatement(FIND_DIAGNOSTICO);
+//		
+//		String codigoDiagnostico = "A000"; // Busco por ejemplo el primer diagnóstico, que si está cargado ya me lo dice
+//		pst.setString(1, codigoDiagnostico);
+//		ResultSet rs = pst.executeQuery();
+//
+//		boolean res = rs.next();
+//		
+//		rs.close();
+//		pst.close();
+//		con.close();
+//		return res;
+		
+		
+		List<Diagnostico> diagnosticos = listarDiagnosticos();
+		if (diagnosticos.size() != 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	
+
 }
