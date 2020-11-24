@@ -17,6 +17,7 @@ import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
+import logica.LecturaExcel;
 import logica.servicios.ParserBaseDeDatos;
 import ui.admin.PanelCitas;
 import ui.auditor.VerAccionesAdmin;
@@ -28,6 +29,8 @@ public class VentanaInicio extends JFrame {
 	/**
 	 * 
 	 */
+	private static LecturaExcel lecturaExcel = new LecturaExcel();
+
 	private static final long serialVersionUID = 1L;
 	private JPanel panel_1;
 	private JButton btnMedico;
@@ -35,7 +38,7 @@ public class VentanaInicio extends JFrame {
 	private JLabel lblIniciaSesin;
 	private JLabel lblIntroduceElCodigo;
 	private JTextField textField;
-	private ParserBaseDeDatos pbd=new ParserBaseDeDatos();
+	private static ParserBaseDeDatos pbd=new ParserBaseDeDatos();
 	private JButton btnAuditor;
 	private JButton btnGerente;
 	
@@ -44,6 +47,16 @@ public class VentanaInicio extends JFrame {
 	 */
 	public static void main(String[] args) {
 		try {
+			if (!pbd.diagnosticosCargados()) { // Si no están cargados los diagnósticos se cargan
+				lecturaExcel.cargarDiagnosticosCie10(); // Cargamos el cie10 de diagnosticos
+				System.out.println("Se han cargado con éxito los diagnósticos del cie10");
+			}
+			else if (pbd.diagnosticosCargados()) { // Si ya estaban cargados te avisa
+				System.out.println("Los diagnósticos del 10 ya estaban cargados");
+			}
+			
+			
+			
 			VentanaInicio frame = new VentanaInicio();
 			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 
