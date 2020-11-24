@@ -40,10 +40,10 @@ public class Equipo {
 		
 		for(int i=0;i<miembros.size();i++) {
 			if(i==miembros.size()-1) {
-				mensaje += pbd.devolverEmpleado(miembros.get(i).getCodempleado()).toString();
+				mensaje += pbd.devolverEmpleado(miembros.get(i).getCodempleado());
 			}
 			else
-				mensaje += pbd.devolverEmpleado(miembros.get(i).getCodempleado()).toString() + ", ";
+				mensaje += pbd.devolverEmpleado(miembros.get(i).getCodempleado()) + ", ";
 		}
 		
 		
