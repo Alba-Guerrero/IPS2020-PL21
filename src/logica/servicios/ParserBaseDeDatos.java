@@ -207,9 +207,16 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	private final static String GET_CITA_EQUIPOD = "select * from cita c where c.fecha=? ;";
 	
-	
 	private final static String ADMIN_NAME = "select * from Administrativo a where a.codadmin=? ;";
+	
+	private final static String GET_DIAGNOSTICOS_DATE= "SELECT count(nombrediagnostico) as numero FROM asignadiagnostico where nombrediagnostico=? and fecha >= ? and fecha <= ?";
 
+	private final static String VER_NUMERO_DIAGNOSTICOS_ASIGNADOS = "SELECT count(nombrediagnostico) as numero FROM asignadiagnostico where nombrediagnostico=?";
+	
+	private final static String GET_CITA_HISTORIAL_FECHA = "select * from cita c,paciente p,historial h where c.codpaciente=p.codpaciente and p.nhistorial=h.nhistorial and h.nhistorial=? and c.fecha=?";
+	
+	
+	
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
 		Connection con = new Conexion().getConnectionJDBC();
@@ -546,18 +553,25 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	public List<Cita> devolvercitasHistorialFechas(String codcita, java.util.Date date2) throws SQLException {
 		List<Cita> citas = new ArrayList<Cita>();
 		Connection con = new Conexion().getConnectionJDBC();
-		PreparedStatement pst = con.prepareStatement(GET_CITA_FECHA_HISTORIAL);
+		PreparedStatement pst = con.prepareStatement(GET_CITA_HISTORIAL_FECHA);
 		boolean res = false;
 		java.sql.Date date = new java.sql.Date(date2.getTime());
-		pst.setDate(1, date);
-		pst.setString(2, codcita);
+		pst.setString(1, codcita);
+		pst.setDate(2, date);
+		
 		ResultSet rs = pst.executeQuery();
 
 		while (rs.next()) {
 			if (rs.getByte("urgencia") == 1)
 				res = true;
-			citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"), rs.getString("codmedico"),
-					rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res));
+			if(rs.getString("codmedico")!=null) {
+				citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"), rs.getString("codmedico"),
+						rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res));
+			}
+			else {
+				citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"),
+						rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res, rs.getString("numequipo")));
+			}
 
 		}
 
@@ -702,8 +716,14 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 			if (rs.getByte("urgencia") == 0)
 				res = true;
 
-			citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"), rs.getString("codmedico"),
-					rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res));
+			if(rs.getString("codmedico")!=null) {
+				citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"), rs.getString("codmedico"),
+						rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res));
+			}
+			else {
+				citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"),
+						rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res, rs.getString("numequipo")));
+			}
 
 		}
 
@@ -756,8 +776,14 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 			else
 				res = false;
 
-			citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"), rs.getString("codmedico"),
-					rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res));
+			if(rs.getString("codmedico")!=null) {
+				citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"), rs.getString("codmedico"),
+						rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res));
+			}
+			else {
+				citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"),
+						rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res, rs.getString("numequipo")));
+			}
 
 		}
 
@@ -771,7 +797,8 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	public List<Cita> devolvercitasPorFecha(Date sDate) throws SQLException {
 		List<Cita> citas = new ArrayList<Cita>();
 		Connection con = new Conexion().getConnectionJDBC();
-		PreparedStatement pst = con.prepareStatement(GET_CITAS_DATE);
+		//PreparedStatement pst = con.prepareStatement(GET_CITAS_DATE);
+		PreparedStatement pst = con.prepareStatement(GET_CITA_EQUIPOD);
 		boolean res = false;
 		pst.setDate(1, sDate);
 
@@ -780,9 +807,14 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		while (rs.next()) {
 			if (rs.getByte("urgencia") == 1)
 				res = true;
-
-			citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"), rs.getString("codmedico"),
-					rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res));
+			if(rs.getString("codmedico")!=null) {
+				citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"), rs.getString("codmedico"),
+						rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res));
+			}
+			else {
+				citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"),
+						rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res, rs.getString("numequipo")));
+			}
 
 		}
 
@@ -2572,6 +2604,70 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		PreparedStatement pst = con.prepareStatement(GET_CITA_HISTORIAL);
 		boolean res = false;
 		pst.setString(1, codhistorial);
+
+		ResultSet rs = pst.executeQuery();
+
+		while (rs.next()) {
+			if (rs.getByte("urgencia") == 0)
+				res = true;
+			
+			citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"),
+			rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res, rs.getString("numequipo")));
+
+		}
+
+//CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return citas;
+	}
+
+	public int listarDiagnosticosAsignadosPorFecha(String nombre, Date sDateIn, Date sDateFin) throws SQLException {
+		int cantidad = 0;
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_DIAGNOSTICOS_DATE);
+		pst.setString(1, nombre);
+		pst.setDate(2, sDateIn);
+		pst.setDate(3, sDateFin);
+		ResultSet rs = pst.executeQuery(); // Creo el resultSet
+		
+		rs.next();
+		cantidad = rs.getInt("numero");
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return cantidad;
+	}
+
+	public int listarDiagnosticosAsignados(String nombre) throws SQLException {
+		int cantidad = 0;
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VER_NUMERO_DIAGNOSTICOS_ASIGNADOS);
+		pst.setString(1, nombre);
+		ResultSet rs = pst.executeQuery(); // Creo el resultSet
+		
+		rs.next();
+		cantidad = rs.getInt("numero");
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return cantidad;
+	}
+
+	public List<Cita> devolverCitasConEquipoHistFecha(String codhistorial, Date date) throws SQLException {
+		List<Cita> citas = new ArrayList<Cita>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_CITA_HISTORIAL_FECHA);
+		boolean res = false;
+		pst.setString(1, codhistorial);
+		pst.setDate(2, date);
 
 		ResultSet rs = pst.executeQuery();
 
