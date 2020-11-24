@@ -80,31 +80,33 @@ public class AñadirEmpleado extends JDialog {
 			panelDatos = new JPanel();
 			panelDatos.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Datos personales", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			panelDatos.setBounds(10, 11, 694, 250);
-			panelDatos.setLayout(new MigLayout("", "[58px][10px][39px][10px][121px][43px][58px][10px][240px]", "[20px][20px][20px][][20px][20px][][][][]"));
-			panelDatos.add(getLblNombre(), "cell 0 0,growx,aligny center");
-			panelDatos.add(getTxtFieldNombre(), "cell 2 0 3 1,growx,aligny top");
-			panelDatos.add(getLblApellidos(), "cell 6 0,growx,aligny center");
-			panelDatos.add(getTxtFieldApellidos(), "cell 8 0,growx,aligny top");
-			panelDatos.add(getLblDni(), "cell 0 1,growx,aligny center");
-			panelDatos.add(getTxtFieldDni(), "cell 2 1 3 1,alignx left,aligny top");
-			panelDatos.add(getLblCorreo(), "cell 0 6,growx,aligny center");
-			panelDatos.add(getTxtFieldCorreo(), "cell 2 6,alignx left,aligny top");
-			panelDatos.add(getLblNewLabel(), "cell 0 7,growx,aligny center");
-			panelDatos.add(getPasswordField(), "cell 2 7 3 1,growx,aligny top");
-			panelDatos.add(getLblNewLabel_1(), "cell 0 8,growx,aligny center");
-			panelDatos.add(getPasswordField_1(), "cell 2 8 3 1,growx,aligny top");
+			panelDatos.setLayout(null);
+			panelDatos.add(getLblNombre());
+			panelDatos.add(getTxtFieldNombre());
+			panelDatos.add(getLblApellidos());
+			panelDatos.add(getTxtFieldApellidos());
+			panelDatos.add(getLblDni());
+			panelDatos.add(getTxtFieldDni());
+			panelDatos.add(getLblCorreo());
+			panelDatos.add(getTxtFieldCorreo());
+			panelDatos.add(getLblNewLabel());
+			panelDatos.add(getPasswordField());
+			panelDatos.add(getLblNewLabel_1());
+			panelDatos.add(getPasswordField_1());
 		}
 		return panelDatos;
 	}
 	private JLabel getLblNombre() {
 		if (lblNombre == null) {
 			lblNombre = new JLabel("Nombre:");
+			lblNombre.setBounds(21, 36, 96, 14);
 		}
 		return lblNombre;
 	}
 	private JTextField getTxtFieldNombre() {
 		if (txtFieldNombre == null) {
 			txtFieldNombre = new JTextField();
+			txtFieldNombre.setBounds(127, 33, 178, 20);
 			txtFieldNombre.setColumns(10);
 		}
 		return txtFieldNombre;
@@ -112,12 +114,14 @@ public class AñadirEmpleado extends JDialog {
 	private JLabel getLblApellidos() {
 		if (lblApellidos == null) {
 			lblApellidos = new JLabel("Apellidos:");
+			lblApellidos.setBounds(351, 36, 58, 14);
 		}
 		return lblApellidos;
 	}
 	private JTextField getTxtFieldApellidos() {
 		if (txtFieldApellidos == null) {
 			txtFieldApellidos = new JTextField();
+			txtFieldApellidos.setBounds(419, 33, 240, 20);
 			txtFieldApellidos.setColumns(10);
 		}
 		return txtFieldApellidos;
@@ -125,12 +129,14 @@ public class AñadirEmpleado extends JDialog {
 	private JLabel getLblDni() {
 		if (lblDni == null) {
 			lblDni = new JLabel("DNI:");
+			lblDni.setBounds(21, 74, 96, 14);
 		}
 		return lblDni;
 	}
 	private JTextField getTxtFieldDni() {
 		if (txtFieldDni == null) {
 			txtFieldDni = new JTextField();
+			txtFieldDni.setBounds(127, 71, 86, 20);
 			txtFieldDni.setColumns(10);
 		}
 		return txtFieldDni;
@@ -138,12 +144,14 @@ public class AñadirEmpleado extends JDialog {
 	private JLabel getLblCorreo() {
 		if (lblCorreo == null) {
 			lblCorreo = new JLabel("Correo elect\u00F3nico:");
+			lblCorreo.setBounds(21, 132, 96, 14);
 		}
 		return lblCorreo;
 	}
 	private JTextField getTxtFieldCorreo() {
 		if (txtFieldCorreo == null) {
 			txtFieldCorreo = new JTextField();
+			txtFieldCorreo.setBounds(151, 129, 240, 20);
 			txtFieldCorreo.setColumns(10);
 		}
 		return txtFieldCorreo;
@@ -208,24 +216,28 @@ public class AñadirEmpleado extends JDialog {
 	private JLabel getLblNewLabel() {
 		if (lblNewLabel == null) {
 			lblNewLabel = new JLabel("Contrase\u00F1a:");
+			lblNewLabel.setBounds(21, 163, 96, 14);
 		}
 		return lblNewLabel;
 	}
 	private JLabel getLblNewLabel_1() {
 		if (lblNewLabel_1 == null) {
 			lblNewLabel_1 = new JLabel("Repetir contrase\u00F1a:");
+			lblNewLabel_1.setBounds(21, 194, 96, 14);
 		}
 		return lblNewLabel_1;
 	}
 	private JPasswordField getPasswordField() {
 		if (passwordField == null) {
 			passwordField = new JPasswordField();
+			passwordField.setBounds(151, 160, 178, 20);
 		}
 		return passwordField;
 	}
 	private JPasswordField getPasswordField_1() {
 		if (passwordField_1 == null) {
 			passwordField_1 = new JPasswordField();
+			passwordField_1.setBounds(151, 191, 178, 20);
 		}
 		return passwordField_1;
 	}
