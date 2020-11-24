@@ -169,7 +169,7 @@ public class VentanaInicio extends JFrame {
 	private JLabel getLblNewLabel_1() {
 		if (lblNewLabel_1 == null) {
 			ImageIcon icon =new ImageIcon("C:/Users/Alba/git/IPS2020-PL21/resources/logop.jpg");
-			lblNewLabel_1 = new JLabel("",icon,JLabel.CENTER);
+			lblNewLabel_1 = new JLabel("",new ImageIcon(VentanaInicio.class.getResource("/img/logop.jpg")),JLabel.CENTER);
 			lblNewLabel_1.setBounds(146, 113, 140, 143);
 		}
 		return lblNewLabel_1;
