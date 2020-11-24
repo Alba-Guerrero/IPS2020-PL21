@@ -48,12 +48,12 @@ public class LecturaExcel {
 				Cell cell1 = row.getCell(0);
 				String codigo = "";
 				if (!cell1.getStringCellValue().equals("")) {
-					codigo = cell1.getStringCellValue() + "\t";
+					codigo = cell1.getStringCellValue();
 				}
 				Cell cell2 = row.getCell(1);
 				String diagnostico = "";
 				if (!cell2.getStringCellValue().equals("")) {
-					diagnostico = cell2.getStringCellValue() + "\t";
+					diagnostico = cell2.getStringCellValue();
 				}		
 				
 				// Tendremos que crear el diagnóstico
