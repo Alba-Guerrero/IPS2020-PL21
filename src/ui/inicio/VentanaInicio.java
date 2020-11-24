@@ -22,6 +22,7 @@ import javax.swing.border.TitledBorder;
 
 import com.google.common.hash.Hashing;
 
+import logica.LecturaExcel;
 import logica.servicios.ParserBaseDeDatos;
 import ui.gerente.DatosGerente;
 import ui.medico.VentanaMedicoCita;
@@ -31,8 +32,10 @@ public class VentanaInicio extends JFrame {
 	/**
 	 * 
 	 */
+	private static LecturaExcel lecturaExcel = new LecturaExcel();
+
 	private static final long serialVersionUID = 1L;
-	private ParserBaseDeDatos pbd=new ParserBaseDeDatos();
+	private static ParserBaseDeDatos pbd=new ParserBaseDeDatos();
 	private JPanel panel_2;
 	private JLabel lblHospitalPsquitricoUniversidad;
 	private JLabel lblNewLabel;
@@ -49,6 +52,16 @@ public class VentanaInicio extends JFrame {
 	 */
 	public static void main(String[] args) {
 		try {
+			
+			if (!pbd.diagnosticosCargados()) { // Si no están cargados los diagnósticos se cargan
+				lecturaExcel.cargarDiagnosticosCie10(); // Cargamos el cie10 de diagnosticos
+				System.out.println("Se han cargado con éxito los diagnósticos del cie10");
+			}
+			else if (pbd.diagnosticosCargados()) { // Si ya estaban cargados te avisa
+				System.out.println("Los diagnósticos del 10 ya estaban cargados");
+			}
+			
+			
 			VentanaInicio frame = new VentanaInicio();
 			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 
