@@ -62,8 +62,8 @@ public class ParserBaseDeDatos {
 	private final static String GET_CITAS_MED = "select * from  medico m ,empleado e where m.codmedico= e.codempleado and  e.codempleado=?  ;";
 	private final static String GET_CITA_FECHA_HISTORIAL = "select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.codpaciente= p.codpaciente and c.fecha=? and p.nhistorial =?";
 	private final static String GET_CITA_FECHA_HISTORIAL_MED = "select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.codpaciente= p.codpaciente and c.fecha=? and p.nhistorial =? and c.codmedico=?";
-	private final static String GET_ADMINISTRATIVO = "Select * from administrativo where codAdmin=?";
-	private final static String GET_MEDICO = "Select * from medico where codmedico=?"; 
+	private final static String GET_ADMINISTRATIVO = "Select * from administrativo where codAdmin=? and pass=?";
+	private final static String GET_MEDICO = "Select * from medico m,empleado e  where m.codmedico=e.codempleado and  m.codmedico=? and e.pass=?"; 
 	private final static String GET_MEDICO_NOMBRE = "Select * from empleado where codempleado=?";
 	private final static String GET_MEDICO_CODIGO = "Select * from empleado where nombre=?";
 	
@@ -795,10 +795,11 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 
 	// ---------------------ventana inicio-----------------------------
 
-	public boolean buscarAdministrativo(String text) throws SQLException {
+	public boolean buscarAdministrativo(String text,String pass) throws SQLException {
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst = con.prepareStatement(GET_ADMINISTRATIVO);
 		pst.setString(1, text);
+		pst.setString(2, pass);
 		ResultSet rs = pst.executeQuery();
 
 		boolean res = rs.next();
@@ -810,10 +811,11 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 
 	}
 
-	public boolean buscarMedicoCod(String text) throws SQLException {
+	public boolean buscarMedicoCod(String text,String pass) throws SQLException {
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst = con.prepareStatement(GET_MEDICO);
 		pst.setString(1, text);
+		pst.setString(2, pass);
 		ResultSet rs = pst.executeQuery();
 
 		boolean res = rs.next();

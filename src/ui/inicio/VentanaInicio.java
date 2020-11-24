@@ -1,37 +1,29 @@
 package ui.inicio;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import java.awt.GridBagLayout;
-import java.awt.HeadlessException;
-import java.awt.event.ActionListener;
-import java.sql.SQLException;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
-import java.awt.Font;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
+import javax.swing.border.TitledBorder;
+
+import com.google.common.hash.Hashing;
 
 import logica.servicios.ParserBaseDeDatos;
-import ui.admin.PanelCitas;
-import ui.auditor.VerAccionesAdmin;
 import ui.medico.VentanaMedicoCita;
-import ui.medico.VerCitasMedico;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import javax.swing.JPasswordField;
-import javax.swing.ImageIcon;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.LineBorder;
-import java.awt.Color;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
 
 
 public class VentanaInicio extends JFrame {
@@ -205,19 +197,60 @@ public class VentanaInicio extends JFrame {
 		vaa.setLocationRelativeTo(null);
 		vaa.setResizable(true);
 	}
-	private void compruebaUsuario() {
+
+	public static String getSha256(String value) {
 		try {
-			if(pbd.buscarMedicoCod(txtCode.getText())) {
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			md.update(value.getBytes());
+			return bytesToHex(md.digest());
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	private static String bytesToHex(byte[] bytes) {
+		StringBuffer result = new StringBuffer();
+		for (byte b : bytes)
+			result.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
+		return result.toString();
+	}
+
+	public String get_SHA_512_SecurePassword(String passwordToHash, String salt){
+		String generatedPassword = null;
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-512");
+			md.update(salt.getBytes(StandardCharsets.UTF_8));
+			byte[] bytes = md.digest(passwordToHash.getBytes(StandardCharsets.UTF_8));
+			StringBuilder sb = new StringBuilder();
+			for(int i=0; i< bytes.length ;i++){
+				sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+			}
+			generatedPassword = sb.toString();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return generatedPassword;
+	}
+	
+	 
+	private void compruebaUsuario() {
+		String hash= getSha256(new String(passwordField.getPassword()));
+		try {
+			if(pbd.buscarMedicoCod(txtCode.getText(),hash)) {
 				dispose();
 				verCitas();}
 			
 			
-			else if(pbd.buscarAdministrativo(txtCode.getText())) {
+			else if(pbd.buscarAdministrativo(txtCode.getText(),hash)) {
 				dispose();
 				panelCita();
 			}
 			
 			else if("Auditor".equals(txtCode.getText())) {
+				dispose();
+				abrirAuditor();
+			}
+			else if("Gerente".equals(txtCode.getText())) {
 				dispose();
 				abrirAuditor();
 			}
