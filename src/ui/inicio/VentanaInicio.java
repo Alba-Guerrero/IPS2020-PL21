@@ -246,13 +246,13 @@ public class VentanaInicio extends JFrame {
 				panelCita();
 			}
 			
-			else if("Auditor".equals(txtCode.getText())) {
+			else if(pbd.buscarAuditor(txtCode.getText(),hash)) {
 				dispose();
 				abrirAuditor();
 			}
-			else if("Gerente".equals(txtCode.getText())) {
+			else if(pbd.buscarGerente(txtCode.getText(),hash)) {
 				dispose();
-				abrirAuditor();
+				abrirGerente();
 			}
 			else {
 				txtCode.setText("");
@@ -264,6 +264,13 @@ public class VentanaInicio extends JFrame {
 		}
 		
 		
+	}
+	
+	protected void abrirGerente() {/*
+	//clase geretne
+		vaa.setVisible(true);
+		vaa.setLocationRelativeTo(null);
+		vaa.setResizable(true);*/
 	}
 	
 	private JButton getBtnCancelar() {
