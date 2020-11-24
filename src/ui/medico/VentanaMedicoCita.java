@@ -575,8 +575,8 @@ public class VentanaMedicoCita extends JDialog {
 		if (panel_1 == null) {
 			panel_1 = new JPanel();
 			panel_1.add(getLblNewLabel());
-			panel_1.add(getBtnIr());
 			panel_1.add(getDateChooser());
+			panel_1.add(getBtnIr());
 			panel_1.add(getBtnTodas());
 			panel_1.add(getTextHistorial());
 			panel_1.add(getIrHistorial());

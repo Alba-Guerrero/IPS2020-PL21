@@ -44,6 +44,7 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import com.toedter.calendar.JDateChooser;
 import java.util.Date;
+import java.awt.Font;
 
 public class DatosGerente extends JDialog {
 
@@ -67,6 +68,10 @@ public class DatosGerente extends JDialog {
 	private JDateChooser dateChooser_1;
 	private JButton btnFiltroFechas;
 	private JButton btnTodas;
+	private JPanel panel;
+	private JPanel panel_3;
+	private JLabel lblNewLabel_1;
+	private JButton btnNewButton_2;
 
 	/**
 	 * Create the frame.
@@ -229,12 +234,9 @@ public class DatosGerente extends JDialog {
 	private JPanel getPanelFiltros() {
 		if (panelFiltros == null) {
 			panelFiltros = new JPanel();
-			panelFiltros.add(getLblFechaIn());
-			panelFiltros.add(getDateChooser());
-			panelFiltros.add(getLblFechaIn_1());
-			panelFiltros.add(getDateChooser_1());
-			panelFiltros.add(getBtnFiltroFechas());
-			panelFiltros.add(getBtnTodas());
+			panelFiltros.setLayout(new GridLayout(2, 1, 0, 0));
+			panelFiltros.add(getPanel_3());
+			panelFiltros.add(getPanel());
 		}
 		return panelFiltros;
 	}
@@ -304,5 +306,41 @@ public class DatosGerente extends JDialog {
 			});
 		}
 		return btnTodas;
+	}
+	private JPanel getPanel() {
+		if (panel == null) {
+			panel = new JPanel();
+			panel.add(getLblFechaIn());
+			panel.add(getDateChooser());
+			panel.add(getLblFechaIn_1());
+			panel.add(getDateChooser_1());
+			panel.add(getBtnFiltroFechas());
+			panel.add(getBtnTodas());
+		}
+		return panel;
+	}
+	private JPanel getPanel_3() {
+		if (panel_3 == null) {
+			panel_3 = new JPanel();
+			panel_3.setLayout(null);
+			panel_3.add(getLblNewLabel_1());
+			panel_3.add(getBtnNewButton_2());
+		}
+		return panel_3;
+	}
+	private JLabel getLblNewLabel_1() {
+		if (lblNewLabel_1 == null) {
+			lblNewLabel_1 = new JLabel("Bienvenido/a Gerente");
+			lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
+			lblNewLabel_1.setBounds(12, -2, 212, 35);
+		}
+		return lblNewLabel_1;
+	}
+	private JButton getBtnNewButton_2() {
+		if (btnNewButton_2 == null) {
+			btnNewButton_2 = new JButton("Cerrar sesi\u00F3n");
+			btnNewButton_2.setBounds(1108, 4, 152, 27);
+		}
+		return btnNewButton_2;
 	}
 }

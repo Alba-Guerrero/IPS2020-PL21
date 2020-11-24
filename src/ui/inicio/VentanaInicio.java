@@ -23,6 +23,7 @@ import javax.swing.border.TitledBorder;
 import com.google.common.hash.Hashing;
 
 import logica.servicios.ParserBaseDeDatos;
+import ui.gerente.DatosGerente;
 import ui.medico.VentanaMedicoCita;
 
 
@@ -256,6 +257,7 @@ public class VentanaInicio extends JFrame {
 			}
 			else {
 				txtCode.setText("");
+				passwordField.setText("");
 				JOptionPane.showMessageDialog(null, "No se ha encontrado ningun Empleado con esos datos.Por favor vuelva a intentarlo");
 			}
 		} catch (SQLException e) {
@@ -266,11 +268,11 @@ public class VentanaInicio extends JFrame {
 		
 	}
 	
-	protected void abrirGerente() {/*
-	//clase geretne
-		vaa.setVisible(true);
-		vaa.setLocationRelativeTo(null);
-		vaa.setResizable(true);*/
+	protected void abrirGerente() {
+		DatosGerente dg= new DatosGerente();
+		dg.setVisible(true);
+		dg.setLocationRelativeTo(null);
+		dg.setResizable(true);
 	}
 	
 	private JButton getBtnCancelar() {
