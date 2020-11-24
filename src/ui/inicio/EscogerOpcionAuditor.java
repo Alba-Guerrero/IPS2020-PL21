@@ -15,12 +15,20 @@ import javax.swing.JDialog;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import javax.swing.JLabel;
+import java.awt.Font;
 
 public class EscogerOpcionAuditor extends JDialog {
 
 	private JPanel contentPane;
 	private JButton btnAccionesAdmin;
 	private JButton btnVerAccionEmpleado;
+	private JPanel panel_2;
+	private JButton btnCerrarSesin;
+	private JLabel lblNewLabel;
+	private JLabel label;
 
 
 	/**
@@ -33,6 +41,7 @@ public class EscogerOpcionAuditor extends JDialog {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		contentPane.add(getPanel_2(), BorderLayout.NORTH);
 		contentPane.add(getBtnAccionesAdmin(), BorderLayout.WEST);
 		contentPane.add(getBtnVerAccionEmpleado(), BorderLayout.EAST);
 	}
@@ -73,5 +82,51 @@ public class EscogerOpcionAuditor extends JDialog {
 		vaa.setVisible(true);
 		vaa.setLocationRelativeTo(null);
 		vaa.setResizable(true);
+	}
+	private JPanel getPanel_2() {
+		if (panel_2 == null) {
+			panel_2 = new JPanel();
+			panel_2.setLayout(new GridLayout(0, 3, 0, 0));
+			panel_2.add(getLblNewLabel());
+			panel_2.add(getLabel());
+			panel_2.add(getBtnCerrarSesin());
+		}
+		return panel_2;
+	}
+	private JButton getBtnCerrarSesin() {
+		if (btnCerrarSesin == null) {
+			btnCerrarSesin = new JButton("Cerrar sesi\u00F3n");
+			btnCerrarSesin.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					ventanaInicio();
+					dispose();
+					
+					
+				}
+			});
+		}
+		return btnCerrarSesin;
+	}
+	
+	
+	private void ventanaInicio() {
+		VentanaInicio vmc =new VentanaInicio();
+		vmc.setLocationRelativeTo(null);
+		vmc.setVisible(true);
+} 
+	
+	
+	private JLabel getLblNewLabel() {
+		if (lblNewLabel == null) {
+			lblNewLabel = new JLabel("Bienvenido/a Auditor");
+			lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		}
+		return lblNewLabel;
+	}
+	private JLabel getLabel() {
+		if (label == null) {
+			label = new JLabel("");
+		}
+		return label;
 	}
 }
