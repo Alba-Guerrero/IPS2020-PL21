@@ -259,7 +259,7 @@ protected void verCalendarioCitas() {
 	
 protected void añdirPaciente() {
 		
-		CrearPaciente cp= new CrearPaciente();
+		CrearPaciente cp= new CrearPaciente(codAdmin);
 cp.setLocationRelativeTo(null);
 		cp.setResizable(true);
 		cp.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
@@ -285,7 +285,7 @@ cp.setLocationRelativeTo(null);
 	}
 	
 	private void abrirCrearEquipo() throws SQLException {
-		CrearEquipo cp= new CrearEquipo();
+		CrearEquipo cp= new CrearEquipo(codAdmin);
 		cp.setLocationRelativeTo(null);
 		cp.setResizable(true);
 		cp.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
