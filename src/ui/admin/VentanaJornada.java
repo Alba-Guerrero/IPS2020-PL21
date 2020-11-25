@@ -75,14 +75,16 @@ public class VentanaJornada extends JDialog{
 	private List<JToggleButton> diasSeleccionados = new ArrayList<JToggleButton>();
 
 	private String codAdmin;
+	private Empleado em;
 
 
 	/**
 	 * Create the frame.
 	 * @throws SQLException 
 	 */
-	public VentanaJornada(String codAdmin) throws SQLException {
+	public VentanaJornada(String codAdmin, Empleado em) throws SQLException {
 		this.codAdmin = codAdmin;
+		this.em=em;
 		setTitle("Asignar Jornada");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 650, 590);
@@ -124,6 +126,9 @@ public class VentanaJornada extends JDialog{
 			List<Empleado> empleados = pbd.buscarEmpleados();
 			for (int i = 0; i < empleados.size(); i++) {
 				cmboBoxEmpleado.insertItemAt(empleados.get(i), i);
+			}
+			if(em!=null) {
+				cmboBoxEmpleado.setSelectedItem(em);
 			}
 			//activarBoton();
 			

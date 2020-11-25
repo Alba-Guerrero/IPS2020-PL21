@@ -11,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 import logica.Administrativo;
 import logica.servicios.ParserBaseDeDatos;
 import ui.admin.AsignarVacaciones;
+import ui.admin.AñadirEmpleado;
 import ui.admin.CrearEquipo;
 import ui.admin.CrearPaciente;
 import ui.admin.PanelCitas;
@@ -40,10 +41,10 @@ public class VentanaAdministrador extends JDialog {
 	private JButton btnAsignarCitas;
 	private JPanel panelPaciente;
 	private JLabel lblSelecciona;
-	private JButton btnNewButton;
+	private JButton btnCalendarioCitas;
 
 	private String codAdmin;
-	private JButton btnNewButton_1;
+	private JButton btnDarVacaciones;
 	private JButton btnAadirPaciente;
 	private JButton btnCrearEquipo;
 	private JPanel panelEmpleados;
@@ -57,6 +58,7 @@ public class VentanaAdministrador extends JDialog {
 	private JPanel panel_3;
 	private JLabel lblNewLabel;
 	private JLabel lblNewLabel_1;
+	private JButton btnAñadirEmpleado;
 
 	/**
 	 * Create the frame.
@@ -153,7 +155,7 @@ public class VentanaAdministrador extends JDialog {
 			panelPaciente.add(getPanel_10());
 			panelPaciente.add(getBtnAadirPaciente());
 			panelPaciente.add(getBtnAsignarCitas());
-			panelPaciente.add(getBtnNewButton());
+			panelPaciente.add(getBtnCalendarioCitas());
 		}
 		return panelPaciente;
 	}
@@ -173,7 +175,7 @@ public class VentanaAdministrador extends JDialog {
 	 */
 	protected void asignarJornadaLaboral() throws SQLException {
 		
-		VentanaJornada vj = new VentanaJornada(codAdmin);
+		VentanaJornada vj = new VentanaJornada(codAdmin, null);
 		vj.setLocationRelativeTo(null);
 		vj.setResizable(true);
 		vj.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
@@ -207,23 +209,23 @@ protected void verCalendarioCitas() {
 		vca.setLocationRelativeTo(this);
 		
 	}
-	private JButton getBtnNewButton() {
-		if (btnNewButton == null) {
-			btnNewButton = new JButton("Calendario citas");
-			btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 18));
-			btnNewButton.addActionListener(new ActionListener() {
+	private JButton getBtnCalendarioCitas() {
+		if (btnCalendarioCitas == null) {
+			btnCalendarioCitas = new JButton("Calendario citas");
+			btnCalendarioCitas.setFont(new Font("Tahoma", Font.PLAIN, 18));
+			btnCalendarioCitas.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					verCalendarioCitas();
 				}
 			});
 		}
-		return btnNewButton;
+		return btnCalendarioCitas;
 	}
 	private JButton getBtnNewButton_1_1() {
-		if (btnNewButton_1 == null) {
-			btnNewButton_1 = new JButton("Dar vacaciones");
-			btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-			btnNewButton_1.addActionListener(new ActionListener() {
+		if (btnDarVacaciones == null) {
+			btnDarVacaciones = new JButton("Dar vacaciones");
+			btnDarVacaciones.setFont(new Font("Tahoma", Font.PLAIN, 18));
+			btnDarVacaciones.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
 						abrirVacaciones();
@@ -234,7 +236,7 @@ protected void verCalendarioCitas() {
 				}
 			});
 		}
-		return btnNewButton_1;
+		return btnDarVacaciones;
 	}
 	protected void abrirVacaciones() throws SQLException {
 		AsignarVacaciones av = new AsignarVacaciones(codAdmin);
@@ -301,6 +303,7 @@ cp.setLocationRelativeTo(null);
 			panelEmpleados.add(getBtnCrearEquipo());
 			panelEmpleados.add(getBtnJornada());
 			panelEmpleados.add(getBtnNewButton_1_1());
+			panelEmpleados.add(getBtnAñadirEmpleado());
 		}
 	
 		return panelEmpleados;
@@ -416,5 +419,24 @@ cp.setLocationRelativeTo(null);
 			lblNewLabel_1 = new JLabel("");
 		}
 		return lblNewLabel_1;
+	}
+	private JButton getBtnAñadirEmpleado() {
+		if (btnAñadirEmpleado == null) {
+			btnAñadirEmpleado = new JButton("A\u00F1adir empleado a la plantilla");
+			btnAñadirEmpleado.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					abrirVentanaAñadir();
+				}
+			});
+			btnAñadirEmpleado.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		}
+		return btnAñadirEmpleado;
+	}
+	
+	private void abrirVentanaAñadir() {
+		AñadirEmpleado ae = new AñadirEmpleado(codAdmin);
+		ae.setVisible(true);
+		ae.setLocationRelativeTo(null);
+		ae.setResizable(true);
 	}
 }

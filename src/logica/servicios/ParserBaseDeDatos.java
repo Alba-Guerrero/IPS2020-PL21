@@ -220,6 +220,10 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	private final static String GET_CITA_HISTORIAL_FECHA = "select * from cita c,paciente p,historial h where c.codpaciente=p.codpaciente and p.nhistorial=h.nhistorial and h.nhistorial=? and c.fecha=?";
 	
 	
+	private final static String ADD_EMPLEADO = "INSERT INTO empleado VALUES(?,?,?,?,?,?,?,?,?)";
+	private final static String ADD_MEDICO = "INSERT INTO medico VALUES(?)";
+	private final static String ADD_ENFERMERO = "INSERT INTO enfermero VALUES(?)";
+	
 	
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
@@ -586,8 +590,8 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		return citas;
 	}
 
-	public Medico devolverEmpleado(String codempleado) throws SQLException {
-		Medico empleado = null;
+	public Empleado devolverEmpleado(String codempleado) throws SQLException {
+		Empleado empleado = null;
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst = con.prepareStatement(GET_CITAS_MED);
 		pst.setString(1, codempleado);
@@ -595,7 +599,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 
 		while (rs.next()) {
 
-			empleado = new Medico(rs.getString("codmedico"), rs.getString("nombre"), rs.getString("apellido"),
+			empleado = new Empleado(rs.getString("codempleado"), rs.getString("nombre"), rs.getString("apellido"),
 					rs.getString("pass"), rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("dinicio"),
 					rs.getDate("dfin"), rs.getString("djornada"));
 
@@ -2775,5 +2779,39 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	}
 	
 	
-
+	public void addEmpleado(Empleado empleado, String tipo) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(ADD_EMPLEADO);
+		
+		pst.setString(1, empleado.getCodeEmpleado());
+		pst.setString(2, empleado.getNombre());
+		pst.setString(3, empleado.getApellido());
+		pst.setString(4, empleado.getPass());
+		pst.setTime(5, empleado.gethInicio());
+		pst.setTime(6, empleado.gethFin());
+		pst.setDate(7, empleado.getdInicio());
+		pst.setDate(8, empleado.getdFin());
+		pst.setString(9, empleado.getdJornada());
+		
+		pst.executeUpdate();
+		
+		pst.close();
+		
+		PreparedStatement pst2 = null;
+		
+		if(tipo.equals("Médico")) {
+			pst2 = con.prepareStatement(ADD_MEDICO);
+			pst2.setString(1, empleado.getCodeEmpleado());
+		}
+		else if(tipo.equals("Enfermero")) {
+			pst2 = con.prepareStatement(ADD_ENFERMERO);
+			pst2.setString(1, empleado.getCodeEmpleado());
+		}
+		
+		pst2.executeUpdate();
+		
+		pst2.close();
+		
+		con.close();
+	}
 }
