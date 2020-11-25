@@ -24,7 +24,7 @@ public class Medico extends Empleado{
 	 * @param date2
 	 * @param dJornada
 	 */
-	public Medico(String codeEmpleado,String nombre,String apellido, String pass, Time hInicio, Time hFin, java.util.Date date, java.util.Date date2, String dJornada) {
+	public Medico(String codeEmpleado,String nombre,String apellido, String pass, Time hInicio, Time hFin, Date date, Date date2, String dJornada) {
 		super(codeEmpleado,nombre,apellido,pass, hInicio, hFin, date, date2, dJornada);	
 	}
 
