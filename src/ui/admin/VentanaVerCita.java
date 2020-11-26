@@ -18,7 +18,7 @@ import logica.Equipo;
 import logica.HistorialMedico;
 import logica.Paciente;
 import logica.empleados.Empleado;
-
+import logica.empleados.Medico;
 import logica.servicios.ParserBaseDeDatos;
 import logica.servicios.PrescripcionesToPDF;
 import net.sf.jasperreports.engine.JRException;
@@ -52,6 +52,8 @@ import java.io.FileNotFoundException;
 import javax.swing.JTextField;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+
 import java.awt.FlowLayout;
 import javax.swing.JComboBox;
 import java.awt.Rectangle;
@@ -119,6 +121,7 @@ public class VentanaVerCita extends JDialog {
 	private JLabel lblEspecialidad_1;
 	private JTextField textField;
 	private JButton btnIr_2;
+	private DefaultListModel<Empleado> modeloListaEmpleado;
 
 	/**
 	 * Create the frame.
@@ -728,10 +731,44 @@ public class VentanaVerCita extends JDialog {
 		if (txtNombre.getText().equals(""))
 			JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
 		else {
+			
+			buscarNombre();
 
 		}
 	}
+	
+	private void buscarNombre() {
+		if(checkMedico.isSelected()&& !checkEnfermero.isSelected()) {
+			
+			try {
+				pbd.devolverMedicoNombre(txtNombre.getText());
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
+	}
 
+	
+	private DefaultListModel<Empleado> modeloListaM(List<Empleado> empleado) throws SQLException {
+		modeloListaEmpleado = new DefaultListModel<Empleado>();
+		if(empleado!=null) {
+		List<Empleado> empleados = empleado;
+		for (int i = 0; i < empleados.size(); i++) {
+			modeloListaEmpleado.addElement(empleados.get(i));
+
+		}
+		list.setModel(modeloListaEmpleado);
+		}
+		if(modeloListaEmpleado.getSize()==0)
+			JOptionPane.showMessageDialog(null, "No se ha encontrado ningún médico con esas características");
+		return modeloListaEmpleado;
+	}  
+	
+	
+	
 	public void añadirFilasFiltro(boolean medico,boolean enfermero,boolean equipos) {
 		int contador=0;
 		borrarModeloTabla();
@@ -897,6 +934,7 @@ public class VentanaVerCita extends JDialog {
 	private JCheckBox getCheckMedico() {
 		if (checkMedico == null) {
 			checkMedico = new JCheckBox("M\u00E9dico");
+			checkMedico.setSelected(true);
 			checkMedico.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					añadirFilasFiltro(checkMedico.isSelected(), checkEnfermero.isSelected(), checkEquipo.isSelected());
@@ -910,6 +948,7 @@ public class VentanaVerCita extends JDialog {
 	private JCheckBox getCheckEnfermero() {
 		if (checkEnfermero == null) {
 			checkEnfermero = new JCheckBox("Enfermero");
+			checkEnfermero.setSelected(true);
 			checkEnfermero.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					añadirFilasFiltro(checkMedico.isSelected(), checkEnfermero.isSelected(), checkEquipo.isSelected());
@@ -922,6 +961,7 @@ public class VentanaVerCita extends JDialog {
 	private JCheckBox getCheckEquipo() {
 		if (checkEquipo == null) {
 			checkEquipo = new JCheckBox("Equipo");
+			checkEquipo.setSelected(true);
 			checkEquipo.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					añadirFilasFiltro(checkMedico.isSelected(), checkEnfermero.isSelected(), checkEquipo.isSelected());
