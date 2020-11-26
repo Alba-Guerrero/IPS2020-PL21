@@ -20,6 +20,7 @@ import logica.AsignaCausa;
 import logica.AsignaDiagnostico;
 import logica.AsignaEquipo;
 import logica.AsignaPreinscripcion;
+import logica.AsignaProcedimiento;
 import logica.AsignaVacuna;
 import logica.Causas;
 import logica.Cita;
@@ -109,6 +110,8 @@ public class ParserBaseDeDatos {
 	private final static String ADD_PREINSCRIPCION = "INSERT INTO PRESCRIPCION (NOMBREPRESCRIPCION, MEDICAMENTO)"
 			+ " VALUES(?,?)";
 	private final static String ADD_DIAGNOSTICO = "INSERT INTO DIAGNOSTICO (CODDIAGNOSTICO, NOMBREDIAGNOSTICO)" + " VALUES(?, ?)";
+	
+	private final static String ADD_PROCEDIMIENTO = "INSERT INTO PROCEDIMIENTO (CODPROCEDIMIENTO, NOMBREPROCEDIMIENTO)" + " VALUES(?,?)";
 
 	private final static String ADD_CORREO = "INSERT INTO CORREO (CODCORREO, CODMEDICODESTINO, CODMEDICOORIGEN, ASUNTO, MENSAJE, FECHA, HORA) VALUES (?,?,?,?,?,?,?)";
 
@@ -2952,7 +2955,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 			ResultSet rs1 = pst1.executeQuery();
 			while (rs1.next()) {
 				
-				nombreProcedimientos.add(rs.getString(2) + "\t" + "Fecha: " + rs.getString(6) + "\t" + "Hora: " + rs.getString(7)
+				nombreProcedimientos.add(rs.getString(2) + "\t" + "\t" + "Fecha: " + rs.getString(6) + "\t" + "Hora: " + rs.getString(7)
 										+ "\t" + "\t"+ "Empleado: " + rs1.getString("nombre"));
 			}
 			
@@ -2966,5 +2969,46 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		con.close();
 		
 		return nombreProcedimientos;
+	}
+	
+	
+	
+	
+	/**
+	 * Método para guardar un nuevo procedimiento
+	 * 
+	 * @param p
+	 * @throws SQLException
+	 */
+	public void nuevoProcedimiento(Procedimiento p) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(ADD_PROCEDIMIENTO);
+
+		String codprocedimiento = p.getNumero();
+		String nombreprocedimiento = p.getNombre();
+
+		pst.setString(1, codprocedimiento);
+		pst.setString(2, nombreprocedimiento);
+
+		pst.executeUpdate();
+		pst.close();
+		con.close();
+	}
+
+	
+	
+	/**
+	 * Método para saber si los procedimientos del cie10 están cargados en la base de datos
+	 * @return
+	 * @throws SQLException 
+	 */
+	public boolean procedimientosCargados() throws SQLException {
+		List<Procedimiento> procedimientos = cargarProcedimientos();
+		if (procedimientos.size() != 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 }
