@@ -186,7 +186,6 @@ public class DatosGerente extends JDialog {
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-				System.out.println(diagnostico.getNombre() + cant);
 				nuevaFila[2]= cant + "";
 				int datoss1 = cant;
 				dataset.setValue(datoss1,"", diagnostico.getNombre());
@@ -204,7 +203,6 @@ public class DatosGerente extends JDialog {
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-				System.out.println(diagnostico.getNombre() + cant);
 				nuevaFila[2]= cant + "";
 				int datoss1 = cant;
 				dataset.setValue(datoss1,"", diagnostico.getNombre());

@@ -32,7 +32,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -63,12 +65,14 @@ public class CrearEquipo extends JDialog {
 	private JButton btnEliminarMedico;
 	private JPanel panel;
 	private JButton btnCrearEquipo;
+	private String codAdmin;
 
 	/**
 	 * Create the frame.
 	 * @throws SQLException 
 	 */
-	public CrearEquipo() throws SQLException {
+	public CrearEquipo(String codAdmin) throws SQLException {
+		this.codAdmin = codAdmin;
 		setTitle("Crear Equipo");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1050, 650);
@@ -370,6 +374,34 @@ public class CrearEquipo extends JDialog {
 		return btnCrearEquipo;
 	}
 
+	protected void guardarAccion(String numEquipo) throws SQLException {
+		List<Accion> devolverAccionesAdmin = pbd.devolverAccionesAdmin();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" +numeroAccion;
+		
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());	
+		String mensajeMedicos = "";
+		for(int i = 0; i<medicos.size(); i++) {
+			if(i == medicos.size()) {
+				mensajeMedicos += medicos.get(i).toString();
+			}
+			else {
+				mensajeMedicos += medicos.get(i).toString() + ", ";
+			}
+		}
+		
+		String mensajeAccion = "El aministrador " + codAdmin + " ha creado el equipo " + numEquipo + " formado por " + mensajeMedicos;
+		
+		Accion a = new Accion(naccion, codAdmin,  fecha, hora, mensajeAccion);
+		
+		pbd.guardarAccion(a);
+		
+	}
+
 	protected void crearEquipo() throws SQLException {
 		List<Equipo> devolverEquipos = pbd.calcularEquipos();
 		int numeroEquipos = devolverEquipos.size() + 1;
@@ -382,6 +414,7 @@ public class CrearEquipo extends JDialog {
 			 String codEmpleado = medicos.get(i).getCodeEmpleado();
 			 pbd.asignarEquipo(codequipo, numEquipo, codEmpleado);
 		 }
+		 guardarAccion(numEquipo);
 	}
 	
 	private boolean camposCubiertos() {
