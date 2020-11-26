@@ -20,8 +20,11 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
+<<<<<<< HEAD
 
 //import com.google.common.hash.Hashing;
+=======
+>>>>>>> refs/heads/maria-HU11745
 
 import logica.LecturaExcel;
 

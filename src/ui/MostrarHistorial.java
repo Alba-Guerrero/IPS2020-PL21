@@ -68,6 +68,9 @@ public class MostrarHistorial extends JDialog {
 	private JTextArea textAreaDiagnosticos;
 	private JButton btnNewButton;
 	private JButton btnNewButton_1;
+	private JPanel panelProcedimientos;
+	private JScrollPane scrollPaneProcedimientos;
+	private JTextArea textAreaProcedimientos;
 
 	/**
 	 * Create the frame.
@@ -102,6 +105,7 @@ public class MostrarHistorial extends JDialog {
 			panelPestañas.addTab("Vacunas", null, getPanelVacunas(), null);
 			panelPestañas.addTab("Preinscripciones", null, getPanelPreinscripciones(), null);
 			panelPestañas.addTab("Diagnosticos", null, getPanelDiagnosticos(), null);
+			panelPestañas.addTab("Procedimientos", null, getPanelProcedimientos(), null);
 		}
 		return panelPestañas;
 	}
@@ -298,6 +302,10 @@ public class MostrarHistorial extends JDialog {
 		}
 		return diagnosticos;
 	}
+	
+	
+	
+	
 	private JButton getBtnNewButton() {
 		if (btnNewButton == null) {
 			btnNewButton = new JButton("Descargar Historial");
@@ -350,5 +358,50 @@ public class MostrarHistorial extends JDialog {
 			});
 		}
 		return btnNewButton_1;
+	}
+	private JPanel getPanelProcedimientos() {
+		if (panelProcedimientos == null) {
+			panelProcedimientos = new JPanel();
+			panelProcedimientos.setLayout(new BorderLayout(0, 0));
+			panelProcedimientos.add(getScrollPaneProcedimientos());
+			//panelProcedimientos.add(getTextAreaProcedimientos());
+		}
+		return panelProcedimientos;
+	}
+	private JScrollPane getScrollPaneProcedimientos() {
+		if (scrollPaneProcedimientos == null) {
+			scrollPaneProcedimientos = new JScrollPane();
+			
+			scrollPaneProcedimientos.setViewportView(getTextAreaProcedimientos());
+		}
+		return scrollPaneProcedimientos;
+	}
+	private JTextArea getTextAreaProcedimientos() {
+		if (textAreaProcedimientos == null) {
+			textAreaProcedimientos = new JTextArea();
+			
+			try {
+				textAreaProcedimientos.setText(ponerProcedimientos());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return textAreaProcedimientos;
+	}
+
+	/**
+	 * Método que me muestra todos los procedimientos que se le han asignado al paciente
+	 * @return
+	 * @throws SQLException 
+	 */
+	private String ponerProcedimientos() throws SQLException {
+		String procedimientos = "";
+		
+		List<String> nombreProcedimientos = new ArrayList<>();
+		nombreProcedimientos = pbd.mostrarProcedimientosAsignados(hm.getHistorial());
+		for(String str : nombreProcedimientos) {
+			procedimientos += str + "\n";
+		}
+		return procedimientos;
 	}
 }
