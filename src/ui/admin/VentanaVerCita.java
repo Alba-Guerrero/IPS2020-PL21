@@ -57,6 +57,8 @@ import javax.swing.JComboBox;
 import java.awt.Rectangle;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class VentanaVerCita extends JDialog {
 
@@ -164,7 +166,7 @@ public class VentanaVerCita extends JDialog {
 			sortKeys.add(new RowSorter.SortKey(2, SortOrder.ASCENDING));
 			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
 			sorter.setSortKeys(sortKeys);
-			for (int i = 8; i < 11; i++) {
+			for (int i = 8; i < 12; i++) {
 				tablacita.getColumnModel().getColumn(i).setMinWidth(0);
 				tablacita.getColumnModel().getColumn(i).setMaxWidth(0);
 				tablacita.getColumnModel().getColumn(i).setWidth(0);
@@ -182,7 +184,7 @@ public class VentanaVerCita extends JDialog {
 						btnModificar.setEnabled(true);
 						btnVerHistorial.setEnabled(true);
 						try {
-							Paciente p = pbd.devolverPacientesMedico(
+							Paciente p = pbd.devolverPacientes(
 									(String) tablacita.getValueAt(tablacita.getSelectedRow(), 9));
 						} catch (SQLException e) {
 							e.printStackTrace();
@@ -228,7 +230,7 @@ public class VentanaVerCita extends JDialog {
 			Paciente p = null;
 			Empleado empleado = null;
 			try {
-				p = pbd.devolverPacientesMedico(c.getCodCita());
+				p = pbd.devolverPacientes(c.getCodCita());
 				empleado = pbd.devolverEmpleado(c.getCodMed());
 
 			} catch (SQLException e) {
@@ -394,7 +396,7 @@ public class VentanaVerCita extends JDialog {
 								p = pbd.devolverPacientesEquipo(
 										(String) tablacita.getValueAt(tablacita.getSelectedRow(), 10));
 							} else {
-								p = pbd.devolverPacientesMedico(
+								p = pbd.devolverPacientes(
 										(String) tablacita.getValueAt(tablacita.getSelectedRow(), 9));
 							}
 							// System.err.println(p.getNombre() +" "+p.getApellido()+"
@@ -452,7 +454,7 @@ public class VentanaVerCita extends JDialog {
 			Empleado empleado = null;
 			try {
 
-				p = pbd.devolverPacientesMedico(c.getCodCita());
+				p = pbd.devolverPacientes(c.getCodCita());
 				empleado = pbd.devolverEmpleado(c.getCodMed());
 
 			} catch (SQLException e) {
@@ -501,7 +503,7 @@ public class VentanaVerCita extends JDialog {
 			Empleado empleado = null;
 			try {
 
-				p = pbd.devolverPacientesMedico(c.getCodCita());
+				p = pbd.devolverPacientes(c.getCodCita());
 				empleado = pbd.devolverEmpleado(c.getCodMed());
 
 			} catch (SQLException e) {
@@ -614,7 +616,7 @@ public class VentanaVerCita extends JDialog {
 					System.out.println(fila);
 					p = pbd.devolverPacientesEquipo((String) tablacita.getValueAt(tablacita.getSelectedRow(), 10));
 				} else {
-					p = pbd.devolverPacientesMedico((String) tablacita.getValueAt(tablacita.getSelectedRow(), 9));
+					p = pbd.devolverPacientes((String) tablacita.getValueAt(tablacita.getSelectedRow(), 9));
 				}
 
 				try {
@@ -730,41 +732,52 @@ public class VentanaVerCita extends JDialog {
 		}
 	}
 
-	public void añadirFilasMedico() {
+	public void añadirFilasFiltro(boolean medico,boolean enfermero,boolean equipos) {
+		int contador=0;
 		borrarModeloTabla();
 		Object[] nuevaFila = new Object[12];
 		List<Cita> citas = new ArrayList<Cita>();
 
 		try {
 			citas = pbd.devolverCitas();
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-
-		}
-
 		for (Cita c : citas) {
 			Paciente p = null;
 			Empleado empleado = null;
 
-			try {
-				p = pbd.devolverPacientesMedico(c.getCodCita());
-				empleado = pbd.devolverEmpleado(c.getCodMed());
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			p = pbd.devolverPacientes(c.getCodCita());
+			empleado = pbd.devolverEmpleado(c.getCodMed());
+		if((medico && pbd.checkCodeMedico(c.getCodMed()))|| (enfermero && pbd.checkCodEnfermero(c.getCodMed()))||
+				(equipos && pbd.checkCodEquipo(c.getNumequipo()))) {
+			contador++;
 			nuevaFila[0] = p.getNombre();
 			nuevaFila[1] = p.getApellido();
 			nuevaFila[2] = c.gethInicio();
 			nuevaFila[3] = c.gethFin();
 			nuevaFila[4] = c.getDate();
 			nuevaFila[5] = c.getUbicacion();
-			nuevaFila[6] = empleado.getNombre() + "  " + empleado.getApellido();
+			if (empleado != null) {
+				nuevaFila[6] = empleado.getNombre() + "  " + empleado.getApellido();
+			} else {
+				nuevaFila[6] = "";
+			}
+
+			if (c.getNumequipo() != null) {
+				nuevaFila[7] = c.getNumequipo();
+			} else {
+				nuevaFila[7] = "";
+			}
 			nuevaFila[8] = c.isUrgente();
 			nuevaFila[9] = c.getCodCita();
 			nuevaFila[10] = c.getCodPaciente();
 			nuevaFila[11] = c.getCodMed();
 			modeloTabla.addRow(nuevaFila);
 		}
+		}
+	}catch (Exception e) {
+		// TODO: handle exception
+	}
+		
+	System.err.println(contador);
 	}
 
 	private JPanel getPnApellido() {
@@ -884,11 +897,11 @@ public class VentanaVerCita extends JDialog {
 	private JCheckBox getCheckMedico() {
 		if (checkMedico == null) {
 			checkMedico = new JCheckBox("M\u00E9dico");
-			checkMedico.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-
+			checkMedico.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					añadirFilasFiltro(checkMedico.isSelected(), checkEnfermero.isSelected(), checkEquipo.isSelected());
 				}
+				
 			});
 		}
 		return checkMedico;
@@ -897,6 +910,11 @@ public class VentanaVerCita extends JDialog {
 	private JCheckBox getCheckEnfermero() {
 		if (checkEnfermero == null) {
 			checkEnfermero = new JCheckBox("Enfermero");
+			checkEnfermero.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					añadirFilasFiltro(checkMedico.isSelected(), checkEnfermero.isSelected(), checkEquipo.isSelected());
+				}
+			});
 		}
 		return checkEnfermero;
 	}
@@ -904,6 +922,11 @@ public class VentanaVerCita extends JDialog {
 	private JCheckBox getCheckEquipo() {
 		if (checkEquipo == null) {
 			checkEquipo = new JCheckBox("Equipo");
+			checkEquipo.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					añadirFilasFiltro(checkMedico.isSelected(), checkEnfermero.isSelected(), checkEquipo.isSelected());
+				}
+			});
 		}
 		return checkEquipo;
 	}

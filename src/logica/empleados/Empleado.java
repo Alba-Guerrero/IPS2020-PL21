@@ -10,7 +10,7 @@ import java.util.Date;
  * @author María
  *
  */
-public abstract class Empleado {
+public  class Empleado {
 	
 	public String codeEmpleado;
 	public String pass;
