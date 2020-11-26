@@ -21,7 +21,6 @@ import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
 
-//import com.google.common.hash.Hashing;
 
 import logica.LecturaExcel;
 
@@ -55,6 +54,8 @@ public class VentanaInicio extends JFrame {
 	public static void main(String[] args) {
 		try {
 			
+			
+			// DIAGNOSTICOS CIE10
 			if (!pbd.diagnosticosCargados()) { // Si no están cargados los diagnósticos se cargan
 				lecturaExcel.cargarDiagnosticosCie10(); // Cargamos el cie10 de diagnosticos
 				System.out.println("Se han cargado con éxito los diagnósticos del cie10");
@@ -62,6 +63,18 @@ public class VentanaInicio extends JFrame {
 			else if (pbd.diagnosticosCargados()) { // Si ya estaban cargados te avisa
 				System.out.println("Los diagnósticos del 10 ya estaban cargados");
 			}
+			
+			// PROCEDIMIENTOS CIE10
+			if (!pbd.procedimientosCargados()) { // Si no están cargados los procedimientos se cargan
+				lecturaExcel.cargarProcedimientosCie10(); // Cargamos el cie10 de procedimientos
+				System.out.println("Se han cargado con éxito los procedimientos del cie10");
+			}
+			else if (pbd.procedimientosCargados()) { // Si ya estaban cargados te avisa
+				System.out.println("Los procedimientos del 10 ya estaban cargados");
+			}			
+			
+			
+			
 			
 			
 			VentanaInicio frame = new VentanaInicio();
