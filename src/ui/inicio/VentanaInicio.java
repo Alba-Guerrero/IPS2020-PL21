@@ -20,7 +20,6 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
-import com.google.common.hash.Hashing;
 
 import logica.LecturaExcel;
 import logica.servicios.ParserBaseDeDatos;

@@ -42,11 +42,12 @@ public class LecturaExcel {
 			int rows = sheet.getLastRowNum(); // Cogemos el número total de filas que tieene la hoja
 			
 			Row row; 
-			for (int i = 0; i <= rows; i++) { // Recorremos todas las filas
+			for (int i = 3; i <= rows; i++) { // Recorremos todas las filas
 				row = sheet.getRow(i); // Con la fila en la que estamos iterando...
 				
 				Cell cell1 = row.getCell(0);
 				String codigo = "";
+				//System.out.println(celll1.getStringCellValue());
 				if (!cell1.getStringCellValue().equals("")) {
 					codigo = cell1.getStringCellValue();
 				}
@@ -61,7 +62,7 @@ public class LecturaExcel {
 				pbd.nuevoDiagnostico(d);
 				
 				
-				System.out.println(codigo + diagnostico);
+				System.out.println(codigo + "\t" +  diagnostico);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

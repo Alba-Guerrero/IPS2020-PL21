@@ -20,6 +20,7 @@ import logica.AsignaCausa;
 import logica.AsignaDiagnostico;
 import logica.AsignaEquipo;
 import logica.AsignaPreinscripcion;
+import logica.AsignaProcedimiento;
 import logica.AsignaVacuna;
 import logica.Causas;
 import logica.Cita;
@@ -29,6 +30,7 @@ import logica.Equipo;
 import logica.HistorialMedico;
 import logica.Paciente;
 import logica.Preinscripcion;
+import logica.Procedimiento;
 import logica.Vacaciones;
 import logica.Vacuna;
 import logica.empleados.Empleado;
@@ -104,6 +106,8 @@ public class ParserBaseDeDatos {
 
 	private final static String ADD_ASIGNA_DIAGNOSTICO = "INSERT INTO ASIGNADIAGNOSTICO (CODASIGDIAGNOSTICO,NOMBREDIAGNOSTICO, CODDIAGNOSTICO, HISTORIAL, CODEMPLEADO, FECHA, HORA) VALUES (?,?,?,?,?,?,?)";
 
+	private final static String ADD_ASIGNA_PROCEDIMIENTO = "INSERT INTO ASIGNAPROCEDIMIENTO (CODASIGPROCEDIMIENTO, NOMBREPROCEDIMIENTO, CODPROCEDIMIENTO, NHISTORIAL, CODEMPLEADO,FECHA, HORA) VALUES (?,?,?,?,?,?,?)";
+	
 	private final static String ADD_PREINSCRIPCION = "INSERT INTO PRESCRIPCION (NOMBREPRESCRIPCION, MEDICAMENTO)"
 			+ " VALUES(?,?)";
 	private final static String ADD_DIAGNOSTICO = "INSERT INTO DIAGNOSTICO (CODDIAGNOSTICO, NOMBREDIAGNOSTICO)" + " VALUES(?, ?)";
@@ -112,6 +116,8 @@ public class ParserBaseDeDatos {
 
 	private final static String LIST_PREINSCRIPCIONES = "Select * from prescripcion";
 
+	private final static String LIST_PROCEDIMIENTOS = "Select * from procedimiento";
+	
 	private final static String LIST_DIAGNOSTICOS = "Select * from diagnostico";
 
 	private final static String GET_CITA_HISTORIAL = "select * from cita c,paciente p,historial h where c.codpaciente=p.codpaciente and p.nhistorial=h.nhistorial and h.nhistorial=?";
@@ -127,6 +133,8 @@ public class ParserBaseDeDatos {
 	private final static String VER_PREINSCRIPCIONES_ASIGNADAS = "SELECT * FROM asignaprescripcion where nhistorial = ?";
 	
 	private final static String VER_ASIGNA_PREINSCRIPCIONES = "SELECT * FROM asignaprescripcion where nhistorial = ? and fecha=?";
+	
+	private final static String VER_ASIGNA_PROCEDIMIENTOS = "SELECT * FROM asignaprocedimiento where nhistorial = ?";
 
 	private final static String VER_VACUNAS_ASIGNADAS = "SELECT * FROM asignavacuna where historial = ?";
 
@@ -1649,6 +1657,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		List<String> nombreVacunas = new ArrayList<String>();
 
 		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst1 = con.prepareStatement(GET_MEDICO_NOMBRE);
 		PreparedStatement pst = con.prepareStatement(VER_VACUNAS_ASIGNADAS);
 
 		pst.setString(1, historial); // busco por n de historial
@@ -1656,16 +1665,28 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		ResultSet rs = pst.executeQuery(); // Creo el resultSet
 
 		while (rs.next()) {
+			pst1.setString(1, rs.getString("codempleado"));
+			ResultSet rs1 = pst1.executeQuery();
+			while (rs1.next()) {
+
 			nombreVacunas.add(rs.getString(2) + "	Fecha: " + rs.getString(5) + "	Hora: " + rs.getString(6)
-					+ "	Médico: " + rs.getString(3));
+					+ "		Empleado: " + rs1.getString("nombre"));
+			}
+			
+			rs1.close();
 		}
 
 		// CERRAR EN ESTE ORDEN
 		rs.close();
 		pst.close();
+		pst1.close();
 		con.close();
 		return nombreVacunas;
-	}
+		
+		
+
+		}
+	
 
 	/**
 	 * Método que me devuelve una lista con todos los diagnosticos que tengo en la
@@ -1739,6 +1760,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		List<String> nombreDiagnosticos = new ArrayList<String>();
 
 		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst1 = con.prepareStatement(GET_MEDICO_NOMBRE);
 		PreparedStatement pst = con.prepareStatement(VER_DIAGNOSTICOS_ASIGNADOS);
 
 		pst.setString(1, historial); // busco por n de historial
@@ -1746,15 +1768,26 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		ResultSet rs = pst.executeQuery(); // Creo el resultSet
 
 		while (rs.next()) {
-			nombreDiagnosticos.add(rs.getString(2) + "	Fecha: " + rs.getDate(6) + "	Hora: " + rs.getTime(7)
-					+ "	Empleado: " + rs.getString(5));
+			pst1.setString(1, rs.getString("codempleado"));
+			ResultSet rs1 = pst1.executeQuery();
+			while (rs1.next()) {
+				nombreDiagnosticos.add(rs.getString(2) + "\t" +"Fecha: " + rs.getDate(6) + "\t" +"Hora: " + rs.getTime(7)
+					+ "\t" + "\t" + "Empleado: " + rs1.getString("nombre"));
+			}
+			
+			rs1.close();
 		}
 
 		// CERRAR EN ESTE ORDEN
+		
 		rs.close();
 		pst.close();
+		pst1.close();
 		con.close();
 		return nombreDiagnosticos;
+		
+		
+	
 	}
 
 	public List<Cita> devolvercitasHistorialFechasMedico(String historial, java.util.Date fecha, String codmedico)
@@ -2775,5 +2808,128 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	}
 	
 	
+	/**
+	 * Método para cargar los procedimientos de la base de datos
+	 * @return
+	 * @throws SQLException 
+	 */
+	public List<Procedimiento> cargarProcedimientos() throws SQLException{
+		List<Procedimiento> procedimientos = new ArrayList<Procedimiento>(); // Creo la lista que voy a devolver
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(LIST_PROCEDIMIENTOS);
+
+		ResultSet rs = pst.executeQuery(); // Creo el resultSet
+
+		while (rs.next()) {
+
+			procedimientos.add(new Procedimiento(rs.getString("codProcedimiento"), rs.getString("nombreProcedimiento")));
+		}
+
+		rs.close();
+		pst.close();
+		con.close();
+
+		return procedimientos;
+	}
+	
+	
+	
+	/**
+	 * Método que me crea una nueva asignaPreinscripcion y me lo guarda
+	 * @param ap
+	 * @throws SQLException 
+	 */
+	public void nuevoAsignaProcedimiento(AsignaProcedimiento ap) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(ADD_ASIGNA_PROCEDIMIENTO);
+
+		String codAsigProcedimiento = ap.getCodAsigProcedimiento();
+		String nombreProcedimiento = ap.getNombreProcedimiento();
+		String codProcedimiento = ap.getCodigoProcedimiento();
+		String nHistorial = ap.getnHistorial();
+		String codempleado = ap.getCodEmpleado();
+		java.sql.Date fecha = new java.sql.Date(ap.getFecha().getTime());
+		Time hora = new Time(fecha.getTime());
+
+		pst.setString(1, codAsigProcedimiento);
+		pst.setString(2, nombreProcedimiento);
+		pst.setString(3, codProcedimiento);
+		pst.setString(4, nHistorial);
+		pst.setString(5, codempleado);
+		pst.setDate(6, fecha);
+		pst.setTime(7, hora);
+
+		pst.executeUpdate();
+
+		pst.close();
+		con.close();
+	}
+	
+	
+	
+	/**
+	 * Método para buscar todos los procedimientos que tiene asignado un numero de historial que se le pasa por parámetro
+	 * 
+	 * @param historial
+	 * @return
+	 * @throws SQLException
+	 */
+	//public List<AsignaProcedimiento> mostrarProcedimientosAsignados(String historial) throws SQLException{
+	public List<String> mostrarProcedimientosAsignados(String historial) throws SQLException{
+
+//		List<AsignaProcedimiento> aProcedimientos = new ArrayList<AsignaProcedimiento>();
+//		
+//		Connection con = new Conexion().getConnectionJDBC();
+//		PreparedStatement pst = con.prepareStatement(VER_ASIGNA_PROCEDIMIENTOS);
+//
+//		pst.setString(1, historial); 
+//
+//		ResultSet rs = pst.executeQuery(); 
+//
+//		while (rs.next()) {
+//			aProcedimientos.add("Nombre: " + rs.getString("nombreprocedimiento") + 
+//					rs.getString("codprocedimiento"),rs.getString("nhistorial"),
+//				rs.getString("codempleado"), rs.getDate("fecha"),rs.getTime("hora")));			
+//		}
+//
+//		// CERRAR EN ESTE ORDEN
+//		rs.close();
+//		pst.close();
+//		con.close();
+//		return aProcedimientos;
+		
+		
+		List<String> nombreProcedimientos = new ArrayList<String>();
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst1 = con.prepareStatement(GET_MEDICO_NOMBRE);
+		PreparedStatement pst = con.prepareStatement(VER_ASIGNA_PROCEDIMIENTOS);
+
+		pst.setString(1, historial); // busco por n de historial
+
+		
+		ResultSet rs = pst.executeQuery(); // Creo el resultSet
+
+		while (rs.next()) {
+			pst1.setString(1, rs.getString("codempleado"));
+			ResultSet rs1 = pst1.executeQuery();
+			while (rs1.next()) {
+				
+				nombreProcedimientos.add(rs.getString(2) + "\t" + "Fecha: " + rs.getString(6) + "\t" + "Hora: " + rs.getString(7)
+										+ "\t" + "\t"+ "Empleado: " + rs1.getString("nombre"));
+			}
+			
+			rs1.close();
+		}
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		pst1.close();
+		con.close();
+		
+		return nombreProcedimientos;
+	}
 
 }
