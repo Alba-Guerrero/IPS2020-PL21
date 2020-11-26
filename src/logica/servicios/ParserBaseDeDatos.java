@@ -34,6 +34,8 @@ import logica.Vacuna;
 import logica.empleados.Empleado;
 import logica.empleados.Enfermero;
 import logica.empleados.Medico;
+import logica.servicios.DtoCita;
+import logica.servicios.DtoMapper;
 import oracle.jdbc.proxy.annotation.GetDelegate;
 
 public class ParserBaseDeDatos {
@@ -145,7 +147,7 @@ public class ParserBaseDeDatos {
 	private final static String CITA_CODCITA = "select * from cita  where codCita=? and codpaciente=? ";
 	private final static String PACIENTE_HISTORIAL = "select * from paciente  where nhistorial=? ";
 
-	private final static String VACUNAS_PERSONA = "SELECT * FROM asignaVacuna WHERE nHistorial=?";
+	private final static String VACUNAS_PERSONA = "SELECT * FROM asignaVacuna WHERE historial=?";
 	private final static String GET_ACOMPAÑANTE = "SELECT * FROM acompañantePaciente WHERE codpaciente=?";
 
 	
@@ -1846,6 +1848,11 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	}
 	
 
+	/*
+	 * SI ESTAS LEYENDO ESTO, ES PORQUE TE DA ERROR PORQUE CAMBIE EN VACUNAS_PERSONA NHISTORIAL POR HISTORIAL
+	 * Y CODVACUNA POR NOMBREVACUNA AQUI ABAJO
+	 * 																					-Raul
+	 */
 	public List<String> verVacunasPaciente(String nHistorial) throws SQLException {
 		List<String> listaVacunas = new ArrayList<String>();
 
@@ -1854,7 +1861,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		pst.setString(1, nHistorial);
 		ResultSet rs = pst.executeQuery();
 		if (rs.next()) {
-			listaVacunas.add(rs.getString("codVacuna"));
+			listaVacunas.add(rs.getString("nombreVacuna"));
 		}
 
 		rs.close();

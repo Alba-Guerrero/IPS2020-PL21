@@ -26,6 +26,7 @@ import java.util.List;
 import javax.swing.JLabel;
 import java.awt.Component;
 import javax.swing.Box;
+import javax.swing.JButton;
 
 public class CalendarioVacunas extends JDialog {
 
@@ -41,6 +42,12 @@ public class CalendarioVacunas extends JDialog {
 	private ParserBaseDeDatos pbd = new ParserBaseDeDatos();
 	private List<String> vacunas = new ArrayList<String>();
 	private boolean[] strike;
+	
+	private String[] nombreVacunas = {"Hepatitis B", "Difteria, tétanos y tosferina", "Poliomelitis", "Influenza", "Neumococo", "Rotavirus", "Menungococo B", "Meningococo C y ACWY",
+			"Sarampión, rubeola y parotiditis", "Varicela", "Virus del papiloma humano"};
+	private JPanel panel_1;
+	private JPanel panelOtras;
+	private JButton btnNewButton;
 	
 	/**
 	 * Launch the application.
@@ -80,12 +87,15 @@ public class CalendarioVacunas extends JDialog {
 		setContentPane(contentPane);
 		contentPane.add(getPanel(), BorderLayout.NORTH);
 		contentPane.add(getScrollPane(), BorderLayout.CENTER);
+		contentPane.add(getPanelOtras(), BorderLayout.SOUTH);
+		//contentPane.add(getTable_1(), BorderLayout.WEST);
 		
 	}
 	private JPanel getPanel() {
 		if (panel == null) {
 			panel = new JPanel();
 			panel.add(getLblPaciente());
+			panel.add(getPanel_1());
 		}
 		return panel;
 	}
@@ -99,8 +109,7 @@ public class CalendarioVacunas extends JDialog {
 	private JTable getTablaVacunas() {
 		if (tablaVacunas == null) {
 			String[] edad = {"VACUNAS", "2 meses", "3 meses", "4 meses", "5 meses", "11 meses", "12 meses", "15 meses", "3-4 años", "6 años", "12 años", "14 años", "15-18 años"};
-			//List<String> vacunas = {"Hepatitis B", "Difteria, tétanos y tosferina", "Poliomelitis", "Influenza", "Neumococo", "Rotavirus", "Menungococo B", "Meningococo C y ACWY",
-			//		"Sarampión, rubeola y parotiditis", "Varicela", "Virus del papiloma humano"};
+			//
 			modeloTabla = new ModeloNoEditable(edad, 11);
 			
 			tablaVacunas = new JTable(modeloTabla) {
@@ -212,5 +221,28 @@ public class CalendarioVacunas extends JDialog {
 			}
 		
 		return vaccinated;
+	}
+	
+	private void addVacuna() {
+		
+	}
+	private JPanel getPanel_1() {
+		if (panel_1 == null) {
+			panel_1 = new JPanel();
+		}
+		return panel_1;
+	}
+	private JPanel getPanelOtras() {
+		if (panelOtras == null) {
+			panelOtras = new JPanel();
+			panelOtras.add(getBtnNewButton());
+		}
+		return panelOtras;
+	}
+	private JButton getBtnNewButton() {
+		if (btnNewButton == null) {
+			btnNewButton = new JButton("Otras vacunas");
+		}
+		return btnNewButton;
 	}
 }
