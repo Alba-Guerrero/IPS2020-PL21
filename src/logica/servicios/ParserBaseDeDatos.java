@@ -1884,15 +1884,17 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	 * Y CODVACUNA POR NOMBREVACUNA AQUI ABAJO
 	 * 																					-Raul
 	 */
-	public List<String> verVacunasPaciente(String nHistorial) throws SQLException {
-		List<String> listaVacunas = new ArrayList<String>();
+	public List<AsignaVacuna> verVacunasPaciente(String nHistorial) throws SQLException {
+		List<AsignaVacuna> listaVacunas = new ArrayList<AsignaVacuna>();
 
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst = con.prepareStatement(VACUNAS_PERSONA);
 		pst.setString(1, nHistorial);
 		ResultSet rs = pst.executeQuery();
-		if (rs.next()) {
-			listaVacunas.add(rs.getString("nombreVacuna"));
+		while (rs.next()) {
+			AsignaVacuna v = new AsignaVacuna(rs.getString("codasigvac"), rs.getString("nombreVacuna"), rs.getString("historial"), rs.getString("codempleado"),
+					rs.getDate("fecha"), rs.getTime("hora"));
+			listaVacunas.add(v);
 		}
 
 		rs.close();

@@ -14,19 +14,24 @@ import javax.swing.table.TableColumn;
 
 import logica.AsignaVacuna;
 import logica.Paciente;
+import logica.Vacuna;
 import logica.servicios.ParserBaseDeDatos;
+import ui.admin.NuevasVacunas;
 
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import java.awt.GridLayout;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JLabel;
 import java.awt.Component;
 import javax.swing.Box;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class CalendarioVacunas extends JDialog {
 
@@ -40,7 +45,7 @@ public class CalendarioVacunas extends JDialog {
 	private JLabel lblPaciente;
 	private Paciente paciente;
 	private ParserBaseDeDatos pbd = new ParserBaseDeDatos();
-	private List<String> vacunas = new ArrayList<String>();
+	private List<AsignaVacuna> vacunas = new ArrayList<AsignaVacuna>();
 	private boolean[] strike;
 	
 	private String[] nombreVacunas = {"Hepatitis B", "Difteria, tétanos y tosferina", "Poliomelitis", "Influenza", "Neumococo", "Rotavirus", "Menungococo B", "Meningococo C y ACWY",
@@ -48,6 +53,8 @@ public class CalendarioVacunas extends JDialog {
 	private JPanel panel_1;
 	private JPanel panelOtras;
 	private JButton btnNewButton;
+	
+	private List<AsignaVacuna> vacunasNuevas = new ArrayList<AsignaVacuna>();
 	
 	/**
 	 * Launch the application.
@@ -74,6 +81,7 @@ public class CalendarioVacunas extends JDialog {
 		paciente = p;
 		try {
 			vacunas = pbd.verVacunasPaciente(paciente.getHistorial());
+			sacarVacunasNuevas();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -212,7 +220,7 @@ public class CalendarioVacunas extends JDialog {
 		boolean vaccinated = false;
 		
 			for (int i = 0; i < vacunas.size(); i++) {
-				if(vacuna.equals(vacunas.get(i))) {
+				if(vacuna.equals(vacunas.get(i).getNombreVacuna())) {
 					vaccinated = true;
 					//strike[i]=true;
 				}
@@ -223,9 +231,6 @@ public class CalendarioVacunas extends JDialog {
 		return vaccinated;
 	}
 	
-	private void addVacuna() {
-		
-	}
 	private JPanel getPanel_1() {
 		if (panel_1 == null) {
 			panel_1 = new JPanel();
@@ -242,7 +247,43 @@ public class CalendarioVacunas extends JDialog {
 	private JButton getBtnNewButton() {
 		if (btnNewButton == null) {
 			btnNewButton = new JButton("Otras vacunas");
+			btnNewButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					mostrarVentanaNueva();
+					
+				}
+			});
 		}
 		return btnNewButton;
+	}
+	
+	private void sacarVacunasNuevas(){
+		for(int i=0; i< vacunas.size(); i++) {
+			/*
+			for(String nombre : nombreVacunas) {
+				if(!(nombre.equals(vacunas.get(i).getNombreVacuna()))) {
+					vacunasNuevas.add(vacunas.get(i));
+					System.out.print(vacunas.get(i).getNombreVacuna());
+				}
+			}
+			*/
+			if(!(Arrays.asList(nombreVacunas).contains(vacunas.get(i).getNombreVacuna()))) {
+				vacunasNuevas.add(vacunas.get(i));
+				/*
+				System.out.println("Vacunas: " + vacunas.size());
+				System.out.println("Nombre: " + nombreVacunas.length);
+				System.out.println(vacunas.get(i).getNombreVacuna());
+				*/
+			}
+		}
+		
+	}
+	
+	private void mostrarVentanaNueva() {
+		NuevasVacunas nv = new NuevasVacunas(vacunasNuevas);
+		nv.setModal(true);
+		nv.setVisible(true);
+		nv.setLocationRelativeTo(this);
+		nv.setResizable(true);
 	}
 }

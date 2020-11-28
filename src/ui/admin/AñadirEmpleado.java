@@ -51,8 +51,6 @@ public class AñadirEmpleado extends JDialog {
 	private JPanel panelProfesion;
 	private JRadioButton rdbtnMedico;
 	private JRadioButton rdbtnEnfermero;
-	private JLabel lblEspecialidad;
-	private JComboBox cmboxEspecialidad;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JButton btnContinuar;
 	private JButton btnCancelar;
@@ -187,8 +185,6 @@ public class AñadirEmpleado extends JDialog {
 			panelProfesion.setLayout(null);
 			panelProfesion.add(getRdbtnMedico());
 			panelProfesion.add(getRdbtnEnfermero());
-			panelProfesion.add(getLblEspecialidad());
-			panelProfesion.add(getCmboxEspecialidad());
 		}
 		return panelProfesion;
 	}
@@ -207,20 +203,6 @@ public class AñadirEmpleado extends JDialog {
 			rdbtnEnfermero.setBounds(146, 44, 109, 23);
 		}
 		return rdbtnEnfermero;
-	}
-	private JLabel getLblEspecialidad() {
-		if (lblEspecialidad == null) {
-			lblEspecialidad = new JLabel("Especialidad:");
-			lblEspecialidad.setBounds(289, 48, 84, 14);
-		}
-		return lblEspecialidad;
-	}
-	private JComboBox getCmboxEspecialidad() {
-		if (cmboxEspecialidad == null) {
-			cmboxEspecialidad = new JComboBox();
-			cmboxEspecialidad.setBounds(383, 44, 141, 22);
-		}
-		return cmboxEspecialidad;
 	}
 	private JButton getBtnContinuar() {
 		if (btnContinuar == null) {
