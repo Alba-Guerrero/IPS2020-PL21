@@ -233,6 +233,9 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	private final static String ADD_MEDICO = "INSERT INTO medico VALUES(?)";
 	private final static String ADD_ENFERMERO = "INSERT INTO enfermero VALUES(?)";
 	
+	//FUNCIONES
+	
+	
 	
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
 		List<Paciente> pacientes = new ArrayList<Paciente>();
@@ -3020,4 +3023,6 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 			return false;
 		}
 	}
+	
+	
 }
