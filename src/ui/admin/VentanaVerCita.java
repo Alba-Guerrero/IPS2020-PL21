@@ -18,6 +18,7 @@ import logica.Equipo;
 import logica.HistorialMedico;
 import logica.Paciente;
 import logica.empleados.Empleado;
+import logica.empleados.Enfermero;
 import logica.empleados.Medico;
 import logica.servicios.ParserBaseDeDatos;
 import logica.servicios.PrescripcionesToPDF;
@@ -31,6 +32,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -61,6 +63,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JList;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import net.miginfocom.swing.MigLayout;
 
 public class VentanaVerCita extends JDialog {
 
@@ -112,16 +115,23 @@ public class VentanaVerCita extends JDialog {
 	private JCheckBox checkMedico;
 	private JCheckBox checkEnfermero;
 	private JCheckBox checkEquipo;
-	private JScrollPane scrollPane_1;
+	private JScrollPane scrollMedico;
 	private JPanel panel_1;
 	private JLabel lblFiltarPor;
-	private JList list;
+	private JList<Medico> listMedico;
 	private JPanel panel_2;
 	private JPanel panel_3;
 	private JLabel lblEspecialidad_1;
 	private JTextField textField;
 	private JButton btnIr_2;
-	private DefaultListModel<Empleado> modeloListaEmpleado;
+	private DefaultListModel<Medico> modeloListaMedico=new DefaultListModel<Medico>();;
+	private DefaultListModel<Enfermero> modeloListaEnfermero=new DefaultListModel<Enfermero>();
+	private JScrollPane scrollEnfermero;
+	private JList<Enfermero> listEnfermero;
+	private JLabel lblEnfermeros;
+	private JLabel lblMdico;
+	private Enfermero enfermero;
+	private Medico medico;
 
 	/**
 	 * Create the frame.
@@ -151,8 +161,8 @@ public class VentanaVerCita extends JDialog {
 
 	public JTable getTableCita() {
 		if (tablacita == null) {
-			String[] nombreColumnas = { "Nombre paciente ", " Apellido paciente  ", "Hora inicio", " Hora fin",
-					"Fecha ", "Ubicación ", "Nombre médico", "Nombre equipo", "Urgencia", "Codcita", "CodPaciente",
+			String[] nombreColumnas = { "Nombre paciente ", "Hora inicio", " Hora fin",
+					"Fecha ", "Ubicación ", "Nombre médico/enfermero", "Nombre equipo", "Urgencia", "Codcita", "CodPaciente",
 					"CodMed" };
 			modeloTabla = new ModeloNoEditable(nombreColumnas, 0);
 			tablacita = new JTable(modeloTabla);
@@ -169,7 +179,7 @@ public class VentanaVerCita extends JDialog {
 			sortKeys.add(new RowSorter.SortKey(2, SortOrder.ASCENDING));
 			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
 			sorter.setSortKeys(sortKeys);
-			for (int i = 8; i < 12; i++) {
+			for (int i = 8; i < 11; i++) {
 				tablacita.getColumnModel().getColumn(i).setMinWidth(0);
 				tablacita.getColumnModel().getColumn(i).setMaxWidth(0);
 				tablacita.getColumnModel().getColumn(i).setWidth(0);
@@ -210,7 +220,7 @@ public class VentanaVerCita extends JDialog {
 
 	public void añadirFilas(boolean dia) {
 		borrarModeloTabla();
-		Object[] nuevaFila = new Object[12];
+		Object[] nuevaFila = new Object[11];
 		List<Cita> citas = new ArrayList<Cita>();
 		if (dia) {
 			Date date = getDateChooser().getDate();
@@ -239,27 +249,26 @@ public class VentanaVerCita extends JDialog {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			nuevaFila[0] = p.getNombre();
-			nuevaFila[1] = p.getApellido();
-			nuevaFila[2] = c.gethInicio();
-			nuevaFila[3] = c.gethFin();
-			nuevaFila[4] = c.getDate();
-			nuevaFila[5] = c.getUbicacion();
+			nuevaFila[0] = p.getNombre()+" "+ p.getApellido();
+			nuevaFila[1] = c.gethInicio();
+			nuevaFila[2] = c.gethFin();
+			nuevaFila[3] = c.getDate();
+			nuevaFila[4] = c.getUbicacion();
 			if (empleado != null) {
-				nuevaFila[6] = empleado.getNombre() + "  " + empleado.getApellido();
+				nuevaFila[5] = empleado.getNombre() + "  " + empleado.getApellido();
 			} else {
-				nuevaFila[6] = "";
+				nuevaFila[5] = "";
 			}
 
 			if (c.getNumequipo() != null) {
-				nuevaFila[7] = c.getNumequipo();
+				nuevaFila[6] = c.getNumequipo();
 			} else {
-				nuevaFila[7] = "";
+				nuevaFila[6] = "";
 			}
-			nuevaFila[8] = c.isUrgente();
-			nuevaFila[9] = c.getCodCita();
-			nuevaFila[10] = c.getCodPaciente();
-			nuevaFila[11] = c.getCodMed();
+			nuevaFila[7] = c.isUrgente();
+			nuevaFila[8] = c.getCodCita();
+			nuevaFila[9] = c.getCodPaciente();
+			nuevaFila[10] = c.getCodMed();
 			modeloTabla.addRow(nuevaFila);
 		}
 	}
@@ -279,13 +288,14 @@ public class VentanaVerCita extends JDialog {
 	private JPanel getPanelCita() {
 		if (panelCita == null) {
 			panelCita = new JPanel();
-			panelCita.add(getLblNewLabel());
-			panelCita.add(getDateChooser());
-			panelCita.add(getBtnIr());
-			panelCita.add(getBtnTodasLasCitas());
-			panelCita.add(getTxtNDeHistorial());
-			panelCita.add(getIrHistorial());
-			panelCita.add(getBtnBuscarPorFecha());
+			panelCita.setLayout(new MigLayout("", "[220px][][][][][][][][][][][][][][][][][][105px][][][][][][][][][][][][][][][41px][][117px][][116px][41px][][127px][][][][][]", "[25px]"));
+			panelCita.add(getLblNewLabel(), "cell 1 0,alignx left,aligny center");
+			panelCita.add(getDateChooser(), "flowx,cell 2 0 17 1,growx,aligny center");
+			panelCita.add(getBtnIr(), "cell 19 0,alignx left,aligny top");
+			panelCita.add(getBtnTodasLasCitas(), "cell 24 0,alignx left,aligny top");
+			panelCita.add(getTxtNDeHistorial(), "cell 30 0 6 1,alignx left,aligny center");
+			panelCita.add(getIrHistorial(), "flowx,cell 36 0,alignx left,aligny top");
+			panelCita.add(getBtnBuscarPorFecha(), "cell 36 0,alignx left,aligny top");
 		}
 		return panelCita;
 	}
@@ -443,7 +453,7 @@ public class VentanaVerCita extends JDialog {
 
 	private void añadirFilasHistorial() {
 		borrarModeloTabla();
-		Object[] nuevaFila = new Object[12];
+		Object[] nuevaFila = new Object[11];
 		List<Cita> citas = new ArrayList<Cita>();
 		try {
 			citas = pbd.devolvercitasHistorial(txtNDeHistorial.getText());
@@ -463,28 +473,27 @@ public class VentanaVerCita extends JDialog {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-
-			nuevaFila[0] = p.getNombre();
-			nuevaFila[1] = p.getApellido();
-			nuevaFila[2] = c.gethInicio();
-			nuevaFila[3] = c.gethFin();
-			nuevaFila[4] = c.getDate();
-			nuevaFila[5] = c.getUbicacion();
+			nuevaFila[0] = p.getNombre()+" "+ p.getApellido();
+			nuevaFila[1] = c.gethInicio();
+			nuevaFila[2] = c.gethFin();
+			nuevaFila[3] = c.getDate();
+			nuevaFila[4] = c.getUbicacion();
 			if (empleado != null) {
-				nuevaFila[6] = empleado.getNombre() + "  " + empleado.getApellido();
+				nuevaFila[5] = empleado.getNombre() + "  " + empleado.getApellido();
 			} else {
-				nuevaFila[6] = "";
+				nuevaFila[5] = "";
 			}
 
 			if (c.getNumequipo() != null) {
-				nuevaFila[7] = c.getNumequipo();
+				nuevaFila[6] = c.getNumequipo();
 			} else {
-				nuevaFila[7] = "";
+				nuevaFila[6] = "";
 			}
-			nuevaFila[8] = c.isUrgente();
-			nuevaFila[9] = c.getCodCita();
-			nuevaFila[10] = c.getCodPaciente();
-			nuevaFila[11] = c.getCodMed();
+			nuevaFila[7] = c.isUrgente();
+			nuevaFila[8] = c.getCodCita();
+			nuevaFila[9] = c.getCodPaciente();
+			nuevaFila[10] = c.getCodMed();
+			modeloTabla.addRow(nuevaFila);
 			modeloTabla.addRow(nuevaFila);
 		}
 
@@ -492,7 +501,7 @@ public class VentanaVerCita extends JDialog {
 
 	private void añadirFilasHistorialFecha() {
 		borrarModeloTabla();
-		Object[] nuevaFila = new Object[12];
+		Object[] nuevaFila = new Object[11];
 		List<Cita> citas = new ArrayList<Cita>();
 		try {
 			citas = pbd.devolvercitasHistorialFechas(txtNDeHistorial.getText(), dateChooser.getDate());
@@ -513,28 +522,26 @@ public class VentanaVerCita extends JDialog {
 				e.printStackTrace();
 			}
 
-			nuevaFila[0] = p.getNombre();
-			nuevaFila[1] = p.getApellido();
-			nuevaFila[2] = c.gethInicio();
-			nuevaFila[3] = c.gethFin();
-			nuevaFila[4] = c.getDate();
-			nuevaFila[5] = c.getUbicacion();
+			nuevaFila[0] = p.getNombre()+" "+ p.getApellido();
+			nuevaFila[1] = c.gethInicio();
+			nuevaFila[2] = c.gethFin();
+			nuevaFila[3] = c.getDate();
+			nuevaFila[4] = c.getUbicacion();
 			if (empleado != null) {
-				nuevaFila[6] = empleado.getNombre() + "  " + empleado.getApellido();
+				nuevaFila[5] = empleado.getNombre() + "  " + empleado.getApellido();
 			} else {
-				nuevaFila[6] = "";
+				nuevaFila[5] = "";
 			}
 
 			if (c.getNumequipo() != null) {
-				nuevaFila[7] = c.getNumequipo();
+				nuevaFila[6] = c.getNumequipo();
 			} else {
-				nuevaFila[7] = "";
+				nuevaFila[6] = "";
 			}
-			nuevaFila[8] = c.isUrgente();
-			nuevaFila[9] = c.getCodCita();
-			nuevaFila[10] = c.getCodPaciente();
-			nuevaFila[11] = c.getCodMed();
-
+			nuevaFila[7] = c.isUrgente();
+			nuevaFila[8] = c.getCodCita();
+			nuevaFila[9] = c.getCodPaciente();
+			nuevaFila[10] = c.getCodMed();
 			modeloTabla.addRow(nuevaFila);
 		}
 
@@ -690,9 +697,10 @@ public class VentanaVerCita extends JDialog {
 	private JPanel getPnNombre() {
 		if (pnNombre == null) {
 			pnNombre = new JPanel();
-			pnNombre.add(getLblNombre());
-			pnNombre.add(getTxtNombre());
-			pnNombre.add(getBtnIr_1());
+			pnNombre.setLayout(new MigLayout("", "[50px][116px][41px][]", "[25px]"));
+			pnNombre.add(getLblNombre(), "cell 0 0,alignx left,aligny center");
+			pnNombre.add(getTxtNombre(), "cell 1 0 2 1,growx,aligny center");
+			pnNombre.add(getBtnIr_1(), "cell 3 0,alignx left,aligny top");
 		}
 		return pnNombre;
 	}
@@ -726,8 +734,41 @@ public class VentanaVerCita extends JDialog {
 		}
 		return btnIr_1;
 	}
+	
+	private void buscarApellido() {
+		
+			if(checkMedico.isSelected()) {
+			
+			try {
+				
+				modeloListaMedico(pbd.devolverMedicoApellido(txtApellido.getText()));
+			} catch (SQLException e) {
+		
+				e.printStackTrace();
+			}
+		}if(checkEnfermero.isSelected()) {
+			try {
+				modeloListaEnfermero(pbd.buscarApellidoEnfermero(txtApellido.getText()));
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}	
+			
+		}else
+			JOptionPane.showMessageDialog(null, "Por favor, selecciona un médico o enfermero");
+		
+		
+	}
+
+	
+		
+		
+		
+	
 
 	private void buscarPorNombre() {
+		modeloListaEnfermero.clear();
+		modeloListaMedico.clear();
+		
 		if (txtNombre.getText().equals(""))
 			JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
 		else {
@@ -735,44 +776,86 @@ public class VentanaVerCita extends JDialog {
 			buscarNombre();
 
 		}
+		txtNombre.setText("");
+		
+	}
+	
+	private void buscarPorApellido() {
+		modeloListaEnfermero.clear();
+		modeloListaMedico.clear();
+		if (txtApellido.getText().equals(""))
+			JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
+		else {
+			
+			buscarApellido();
+
+		}
+		txtApellido.setText("");
+		
 	}
 	
 	private void buscarNombre() {
-		if(checkMedico.isSelected()&& !checkEnfermero.isSelected()) {
+		if(checkMedico.isSelected()) {
 			
 			try {
-				pbd.devolverMedicoNombre(txtNombre.getText());
+				
+				modeloListaMedico(pbd.devolverMedicoNombre(txtNombre.getText()));
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+		
 				e.printStackTrace();
 			}
-		}
+		} if(checkEnfermero.isSelected()) {
+			try {
+				modeloListaEnfermero(pbd.buscarNombreEnfermero(txtNombre.getText()));
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}	
+			
+		}else
+			JOptionPane.showMessageDialog(null, "Por favor, selecciona un médico o enfermero");
 		
 		
 	}
 
 	
-	private DefaultListModel<Empleado> modeloListaM(List<Empleado> empleado) throws SQLException {
-		modeloListaEmpleado = new DefaultListModel<Empleado>();
-		if(empleado!=null) {
-		List<Empleado> empleados = empleado;
-		for (int i = 0; i < empleados.size(); i++) {
-			modeloListaEmpleado.addElement(empleados.get(i));
+	private DefaultListModel<Medico> modeloListaMedico(List<Medico> medico) throws SQLException {
+		modeloListaMedico = new DefaultListModel<Medico>();
+		
+		if(medico!=null) {
+		List<Medico> medicos = medico;
+		for (int i = 0; i < medicos.size(); i++) {
+			modeloListaMedico.addElement(medicos.get(i));
 
 		}
-		list.setModel(modeloListaEmpleado);
+		listMedico.setModel(modeloListaMedico);
 		}
-		if(modeloListaEmpleado.getSize()==0)
+		if(modeloListaMedico.getSize()==0)
 			JOptionPane.showMessageDialog(null, "No se ha encontrado ningún médico con esas características");
-		return modeloListaEmpleado;
+		return modeloListaMedico;
 	}  
 	
+	
+	private DefaultListModel<Enfermero> modeloListaEnfermero(List<Enfermero> enfermero) throws SQLException {
+		modeloListaEnfermero= new DefaultListModel<Enfermero>();
+		
+		if(enfermero!=null) {
+		List<Enfermero> enfermeros = enfermero;
+		for (int i = 0; i < enfermeros.size(); i++) {
+			modeloListaEnfermero.addElement(enfermeros.get(i));
+
+		}
+		listEnfermero.setModel(modeloListaEnfermero);
+		}
+		if(modeloListaEnfermero.getSize()==0)
+			JOptionPane.showMessageDialog(null, "No se ha encontrado ningún enfermero con esas características");
+		return modeloListaEnfermero;
+	}  
 	
 	
 	public void añadirFilasFiltro(boolean medico,boolean enfermero,boolean equipos) {
 		int contador=0;
 		borrarModeloTabla();
-		Object[] nuevaFila = new Object[12];
+		Object[] nuevaFila = new Object[11];
 		List<Cita> citas = new ArrayList<Cita>();
 
 		try {
@@ -786,27 +869,26 @@ public class VentanaVerCita extends JDialog {
 		if((medico && pbd.checkCodeMedico(c.getCodMed()))|| (enfermero && pbd.checkCodEnfermero(c.getCodMed()))||
 				(equipos && pbd.checkCodEquipo(c.getNumequipo()))) {
 			contador++;
-			nuevaFila[0] = p.getNombre();
-			nuevaFila[1] = p.getApellido();
-			nuevaFila[2] = c.gethInicio();
-			nuevaFila[3] = c.gethFin();
-			nuevaFila[4] = c.getDate();
-			nuevaFila[5] = c.getUbicacion();
+			nuevaFila[0] = p.getNombre()+" "+ p.getApellido();
+			nuevaFila[1] = c.gethInicio();
+			nuevaFila[2] = c.gethFin();
+			nuevaFila[3] = c.getDate();
+			nuevaFila[4] = c.getUbicacion();
 			if (empleado != null) {
-				nuevaFila[6] = empleado.getNombre() + "  " + empleado.getApellido();
+				nuevaFila[5] = empleado.getNombre() + "  " + empleado.getApellido();
 			} else {
-				nuevaFila[6] = "";
+				nuevaFila[5] = "";
 			}
 
 			if (c.getNumequipo() != null) {
-				nuevaFila[7] = c.getNumequipo();
+				nuevaFila[6] = c.getNumequipo();
 			} else {
-				nuevaFila[7] = "";
+				nuevaFila[6] = "";
 			}
-			nuevaFila[8] = c.isUrgente();
-			nuevaFila[9] = c.getCodCita();
-			nuevaFila[10] = c.getCodPaciente();
-			nuevaFila[11] = c.getCodMed();
+			nuevaFila[7] = c.isUrgente();
+			nuevaFila[8] = c.getCodCita();
+			nuevaFila[9] = c.getCodPaciente();
+			nuevaFila[10] = c.getCodMed();
 			modeloTabla.addRow(nuevaFila);
 		}
 		}
@@ -820,9 +902,10 @@ public class VentanaVerCita extends JDialog {
 	private JPanel getPnApellido() {
 		if (pnApellido == null) {
 			pnApellido = new JPanel();
-			pnApellido.add(getLblApellido());
-			pnApellido.add(getTxtApellido());
-			pnApellido.add(getBtnApellido());
+			pnApellido.setLayout(new MigLayout("", "[50px][116px][41px][]", "[25px]"));
+			pnApellido.add(getLblApellido(), "cell 0 0,alignx left,aligny center");
+			pnApellido.add(getTxtApellido(), "cell 1 0 2 1,growx,aligny center");
+			pnApellido.add(getBtnApellido(), "cell 3 0,alignx left,aligny top");
 		}
 		return pnApellido;
 	}
@@ -854,6 +937,12 @@ public class VentanaVerCita extends JDialog {
 	private JButton getBtnApellido() {
 		if (BtnApellido == null) {
 			BtnApellido = new JButton("Ir");
+			BtnApellido.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+					buscarPorApellido();
+				}
+			});
 		}
 		return BtnApellido;
 	}
@@ -861,9 +950,10 @@ public class VentanaVerCita extends JDialog {
 	private JPanel getPnCodEmpleado() {
 		if (pnCodEmpleado == null) {
 			pnCodEmpleado = new JPanel();
-			pnCodEmpleado.add(getLblCodempleado());
-			pnCodEmpleado.add(getTxtEmpleado());
-			pnCodEmpleado.add(getBtnCodEmpleado());
+			pnCodEmpleado.setLayout(new MigLayout("", "[83px][116px][41px]", "[25px]"));
+			pnCodEmpleado.add(getLblCodempleado(), "cell 0 0,alignx left,aligny center");
+			pnCodEmpleado.add(getTxtEmpleado(), "cell 1 0,alignx left,aligny center");
+			pnCodEmpleado.add(getBtnCodEmpleado(), "cell 2 0,alignx left,aligny top");
 		}
 		return pnCodEmpleado;
 	}
@@ -886,8 +976,60 @@ public class VentanaVerCita extends JDialog {
 	private JButton getBtnCodEmpleado() {
 		if (btnCodEmpleado == null) {
 			btnCodEmpleado = new JButton("Ir");
+			btnCodEmpleado.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+					buscarPorCodEmpelado();
+				}
+
+				
+			});
 		}
 		return btnCodEmpleado;
+	}
+	
+	
+	private void buscarPorCodEmpelado() {
+		modeloListaEnfermero.clear();
+		modeloListaMedico.clear();
+		if (txtEmpleado.getText().equals(""))
+			JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
+		else {
+			
+			buscarCodigoEmpleado();
+
+		}
+		txtEmpleado.setText("");
+		
+	}
+	
+	
+	private void buscarCodigoEmpleado() {
+			if(checkMedico.isSelected()) {
+			
+			try {
+				List<Medico>medicos=new ArrayList<Medico>();
+				medicos.add(pbd.buscarMedicoCodigo(txtEmpleado.getText()));
+				modeloListaMedico(medicos);
+			} catch (SQLException e) {
+		
+				e.printStackTrace();
+			}
+		}if(checkEnfermero.isSelected()) {
+			try {
+				List<Enfermero>enfermeros=new ArrayList<Enfermero>();
+				enfermeros.add(pbd.buscarEnfermeroCodigo(txtEmpleado.getText()));
+				modeloListaEnfermero(enfermeros);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}	
+			
+		}else
+			JOptionPane.showMessageDialog(null, "Por favor, selecciona un médico o enfermero");
+		
+	
+		
+		
 	}
 
 	private JPanel getPanelEspecialidad() {
@@ -971,12 +1113,13 @@ public class VentanaVerCita extends JDialog {
 		return checkEquipo;
 	}
 
-	private JScrollPane getScrollPane_1() {
-		if (scrollPane_1 == null) {
-			scrollPane_1 = new JScrollPane();
-			scrollPane_1.setViewportView(getList());
+	private JScrollPane getScrollMedico() {
+		if (scrollMedico == null) {
+			scrollMedico = new JScrollPane();
+			scrollMedico.setViewportView(getListMedico());
+			scrollMedico.setColumnHeaderView(getLblMdico());
 		}
-		return scrollPane_1;
+		return scrollMedico;
 	}
 
 	private JPanel getPanel_1() {
@@ -995,24 +1138,35 @@ public class VentanaVerCita extends JDialog {
 	private JLabel getLblFiltarPor() {
 		if (lblFiltarPor == null) {
 			lblFiltarPor = new JLabel("Filtar por:");
-			lblFiltarPor.setBounds(12, 0, 57, 16);
+			lblFiltarPor.setBounds(0, 22, 57, 16);
 		}
 		return lblFiltarPor;
 	}
 
-	private JList getList() {
-		if (list == null) {
-			list = new JList();
+	private JList getListMedico() {
+		if (listMedico == null) {
+			listMedico = new JList();
+			listMedico.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			listMedico.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					
+					medico=listMedico.getSelectedValue();
+					añadirFilasMedico();
+				}
+			});
+			
 		}
-		return list;
+		return listMedico;
 	}
 
 	private JPanel getPanel_2() {
 		if (panel_2 == null) {
 			panel_2 = new JPanel();
-			panel_2.setLayout(new GridLayout(2, 1, 0, 0));
+			panel_2.setLayout(new GridLayout(3, 1, 0, 0));
 			panel_2.add(getPanel_3());
-			panel_2.add(getScrollPane_1());
+			panel_2.add(getScrollEnfermero());
+			panel_2.add(getScrollMedico());
 		}
 		return panel_2;
 	}
@@ -1047,5 +1201,113 @@ public class VentanaVerCita extends JDialog {
 			btnIr_2 = new JButton("Ir");
 		}
 		return btnIr_2;
+	}
+	private JScrollPane getScrollEnfermero() {
+		if (scrollEnfermero == null) {
+			scrollEnfermero = new JScrollPane();
+			scrollEnfermero.setViewportView(getListEnfermero());
+			scrollEnfermero.setColumnHeaderView(getLblEnfermeros());
+		}
+		return scrollEnfermero;
+	}
+	private JList getListEnfermero() {
+		if (listEnfermero == null) {
+			listEnfermero = new JList();
+			listEnfermero.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			listEnfermero.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					
+					enfermero=listEnfermero.getSelectedValue();
+					añadirFilasEnfermero();
+					
+				}
+			});
+			
+		}
+		return listEnfermero;
+	}
+	
+	
+	private void añadirFilasMedico(){
+		borrarModeloTabla();
+		Object[] nuevaFila = new Object[11];
+		List<Cita> citas;
+		try {
+			citas = pbd.devolvercitasMedico(medico.getCodeEmpleado());
+		
+		for (Cita c : citas) {
+			Paciente p = null;
+			
+				p = pbd.devolverPacientes(c.getCodCita());
+				nuevaFila[0] = p.getNombre()+" "+ p.getApellido();
+				nuevaFila[1] = c.gethInicio();
+				nuevaFila[2] = c.gethFin();
+				nuevaFila[3] = c.getDate();
+				nuevaFila[4] = c.getUbicacion();
+				nuevaFila[5] = medico.getNombre() + "  " + medico.getApellido();
+				nuevaFila[6] = "";
+				nuevaFila[7] = c.isUrgente();
+				nuevaFila[8] = c.getCodCita();
+				nuevaFila[9] = c.getCodPaciente();
+				nuevaFila[10] = c.getCodMed();
+				modeloTabla.addRow(nuevaFila);
+		}
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		
+	}
+	
+	private void añadirFilasEnfermero(){
+		borrarModeloTabla();
+		Object[] nuevaFila = new Object[11];
+		List<Cita> citas;
+		try {
+			citas = pbd.devolvercitasEnfermero(enfermero.getCodeEmpleado());
+			
+		
+		for (Cita c : citas) {
+			Paciente p = null;
+			
+				p = pbd.devolverPacientes(c.getCodCita());
+				nuevaFila[0] = p.getNombre()+" "+ p.getApellido();
+				nuevaFila[1] = c.gethInicio();
+				nuevaFila[2] = c.gethFin();
+				nuevaFila[3] = c.getDate();
+				nuevaFila[4] = c.getUbicacion();
+				nuevaFila[5] = enfermero.getNombre() + "  " + enfermero.getApellido();
+				nuevaFila[6] = "";
+				nuevaFila[7] = c.isUrgente();
+				nuevaFila[8] = c.getCodCita();
+				nuevaFila[9] = c.getCodPaciente();
+				nuevaFila[10] = c.getCodMed();
+				modeloTabla.addRow(nuevaFila);
+			
+		}
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		
+	}
+	
+	
+	
+	
+	private JLabel getLblEnfermeros() {
+		if (lblEnfermeros == null) {
+			lblEnfermeros = new JLabel("Enfermeros/as :");
+		}
+		return lblEnfermeros;
+	}
+	private JLabel getLblMdico() {
+		if (lblMdico == null) {
+			lblMdico = new JLabel("M\u00E9dicos/as :");
+		}
+		return lblMdico;
 	}
 }

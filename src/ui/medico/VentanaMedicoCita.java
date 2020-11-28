@@ -608,7 +608,7 @@ public class VentanaMedicoCita extends JDialog {
 	private Medico getMedico() {
 		Medico m=null;
 		try {
-			m=pbd.buscarMedicoCodigo(codmedico);
+			m=pbd.buscarEmpleadoCodigo(codmedico);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
