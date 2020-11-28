@@ -1574,7 +1574,7 @@ public class PanelCitas extends JDialog {
 			btnFiltroNomEmp = new JButton("Filtrar");
 			btnFiltroNomEmp.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					//pbd.filtrarNombreEnfermero()
+					//pbd.filtrarNombreEnfermero();
 					
 				}
 			});

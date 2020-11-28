@@ -50,6 +50,9 @@ public class ParserBaseDeDatos {
 	private final static String CHECK_COMPANYCOD_CODE = "select codacompañante FROM acompañantepaciente where codacompañante=?;";
 	private final static String CHECK_PACIENTE_CODE = "select codpaciente FROM paciente where codpaciente=?;";
 	private final static String CHECK_NUMERO_HISTORIAL = "select nhistorial FROM historial where nhistorial=?;";
+	private final static String CHECK_NUMEQUIPO = "select * FROM equipo where numequipo=?;";
+	private final static String CHECK_COD_MED = "select * FROM medico where codmedico=?;";
+	private final static String CHECK_COD_ENFERMERO = "select * FROM enfermero where codenfermero=?;";
 
 	private final static String CHECK_MEDICO_CITA = "select * from cita c,medico m where m.codmedico=c.codmedico and m.codmedico= ? and ?    between c.hinicio  and c.Hfin and  ?    between c.hinicio  and c.Hfin; ";
 
@@ -60,11 +63,16 @@ public class ParserBaseDeDatos {
 	private final static String UPDATE_DATOS_CONTACTO = "UPDATE paciente SET movil=?, email=?, info=? WHERE codpaciente=?";
 
 	private final static String GET_CITAS = "select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and p.codpaciente=c.codpaciente and  m.codmedico=c.codmedico and c.codmedico=?;";
+	private final static String GET_CITAS_ENFERMERO="select * from cita c, enfermero m ,empleado e,paciente p where m.codenfermero= e.codempleado and p.codpaciente=c.codpaciente and  m.codenfermero=c.codmedico and c.codmedico=?;";
 	private final static String GET_CITAS_DATE = "select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.codpaciente= p.codpaciente and c.fecha=?;";
 	private final static String GET_CITAS_DATE_MED = "select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.codpaciente= p.codpaciente and c.codmedico=? and c.fecha=?;";
-	private final static String GET_PACIENTE_CITA = "select * from paciente p,medico m,empleado e, cita c where p.codpaciente= c.codpaciente and c.codmedico=e.codempleado and e.codempleado= m.codmedico  and c.codcita=?;";
+	private final static String GET_PACIENTE_CITA = "select * from paciente p, cita c where p.codpaciente= c.codpaciente  and c.codcita=?;";
+	private final static String GET_PACIENTE_CITA_MEDICO = "select * from paciente p, cita c, empleado e,medico m where p.codpaciente= c.codpaciente and e.codempleado=m.codmedico and c.codmedico= e.codempleado  and c.codcita=?;";
 	private final static String GET_CITA = "select * from cita c where c.fecha>=? ;";
-	private final static String GET_CITAS_MED = "select * from  medico m ,empleado e where m.codmedico= e.codempleado and  e.codempleado=?  ;";
+	private final static String GET_CITAS_EMPLEADOS = "select * from  empleado where codempleado=?;";
+	private final static String GET_CITAS_MEDICO = "select * from  medico m,empleado e where m.codmedico = e.codempleado and  codmedico=?;";
+	
+	private final static String GET_CITAS_ENF= "select * from  enfermero en, empleado e where en.codenfermero = e.codempleado and codenfermero=?;";
 	private final static String GET_CITA_FECHA_HISTORIAL = "select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.codpaciente= p.codpaciente and c.fecha=? and p.nhistorial =?";
 	private final static String GET_CITA_FECHA_HISTORIAL_MED = "select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.codpaciente= p.codpaciente and c.fecha=? and p.nhistorial =? and c.codmedico=?";
 	private final static String GET_ADMINISTRATIVO = "Select * from administrativo where codAdmin=? and pass=?";
@@ -137,6 +145,8 @@ public class ParserBaseDeDatos {
 	private final static String DELETE_CORREO = "delete from correo where codcorreo=?";
 	private final static String FIND_MED_BY_NAME = "select *  from medico m,empleado e where e.codempleado=m.codmedico and  e.nombre like ?|| '%' ;";
 	private final static String FIND_MED_BY_SURNAME = "select *  from medico m,empleado e where e.codempleado=m.codmedico and  e.apellido like ? || '%' ;";
+	private final static String FIND_ENFE_BY_NAME = "select *  from enfermero en,empleado e where e.codempleado=en.codenfermero and  e.nombre like ?|| '%' ;";
+	private final static String FIND_ENFE_BY_SURNAME = "select *  from enfermero en,empleado e where e.codempleado=en.codenfermero and  e.apellido like ? || '%' ;";
 	private final static String FIND_MED_BY_NAME_SURNAME = "select *  from medico m,empleado e where e.codempleado=m.codmedico and e.nombre= like ?|| '%' and  e.apellido like ? || '%';";
 
 	private final static String UPDATE_CITA = "UPDATE cita set hinicio = ?, hfin = ?, fecha = ? ,codmedico=?,ubicacion =?, urgencia=? where codcita=? and codpaciente=? and codmedico =?";
@@ -408,6 +418,53 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		return res;
 
 	}
+	
+
+	public boolean checkCodEnfermero(String cod) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(CHECK_COD_ENFERMERO);
+		pst.setString(1, cod);
+		ResultSet rs = pst.executeQuery();
+
+		boolean res = rs.next();
+
+		rs.close();
+		pst.close();
+		con.close();
+		return res;
+
+	}
+	
+	public boolean checkCodEquipo(String cod) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(CHECK_NUMEQUIPO);
+		pst.setString(1, cod);
+		ResultSet rs = pst.executeQuery();
+
+		boolean res = rs.next();
+
+		rs.close();
+		pst.close();
+		con.close();
+		return res;
+
+	}
+	
+	
+	public boolean checkCodeMedico(String cod) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(CHECK_COD_MED);
+		pst.setString(1, cod);
+		ResultSet rs = pst.executeQuery();
+
+		boolean res = rs.next();
+
+		rs.close();
+		pst.close();
+		con.close();
+		return res;
+
+	}
 
 	/**
 	 * Comprueba que un medico no tengo ninguna cita a la hora de una uqe se quiera
@@ -536,8 +593,34 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		con.close();
 		return citas;
 	}
+	
+	
+	public List<Cita> devolvercitasEnfermero(String codmedico) throws SQLException {
+		List<Cita> citas = new ArrayList<Cita>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement st = con.prepareStatement(GET_CITAS_ENFERMERO);
+		boolean res = false;
+		st.setString(1, codmedico);
 
-	public Paciente devolverPacientesMedico(String codcita) throws SQLException {
+		ResultSet rs = st.executeQuery();
+
+		while (rs.next()) {
+			if (rs.getByte("urgencia") == 1)
+				res = true;
+
+			citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"), rs.getString("codmedico"),
+					rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res));
+
+		}
+
+//CERRAR EN ESTE ORDEN
+		rs.close();
+		st.close();
+		con.close();
+		return citas;
+	}
+
+	public Paciente devolverPacientes(String codcita) throws SQLException {
 		Paciente pacientes = null;
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst = con.prepareStatement(GET_PACIENTE_CITA);
@@ -560,6 +643,29 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		return pacientes;
 	}
 	
+	
+	public Paciente devolverPacientesMedico(String codcita) throws SQLException {
+		Paciente pacientes = null;
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_PACIENTE_CITA_MEDICO);
+		@SuppressWarnings("unused")
+		boolean res = false;
+		pst.setString(1, codcita);
+		ResultSet rs = pst.executeQuery();
+
+		while (rs.next()) {
+
+			pacientes = new Paciente(rs.getString("codpaciente"), rs.getString("nombre"), rs.getString("apellido"),
+					rs.getInt("movil"), rs.getString("email"), rs.getString("info"), rs.getString("nhistorial"));
+
+		}
+
+//CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return pacientes;
+	}
 	public Paciente devolverPacientesEquipo(String numequipo) throws SQLException {
 		Paciente pacientes = null;
 		Connection con = new Conexion().getConnectionJDBC();
@@ -618,7 +724,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	public Empleado devolverEmpleado(String codempleado) throws SQLException {
 		Empleado empleado = null;
 		Connection con = new Conexion().getConnectionJDBC();
-		PreparedStatement pst = con.prepareStatement(GET_CITAS_MED);
+		PreparedStatement pst = con.prepareStatement(GET_CITAS_EMPLEADOS);
 		pst.setString(1, codempleado);
 		ResultSet rs = pst.executeQuery();
 
@@ -922,10 +1028,10 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 
 	}
 
-	public Medico buscarMedicoCodigo(String text) throws SQLException {
+	public Medico buscarEmpleadoCodigo(String text) throws SQLException {
 		Medico m=null;
 		Connection con = new Conexion().getConnectionJDBC();
-		PreparedStatement pst = con.prepareStatement(GET_CITAS_MED);
+		PreparedStatement pst = con.prepareStatement(GET_CITAS_EMPLEADOS);
 		
 		pst.setString(1, text);
 		ResultSet rs = pst.executeQuery();
@@ -943,6 +1049,53 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		return m;
 
 	}
+	
+	
+	
+	public Enfermero buscarEnfermeroCodigo(String text) throws SQLException {
+		Enfermero enfermero=null;
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_CITAS_ENF);
+		
+		pst.setString(1, text);
+		ResultSet rs = pst.executeQuery();
+
+		if( rs.next()) {
+			enfermero= new Enfermero(rs.getString("codenfermero"), rs.getString("nombre"), rs.getString("apellido"),
+					rs.getString("pass"), rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("dinicio"),
+					rs.getDate("dfin"), rs.getString("djornada"));
+		}
+		 
+
+		rs.close();
+		pst.close();
+		con.close();
+		return enfermero;
+
+	}
+	
+	public Medico buscarMedicoCodigo(String text) throws SQLException {
+		Medico medico=null;
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_CITAS_MEDICO);
+		
+		pst.setString(1, text);
+		ResultSet rs = pst.executeQuery();
+
+		if( rs.next()) {
+			medico= new Medico(rs.getString("codmedico"), rs.getString("nombre"), rs.getString("apellido"),
+					rs.getString("pass"), rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("dinicio"),
+					rs.getDate("dfin"), rs.getString("djornada"));
+		}
+		 
+
+		rs.close();
+		pst.close();
+		con.close();
+		return medico;
+
+	}
+
 
 //--------------
 
@@ -2481,6 +2634,53 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		con.close();
 		return enfermeros;
 	}
+	
+	
+	public List<Enfermero> buscarNombreEnfermero(String cadena) throws SQLException{
+		List<Enfermero> enfermeros = new ArrayList<Enfermero>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(FIND_ENFE_BY_NAME);
+		pst.setString(1, cadena);
+		ResultSet rs = pst.executeQuery();
+		
+		while (rs.next()) {
+			enfermeros.add(new Enfermero(rs.getString("codenfermero"), rs.getString("nombre"), rs.getString("apellido"),
+					rs.getString("pass"), rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("dinicio"),
+					rs.getDate("dfin"), rs.getString("djornada")));
+			
+			
+		}
+
+		rs.close();
+		pst.close();
+		con.close();
+		return enfermeros;
+	}
+	public List<Enfermero> buscarApellidoEnfermero(String cadena) throws SQLException{
+		List<Enfermero> enfermeros = new ArrayList<Enfermero>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(FIND_ENFE_BY_SURNAME);
+		pst.setString(1, cadena);
+		ResultSet rs = pst.executeQuery();
+		
+		while (rs.next()) {
+			enfermeros.add(new Enfermero(rs.getString("codenfermero"), rs.getString("nombre"), rs.getString("apellido"),
+					rs.getString("pass"), rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("dinicio"),
+					rs.getDate("dfin"), rs.getString("djornada")));
+			
+			
+		}
+
+		rs.close();
+		pst.close();
+		con.close();
+		return enfermeros;
+	}
+	
+	
+	
+	
+	
 	
 	public List<Enfermero> filtrarApellidoEnfermero(String cadena) throws SQLException{
 		List<Enfermero> enfermeros = new ArrayList<Enfermero>();

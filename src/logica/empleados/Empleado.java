@@ -10,7 +10,9 @@ import java.sql.Date;
  * @author María
  *
  */
-public class Empleado {
+
+public  class Empleado {
+
 	
 	public String codeEmpleado;
 	public String pass;

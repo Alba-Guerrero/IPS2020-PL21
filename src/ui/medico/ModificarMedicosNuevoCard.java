@@ -225,11 +225,13 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton btnFiltrar;
 	private JButton buttonpres;
 	private JButton btnprintpres;
+
 	private JPanel pnProcedimientos;
 	private JTextField txtfFiltrarProcedimientos;
 	private JButton btnFiltrarProcedimientos;
 	private JComboBox<String> cbProcedimientos;
 	private JButton btnProceder;
+
 	private JPanel pnAntecedentes;
 	private JPanel panel_1;
 	private JPanel panel_3;
@@ -305,6 +307,9 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JTable tableProcedimientos;
 	private JButton btnBorrarProcedimiento;
 	private JLabel lblResumenProcedimientos;
+
+	private JPanel pnVacio27;
+
 	/**
 	 * Create the frame.
 	 * @throws SQLException 
@@ -2254,6 +2259,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		return btnFiltrar;
 	}
+
 	private JPanel getPnProcedimientos() {
 		if (pnProcedimientos == null) {
 			pnProcedimientos = new JPanel();
@@ -2427,6 +2433,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			}
 		}		
 	}
+
 	private JPanel getPnAntecedentes() {
 		if (pnAntecedentes == null) {
 			pnAntecedentes = new JPanel();
@@ -3740,6 +3747,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			JOptionPane.showMessageDialog(null, "El paciente no tiene ningún antecedente previo.");
 		}
 	}
+
 
 
 }

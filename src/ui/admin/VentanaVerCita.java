@@ -18,7 +18,8 @@ import logica.Equipo;
 import logica.HistorialMedico;
 import logica.Paciente;
 import logica.empleados.Empleado;
-
+import logica.empleados.Enfermero;
+import logica.empleados.Medico;
 import logica.servicios.ParserBaseDeDatos;
 import logica.servicios.PrescripcionesToPDF;
 import net.sf.jasperreports.engine.JRException;
@@ -31,6 +32,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -52,8 +54,16 @@ import java.io.FileNotFoundException;
 import javax.swing.JTextField;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+
 import java.awt.FlowLayout;
 import javax.swing.JComboBox;
+import java.awt.Rectangle;
+import javax.swing.JCheckBox;
+import javax.swing.JList;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
+import net.miginfocom.swing.MigLayout;
 
 public class VentanaVerCita extends JDialog {
 
@@ -65,13 +75,13 @@ public class VentanaVerCita extends JDialog {
 	private JScrollPane scrollPane;
 	private JTable tablacita;
 	private ModeloNoEditable modeloTabla;
-	private ParserBaseDeDatos pbd=new ParserBaseDeDatos();
+	private ParserBaseDeDatos pbd = new ParserBaseDeDatos();
 	private JPanel panel;
 	private JPanel panelCita;
 	private JLabel lblNewLabel;
 	private JDateChooser dateChooser;
 	private JButton btnIr;
-	private List<Cita> codcitas= new ArrayList<Cita>();
+	private List<Cita> codcitas = new ArrayList<Cita>();
 	private JPanel panelBotones;
 	private JButton btnEliminar;
 	private JButton btnModificar;
@@ -82,9 +92,6 @@ public class VentanaVerCita extends JDialog {
 	private JButton btnVerHistorial;
 	private String codAdmin;
 	private JPanel panelFiltrosMedEn;
-	private JLabel lblFiltrar;
-	private JRadioButton rdbtnMdico;
-	private JRadioButton rdbtnEnfermero;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JPanel panelMedEnfer;
 	private JPanel pnNombre;
@@ -100,19 +107,36 @@ public class VentanaVerCita extends JDialog {
 	private JLabel lblCodempleado;
 	private JTextField txtEmpleado;
 	private JButton btnCodEmpleado;
-	private JPanel pnNombreApellido;
-	private JButton btnNombreYApellido;
 	private JPanel panelEspecialidad;
 	private JComboBox comboBox;
 	private JPanel panelNomEspe;
 	private JLabel lblEspecialidad;
 	private JTextField txtEspecialidad;
-	
-
+	private JCheckBox checkMedico;
+	private JCheckBox checkEnfermero;
+	private JCheckBox checkEquipo;
+	private JScrollPane scrollMedico;
+	private JPanel panel_1;
+	private JLabel lblFiltarPor;
+	private JList<Medico> listMedico;
+	private JPanel panel_2;
+	private JPanel panel_3;
+	private JLabel lblEspecialidad_1;
+	private JTextField textField;
+	private JButton btnIr_2;
+	private DefaultListModel<Medico> modeloListaMedico=new DefaultListModel<Medico>();;
+	private DefaultListModel<Enfermero> modeloListaEnfermero=new DefaultListModel<Enfermero>();
+	private JScrollPane scrollEnfermero;
+	private JList<Enfermero> listEnfermero;
+	private JLabel lblEnfermeros;
+	private JLabel lblMdico;
+	private Enfermero enfermero;
+	private Medico medico;
 
 	/**
 	 * Create the frame.
-	 * @param codmedico 
+	 * 
+	 * @param codmedico
 	 */
 	public VentanaVerCita(String codAdmin) {
 		this.codAdmin = codAdmin;
@@ -134,151 +158,118 @@ public class VentanaVerCita extends JDialog {
 		}
 		return scrollPane;
 	}
+
 	public JTable getTableCita() {
-			if (tablacita == null) {
-				String[] nombreColumnas= {"Nombre paciente "," Apellido paciente  ","Hora inicio"," Hora fin","Fecha ","Ubicación ","Nombre médico","Nombre equipo", "Urgencia","Codcita","CodPaciente","CodMed"};
-				modeloTabla= new ModeloNoEditable(nombreColumnas,0);
-				tablacita = new JTable(modeloTabla);
-				tablacita.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
-				tablacita.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				tablacita.getTableHeader().setBackground(Color.LIGHT_GRAY);
-				
-				TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tablacita.getModel());
-				tablacita.setRowSorter(sorter);
+		if (tablacita == null) {
+			String[] nombreColumnas = { "Nombre paciente ", "Hora inicio", " Hora fin",
+					"Fecha ", "Ubicación ", "Nombre médico/enfermero", "Nombre equipo", "Urgencia", "Codcita", "CodPaciente",
+					"CodMed" };
+			modeloTabla = new ModeloNoEditable(nombreColumnas, 0);
+			tablacita = new JTable(modeloTabla);
+			tablacita.getTableHeader().setReorderingAllowed(false);// Evita que se pueda mpver las columnas
+			tablacita.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tablacita.getTableHeader().setBackground(Color.LIGHT_GRAY);
 
-				List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-				sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
-				sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
-				sortKeys.add(new RowSorter.SortKey(2, SortOrder.ASCENDING));
-				sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
-				sorter.setSortKeys(sortKeys);
-				for (int i = 8; i < 11; i++) {
-					tablacita.getColumnModel().getColumn(i).setMinWidth(0);
-					tablacita.getColumnModel().getColumn(i).setMaxWidth(0);
-					tablacita.getColumnModel().getColumn(i).setWidth(0);
-				}
+			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tablacita.getModel());
+			tablacita.setRowSorter(sorter);
 
-				añadirFilas(false);
-				
-				tablacita.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent arg0) {
-						
-						int fila=tablacita.getSelectedRow();
-						if(fila!=-1) {
-							btnEliminar.setEnabled(true);
-							btnModificar.setEnabled(true);
-							btnVerHistorial.setEnabled(true);
-								try {
-									Paciente p=pbd.devolverPacientesMedico((String)tablacita.getValueAt(tablacita.getSelectedRow(), 9));
-								} catch (SQLException e) {
-									e.printStackTrace();
-								}
+			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+			sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
+			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+			sortKeys.add(new RowSorter.SortKey(2, SortOrder.ASCENDING));
+			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+			sorter.setSortKeys(sortKeys);
+			for (int i = 8; i < 11; i++) {
+				tablacita.getColumnModel().getColumn(i).setMinWidth(0);
+				tablacita.getColumnModel().getColumn(i).setMaxWidth(0);
+				tablacita.getColumnModel().getColumn(i).setWidth(0);
+			}
+
+			añadirFilas(false);
+
+			tablacita.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+
+					int fila = tablacita.getSelectedRow();
+					if (fila != -1) {
+						btnEliminar.setEnabled(true);
+						btnModificar.setEnabled(true);
+						btnVerHistorial.setEnabled(true);
+						try {
+							Paciente p = pbd.devolverPacientes(
+									(String) tablacita.getValueAt(tablacita.getSelectedRow(), 9));
+						} catch (SQLException e) {
+							e.printStackTrace();
 						}
 					}
-				});
-			
-				
-				
-				
-			
-			}
-			return tablacita;
-		}
-	
-	private void borrarModeloTabla() {
-		int filas=modeloTabla.getRowCount();
-			for (int i = 0; i <filas; i++) {
-				modeloTabla.removeRow(0);
-				
-			}
-	}
-	
-	
-	public void añadirFilas(boolean dia)  {
-		borrarModeloTabla();
-		Object[] nuevaFila=new Object[12];
-		List<Cita> citas = new ArrayList<Cita>();
-	if(dia) {
-		Date date = getDateChooser().getDate();
-		java.sql.Date sDate = new java.sql.Date(date.getTime());
-		try {
-			citas = pbd.devolvercitasPorFecha(sDate);
-		} catch (SQLException e) {
+				}
+			});
 
-			e.printStackTrace();
+		}
+		return tablacita;
+	}
+
+	private void borrarModeloTabla() {
+		int filas = modeloTabla.getRowCount();
+		for (int i = 0; i < filas; i++) {
+			modeloTabla.removeRow(0);
+
 		}
 	}
-	else {
-		try {
-			citas = pbd.devolverCitas();
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
-	}
-	
-		for(Cita c:citas) {
-			Paciente p = null;
-			Empleado empleado=null;
+
+	public void añadirFilas(boolean dia) {
+		borrarModeloTabla();
+		Object[] nuevaFila = new Object[11];
+		List<Cita> citas = new ArrayList<Cita>();
+		if (dia) {
+			Date date = getDateChooser().getDate();
+			java.sql.Date sDate = new java.sql.Date(date.getTime());
 			try {
-				if(c.getCodMed()==null) {
-					p = pbd.devolverPacientesEquipo(c.getCodPaciente());
-				}
-				else {
-					p = pbd.devolverPacientesMedico(c.getCodCita());
-					empleado=pbd.devolverEmpleado(c.getCodMed());
-				}
+				citas = pbd.devolvercitasPorFecha(sDate);
+			} catch (SQLException e) {
+
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				citas = pbd.devolverCitas();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}
+
+		for (Cita c : citas) {
+			Paciente p = null;
+			Empleado empleado = null;
+			try {
+				p = pbd.devolverPacientes(c.getCodCita());
+				empleado = pbd.devolverEmpleado(c.getCodMed());
+
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			nuevaFila[0] = p.getNombre();
-			nuevaFila[1]= p.getApellido();
-			nuevaFila[2] = c.gethInicio();
-			nuevaFila[3] =c.gethFin();
-			nuevaFila[4] =c.getDate();
-			nuevaFila[5] =c.getUbicacion();
-			if(empleado!=null) {
-				nuevaFila[6] = empleado.getNombre()+"  " +empleado.getApellido();
+			nuevaFila[0] = p.getNombre()+" "+ p.getApellido();
+			nuevaFila[1] = c.gethInicio();
+			nuevaFila[2] = c.gethFin();
+			nuevaFila[3] = c.getDate();
+			nuevaFila[4] = c.getUbicacion();
+			if (empleado != null) {
+				nuevaFila[5] = empleado.getNombre() + "  " + empleado.getApellido();
+			} else {
+				nuevaFila[5] = "";
 			}
-			else {
+
+			if (c.getNumequipo() != null) {
+				nuevaFila[6] = c.getNumequipo();
+			} else {
 				nuevaFila[6] = "";
 			}
-			
-			if(c.getNumequipo()!=null) {
-				nuevaFila[7] = c.getNumequipo();
-			}
-			else {
-				nuevaFila[7] = "";
-			}
-			nuevaFila[8] = c.isUrgente();
-			nuevaFila[9]=c.getCodCita();
-			nuevaFila[10]=c.getCodPaciente();
-			nuevaFila[11]=c.getCodMed();
+			nuevaFila[7] = c.isUrgente();
+			nuevaFila[8] = c.getCodCita();
+			nuevaFila[9] = c.getCodPaciente();
+			nuevaFila[10] = c.getCodMed();
 			modeloTabla.addRow(nuevaFila);
-			}
-		}
-		
-	
-	private void borrarCitasConEquipo(List<Cita> citas) {
-		for(int i = 0; i<citas.size(); i++) {
-			if(citas.get(i).getCodMed()==null)
-				citas.remove(citas.get(i));
-		}
-	}
-
-	private void añadirCitasConEquipo(List<Cita> citas) throws SQLException {
-		List<Cita> citasConEquip = pbd.devolverCitasConEquipo();
-		for(int i = 0; i<citasConEquip.size(); i++) {
-			if(citasConEquip.get(i).getNumequipo()!=null)
-				citas.add(citasConEquip.get(i));
-		}
-	}
-	
-	private void añadirCitasConEquipoFiltroDia(List<Cita> citas, java.sql.Date sDate) throws SQLException {
-		List<Cita> citasConEquip = pbd.devolvercitasEquipoPorFecha(sDate);
-		for(int i = 0; i<citasConEquip.size(); i++) {
-			if(citasConEquip.get(i).getNumequipo()!=null)
-				citas.add(citasConEquip.get(i));
 		}
 	}
 
@@ -293,19 +284,22 @@ public class VentanaVerCita extends JDialog {
 		}
 		return panel;
 	}
+
 	private JPanel getPanelCita() {
 		if (panelCita == null) {
 			panelCita = new JPanel();
-			panelCita.add(getLblNewLabel());
-			panelCita.add(getDateChooser());
-			panelCita.add(getBtnIr());
-			panelCita.add(getBtnTodasLasCitas());
-			panelCita.add(getTxtNDeHistorial());
-			panelCita.add(getIrHistorial());
-			panelCita.add(getBtnBuscarPorFecha());
+			panelCita.setLayout(new MigLayout("", "[220px][][][][][][][][][][][][][][][][][][105px][][][][][][][][][][][][][][][41px][][117px][][116px][41px][][127px][][][][][]", "[25px]"));
+			panelCita.add(getLblNewLabel(), "cell 1 0,alignx left,aligny center");
+			panelCita.add(getDateChooser(), "flowx,cell 2 0 17 1,growx,aligny center");
+			panelCita.add(getBtnIr(), "cell 19 0,alignx left,aligny top");
+			panelCita.add(getBtnTodasLasCitas(), "cell 24 0,alignx left,aligny top");
+			panelCita.add(getTxtNDeHistorial(), "cell 30 0 6 1,alignx left,aligny center");
+			panelCita.add(getIrHistorial(), "flowx,cell 36 0,alignx left,aligny top");
+			panelCita.add(getBtnBuscarPorFecha(), "cell 36 0,alignx left,aligny top");
 		}
 		return panelCita;
 	}
+
 	private JLabel getLblNewLabel() {
 		if (lblNewLabel == null) {
 			lblNewLabel = new JLabel("Escoga el  d\u00EDa de la cita que desea ver");
@@ -313,13 +307,15 @@ public class VentanaVerCita extends JDialog {
 		}
 		return lblNewLabel;
 	}
+
 	private JDateChooser getDateChooser() {
 		if (dateChooser == null) {
 			dateChooser = new JDateChooser(new Date());
-			
+
 		}
 		return dateChooser;
 	}
+
 	private JButton getBtnIr() {
 		if (btnIr == null) {
 			btnIr = new JButton("Ir");
@@ -331,6 +327,7 @@ public class VentanaVerCita extends JDialog {
 		}
 		return btnIr;
 	}
+
 	private JPanel getPanelBotones() {
 		if (panelBotones == null) {
 			panelBotones = new JPanel();
@@ -340,105 +337,108 @@ public class VentanaVerCita extends JDialog {
 		}
 		return panelBotones;
 	}
+
 	private JButton getBtnEliminar() {
 		if (btnEliminar == null) {
 			btnEliminar = new JButton("Eliminar cita");
 			btnEliminar.setEnabled(false);
 			btnEliminar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					int fila=tablacita.getSelectedRow();
-					if(fila!=-1) {
-					int res=JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea borrar la cita?","Mensaje de confirmación",JOptionPane.YES_NO_OPTION);
-					if(res==JOptionPane.YES_OPTION) {
-						try {
-							pbd.BorrarCita((String)tablacita.getValueAt(tablacita.getSelectedRow(), 9));
-							guardarAccionElimCita();
-							añadirFilas(false);
-						} catch (SQLException e1) {
-							e1.printStackTrace();
+					int fila = tablacita.getSelectedRow();
+					if (fila != -1) {
+						int res = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea borrar la cita?",
+								"Mensaje de confirmación", JOptionPane.YES_NO_OPTION);
+						if (res == JOptionPane.YES_OPTION) {
+							try {
+								pbd.BorrarCita((String) tablacita.getValueAt(tablacita.getSelectedRow(), 9));
+								guardarAccionElimCita();
+								añadirFilas(false);
+							} catch (SQLException e1) {
+								e1.printStackTrace();
+							}
+
+							toFront();
 						}
-						
-						toFront();
+
 					}
-						
-					}
-					
-					
+
 				}
 
 				private void guardarAccionElimCita() throws SQLException {
 					List<Accion> devolverAccionesAdmin = pbd.devolverAccionesAdmin();
 					int numeroAccion = 1;
-					if(devolverAccionesAdmin.size()>0) {
+					if (devolverAccionesAdmin.size() > 0) {
 						numeroAccion = devolverAccionesAdmin.size() + 1;
 					}
-					String naccion = "" +numeroAccion;
-					
-					String nombrePaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 0);
-					String apellidoPaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 1);
-					
-					String nombreMedico=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 6);
-					
-					Date fecha = new Date();	
-					Time hora = new Time(new Date().getTime());	
-					
-					
-					String mensajeAccion = "El aministrador " + codAdmin + " ha eliminado la cita del paciente " + nombrePaciente + " " + apellidoPaciente
-							+ " con el médico " + nombreMedico;
-					
-					Accion a = new Accion(naccion, codAdmin,  fecha, hora, mensajeAccion);
-					
+					String naccion = "" + numeroAccion;
+
+					String nombrePaciente = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 0);
+					String apellidoPaciente = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 1);
+
+					String nombreMedico = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 6);
+
+					Date fecha = new Date();
+					Time hora = new Time(new Date().getTime());
+
+					String mensajeAccion = "El aministrador " + codAdmin + " ha eliminado la cita del paciente "
+							+ nombrePaciente + " " + apellidoPaciente + " con el médico " + nombreMedico;
+
+					Accion a = new Accion(naccion, codAdmin, fecha, hora, mensajeAccion);
+
 					pbd.guardarAccion(a);
-					
+
 				}
 			});
 		}
 		return btnEliminar;
 	}
+
 	private JButton getBtnModificar() {
 		if (btnModificar == null) {
 			btnModificar = new JButton("Modificar cita");
 			btnModificar.setEnabled(false);
 			btnModificar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					
-					int fila=tablacita.getSelectedRow();
-					if(fila!=-1) {
+
+					int fila = tablacita.getSelectedRow();
+					if (fila != -1) {
 						Paciente p;
-							try {
-								if(tablacita.getValueAt(tablacita.getSelectedRow(),6).equals("")) {
-									System.out.println(fila);
-									p=pbd.devolverPacientesEquipo((String)tablacita.getValueAt(tablacita.getSelectedRow(),10));
-								}
-								else {
-									p=pbd.devolverPacientesMedico((String)tablacita.getValueAt(tablacita.getSelectedRow(),9));
-								}
-								//System.err.println(p.getNombre() +" "+p.getApellido()+" "+p.getCodePaciente());
-								Cita c=pbd.citaCod((String)tablacita.getValueAt(tablacita.getSelectedRow(),9),
-										(String)tablacita.getValueAt(tablacita.getSelectedRow(),10));
-								System.err.println((String)tablacita.getValueAt(tablacita.getSelectedRow(),10)+" "+c.getDate()+" "+c.gethFin());
-								VentanaModificarCita(p,c);
-								
-							} catch (SQLException e) {
-								e.printStackTrace();
+						try {
+							if (tablacita.getValueAt(tablacita.getSelectedRow(), 6).equals("")) {
+								System.out.println(fila);
+								p = pbd.devolverPacientesEquipo(
+										(String) tablacita.getValueAt(tablacita.getSelectedRow(), 10));
+							} else {
+								p = pbd.devolverPacientes(
+										(String) tablacita.getValueAt(tablacita.getSelectedRow(), 9));
 							}
+							// System.err.println(p.getNombre() +" "+p.getApellido()+"
+							// "+p.getCodePaciente());
+							Cita c = pbd.citaCod((String) tablacita.getValueAt(tablacita.getSelectedRow(), 9),
+									(String) tablacita.getValueAt(tablacita.getSelectedRow(), 10));
+							System.err.println((String) tablacita.getValueAt(tablacita.getSelectedRow(), 10) + " "
+									+ c.getDate() + " " + c.gethFin());
+							VentanaModificarCita(p, c);
+
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
 					}
 				}
-					
-				
+
 			});
 		}
 		return btnModificar;
 	}
-	
-	
-protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
-		
-		ModificarCita mc = new ModificarCita(this, p,c);
+
+	protected void VentanaModificarCita(Paciente p, Cita c) throws SQLException {
+
+		ModificarCita mc = new ModificarCita(this, p, c);
 		mc.setVisible(true);
 		mc.setLocationRelativeTo(this);
-		
+
 	}
+
 	private JButton getBtnTodasLasCitas() {
 		if (btnTodasLasCitas == null) {
 			btnTodasLasCitas = new JButton("Todas las citas");
@@ -450,13 +450,10 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 		}
 		return btnTodasLasCitas;
 	}
-	
-	
-	
-	
-	private void añadirFilasHistorial()  {
+
+	private void añadirFilasHistorial() {
 		borrarModeloTabla();
-		Object[] nuevaFila=new Object[12];
+		Object[] nuevaFila = new Object[11];
 		List<Cita> citas = new ArrayList<Cita>();
 		try {
 			citas = pbd.devolvercitasHistorial(txtNDeHistorial.getText());
@@ -465,126 +462,89 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 
 			e.printStackTrace();
 		}
-		for(Cita c:citas) {
+		for (Cita c : citas) {
 			Paciente p = null;
-			Empleado empleado=null;
+			Empleado empleado = null;
 			try {
-				if(c.getCodMed()==null) {
-					p = pbd.devolverPacientesEquipo(c.getCodPaciente());
-				}
-				else {
-					p = pbd.devolverPacientesMedico(c.getCodCita());
-					empleado=pbd.devolverEmpleado(c.getCodMed());
-				}
+
+				p = pbd.devolverPacientes(c.getCodCita());
+				empleado = pbd.devolverEmpleado(c.getCodMed());
+
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			
-	
-			nuevaFila[0] = p.getNombre();
-			nuevaFila[1]= p.getApellido();
-			nuevaFila[2] = c.gethInicio();
-			nuevaFila[3] =c.gethFin();
-			nuevaFila[4] =c.getDate();
-			nuevaFila[5] =c.getUbicacion();
-			if(empleado!=null) {
-				nuevaFila[6] = empleado.getNombre()+"  " +empleado.getApellido();
+			nuevaFila[0] = p.getNombre()+" "+ p.getApellido();
+			nuevaFila[1] = c.gethInicio();
+			nuevaFila[2] = c.gethFin();
+			nuevaFila[3] = c.getDate();
+			nuevaFila[4] = c.getUbicacion();
+			if (empleado != null) {
+				nuevaFila[5] = empleado.getNombre() + "  " + empleado.getApellido();
+			} else {
+				nuevaFila[5] = "";
 			}
-			else {
+
+			if (c.getNumequipo() != null) {
+				nuevaFila[6] = c.getNumequipo();
+			} else {
 				nuevaFila[6] = "";
 			}
-			
-			if(c.getNumequipo()!=null) {
-				nuevaFila[7] = c.getNumequipo();
-			}
-			else {
-				nuevaFila[7] = "";
-			}
-			nuevaFila[8] = c.isUrgente();
-			nuevaFila[9]=c.getCodCita();
-			nuevaFila[10]=c.getCodPaciente();
-			nuevaFila[11]=c.getCodMed();
+			nuevaFila[7] = c.isUrgente();
+			nuevaFila[8] = c.getCodCita();
+			nuevaFila[9] = c.getCodPaciente();
+			nuevaFila[10] = c.getCodMed();
+			modeloTabla.addRow(nuevaFila);
 			modeloTabla.addRow(nuevaFila);
 		}
-		
-		}
-	
-	
-	private void añadirCitasConEquipo(List<Cita> citas, String text) throws SQLException {
-		List<Cita> citasConEquip = pbd.devolverCitasConEquipoHist(text);
-		for(int i = 0; i<citasConEquip.size(); i++) {
-			if(citasConEquip.get(i).getNumequipo()!=null)
-				citas.add(citasConEquip.get(i));
-		}
+
 	}
 
-	private void añadirFilasHistorialFecha()  {
+	private void añadirFilasHistorialFecha() {
 		borrarModeloTabla();
-		Object[] nuevaFila=new Object[12];
+		Object[] nuevaFila = new Object[11];
 		List<Cita> citas = new ArrayList<Cita>();
 		try {
-			citas = pbd.devolvercitasHistorialFechas(txtNDeHistorial.getText(),dateChooser.getDate());
+			citas = pbd.devolvercitasHistorialFechas(txtNDeHistorial.getText(), dateChooser.getDate());
 		} catch (SQLException e) {
 
 			e.printStackTrace();
 		}
-	
-		for(Cita c:citas) {
+
+		for (Cita c : citas) {
 			Paciente p = null;
-			Empleado empleado=null;
+			Empleado empleado = null;
 			try {
-				if(c.getCodMed()==null) {
-					p = pbd.devolverPacientesEquipo(c.getCodPaciente());
-				}
-				else {
-					p = pbd.devolverPacientesMedico(c.getCodCita());
-					empleado=pbd.devolverEmpleado(c.getCodMed());
-				}
-			}catch (SQLException e) {
+
+				p = pbd.devolverPacientes(c.getCodCita());
+				empleado = pbd.devolverEmpleado(c.getCodMed());
+
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			
-	
-			nuevaFila[0] = p.getNombre();
-			nuevaFila[1]= p.getApellido();
-			nuevaFila[2] = c.gethInicio();
-			nuevaFila[3] =c.gethFin();
-			nuevaFila[4] =c.getDate();
-			nuevaFila[5] =c.getUbicacion();
-			if(empleado!=null) {
-				nuevaFila[6] = empleado.getNombre()+"  " +empleado.getApellido();
+
+			nuevaFila[0] = p.getNombre()+" "+ p.getApellido();
+			nuevaFila[1] = c.gethInicio();
+			nuevaFila[2] = c.gethFin();
+			nuevaFila[3] = c.getDate();
+			nuevaFila[4] = c.getUbicacion();
+			if (empleado != null) {
+				nuevaFila[5] = empleado.getNombre() + "  " + empleado.getApellido();
+			} else {
+				nuevaFila[5] = "";
 			}
-			else {
+
+			if (c.getNumequipo() != null) {
+				nuevaFila[6] = c.getNumequipo();
+			} else {
 				nuevaFila[6] = "";
 			}
-			
-			if(c.getNumequipo()!=null) {
-				nuevaFila[7] = c.getNumequipo();
-			}
-			else {
-				nuevaFila[7] = "";
-			}
-			nuevaFila[8] = c.isUrgente();
-			nuevaFila[9]=c.getCodCita();
-			nuevaFila[10]=c.getCodPaciente();
-			nuevaFila[11]=c.getCodMed();
-			
+			nuevaFila[7] = c.isUrgente();
+			nuevaFila[8] = c.getCodCita();
+			nuevaFila[9] = c.getCodPaciente();
+			nuevaFila[10] = c.getCodMed();
 			modeloTabla.addRow(nuevaFila);
 		}
-		
-		}
-		
-		
-	
-	private void añadirCitasConEquipoFecha(List<Cita> citas, String text) throws SQLException {
-		Date date = getDateChooser().getDate();
-		java.sql.Date sDate = new java.sql.Date(date.getTime());
-		List<Cita> citasConEquip = pbd.devolverCitasConEquipoHistFecha(text, sDate);
-		for(int i = 0; i<citasConEquip.size(); i++) {
-			if(citasConEquip.get(i).getNumequipo()!=null)
-				citas.add(citasConEquip.get(i));
-		}
-		
+
 	}
 
 	private JTextField getTxtNDeHistorial() {
@@ -598,42 +558,46 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 					txtNDeHistorial.setText("");
 				}
 			});
-			
-			
-			
+
 		}
 		return txtNDeHistorial;
 	}
+
 	private JButton getIrHistorial() {
 		if (irHistorial == null) {
 			irHistorial = new JButton("Ir");
 			irHistorial.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if(txtNDeHistorial.getText().equals("")|| txtNDeHistorial.getText().equals("N\u00BA de historial"))
+					if (txtNDeHistorial.getText().equals("")
+							|| txtNDeHistorial.getText().equals("N\u00BA de historial"))
 						JOptionPane.showMessageDialog(null, "Por favor, introduzca un número de historial válido");
 					else
 						añadirFilasHistorial();
-					
+
 					txtNDeHistorial.setText("N\u00BA de historial");
 				}
 			});
 		}
 		return irHistorial;
 	}
+
 	private JButton getBtnBuscarPorFecha() {
 		if (btnBuscarPorFecha == null) {
 			btnBuscarPorFecha = new JButton("Fecha e historial");
 			btnBuscarPorFecha.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					if(txtNDeHistorial.getText().equals("")|| txtNDeHistorial.getText().equals("N\u00BA de historial"))
-						JOptionPane.showMessageDialog(null, "Por favor, introduzca un número de historial válido o fecha valida");
+					if (txtNDeHistorial.getText().equals("")
+							|| txtNDeHistorial.getText().equals("N\u00BA de historial"))
+						JOptionPane.showMessageDialog(null,
+								"Por favor, introduzca un número de historial válido o fecha valida");
 					else
-					añadirFilasHistorialFecha();
+						añadirFilasHistorialFecha();
 				}
 			});
 		}
 		return btnBuscarPorFecha;
 	}
+
 	private JButton getBtnVerHistorial() {
 		if (btnVerHistorial == null) {
 			btnVerHistorial = new JButton("Ver historial");
@@ -641,163 +605,113 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 			btnVerHistorial.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					mostrarHistorial();
-					
+
 				}
 			});
 		}
 		return btnVerHistorial;
 	}
-	
-	
-	
-	protected void mostrarHistorial() {
-		int fila=tablacita.getSelectedRow();
-		if(fila!=-1) {
 
-			String codcita=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 9);
-			String codPaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 10);
-			String codMedico=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 11);
-			
-		try {
-			PrescripcionesToPDF pdf= new PrescripcionesToPDF();
-			Paciente p;
-			if(tablacita.getValueAt(tablacita.getSelectedRow(),6).equals("")) {
-				System.out.println(fila);
-				p=pbd.devolverPacientesEquipo((String)tablacita.getValueAt(tablacita.getSelectedRow(),10));
-			}
-			else {
-				p=pbd.devolverPacientesMedico((String)tablacita.getValueAt(tablacita.getSelectedRow(),9));
-			}
-			
-			//PrescripcionesDownload pd= new PrescripcionesDownload();
+	protected void mostrarHistorial() {
+		int fila = tablacita.getSelectedRow();
+		if (fila != -1) {
+
+			String codcita = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 9);
+			String codPaciente = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 10);
+
 			try {
-				pdf.createPDF(p);
-			} catch (FileNotFoundException | JRException e) {
+				PrescripcionesToPDF pdf = new PrescripcionesToPDF();
+				Paciente p;
+				if (tablacita.getValueAt(tablacita.getSelectedRow(), 6).equals("")) {
+					System.out.println(fila);
+					p = pbd.devolverPacientesEquipo((String) tablacita.getValueAt(tablacita.getSelectedRow(), 10));
+				} else {
+					p = pbd.devolverPacientes((String) tablacita.getValueAt(tablacita.getSelectedRow(), 9));
+				}
+
+				try {
+					pdf.createPDF(p);
+				} catch (FileNotFoundException | JRException e) {
+
+					e.printStackTrace();
+				}
+
+				HistorialMedico hm = pbd.HistorialCita(codcita, codPaciente);
+				MostrarHistorial mh = new MostrarHistorial(hm);
+				mh.setLocationRelativeTo(null);
+				mh.setResizable(true);
+				mh.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+				mh.setVisible(true);
+				guardarAccionHist();
+			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//pd.receta(p);
-			
-		//	h.escribirhistorial(p);
-		
-			HistorialMedico hm = pbd.HistorialCita(codcita,codPaciente);
-			MostrarHistorial mh = new MostrarHistorial(hm);
-			mh.setLocationRelativeTo(null);
-			mh.setResizable(true);
-			mh.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
-			mh.setVisible(true);
-			guardarAccionHist();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		}
 	}
 
 	private void guardarAccionHist() throws SQLException {
 		List<Accion> devolverAccionesAdmin = pbd.devolverAccionesAdmin();
 		int numeroAccion = 1;
-		if(devolverAccionesAdmin.size()>0) {
+		if (devolverAccionesAdmin.size() > 0) {
 			numeroAccion = devolverAccionesAdmin.size() + 1;
 		}
-		String naccion = "" +numeroAccion;
-		
-		String nombrePaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 0);
-		String apellidoPaciente=(String) tablacita.getValueAt(tablacita.getSelectedRow(), 1);
-		
-		Date fecha = new Date();	
-		Time hora = new Time(new Date().getTime());	
-		
-		
-		String mensajeAccion = "El aministrador " + codAdmin + " ha visto el historial del paciente " + nombrePaciente + " " + apellidoPaciente;
-		
-		Accion a = new Accion(naccion, codAdmin,  fecha, hora, mensajeAccion);
-		
+		String naccion = "" + numeroAccion;
+
+		String nombrePaciente = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 0);
+		String apellidoPaciente = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 1);
+
+		Date fecha = new Date();
+		Time hora = new Time(new Date().getTime());
+
+		String mensajeAccion = "El aministrador " + codAdmin + " ha visto el historial del paciente " + nombrePaciente
+				+ " " + apellidoPaciente;
+
+		Accion a = new Accion(naccion, codAdmin, fecha, hora, mensajeAccion);
+
 		pbd.guardarAccion(a);
-		
+
 	}
+
 	private JPanel getPanel_1_1() {
 		if (panelFiltrosMedEn == null) {
 			panelFiltrosMedEn = new JPanel();
-			panelFiltrosMedEn.setLayout(new GridLayout(8, 1, 0, 0));
-			panelFiltrosMedEn.add(getPanelVacio());
-			panelFiltrosMedEn.add(getPanelMedEnfer());
-			panelFiltrosMedEn.add(getPnNombre());
-			panelFiltrosMedEn.add(getPnApellido());
-			panelFiltrosMedEn.add(getPnCodEmpleado());
-			panelFiltrosMedEn.add(getPnNombreApellido());
+			panelFiltrosMedEn.setLayout(new GridLayout(2, 1, 0, 0));
+			panelFiltrosMedEn.add(getPanel_1());
+			panelFiltrosMedEn.add(getPanel_2());
 		}
 		return panelFiltrosMedEn;
 	}
-	private JLabel getLblFiltrar() {
-		if (lblFiltrar == null) {
-			lblFiltrar = new JLabel("Filtrar por:");
-		}
-		return lblFiltrar;
-	}
-	private JRadioButton getRdbtnMdico() {
-		if (rdbtnMdico == null) {
-			rdbtnMdico = new JRadioButton("M\u00E9dico");
-			rdbtnMdico.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent arg0) {
-					
-					crearPanelEspecialidad();
-				}
 
-			
-			});
-			buttonGroup.add(rdbtnMdico);
-		}
-		return rdbtnMdico;
-	}
-	
-	
-	
-	private void crearPanelEspecialidad() {
-		if(rdbtnMdico.isSelected()) {
-			panelFiltrosMedEn.add(getPanelNomEspe());
-			panelFiltrosMedEn.add(getPanelEspecialidad());
-			
-			
-		}
-			
-		
-	}
-	
-	
-	private JRadioButton getRdbtnEnfermero() {
-		if (rdbtnEnfermero == null) {
-			rdbtnEnfermero = new JRadioButton("Enfermero");
-			buttonGroup.add(rdbtnEnfermero);
-		}
-		return rdbtnEnfermero;
-	}
 	private JPanel getPanelMedEnfer() {
 		if (panelMedEnfer == null) {
 			panelMedEnfer = new JPanel();
-			panelMedEnfer.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-			panelMedEnfer.add(getLblFiltrar());
-			panelMedEnfer.add(getRdbtnEnfermero());
-			panelMedEnfer.add(getRdbtnMdico());
+			panelMedEnfer.setLayout(new GridLayout(1, 3, 0, 0));
+			panelMedEnfer.add(getCheckMedico());
+			panelMedEnfer.add(getCheckEquipo());
+			panelMedEnfer.add(getCheckEnfermero());
 		}
 		return panelMedEnfer;
 	}
+
 	private JPanel getPnNombre() {
 		if (pnNombre == null) {
 			pnNombre = new JPanel();
-			pnNombre.add(getLblNombre());
-			pnNombre.add(getTxtNombre());
-			pnNombre.add(getBtnIr_1());
+			pnNombre.setLayout(new MigLayout("", "[50px][116px][41px][]", "[25px]"));
+			pnNombre.add(getLblNombre(), "cell 0 0,alignx left,aligny center");
+			pnNombre.add(getTxtNombre(), "cell 1 0 2 1,growx,aligny center");
+			pnNombre.add(getBtnIr_1(), "cell 3 0,alignx left,aligny top");
 		}
 		return pnNombre;
 	}
+
 	private JLabel getLblNombre() {
 		if (lblNombre == null) {
 			lblNombre = new JLabel("Nombre:");
 		}
 		return lblNombre;
 	}
+
 	private JTextField getTxtNombre() {
 		if (txtNombre == null) {
 			txtNombre = new JTextField();
@@ -805,92 +719,213 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 		}
 		return txtNombre;
 	}
+
 	private JButton getBtnIr_1() {
 		if (btnIr_1 == null) {
 			btnIr_1 = new JButton("Ir");
 			btnIr_1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					
-				buscarPorNombre();
-					
+
+					buscarPorNombre();
+
 				}
 
-				
 			});
 		}
 		return btnIr_1;
 	}
 	
+	private void buscarApellido() {
+		
+			if(checkMedico.isSelected()) {
+			
+			try {
+				
+				modeloListaMedico(pbd.devolverMedicoApellido(txtApellido.getText()));
+			} catch (SQLException e) {
+		
+				e.printStackTrace();
+			}
+		}if(checkEnfermero.isSelected()) {
+			try {
+				modeloListaEnfermero(pbd.buscarApellidoEnfermero(txtApellido.getText()));
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}	
+			
+		}else
+			JOptionPane.showMessageDialog(null, "Por favor, selecciona un médico o enfermero");
+		
+		
+	}
+
 	
+		
+		
+		
 	
+
 	private void buscarPorNombre() {
-		if(txtNombre.getText().equals(""))
+		modeloListaEnfermero.clear();
+		modeloListaMedico.clear();
+		
+		if (txtNombre.getText().equals(""))
 			JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
-		else {	
-			if(rdbtnMdico.isSelected())
-				añadirFilasMedico();
+		else {
+			
+			buscarNombre();
+
 		}
+		txtNombre.setText("");
+		
+	}
+	
+	private void buscarPorApellido() {
+		modeloListaEnfermero.clear();
+		modeloListaMedico.clear();
+		if (txtApellido.getText().equals(""))
+			JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
+		else {
+			
+			buscarApellido();
+
+		}
+		txtApellido.setText("");
+		
+	}
+	
+	private void buscarNombre() {
+		if(checkMedico.isSelected()) {
+			
+			try {
+				
+				modeloListaMedico(pbd.devolverMedicoNombre(txtNombre.getText()));
+			} catch (SQLException e) {
+		
+				e.printStackTrace();
+			}
+		} if(checkEnfermero.isSelected()) {
+			try {
+				modeloListaEnfermero(pbd.buscarNombreEnfermero(txtNombre.getText()));
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}	
+			
+		}else
+			JOptionPane.showMessageDialog(null, "Por favor, selecciona un médico o enfermero");
+		
+		
+	}
+
+	
+	private DefaultListModel<Medico> modeloListaMedico(List<Medico> medico) throws SQLException {
+		modeloListaMedico = new DefaultListModel<Medico>();
+		
+		if(medico!=null) {
+		List<Medico> medicos = medico;
+		for (int i = 0; i < medicos.size(); i++) {
+			modeloListaMedico.addElement(medicos.get(i));
+
+		}
+		listMedico.setModel(modeloListaMedico);
+		}
+		if(modeloListaMedico.getSize()==0)
+			JOptionPane.showMessageDialog(null, "No se ha encontrado ningún médico con esas características");
+		return modeloListaMedico;
+	}  
+	
+	
+	private DefaultListModel<Enfermero> modeloListaEnfermero(List<Enfermero> enfermero) throws SQLException {
+		modeloListaEnfermero= new DefaultListModel<Enfermero>();
+		
+		if(enfermero!=null) {
+		List<Enfermero> enfermeros = enfermero;
+		for (int i = 0; i < enfermeros.size(); i++) {
+			modeloListaEnfermero.addElement(enfermeros.get(i));
+
+		}
+		listEnfermero.setModel(modeloListaEnfermero);
+		}
+		if(modeloListaEnfermero.getSize()==0)
+			JOptionPane.showMessageDialog(null, "No se ha encontrado ningún enfermero con esas características");
+		return modeloListaEnfermero;
+	}  
+	
+	
+	public void añadirFilasFiltro(boolean medico,boolean enfermero,boolean equipos) {
+		int contador=0;
+		borrarModeloTabla();
+		Object[] nuevaFila = new Object[11];
+		List<Cita> citas = new ArrayList<Cita>();
+
+		try {
+			citas = pbd.devolverCitas();
+		for (Cita c : citas) {
+			Paciente p = null;
+			Empleado empleado = null;
+
+			p = pbd.devolverPacientes(c.getCodCita());
+			empleado = pbd.devolverEmpleado(c.getCodMed());
+		if((medico && pbd.checkCodeMedico(c.getCodMed()))|| (enfermero && pbd.checkCodEnfermero(c.getCodMed()))||
+				(equipos && pbd.checkCodEquipo(c.getNumequipo()))) {
+			contador++;
+			nuevaFila[0] = p.getNombre()+" "+ p.getApellido();
+			nuevaFila[1] = c.gethInicio();
+			nuevaFila[2] = c.gethFin();
+			nuevaFila[3] = c.getDate();
+			nuevaFila[4] = c.getUbicacion();
+			if (empleado != null) {
+				nuevaFila[5] = empleado.getNombre() + "  " + empleado.getApellido();
+			} else {
+				nuevaFila[5] = "";
+			}
+
+			if (c.getNumequipo() != null) {
+				nuevaFila[6] = c.getNumequipo();
+			} else {
+				nuevaFila[6] = "";
+			}
+			nuevaFila[7] = c.isUrgente();
+			nuevaFila[8] = c.getCodCita();
+			nuevaFila[9] = c.getCodPaciente();
+			nuevaFila[10] = c.getCodMed();
+			modeloTabla.addRow(nuevaFila);
+		}
+		}
+	}catch (Exception e) {
+		// TODO: handle exception
 	}
 		
-			public void añadirFilasMedico()  {
-				borrarModeloTabla();
-				Object[] nuevaFila=new Object[12];
-				List<Cita> citas = new ArrayList<Cita>();
-			
-				try {
-					citas = pbd.devolverCitas();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				
-			}
-			
-				for(Cita c:citas) {
-					Paciente p = null;
-					Empleado empleado=null;
-					
-					try {
-						p = pbd.devolverPacientesMedico(c.getCodCita());
-							empleado=pbd.devolverEmpleado(c.getCodMed());
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
-					nuevaFila[0] = p.getNombre();
-					nuevaFila[1]= p.getApellido();
-					nuevaFila[2] = c.gethInicio();
-					nuevaFila[3] =c.gethFin();
-					nuevaFila[4] =c.getDate();
-					nuevaFila[5] =c.getUbicacion();
-					nuevaFila[6] = empleado.getNombre()+"  " +empleado.getApellido();
-					nuevaFila[8] = c.isUrgente();
-					nuevaFila[9]=c.getCodCita();
-					nuevaFila[10]=c.getCodPaciente();
-					nuevaFila[11]=c.getCodMed();
-					modeloTabla.addRow(nuevaFila);
-					}
-				}
-			
-			
+	System.err.println(contador);
+	}
+
 	private JPanel getPnApellido() {
 		if (pnApellido == null) {
 			pnApellido = new JPanel();
-			pnApellido.add(getLblApellido());
-			pnApellido.add(getTxtApellido());
-			pnApellido.add(getBtnApellido());
+			pnApellido.setLayout(new MigLayout("", "[50px][116px][41px][]", "[25px]"));
+			pnApellido.add(getLblApellido(), "cell 0 0,alignx left,aligny center");
+			pnApellido.add(getTxtApellido(), "cell 1 0 2 1,growx,aligny center");
+			pnApellido.add(getBtnApellido(), "cell 3 0,alignx left,aligny top");
 		}
 		return pnApellido;
 	}
+
 	private JPanel getPanelVacio() {
 		if (panelVacio == null) {
 			panelVacio = new JPanel();
+			panelVacio.setLayout(null);
+			panelVacio.add(getLblFiltarPor());
 		}
 		return panelVacio;
 	}
+
 	private JLabel getLblApellido() {
 		if (lblApellido == null) {
 			lblApellido = new JLabel("Apellido:");
 		}
 		return lblApellido;
 	}
+
 	private JTextField getTxtApellido() {
 		if (txtApellido == null) {
 			txtApellido = new JTextField();
@@ -898,27 +933,38 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 		}
 		return txtApellido;
 	}
+
 	private JButton getBtnApellido() {
 		if (BtnApellido == null) {
 			BtnApellido = new JButton("Ir");
+			BtnApellido.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+					buscarPorApellido();
+				}
+			});
 		}
 		return BtnApellido;
 	}
+
 	private JPanel getPnCodEmpleado() {
 		if (pnCodEmpleado == null) {
 			pnCodEmpleado = new JPanel();
-			pnCodEmpleado.add(getLblCodempleado());
-			pnCodEmpleado.add(getTxtEmpleado());
-			pnCodEmpleado.add(getBtnCodEmpleado());
+			pnCodEmpleado.setLayout(new MigLayout("", "[83px][116px][41px]", "[25px]"));
+			pnCodEmpleado.add(getLblCodempleado(), "cell 0 0,alignx left,aligny center");
+			pnCodEmpleado.add(getTxtEmpleado(), "cell 1 0,alignx left,aligny center");
+			pnCodEmpleado.add(getBtnCodEmpleado(), "cell 2 0,alignx left,aligny top");
 		}
 		return pnCodEmpleado;
 	}
+
 	private JLabel getLblCodempleado() {
 		if (lblCodempleado == null) {
 			lblCodempleado = new JLabel("CodEmpleado:");
 		}
 		return lblCodempleado;
 	}
+
 	private JTextField getTxtEmpleado() {
 		if (txtEmpleado == null) {
 			txtEmpleado = new JTextField();
@@ -926,25 +972,66 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 		}
 		return txtEmpleado;
 	}
+
 	private JButton getBtnCodEmpleado() {
 		if (btnCodEmpleado == null) {
 			btnCodEmpleado = new JButton("Ir");
+			btnCodEmpleado.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+					buscarPorCodEmpelado();
+				}
+
+				
+			});
 		}
 		return btnCodEmpleado;
 	}
-	private JPanel getPnNombreApellido() {
-		if (pnNombreApellido == null) {
-			pnNombreApellido = new JPanel();
-			pnNombreApellido.add(getBtnNombreYApellido());
+	
+	
+	private void buscarPorCodEmpelado() {
+		modeloListaEnfermero.clear();
+		modeloListaMedico.clear();
+		if (txtEmpleado.getText().equals(""))
+			JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
+		else {
+			
+			buscarCodigoEmpleado();
+
 		}
-		return pnNombreApellido;
+		txtEmpleado.setText("");
+		
 	}
-	private JButton getBtnNombreYApellido() {
-		if (btnNombreYApellido == null) {
-			btnNombreYApellido = new JButton("Nombre y apellido");
-		}
-		return btnNombreYApellido;
+	
+	
+	private void buscarCodigoEmpleado() {
+			if(checkMedico.isSelected()) {
+			
+			try {
+				List<Medico>medicos=new ArrayList<Medico>();
+				medicos.add(pbd.buscarMedicoCodigo(txtEmpleado.getText()));
+				modeloListaMedico(medicos);
+			} catch (SQLException e) {
+		
+				e.printStackTrace();
+			}
+		}if(checkEnfermero.isSelected()) {
+			try {
+				List<Enfermero>enfermeros=new ArrayList<Enfermero>();
+				enfermeros.add(pbd.buscarEnfermeroCodigo(txtEmpleado.getText()));
+				modeloListaEnfermero(enfermeros);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}	
+			
+		}else
+			JOptionPane.showMessageDialog(null, "Por favor, selecciona un médico o enfermero");
+		
+	
+		
+		
 	}
+
 	private JPanel getPanelEspecialidad() {
 		if (panelEspecialidad == null) {
 			panelEspecialidad = new JPanel();
@@ -953,6 +1040,7 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 		}
 		return panelEspecialidad;
 	}
+
 	private JComboBox getComboBox() {
 		if (comboBox == null) {
 			comboBox = new JComboBox();
@@ -960,6 +1048,7 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 		}
 		return comboBox;
 	}
+
 	private JPanel getPanelNomEspe() {
 		if (panelNomEspe == null) {
 			panelNomEspe = new JPanel();
@@ -968,17 +1057,257 @@ protected void VentanaModificarCita(Paciente p,Cita c) throws SQLException {
 		}
 		return panelNomEspe;
 	}
+
 	private JLabel getLblEspecialidad() {
 		if (lblEspecialidad == null) {
 			lblEspecialidad = new JLabel("Especialidad:");
 		}
 		return lblEspecialidad;
 	}
+
 	private JTextField getTxtEspecialidad() {
 		if (txtEspecialidad == null) {
 			txtEspecialidad = new JTextField();
 			txtEspecialidad.setColumns(10);
 		}
 		return txtEspecialidad;
+	}
+
+	private JCheckBox getCheckMedico() {
+		if (checkMedico == null) {
+			checkMedico = new JCheckBox("M\u00E9dico");
+			checkMedico.setSelected(true);
+			checkMedico.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					añadirFilasFiltro(checkMedico.isSelected(), checkEnfermero.isSelected(), checkEquipo.isSelected());
+				}
+				
+			});
+		}
+		return checkMedico;
+	}
+
+	private JCheckBox getCheckEnfermero() {
+		if (checkEnfermero == null) {
+			checkEnfermero = new JCheckBox("Enfermero");
+			checkEnfermero.setSelected(true);
+			checkEnfermero.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					añadirFilasFiltro(checkMedico.isSelected(), checkEnfermero.isSelected(), checkEquipo.isSelected());
+				}
+			});
+		}
+		return checkEnfermero;
+	}
+
+	private JCheckBox getCheckEquipo() {
+		if (checkEquipo == null) {
+			checkEquipo = new JCheckBox("Equipo");
+			checkEquipo.setSelected(true);
+			checkEquipo.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					añadirFilasFiltro(checkMedico.isSelected(), checkEnfermero.isSelected(), checkEquipo.isSelected());
+				}
+			});
+		}
+		return checkEquipo;
+	}
+
+	private JScrollPane getScrollMedico() {
+		if (scrollMedico == null) {
+			scrollMedico = new JScrollPane();
+			scrollMedico.setViewportView(getListMedico());
+			scrollMedico.setColumnHeaderView(getLblMdico());
+		}
+		return scrollMedico;
+	}
+
+	private JPanel getPanel_1() {
+		if (panel_1 == null) {
+			panel_1 = new JPanel();
+			panel_1.setLayout(new GridLayout(0, 1, 0, 0));
+			panel_1.add(getPanelVacio());
+			panel_1.add(getPanelMedEnfer());
+			panel_1.add(getPnNombre());
+			panel_1.add(getPnApellido());
+			panel_1.add(getPnCodEmpleado());
+		}
+		return panel_1;
+	}
+
+	private JLabel getLblFiltarPor() {
+		if (lblFiltarPor == null) {
+			lblFiltarPor = new JLabel("Filtar por:");
+			lblFiltarPor.setBounds(0, 22, 57, 16);
+		}
+		return lblFiltarPor;
+	}
+
+	private JList getListMedico() {
+		if (listMedico == null) {
+			listMedico = new JList();
+			listMedico.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			listMedico.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					
+					medico=listMedico.getSelectedValue();
+					añadirFilasMedico();
+				}
+			});
+			
+		}
+		return listMedico;
+	}
+
+	private JPanel getPanel_2() {
+		if (panel_2 == null) {
+			panel_2 = new JPanel();
+			panel_2.setLayout(new GridLayout(3, 1, 0, 0));
+			panel_2.add(getPanel_3());
+			panel_2.add(getScrollEnfermero());
+			panel_2.add(getScrollMedico());
+		}
+		return panel_2;
+	}
+
+	private JPanel getPanel_3() {
+		if (panel_3 == null) {
+			panel_3 = new JPanel();
+			panel_3.add(getLblEspecialidad_1());
+			panel_3.add(getTextField());
+			panel_3.add(getBtnIr_2());
+		}
+		return panel_3;
+	}
+
+	private JLabel getLblEspecialidad_1() {
+		if (lblEspecialidad_1 == null) {
+			lblEspecialidad_1 = new JLabel("Especialidad:");
+		}
+		return lblEspecialidad_1;
+	}
+
+	private JTextField getTextField() {
+		if (textField == null) {
+			textField = new JTextField();
+			textField.setColumns(10);
+		}
+		return textField;
+	}
+
+	private JButton getBtnIr_2() {
+		if (btnIr_2 == null) {
+			btnIr_2 = new JButton("Ir");
+		}
+		return btnIr_2;
+	}
+	private JScrollPane getScrollEnfermero() {
+		if (scrollEnfermero == null) {
+			scrollEnfermero = new JScrollPane();
+			scrollEnfermero.setViewportView(getListEnfermero());
+			scrollEnfermero.setColumnHeaderView(getLblEnfermeros());
+		}
+		return scrollEnfermero;
+	}
+	private JList getListEnfermero() {
+		if (listEnfermero == null) {
+			listEnfermero = new JList();
+			listEnfermero.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			listEnfermero.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					
+					enfermero=listEnfermero.getSelectedValue();
+					añadirFilasEnfermero();
+					
+				}
+			});
+			
+		}
+		return listEnfermero;
+	}
+	
+	
+	private void añadirFilasMedico(){
+		borrarModeloTabla();
+		Object[] nuevaFila = new Object[11];
+		List<Cita> citas;
+		try {
+			citas = pbd.devolvercitasMedico(medico.getCodeEmpleado());
+		
+		for (Cita c : citas) {
+			Paciente p = null;
+			
+				p = pbd.devolverPacientes(c.getCodCita());
+				nuevaFila[0] = p.getNombre()+" "+ p.getApellido();
+				nuevaFila[1] = c.gethInicio();
+				nuevaFila[2] = c.gethFin();
+				nuevaFila[3] = c.getDate();
+				nuevaFila[4] = c.getUbicacion();
+				nuevaFila[5] = medico.getNombre() + "  " + medico.getApellido();
+				nuevaFila[6] = "";
+				nuevaFila[7] = c.isUrgente();
+				nuevaFila[8] = c.getCodCita();
+				nuevaFila[9] = c.getCodPaciente();
+				nuevaFila[10] = c.getCodMed();
+				modeloTabla.addRow(nuevaFila);
+		}
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		
+	}
+	
+	private void añadirFilasEnfermero(){
+		borrarModeloTabla();
+		Object[] nuevaFila = new Object[11];
+		List<Cita> citas;
+		try {
+			citas = pbd.devolvercitasEnfermero(enfermero.getCodeEmpleado());
+			
+		
+		for (Cita c : citas) {
+			Paciente p = null;
+			
+				p = pbd.devolverPacientes(c.getCodCita());
+				nuevaFila[0] = p.getNombre()+" "+ p.getApellido();
+				nuevaFila[1] = c.gethInicio();
+				nuevaFila[2] = c.gethFin();
+				nuevaFila[3] = c.getDate();
+				nuevaFila[4] = c.getUbicacion();
+				nuevaFila[5] = enfermero.getNombre() + "  " + enfermero.getApellido();
+				nuevaFila[6] = "";
+				nuevaFila[7] = c.isUrgente();
+				nuevaFila[8] = c.getCodCita();
+				nuevaFila[9] = c.getCodPaciente();
+				nuevaFila[10] = c.getCodMed();
+				modeloTabla.addRow(nuevaFila);
+			
+		}
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		
+	}
+	
+	
+	
+	
+	private JLabel getLblEnfermeros() {
+		if (lblEnfermeros == null) {
+			lblEnfermeros = new JLabel("Enfermeros/as :");
+		}
+		return lblEnfermeros;
+	}
+	private JLabel getLblMdico() {
+		if (lblMdico == null) {
+			lblMdico = new JLabel("M\u00E9dicos/as :");
+		}
+		return lblMdico;
 	}
 }
