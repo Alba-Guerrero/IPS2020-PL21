@@ -1037,7 +1037,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		ResultSet rs = pst.executeQuery();
 
 		if( rs.next()) {
-			m= new Medico(rs.getString("codmedico"), rs.getString("nombre"), rs.getString("apellido"),
+			m= new Medico(rs.getString("codempleado"), rs.getString("nombre"), rs.getString("apellido"),
 					rs.getString("pass"), rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("dinicio"),
 					rs.getDate("dfin"), rs.getString("djornada"));
 		}
