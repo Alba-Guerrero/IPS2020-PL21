@@ -353,7 +353,7 @@ public class MostrarHistorial extends JDialog {
 			e.printStackTrace();
 		}
 		
-		JOptionPane.showConfirmDialog(null, "Se ha generado su historial con éxito");
+		JOptionPane.showMessageDialog(null, "Se ha generado su historial con éxito");
 		
 		
 		

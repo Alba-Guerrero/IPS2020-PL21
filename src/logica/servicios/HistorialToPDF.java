@@ -10,13 +10,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+import logica.AsignaAntecedente;
 import logica.AsignaCausa;
 import logica.AsignaDiagnostico;
 import logica.AsignaEnfermPrev;
 import logica.AsignaPreinscripcion;
+import logica.AsignaProcedimiento;
 import logica.AsignaVacuna;
 import logica.Paciente;
+import logica.empleados.Enfermero;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -37,7 +39,8 @@ public class HistorialToPDF {
 	private List<AsignaVacuna> vacuna;
 	private List<AsignaCausa> causa;
 	private List<AsignaEnfermPrev> enfermedad;
-	//private List<Asigna> procedimineto;
+	private List<AsignaProcedimiento> procedimiento;
+	private List<AsignaAntecedente> antecedente;
 
 	public HistorialToPDF() {
 		super();
@@ -46,6 +49,11 @@ public class HistorialToPDF {
 		this.ad = new ArrayList<AsignaDiagnostico>();
 		this.vacuna = new ArrayList<AsignaVacuna>();
 		this.causa = new ArrayList<AsignaCausa>();
+		this.enfermedad= new ArrayList<AsignaEnfermPrev>();
+		this.procedimiento= new ArrayList<AsignaProcedimiento>();
+		this.antecedente = new ArrayList<AsignaAntecedente>();
+		
+
 
 	}
 
@@ -56,6 +64,9 @@ public class HistorialToPDF {
 			ad = pbd.asignaDiagnosticoHistorial(p.getHistorial());
 			vacuna = pbd.asignaVacunaHistorial(p.getHistorial());
 			causa = pbd.asignaCausaHistorial(p.getHistorial());
+			enfermedad= pbd.listarenfermedadesPAsignadas(p.getHistorial());
+			procedimiento=pbd.listarProcedimientosAsignados(p.getHistorial());
+			antecedente= pbd.listarAntecedentesAsignados(p.getHistorial());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -66,6 +77,10 @@ public class HistorialToPDF {
 		JRBeanCollectionDataSource causas = new JRBeanCollectionDataSource(causa);
 		JRBeanCollectionDataSource diagnosticos = new JRBeanCollectionDataSource(ad);
 		JRBeanCollectionDataSource vacunas = new JRBeanCollectionDataSource(vacuna);
+		JRBeanCollectionDataSource enfermedades = new JRBeanCollectionDataSource(enfermedad);
+		JRBeanCollectionDataSource procedimientos = new JRBeanCollectionDataSource(procedimiento);
+		JRBeanCollectionDataSource antecedentes = new JRBeanCollectionDataSource(antecedente);
+		
 
 		// Map con los parametros
 		final Map<String, Object> parameters = new HashMap<String, Object>();
@@ -74,9 +89,12 @@ public class HistorialToPDF {
 		parameters.put("Causa", causas);
 		parameters.put("Vacuna", vacunas);
 		parameters.put("Diagnostico", diagnosticos);
+		parameters.put("Antecedente", antecedentes);
+		parameters.put("Procedimiento", procedimientos);
+		parameters.put("Enfermedad", enfermedades);
 
 		// leemos el jrcml
-		InputStream input = new FileInputStream(new File("historial.jrxml"));
+		InputStream input = new FileInputStream(new File("historial2.jrxml"));
 		JasperDesign jasperDesign = JRXmlLoader.load(input);
 
 		// COMPILASMOS EL JASPER XRML

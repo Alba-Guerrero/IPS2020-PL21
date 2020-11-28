@@ -1723,6 +1723,31 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	}
 	
 	
+	public List<AsignaCausa> asignaProcedimientoHistorial(String nhistorial) throws SQLException {
+		List<AsignaCausa> causa = new ArrayList<AsignaCausa>();
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VER_CAUSAS_ASIGNADAS);
+
+		pst.setString(1, nhistorial); 
+
+		ResultSet rs = pst.executeQuery(); 
+
+		while (rs.next()) {
+			causa.add(new AsignaCausa(rs.getString("codAsigCausa"), rs.getString("nombreCausa"),rs.getString("historial"),
+				rs.getString("codempleado"),rs.getDate("fecha"),rs.getTime("hora")));
+					
+			
+		}
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return causa;
+	}
+	
+	
 	
 	public List<String> buscarNombreTodasCausas() throws SQLException {
 		List<String> nombresCausas = new ArrayList<String>();

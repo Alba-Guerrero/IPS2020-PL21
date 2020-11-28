@@ -20,6 +20,7 @@ import logica.Paciente;
 import logica.empleados.Empleado;
 import logica.empleados.Enfermero;
 import logica.empleados.Medico;
+import logica.servicios.HistorialToPDF;
 import logica.servicios.ParserBaseDeDatos;
 import logica.servicios.PrescripcionesToPDF;
 import net.sf.jasperreports.engine.JRException;
@@ -616,17 +617,17 @@ public class VentanaVerCita extends JDialog {
 		int fila = tablacita.getSelectedRow();
 		if (fila != -1) {
 
-			String codcita = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 9);
-			String codPaciente = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 10);
+			String codcita = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 8);
+			String codPaciente = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 9);
 
 			try {
-				PrescripcionesToPDF pdf = new PrescripcionesToPDF();
+				HistorialToPDF pdf = new HistorialToPDF();
 				Paciente p;
 				if (tablacita.getValueAt(tablacita.getSelectedRow(), 6).equals("")) {
 					System.out.println(fila);
-					p = pbd.devolverPacientesEquipo((String) tablacita.getValueAt(tablacita.getSelectedRow(), 10));
+					p = pbd.devolverPacientesEquipo((String) tablacita.getValueAt(tablacita.getSelectedRow(), 9));
 				} else {
-					p = pbd.devolverPacientes((String) tablacita.getValueAt(tablacita.getSelectedRow(), 9));
+					p = pbd.devolverPacientes((String) tablacita.getValueAt(tablacita.getSelectedRow(), 8));
 				}
 
 				try {
