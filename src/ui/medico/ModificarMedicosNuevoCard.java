@@ -349,7 +349,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		ponerCausas();
 		causaSeleccionada = false;
 
-
+		listaCausasSeleccionadas = new ArrayList<Causas>();
 		preinscripciones = pbd.listarPrescripciones();
 		vacunas = pbd.listarVacunas();
 		diagnosticos = pbd.listarDiagnosticos();
@@ -554,8 +554,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getBtnElimCausa() {
 		if (btnElimCausa == null) {
 			btnElimCausa = new JButton("Borrar causa");
-			FlowLayout flowLayout = (FlowLayout) btnElimCausa.getLayout();
-			flowLayout.setAlignment(FlowLayout.RIGHT);
 			btnElimCausa.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					eliminarCausa();
@@ -599,11 +597,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableCausa.getModel());
 			tableCausa.setRowSorter(sorter);
 			
-			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-			sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
-			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
-			
-			sorter.setSortKeys(sortKeys);
 			
 			añadirFilasCausas();
 		}
@@ -672,7 +665,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	
 	public void rellenarCBCausas() {
 		for (int i = 0; i < nombresCausas.size(); i++) {
-			cbCausas.insertItemAt(nombresCausas.get(i), i);
+			cbCausas.insertItemAt(nombresCausas.get(i).toString(), i);
 		}
 	}
 	
@@ -769,31 +762,34 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 
 	protected void añadirCausa() {
-//		int indiceSeleciconado = cbCausas.getSelectedIndex(); // Lo que está seleccionado en el comboBox
-//		Causas c = null; // La preinscripcion
-//			
-//
-//		// Buscamos la preinscripcion que hay seleccionada en el comboBox
-//		int contador = 0;
-//		for (Causas causa : nombresCausas) {
-//			if (indiceSeleciconado == contador) {
-//				c = causa;
-//			}
-//			contador = contador + 1;
-//		}
+		int indiceSeleciconado = cbCausas.getSelectedIndex(); // Lo que está seleccionado en el comboBox
+		Causas c = null; // La preinscripcion
+			
+
+		// Buscamos la preinscripcion que hay seleccionada en el comboBox
+		int contador = 0;
+		for (Causas causa : nombresCausas) {
+			if (indiceSeleciconado == contador) {
+				c = causa;
+			}
+			contador = contador + 1;
+		}
+		listaCausasSeleccionadas.add(c);
 		
-		listaCausasSeleccionadas.add((Causas) cbCausas.getSelectedItem());
-		tablaCausaBool = true;
+		if (tablaCausaBool == false) { // Para que no casque al pintar la tabla de los diagnosticos
+			tablaCausaBool = true;
+		}
+		
+		añadirFilasCausas(); // Añadimos a la tabla que nos muestra los diagnosticos que ya le hemos asignado
+		
+		cbCausas.setSelectedIndex(0);
 		
 	}
 	
 	private void guardarCausas() throws SQLException {
 		String nHistorial = "" + mm.getPaciente().getHistorial();
-		Time hora =  cita.gethInicio();
-		java.sql.Date horas = new java.sql.Date(hora.getTime());
-		
-		Time hour = new Time(horas.getTime());
-		Date fecha = (Date) cita.getDate();
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());
 		
 		java.sql.Date sDate = new java.sql.Date(fecha.getTime());
 		
@@ -802,8 +798,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			for(Causas c: listaCausasSeleccionadas) {
 				String nombreCausas = c.getNombreVacuna();
 				String codcausa = "" + r.nextInt(300);
-				pbd.actualizarAsignaCausa(codcausa,nombreCausas, nHistorial, sDate, hour, codmedico);
-				//guardarAccionCausa(causas);
+				pbd.actualizarAsignaCausa(codcausa,nombreCausas, nHistorial, sDate, hora, codmedico);
+				guardarAccionCausa(c.toString());
 			}
 		}
 		
@@ -1645,7 +1641,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		
 		String nombrePaciente = paciente.getNombre();
 		String apellidoPaciente= paciente.getApellido();
-		String codMed = cita.getCodMed();
+		
+		String codMed = codmedico;
 		
 		String nombre =pbd.devolverEmpleado(codMed).getNombre();
 		String apellido =pbd.devolverEmpleado(codMed).getApellido();
@@ -1742,7 +1739,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		
 		String nombrePaciente = paciente.getNombre();
 		String apellidoPaciente= paciente.getApellido();
-		String codMed = cita.getCodMed();
+		String codMed = codmedico;
 		
 		String nombre =pbd.devolverEmpleado(codMed).getNombre();
 		String apellido =pbd.devolverEmpleado(codMed).getApellido();
@@ -1787,7 +1784,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		
 		String nombrePaciente = paciente.getNombre();
 		String apellidoPaciente= paciente.getApellido();
-		String codMed = cita.getCodMed();
+		String codMed = codmedico;
 		
 		String nombre =pbd.devolverEmpleado(codMed).getNombre();
 		String apellido =pbd.devolverEmpleado(codMed).getApellido();
@@ -1803,7 +1800,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		+ apellidoPaciente + " la siguiente preinscripción" + mensajePreinscripciones;
 				
 		AccionEmpleado a = new AccionEmpleado(naccion, codMed,  fecha, hora, mensajeAccion);
-		//pbd.guardarAccionEmpleado(a);
+		pbd.guardarAccionEmpleado(a);
 		
 	} 
 	private JPanel getPnDiagnosticos() {
@@ -1915,7 +1912,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		
 		String nombrePaciente = paciente.getNombre();
 		String apellidoPaciente= paciente.getApellido();
-		String codMed = cita.getCodMed();
+		String codMed = codmedico;
 		
 		String nombre =pbd.devolverEmpleado(codMed).getNombre();
 		String apellido =pbd.devolverEmpleado(codMed).getApellido();
@@ -2465,7 +2462,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		
 		String nombrePaciente = paciente.getNombre();
 		String apellidoPaciente= paciente.getApellido();
-		String codMed = cita.getCodMed();
+		String codMed = codmedico;
 		
 		String nombre =pbd.devolverEmpleado(codMed).getNombre();
 		String apellido =pbd.devolverEmpleado(codMed).getApellido();

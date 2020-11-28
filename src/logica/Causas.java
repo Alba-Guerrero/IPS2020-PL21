@@ -22,5 +22,10 @@ public class Causas {
 		this.nombreCausas = nombreCausas;
 	}
 	
+	@Override
+	public String toString() {
+		return getNombreVacuna();
+	}
+	
 	
 }
