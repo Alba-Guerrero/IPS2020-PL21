@@ -39,6 +39,8 @@ import logica.Vacuna;
 import logica.empleados.Empleado;
 import logica.empleados.Enfermero;
 import logica.empleados.Medico;
+import logica.servicios.DtoCita;
+import logica.servicios.DtoMapper;
 import oracle.jdbc.proxy.annotation.GetDelegate;
 
 public class ParserBaseDeDatos {
@@ -180,7 +182,7 @@ public class ParserBaseDeDatos {
 	private final static String CITA_CODCITA = "select * from cita  where codCita=? and codpaciente=? ";
 	private final static String PACIENTE_HISTORIAL = "select * from paciente  where nhistorial=? ";
 
-	private final static String VACUNAS_PERSONA = "SELECT * FROM asignaVacuna WHERE nHistorial=?";
+	private final static String VACUNAS_PERSONA = "SELECT * FROM asignaVacuna WHERE historial=?";
 	private final static String GET_ACOMPAÑANTE = "SELECT * FROM acompañantePaciente WHERE codpaciente=?";
 
 	
@@ -258,6 +260,9 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	private final static String ADD_EMPLEADO = "INSERT INTO empleado VALUES(?,?,?,?,?,?,?,?,?)";
 	private final static String ADD_MEDICO = "INSERT INTO medico VALUES(?)";
 	private final static String ADD_ENFERMERO = "INSERT INTO enfermero VALUES(?)";
+	
+	//FUNCIONES
+	
 	
 	
 	public List<Paciente> buscarPaciente(String buscando) throws SQLException {
@@ -2048,15 +2053,22 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	}
 	
 
-	public List<String> verVacunasPaciente(String nHistorial) throws SQLException {
-		List<String> listaVacunas = new ArrayList<String>();
+	/*
+	 * SI ESTAS LEYENDO ESTO, ES PORQUE TE DA ERROR PORQUE CAMBIE EN VACUNAS_PERSONA NHISTORIAL POR HISTORIAL
+	 * Y CODVACUNA POR NOMBREVACUNA AQUI ABAJO
+	 * 																					-Raul
+	 */
+	public List<AsignaVacuna> verVacunasPaciente(String nHistorial) throws SQLException {
+		List<AsignaVacuna> listaVacunas = new ArrayList<AsignaVacuna>();
 
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst = con.prepareStatement(VACUNAS_PERSONA);
 		pst.setString(1, nHistorial);
 		ResultSet rs = pst.executeQuery();
-		if (rs.next()) {
-			listaVacunas.add(rs.getString("codVacuna"));
+		while (rs.next()) {
+			AsignaVacuna v = new AsignaVacuna(rs.getString("codasigvac"), rs.getString("nombreVacuna"), rs.getString("historial"), rs.getString("codempleado"),
+					rs.getDate("fecha"), rs.getTime("hora"));
+			listaVacunas.add(v);
 		}
 
 		rs.close();
@@ -3518,5 +3530,4 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		return enferemedades;
 	}
 	
-
 }
