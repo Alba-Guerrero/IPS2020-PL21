@@ -1,5 +1,4 @@
 package logica.servicios;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -38,7 +37,7 @@ public class HistorialToPDF {
 	private List<AsignaVacuna> vacuna;
 	private List<AsignaCausa> causa;
 	private List<AsignaEnfermPrev> enfermedad;
-	private List<Asigna> procedimineto;
+	//private List<Asigna> procedimineto;
 
 	public HistorialToPDF() {
 		super();
