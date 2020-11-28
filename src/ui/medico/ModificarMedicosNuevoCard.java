@@ -53,6 +53,7 @@ import logica.AsignaVacuna;
 import logica.Causas;
 import logica.Cita;
 import logica.Diagnostico;
+import logica.Email;
 import logica.HistorialMedico;
 import logica.Paciente;
 import logica.Preinscripcion;
@@ -75,6 +76,7 @@ import java.io.IOException;
 import javax.swing.BoxLayout;
 import java.awt.Rectangle;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.JCheckBox;
 
 public class ModificarMedicosNuevoCard extends JDialog {
 
@@ -1628,6 +1630,19 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		return horizontalStrut;
 	}
 	
+	protected void guardarCausas() throws SQLException {
+			String causas = getCbCausas().getSelectedItem().toString();
+			String nHistorial = "" + mm.getPaciente().getHistorial();
+			Time hora =  cita.gethInicio();
+			
+			java.sql.Date horas = new java.sql.Date(hora.getTime());
+			
+			Time hour = new Time(horas.getTime());
+			
+			Date fecha = (Date) cita.getDate();
+			
+			java.sql.Date sDate = new java.sql.Date(fecha.getTime());
+			
 
 	
 	
@@ -1833,6 +1848,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			btnDiagnosticar.setBounds(824, 9, 161, 21);
 			btnDiagnosticar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					comprobarEDO();
 					anadirDiagnostico();
 					restaurarCbDiagnosticos();
 				}
@@ -4016,6 +4032,25 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		else { // Si no tiene ningún antecedente muestra el mensaje y NO abre la ventana
 			JOptionPane.showMessageDialog(null, "El paciente no tiene ningún antecedente previo.");
+		}
+	}
+	
+	
+	private JCheckBox getChckbxEdo() {
+		if (chckbxEdo == null) {
+			chckbxEdo = new JCheckBox("Enfermedad EDO");
+			chckbxEdo.setBounds(506, 9, 136, 21);
+		}
+		return chckbxEdo;
+	}
+	
+	
+	/**
+	 * Método que me mira si es una enfermedad edo y en ese caso manda un correo
+	 */
+	protected void comprobarEDO() {
+		if (chckbxEdo.isSelected()) {
+			Email.enviarEDO("roloalvarez7@gmail.com", "sbeiaolebhiewuzz", "UO265210@uniovi.es", paciente, cita, (String)getCbDiagnosticos().getSelectedItem());
 		}
 	}
 
