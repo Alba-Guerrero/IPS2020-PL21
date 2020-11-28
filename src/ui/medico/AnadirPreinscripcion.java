@@ -92,8 +92,8 @@ public class AnadirPreinscripcion extends JDialog {
 			pnSur.setBackground(Color.WHITE);
 			FlowLayout flowLayout = (FlowLayout) pnSur.getLayout();
 			flowLayout.setAlignment(FlowLayout.RIGHT);
-			pnSur.add(getBtnCancelar());
 			pnSur.add(getBtnNewButton_1());
+			pnSur.add(getBtnCancelar());
 		}
 		return pnSur;
 	}

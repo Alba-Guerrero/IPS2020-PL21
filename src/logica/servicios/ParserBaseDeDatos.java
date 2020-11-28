@@ -16,8 +16,11 @@ import logica.Accion;
 import logica.AccionEmpleado;
 import logica.Acompañante;
 import logica.Administrativo;
+import logica.Antecedente;
+import logica.AsignaAntecedente;
 import logica.AsignaCausa;
 import logica.AsignaDiagnostico;
+import logica.AsignaEnfermPrev;
 import logica.AsignaEquipo;
 import logica.AsignaPreinscripcion;
 import logica.AsignaProcedimiento;
@@ -91,10 +94,14 @@ public class ParserBaseDeDatos {
 	private final static String VER_CAUSAS = "SELECT nombreCausa from causa";
 
 	private final static String VER_NOMBRE_CAUSA = "SELECT  nombrecausa FROM causa";
+	
+	private final static String VER_NOMBRE_ANTECEDENTE = "SELECT nombreAntecedente FROM antecedente";
 
 	private final static String MODIFICAR_UBICACION_CITA = "UPDATE cita SET ubicacion=? where codpaciente=?";
 
 	private final static String INSERT_CAUSAS = "INSERT into causa (nombrecausa) values (?)";
+	
+	private final static String INSERT_ANTECEDENTES = "INSERT into antecedente (codAntecedente, nombreAntecedente) values (?, ?)";
 
 	private final static String INSERT_ASIGNA_CAUSA = "INSERT into asignacausa (codasigcausa, nombrecausa, historial, codempleado, fecha, hora) values(?,?,?,?,?,?)";
 
@@ -104,6 +111,8 @@ public class ParserBaseDeDatos {
 
 	private final static String ADD_ASIGNA_PPREINSCRIPCION = "INSERT INTO ASIGNAPRESCRIPCION (CODASIGPRESCRIPCION, NOMBREPRESCRIPCION, NHISTORIAL, CODEMPLEADO, CANTIDAD, INTERVALO, DURACION, INSTRUCCIONES, FECHA, HORA ) VALUES(?,?,?,?,?,?,?,?,?,?)";
 
+	private final static String ADD_ASIGNA_ANTECEDENTE = "INSERT INTO ASIGNAANTECEDENTE (CODASIGANTECEDENTE, NOMBREANTECEDENTE, CODANTECEDENTE, NHISTORIAL, CODEMPLEADO, FECHA, HORA) VALUES (?,?,?,?,?,?,?)";
+	
 	private final static String ADD_ASIGNA_DIAGNOSTICO = "INSERT INTO ASIGNADIAGNOSTICO (CODASIGDIAGNOSTICO,NOMBREDIAGNOSTICO, CODDIAGNOSTICO, HISTORIAL, CODEMPLEADO, FECHA, HORA) VALUES (?,?,?,?,?,?,?)";
 	private final static String ADD_ASIGNA_PROCEDIMIENTO = "INSERT INTO ASIGNAPROCEDIMIENTO (CODASIGPROCEDIMIENTO, NOMBREPROCEDIMIENTO, CODPROCEDIMIENTO, NHISTORIAL, CODEMPLEADO,FECHA, HORA) VALUES (?,?,?,?,?,?,?)";
 
@@ -113,11 +122,13 @@ public class ParserBaseDeDatos {
 	
 	private final static String ADD_PROCEDIMIENTO = "INSERT INTO PROCEDIMIENTO (CODPROCEDIMIENTO, NOMBREPROCEDIMIENTO)" + " VALUES(?,?)";
 
+	private final static String ADD_ANTECEDENTE = "INSERT INTO ANTECEDENTE (CODANTECEDENTE, NOMBREANTECEDENTE)" + " VALUES (?, ?)";
+	
 	private final static String ADD_CORREO = "INSERT INTO CORREO (CODCORREO, CODMEDICODESTINO, CODMEDICOORIGEN, ASUNTO, MENSAJE, FECHA, HORA) VALUES (?,?,?,?,?,?,?)";
 
 	private final static String LIST_PREINSCRIPCIONES = "Select * from prescripcion";
 	private final static String LIST_PROCEDIMIENTOS = "Select * from procedimiento";
-
+	private final static String LIST_ANTECEDENTES = "Select * from antecedente";
 	private final static String LIST_DIAGNOSTICOS = "Select * from diagnostico";
 
 	private final static String GET_CITA_HISTORIAL = "select * from cita c,paciente p,historial h where c.codpaciente=p.codpaciente and p.nhistorial=h.nhistorial and h.nhistorial=?";
@@ -133,11 +144,18 @@ public class ParserBaseDeDatos {
 	private final static String VER_PREINSCRIPCIONES_ASIGNADAS = "SELECT * FROM asignaprescripcion where nhistorial = ?";
 	
 	private final static String VER_ASIGNA_PREINSCRIPCIONES = "SELECT * FROM asignaprescripcion where nhistorial = ? and fecha=?";
+	private final static String VER_ASIGNA_PREINSCRIPCION = "SELECT * FROM asignaprescripcion where nhistorial = ?";
+
+	private final static String VER_ASIGNA_EPREVIA = "SELECT * FROM asignaenfermedadprevia where historial = ?";
+	
 	private final static String VER_ASIGNA_PROCEDIMIENTOS = "SELECT * FROM asignaprocedimiento where nhistorial = ?";
+	private final static String VER_ASIGNA_ANTECEDENTES = "SELECT * FROM asignaantecedente where nhistorial = ?";
 
 	private final static String VER_VACUNAS_ASIGNADAS = "SELECT * FROM asignavacuna where historial = ?";
 
 	private final static String VER_DIAGNOSTICOS_ASIGNADOS = "SELECT * FROM asignadiagnostico where historial = ?";
+	
+	private final static String VER_ANTECEDENTES_ASIGNADOS = "SELECT * FROM asignaAntecedente where nhistorial = ?";
 
 	private final static String ADD_VACACIONES = "INSERT INTO VACACIONES (CODVACACIONES, CODEMPLEADO, CODADMIN, DINICIO, DFINAL)"
 			+ " VALUES(?,?,?,?,?)";
@@ -3011,4 +3029,294 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 			return false;
 		}
 	}
+
+	
+	/**
+	 * Método para cargar los antecedentes de la base de datos
+	 * @return
+	 * @throws SQLException 
+	 */
+	public List<Antecedente> cargarAntecedentes() throws SQLException {
+		List<Antecedente> antecedentes = new ArrayList<Antecedente>(); // Creo la lista que voy a devolver
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(LIST_ANTECEDENTES);
+
+		ResultSet rs = pst.executeQuery(); // Creo el resultSet
+
+		while (rs.next()) {
+			antecedentes.add(new Antecedente(rs.getString("codAntecedente"), rs.getString("nombreAntecedente")));
+		}
+
+		rs.close();
+		pst.close();
+		con.close();
+
+		return antecedentes;
+	}
+
+	
+	
+	/**
+	 * Método para actualizar los antecedentes
+	 * @param antecedentes
+	 * @throws SQLException 
+	 */
+	public void actualizarAntecedente(String antecedentes) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(INSERT_ANTECEDENTES);
+		
+		Random r = new Random();
+		String codAntecedente = "" + r.nextInt(99999);
+		pst.setString(1, codAntecedente);
+		pst.setString(2, antecedentes);
+
+		pst.executeUpdate();
+
+		pst.close();
+		con.close();		
+	}
+
+	
+	/**
+	 * Me busca el nombre de todos los antecedentes
+	 * @return
+	 * @throws SQLException 
+	 */
+	public List<String> buscarNombreTodosAntecedentes() throws SQLException {
+		List<String> nombresAntecedentes = new ArrayList<String>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement st = con.prepareStatement(VER_NOMBRE_ANTECEDENTE);
+		ResultSet rs = st.executeQuery();
+
+		while (rs.next()) {
+			nombresAntecedentes.add(rs.getString(1));
+		}
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		st.close();
+		con.close();
+		return nombresAntecedentes;
+	}
+
+	
+	/**
+	 * Método que asigna un nuevo antecedente
+	 * @param aa
+	 * @throws SQLException 
+	 */
+	public void nuevaAsignaAntecedente(AsignaAntecedente aa) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(ADD_ASIGNA_ANTECEDENTE);
+
+		String codAsigAntecedente = aa.getCodAsigAntecedente();
+		String nombreAntecedente = aa.getNombreAntecedente();
+		String codAntecedente = aa.getCodAntecedente();
+		String historial = aa.getnHistorial();
+		String codempleado = aa.getCodEmpleado();
+		java.sql.Date fecha = new java.sql.Date(aa.getFecha().getTime());
+		Time hora = new Time(fecha.getTime());
+
+		pst.setString(1, codAsigAntecedente);
+		pst.setString(2, nombreAntecedente);
+		pst.setString(3, codAntecedente);
+		pst.setString(4, historial);
+		pst.setString(5, codempleado);
+		pst.setDate(6, fecha);
+		pst.setTime(7, hora);
+
+		pst.executeUpdate();
+
+		pst.close();
+		con.close();
+		
+	}
+
+	
+	/**
+	 * Método que me devuelve todos los nombres de los antecedentes asignados a un paciente que se pasa por parámetro
+	 * @param historial
+	 * @return
+	 * @throws SQLException 
+	 */
+	public List<String> buscarAntecedentesAsignados(String historial) throws SQLException {
+		List<String> nombreAntecedentes = new ArrayList<String>();
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst1 = con.prepareStatement(GET_MEDICO_NOMBRE);
+		PreparedStatement pst = con.prepareStatement(VER_ANTECEDENTES_ASIGNADOS);
+
+		pst.setString(1, historial); // busco por n de historial
+
+		ResultSet rs = pst.executeQuery(); // Creo el resultSet
+
+		while (rs.next()) {
+			pst1.setString(1, rs.getString("codempleado"));
+			ResultSet rs1 = pst1.executeQuery();
+			while (rs1.next()) {
+				nombreAntecedentes.add(rs.getString(2) + "\t" +"Fecha: " + rs.getDate(6) + "\t" +"Hora: " + rs.getTime(7)
+					+ "\t" + "\t" + "Empleado: " + rs1.getString("nombre"));
+			}
+			
+			rs1.close();
+		}
+
+		// CERRAR EN ESTE ORDEN
+		
+		rs.close();
+		pst.close();
+		pst1.close();
+		con.close();
+		return nombreAntecedentes;
+		
+		
+	}
+
+	public void nuevoAntecedenteB(Antecedente antecedente) throws SQLException {
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(ADD_ANTECEDENTE);
+
+		String codAntecedente = antecedente.getCodAntecedente();
+		String nombreAntecedente = antecedente.getNombreAntecedente();
+
+		pst.setString(1, codAntecedente);
+		pst.setString(2, nombreAntecedente);
+
+		pst.executeUpdate();
+		pst.close();
+		con.close();
+	}
+
+	
+	/**
+	 * Método para saber si un paciente tiene asignado algún antecedente
+	 * @param codPaciente
+	 * @return
+	 * @throws SQLException 
+	 */
+	public boolean tieneAntecedentes(String historial) throws SQLException {
+		List<String> antecedentes = buscarAntecedentesAsignados(historial);
+		if (antecedentes.size() != 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	
+	/**
+	 * Método que me lista los antecedentes asignados a un paciente que se le pasa por parámetro
+	 * @param paciente
+	 * @return
+	 * @throws SQLException 
+	 */
+	public List<AsignaAntecedente> listarAntecedentesAsignados(String nhistorial) throws SQLException {
+		List<AsignaAntecedente> antecedentes = new ArrayList<AsignaAntecedente>();
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VER_ASIGNA_ANTECEDENTES);
+
+		pst.setString(1, nhistorial); 
+
+		ResultSet rs = pst.executeQuery(); 
+
+		while (rs.next()) {
+			antecedentes.add(new AsignaAntecedente(rs.getString("codAsigAntecedente"), rs.getString("nombreAntecedente"), rs.getString("codAntecedente"), 
+					rs.getString("nHistorial"), rs.getString("codEmpleado"), rs.getDate("fecha"), rs.getTime("hora")));
+			
+		}
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return antecedentes;
+	}
+	
+	
+	
+	
+	public List<AsignaProcedimiento> listarProcedimientosAsignados(String historial) throws SQLException{
+
+		List<AsignaProcedimiento> aProcedimientos = new ArrayList<AsignaProcedimiento>();
+		
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VER_ASIGNA_PROCEDIMIENTOS);
+
+		pst.setString(1, historial); 
+
+		ResultSet rs = pst.executeQuery(); 
+
+		while (rs.next()) {
+			aProcedimientos.add(new AsignaProcedimiento(rs.getString("codasigprocedimiento"), rs.getString("nombreProcedimiento"), rs.getString("codProcedimiento"), rs.getString("nhistorial"), rs.getString("codempleado"), rs.getDate("fecha"), rs.getTime("hora")));	
+		}
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return aProcedimientos;
+	}
+
+	
+	
+	/**
+	 * Método para listar todas las preinscripciones asignadas
+	 * @param historial
+	 * @return
+	 * @throws SQLException 
+	 */
+	public List<AsignaPreinscripcion> listarPrescripcionesAsignadas(String historial) throws SQLException {
+		List<AsignaPreinscripcion> aPrescripciones = new ArrayList<AsignaPreinscripcion>();
+		
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VER_ASIGNA_PREINSCRIPCION);
+
+		pst.setString(1, historial); 
+
+		ResultSet rs = pst.executeQuery(); 
+
+		while (rs.next()) {
+			aPrescripciones.add(new AsignaPreinscripcion(rs.getString("codasigprescripcion"), rs.getString("nombrePrescripcion"), rs.getString("nHistorial"), rs.getString("codempleado"), rs.getInt("cantidad"), rs.getInt("intervalo"), rs.getInt("duracion"), rs.getString("instrucciones"), rs.getDate("fecha"), rs.getTime("hora")));	
+		}
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return aPrescripciones;
+	}
+	
+	
+	
+	/**
+	 * Método para listar todas las preinscripciones asignadas
+	 * @param historial
+	 * @return
+	 * @throws SQLException 
+	 */
+	public List<AsignaEnfermPrev> listarenfermedadesPAsignadas(String historial) throws SQLException {
+		List<AsignaEnfermPrev> enferemedades = new ArrayList<AsignaEnfermPrev>();
+		
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VER_ASIGNA_EPREVIA);
+
+		pst.setString(1, historial); 
+
+		ResultSet rs = pst.executeQuery(); 
+
+		while (rs.next()) {
+			enferemedades.add(new AsignaEnfermPrev(rs.getString("codasigenf"), rs.getString("nombreEnfermedad"), rs.getString("historial"), rs.getString("codempleado") ,rs.getDate("fecha"), rs.getTime("hora")));	
+		}
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return enferemedades;
+	}
+	
+
 }

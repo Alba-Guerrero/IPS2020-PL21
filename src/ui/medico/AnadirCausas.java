@@ -41,7 +41,7 @@ public class AnadirCausas extends JDialog {
 	private JPanel pnSur;
 	private JPanel pnCentral;
 	private JButton btnCancelar;
-	private JButton btnNewButton_1;
+	private JButton btnGuardar;
 	private JPanel pnIzq;
 	private JPanel pnDcha;
 	private JLabel lblPreinscripcion;
@@ -79,7 +79,7 @@ public class AnadirCausas extends JDialog {
 			pnSur.setBackground(Color.WHITE);
 			FlowLayout flowLayout = (FlowLayout) pnSur.getLayout();
 			flowLayout.setAlignment(FlowLayout.RIGHT);
-			pnSur.add(getBtnNewButton_1());
+			pnSur.add(getBtnGuardar());
 			pnSur.add(getBtnCancelar());
 		}
 		return pnSur;
@@ -106,10 +106,10 @@ public class AnadirCausas extends JDialog {
 		}
 		return btnCancelar;
 	}
-	private JButton getBtnNewButton_1() {
-		if (btnNewButton_1 == null) {
-			btnNewButton_1 = new JButton("Guardar");
-			btnNewButton_1.addActionListener(new ActionListener() {
+	private JButton getBtnGuardar() {
+		if (btnGuardar == null) {
+			btnGuardar = new JButton("Guardar");
+			btnGuardar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					
 					try {
@@ -124,7 +124,7 @@ public class AnadirCausas extends JDialog {
 				}
 			});
 		}
-		return btnNewButton_1;
+		return btnGuardar;
 	}
 
 
@@ -196,7 +196,7 @@ public class AnadirCausas extends JDialog {
 			pbd.actualizarCausa(causas);
 		}
 		dispose();
-		}
+	}
 	
 	
 	/**

@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,6 +44,8 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import logica.AccionEmpleado;
+import logica.Antecedente;
+import logica.AsignaAntecedente;
 import logica.AsignaDiagnostico;
 import logica.AsignaPreinscripcion;
 import logica.AsignaProcedimiento;
@@ -69,13 +72,26 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import javax.swing.BoxLayout;
+import java.awt.Rectangle;
+import javax.swing.ScrollPaneConstants;
 
 public class ModificarMedicosNuevoCard extends JDialog {
 
 	private boolean listo = true;
-	private boolean tablaLista = false;
+	private boolean listoAntecedentes = true;
+	private boolean tablaPrescripcionesLista = false;
+	private boolean tablaAntecedentesLista = false;
+	private boolean tablaVacunasLista = false;
+	private boolean tablaDiagnosticosLista = false;
+	private boolean tablaProcedimientosLista = false;
+	
 	DefaultListModel modeloLista = new DefaultListModel();
-	private ModeloNoEditable modeloTabla;
+	private ModeloNoEditable modeloTablaPrescripciones;
+	private ModeloNoEditable modeloTablaAntecedentes;
+	private ModeloNoEditable modeloTablaVacunas;
+	private ModeloNoEditable modeloTablaDiagnosticos;
+	private ModeloNoEditable modeloTablaProcedimientos;
 
 	
 	private JPanel contentPane;
@@ -90,15 +106,19 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private ParserBaseDeDatos pbd=new ParserBaseDeDatos();
 	private Cita cita; // El paciente del que estamos modificando la cita
 	private Preinscripcion preinscripcion; // La preinscripcion
+	private Antecedente antecedente; // El antecedente
 	private List<Preinscripcion> preinscripciones; // Las preinscripciones que tenemos en la base de datos
 	private List<Vacuna> vacunas; // Las bacuans que tenemos en la base de datos
 	private List<Diagnostico> diagnosticos; // Los diagnosticos que tenemos en la base de datos
 	private List<Procedimiento> procedimientos; // Los procedimientos que tenemos en la base de datos
+	private List<Antecedente> antecedentes; // Los antecedentes que tenemos en la base de datos
 	private List<Preinscripcion> preinscripcionesPaciente = new ArrayList<Preinscripcion>();
+	//private List<Antecedente> antecedentesPaciente = new ArrayList<Antecedente>();
 	private List<AsignaPreinscripcion> asignaPreinscripcionesPaciente = new ArrayList<AsignaPreinscripcion>();
 	private List<AsignaVacuna> asignaVacunasPaciente = new ArrayList<AsignaVacuna>();
 	private List <AsignaDiagnostico> asignaDiagnosticosPaciente = new ArrayList<AsignaDiagnostico>();
 	private List <AsignaProcedimiento> asignaProcedimientosPaciente = new ArrayList<AsignaProcedimiento>();
+	private List<AsignaAntecedente> asignaAntecedentesPaciente = new ArrayList<AsignaAntecedente>();
 	private Paciente paciente;
 	private Time horaInicioCita; // La hora que le puede asignar el medico 
 	private Time horaFinCita; // La hora que le puede asignar el médico
@@ -121,6 +141,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JComboBox cbCausas;
 
 	private List<String> nombresCausas;
+	private List<String> nombresAntecedentes;
 	private ModificarMedicosNuevoCard mm;
 	private JPanel pnPreinscripciones;
 	private JPanel pnIzq;
@@ -139,31 +160,21 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JSpinner spinnerIntervalo;
 	private JScrollPane scrollPane;
 	private JTextArea textArea;
-	private JPanel pnResumen;
+	private JPanel pnResumenP;
 	private JPanel pnBorrarPreinscripcion;
-	private JButton btnBorrar;
+	private JButton btnBorrarPrescripcion;
 	private JPanel pnResumenPreinscripciones;
 	private JLabel lblResumenPreinscripciones;
 	private JList list;
 	private JScrollPane scrollPane_2;
 	private JButton btnAadirPreinscripcin;
-	private JTable table;
+	private JTable tablePrescripciones;
 	private JPanel pnAcudio;
 	private JRadioButton rdbtnAcudio;
 	private JRadioButton rdbtnNoAcudio;
 	private Component horizontalStrut;
-	private JPanel pnMostrarVacunas;
-	private JPanel pnVacio14;
-	private JLabel lblVacuna;
-	private JPanel pn3;
-	private JComboBox<String> cbVacunas;
-	private JButton btnAsignarVacuna;
-	private JScrollPane scrollPanTabla;
+	private JScrollPane scrollPTablaPrescripciones;
 	private JPanel pnDiagnosticos;
-	private JPanel pn3d;
-	private JPanel pnMostrarDiagnosticos;
-	private JPanel pnVacio22;
-	private JLabel lblDiagnosticos;
 	private JComboBox<String> cbDiagnosticos;
 	private JButton btnDiagnosticar;
 	private JLabel lblHoraInicio;
@@ -204,24 +215,8 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel pnVacio12;
 	private JPanel pnSeleccionAcudio;
 	private JPanel pnVacio13;
-	private JPanel pnFiltrarVacunas;
-	private JPanel pnBuscarVacunaAsignar;
-	private JPanel pnV1;
-	private JPanel pnFiltrarV;
-	private JPanel pnV2;
-	private JTextField txtFiltrarVacunas;
-	private JButton btnFiltrarVacunas;
-	private JPanel pnVacio15;
-	private JPanel pnVacio16;
-	private JPanel pnFiltrarDiagnosticos;
-	private JPanel pnBuscarDiagnosticosAsignar;
-	private JPanel pnFiltrarD;
-	private JPanel pnVacio18;
-	private JPanel pnVacio19;
 	private JTextField txtFiltrarDiagnosticos;
 	private JButton btnFiltrarDiagnosticos;
-	private JPanel pnVacio20;
-	private JPanel pnVacio21;
 	private JButton btnCalendarioVacunas;
 	private JButton btnNewButton;
 	private JPanel panel_4;
@@ -231,21 +226,85 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton buttonpres;
 	private JButton btnprintpres;
 	private JPanel pnProcedimientos;
-	private JPanel pnFiltrarProcedimientos;
-	private JPanel pnBuscarProcedimientosAsignar;
-	private JPanel pnVacio23;
-	private JPanel pnFiltrarP;
-	private JPanel pnVacio24;
 	private JTextField txtfFiltrarProcedimientos;
 	private JButton btnFiltrarProcedimientos;
-	private JPanel pn3p;
-	private JPanel pnVacio25;
-	private JPanel pnVacio26;
-	private JLabel lblProcedimientos;
-	private JPanel pnMostrarProcedimientos;
 	private JComboBox<String> cbProcedimientos;
 	private JButton btnProceder;
-	private JPanel pnVacio27;
+	private JPanel pnAntecedentes;
+	private JPanel panel_1;
+	private JPanel panel_3;
+	private JPanel panel_5;
+	private JButton btnNewButton_1;
+	private JPanel pnCentroA;
+	private JPanel pnDchaA;
+	private JPanel pnResumenA;
+	private JPanel pnBorrarAntecedente;
+	private JPanel pnResumenAntecedentes;
+	private JScrollPane scrollPTablaAntecedentes;
+	private JTable tableAntecedentes;
+	private JButton btnBorrarAntecedente;
+	private JLabel lblResumenAntecedentes;
+	private JPanel pnAccionesAntecedentes;
+	private JPanel pnCbAntecedentes;
+	private JPanel pnAnadirAntecedente;
+	private JPanel pnVacío28;
+	private JPanel pnVerAntecedentes;
+	private JComboBox<String> cbAntecedentes;
+	private JButton btnAsignarAntecedente;
+	private JButton btnVerAnterioresAntecedentes;
+	private JTextField txtFiltrarAntecedentes;
+	private JButton btnFiltrarAntecedentes;
+	private JPanel pnNuevoAntecedente;
+	private JButton btnNuevoAntecedente;
+	private JPanel pnCentroV;
+	private JPanel pnDchaV;
+	private JPanel pnAccionesVacunas;
+	private JPanel pnVacio29;
+	private JPanel pnCbVacunas;
+	private JPanel pnAnadirVacuna;
+	private JPanel pnVacio30;
+	private JPanel pnVacio31;
+	private JTextField textfFiltrarVacunas;
+	private JButton btnFiltrarVacunas;
+	private JComboBox<String> cbVacunas;
+	private JButton btnAsignarVacuna;
+	private JPanel pnResumenV;
+	private JPanel pnBorrarVacuna;
+	private JPanel pnResumenVacunas;
+	private JScrollPane scrollPTablaVacunas;
+	private JTable tableVacunas;
+	private JButton btnBorrarVacuna;
+	private JLabel lblResumenVacunas;
+	private JPanel pnCentroD;
+	private JPanel pnDchaD;
+	private JPanel pnAccionesDiagnosticos;
+	private JPanel pnVacio32;
+	private JPanel pnCbDiagnosticos;
+	private JPanel pnAnadirDiagnostico;
+	private JPanel pnVacio33;
+	private JPanel pnVacio34;
+	private JPanel pnResumenD;
+	private JPanel pnBorrarDiagnostico;
+	private JPanel pnResumenDiagnosticos;
+	private JScrollPane scrollPTablaDiagnosticos;
+	private JTable tableDiagnosticos;
+	private JButton btnBorrarDiagnostico;
+	private JLabel lblResumenDiagnosticos;
+	private JPanel panelCentroPr;
+	private JPanel pnDchaPr;
+	private JPanel pnAccionesProcedimientos;
+	private JPanel pnVacio35;
+	private JPanel pnCbProcedimientos;
+	private JPanel pnAnadirProcedimiento;
+	private JPanel pnVacio36;
+	private JPanel pnVacio37;
+	private JPanel pnResumenPr;
+	private JPanel pnBorrarProcedimiento;
+	private JPanel pnResumenProcedimientos;
+	private JScrollPane scrollPTablaProcedimientos;
+	private JTable tableProcedimientos;
+	private JButton btnBorrarProcedimiento;
+	private JLabel lblResumenProcedimientos;
 	/**
 	 * Create the frame.
 	 * @throws SQLException 
@@ -263,6 +322,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		vacunas = pbd.listarVacunas();
 		diagnosticos = pbd.listarDiagnosticos();
 		procedimientos = pbd.cargarProcedimientos();
+		antecedentes = pbd.cargarAntecedentes();
 
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1486, 691);
@@ -397,6 +457,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			panelPestañas.addTab("Preinscripciones", null, getPnPreinscripciones(), null);
 			panelPestañas.addTab("Diagnosticos", null, getPnDiagnosticos(), null);
 			panelPestañas.addTab("Procedimientos", null, getPnProcedimientos(), null);
+			panelPestañas.addTab("Antecedentes", null, getPnAntecedentes(), null);
 			
 		}
 		return panelPestañas;
@@ -413,9 +474,9 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel getPanelVacunas() throws SQLException {
 		if (panelVacunas == null) {
 			panelVacunas = new JPanel();
-			panelVacunas.setLayout(new GridLayout(1, 2, 0, 0));
-			panelVacunas.add(getPanel_8());
-			panelVacunas.add(getPanel_9());
+			panelVacunas.setLayout(new BorderLayout(0, 0));
+			panelVacunas.add(getPnCentroV(), BorderLayout.CENTER);
+			panelVacunas.add(getPnDchaV(), BorderLayout.EAST);
 			
 		}
 		return panelVacunas;
@@ -652,9 +713,9 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		if (pnDcha == null) {
 			pnDcha = new JPanel();
 			pnDcha.setLayout(new BorderLayout(0, 0));
-			pnDcha.add(getPnResumen());
+			pnDcha.add(getPnResumenP());
 			pnDcha.add(getPnBorrarPreinscripcion());
-			pnDcha.add(getPnResumen(), BorderLayout.CENTER);
+			pnDcha.add(getPnResumenP(), BorderLayout.CENTER);
 			pnDcha.add(getPnBorrarPreinscripcion(), BorderLayout.SOUTH);
 			pnDcha.add(getPnResumenPreinscripciones(), BorderLayout.NORTH);
 		
@@ -839,48 +900,48 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		return textArea;
 	}
-	private JPanel getPnResumen() {
-		if (pnResumen == null) {
-			pnResumen = new JPanel();
-			pnResumen.setLayout(new GridLayout(0, 1, 0, 0));
+	private JPanel getPnResumenP() {
+		if (pnResumenP == null) {
+			pnResumenP = new JPanel();
+			pnResumenP.setLayout(new GridLayout(0, 1, 0, 0));
 			//pnResumen.add(getTable());
-			pnResumen.add(getScrollPanTabla());
+			pnResumenP.add(getScrollPTablaPrescripciones());
 			//pnResumen.add(getList());
 			//pnResumen.add(getTextArea_1());
 		}
-		return pnResumen;
+		return pnResumenP;
 	}
 	private JPanel getPnBorrarPreinscripcion() {
 		if (pnBorrarPreinscripcion == null) {
 			pnBorrarPreinscripcion = new JPanel();
 			FlowLayout flowLayout = (FlowLayout) pnBorrarPreinscripcion.getLayout();
 			flowLayout.setAlignment(FlowLayout.RIGHT);
-			pnBorrarPreinscripcion.add(getBtnBorrar());
+			pnBorrarPreinscripcion.add(getBtnBorrarPrescripcion());
 		}
 		return pnBorrarPreinscripcion;
 	}
-	private JButton getBtnBorrar() {
-		if (btnBorrar == null) {
-			btnBorrar = new JButton("Borrar preinscripci\u00F3n");
-			btnBorrar.addActionListener(new ActionListener() {
+	private JButton getBtnBorrarPrescripcion() {
+		if (btnBorrarPrescripcion == null) {
+			btnBorrarPrescripcion = new JButton("Borrar preinscripci\u00F3n");
+			btnBorrarPrescripcion.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					int fila=table.getSelectedRow();
+					int fila=tablePrescripciones.getSelectedRow();
 					
 					if (fila != -1) {
 						int res = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea borrar la preinscripción?","Mensaje de confirmación",JOptionPane.YES_NO_OPTION);
 						if(res == JOptionPane.YES_OPTION) {	
 								
-								preinscripcionesPaciente.remove(table.getSelectedRow());
-								asignaPreinscripcionesPaciente.remove(table.getSelectedRow());
+								preinscripcionesPaciente.remove(tablePrescripciones.getSelectedRow());
+								asignaPreinscripcionesPaciente.remove(tablePrescripciones.getSelectedRow());
 								
-								añadirFilas();
+								añadirFilasPrescripciones();
 						
 						}						
 					}		
 				}
 			});
 		}
-		return btnBorrar;
+		return btnBorrarPrescripcion;
 	}
 	
 	
@@ -1041,13 +1102,13 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		preinscripcionesPaciente.add(p); // Añadimos la preinscripcion
 		crearAsignaPreinscripcion(p);
 				
-		if (tablaLista == false) { // Para que no casque al pintar la tabla de las preinscripciones
-			tablaLista = true;
+		if (tablaPrescripcionesLista == false) { // Para que no casque al pintar la tabla de las preinscripciones
+			tablaPrescripcionesLista = true;
 		}
 		
-		añadirFilas(); // Añadimos a la tabla que nos muestra las preinscripciones que ya le hemos asignado
+		añadirFilasPrescripciones(); // Añadimos a la tabla que nos muestra las preinscripciones que ya le hemos asignado
 		
-		limpiarPanel(); // Para ponerlo todo de 0
+		limpiarPanelPrescripciones(); // Para ponerlo todo de 0
 		
 	}
 	
@@ -1116,17 +1177,17 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 
 	
-	private JTable getTable() {
-		if (table == null) {
+	private JTable getTablePrescripciones() {
+		if (tablePrescripciones == null) {
 			
 			String[] nombreColumnas= {"Nombre","Medicamento","Cantidad","Duracion","Intervalo"};
-			modeloTabla= new ModeloNoEditable(nombreColumnas,0);
-			table = new JTable(modeloTabla);
-			table.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
-			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			table.getTableHeader().setBackground(Color.LIGHT_GRAY);
-			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
-			table.setRowSorter(sorter);
+			modeloTablaPrescripciones= new ModeloNoEditable(nombreColumnas,0);
+			tablePrescripciones = new JTable(modeloTablaPrescripciones);
+			tablePrescripciones.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
+			tablePrescripciones.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tablePrescripciones.getTableHeader().setBackground(Color.LIGHT_GRAY);
+			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tablePrescripciones.getModel());
+			tablePrescripciones.setRowSorter(sorter);
 			
 			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
 			sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
@@ -1134,22 +1195,22 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			
 			sorter.setSortKeys(sortKeys);
 			
-			añadirFilas();
+			añadirFilasPrescripciones();
 		}
-		return table;
+		return tablePrescripciones;
 	}
 
 	/**
 	 * Método para añadir filas a la tabla de las preinscripciones
 	 * @param b
 	 */
-	private void añadirFilas() {
-		borrarModeloTabla(); // Borramos todo antes de volver a pintar
+	private void añadirFilasPrescripciones() {
+		borrarModeloTablaPrescripciones(); // Borramos todo antes de volver a pintar
 	
 		Object[] nuevaFila=new Object[5]; // 5 son las columnas
 				
 		
-		if (tablaLista) {
+		if (tablaPrescripcionesLista) {
 			for (AsignaPreinscripcion a : asignaPreinscripcionesPaciente) {
 				nuevaFila[0] = a.getCodigoPreinscripcion(); // El nombre de la preinscripcion
 				
@@ -1179,7 +1240,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 				}
 				
 				
-				modeloTabla.addRow(nuevaFila); // Añado la fila
+				modeloTablaPrescripciones.addRow(nuevaFila); // Añado la fila
 				
 			}
 			
@@ -1192,10 +1253,10 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	/**
 	 * Método para borrar todas las filas de tabla
 	 */
-	private void borrarModeloTabla() {
-		int filas = modeloTabla.getRowCount();
+	private void borrarModeloTablaPrescripciones() {
+		int filas = modeloTablaPrescripciones.getRowCount();
 		for (int i = 0; i < filas; i++) {
-			modeloTabla.removeRow(0);			
+			modeloTablaPrescripciones.removeRow(0);			
 		}		
 	}
 	
@@ -1213,8 +1274,10 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		guardarVacunas();
 		guardarDiagnosticos();
 		guardarProcedimientos();
+		guardarAntecedentes();
 		guardarInfoCita(); // Método que me guarda si acabó y si cambio la hora, la guarda también
 	}
+
 
 
 
@@ -1319,75 +1382,15 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			nombresCausas.add(causas.get(i));
 		}
 	}
-	private JPanel getPnMostrarVacunas() {
-		if (pnMostrarVacunas == null) {
-			pnMostrarVacunas = new JPanel();
-			pnMostrarVacunas.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-			pnMostrarVacunas.add(getCbVacunas());
-			pnMostrarVacunas.add(getBtnAsignarVacuna());
-		}
-		return pnMostrarVacunas;
-	}
-	private JPanel getPnVacio14() {
-		if (pnVacio14 == null) {
-			pnVacio14 = new JPanel();
-		}
-		return pnVacio14;
-	}
-	private JLabel getLabel_4_8() {
-		if (lblVacuna == null) {
-			lblVacuna = new JLabel("Vacuna:");
-			lblVacuna.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		}
-		return lblVacuna;
-	}
-	private JPanel getPn3() {
-		if (pn3 == null) {
-			pn3 = new JPanel();
-			pn3.setLayout(new GridLayout(3, 1, 0, 0));
-			pn3.add(getPanel_1());
-			pn3.add(getPanel_3());
-			pn3.add(getLabel_4_8());
-		}
-		return pn3;
-	}
-	private JComboBox<String> getCbVacunas() {
-		if (cbVacunas == null) {
-			cbVacunas = new JComboBox();
+
+
+	private JScrollPane getScrollPTablaPrescripciones() {
+		if (scrollPTablaPrescripciones == null) {
+			scrollPTablaPrescripciones = new JScrollPane();
 			
-			String[] nombreVacunas = new String[vacunas.size()];
-			for (int i = 0; i < vacunas.size(); i++) {
-				nombreVacunas[i] = vacunas.get(i).getNombreVacuna();
-			}
-			
-			cbVacunas.setModel(new DefaultComboBoxModel<String>(nombreVacunas));	
+			scrollPTablaPrescripciones.setViewportView(getTablePrescripciones());
 		}
-		
-		return cbVacunas;
-	}
-	private JButton getBtnAsignarVacuna() {
-		if (btnAsignarVacuna == null) {
-			btnAsignarVacuna = new JButton("Asignar vacuna");
-			btnAsignarVacuna.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					anadirVacuna();
-					restaurarCb();
-				}
-
-
-			});
-		}
-		return btnAsignarVacuna;
-	}
-
-
-	private JScrollPane getScrollPanTabla() {
-		if (scrollPanTabla == null) {
-			scrollPanTabla = new JScrollPane();
-			
-			scrollPanTabla.setViewportView(getTable());
-		}
-		return scrollPanTabla;
+		return scrollPTablaPrescripciones;
 	}
 	
 	
@@ -1421,9 +1424,20 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		AsignaVacuna av = new AsignaVacuna(codVacuna, nombreVacuna, codHistorial, codEmpleado, fecha, hora);
 		
 		asignaVacunasPaciente.add(av);
+		
+		
+		if (tablaVacunasLista == false) { // Para que no casque al pintar la tabla de las vacunas
+			tablaVacunasLista = true;
+		}
+		
+		añadirFilasVacuna(); // Añadimos a la tabla que nos muestra las vacunas que ya le hemos asignado
+		
+		limpiarPanelVacunas(); // Para ponerlo todo de 0
 	}
 	
 	
+
+
 	/**
 	 * Método para asignar definitivamente las vacunas al paciente
 	 * @throws SQLException 
@@ -1516,47 +1530,17 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel getPnDiagnosticos() {
 		if (pnDiagnosticos == null) {
 			pnDiagnosticos = new JPanel();
-			pnDiagnosticos.setLayout(new GridLayout(1, 2, 0, 0));
-			pnDiagnosticos.add(getPanelDiagnosticos());
-			pnDiagnosticos.add(getPanel_13());
+			pnDiagnosticos.setLayout(new BorderLayout(0, 0));
+			pnDiagnosticos.add(getPnCentroD(), BorderLayout.CENTER);
+			pnDiagnosticos.add(getPnDchaD(), BorderLayout.EAST);
 		
 		}
 		return pnDiagnosticos;
 	}
-	private JPanel getPn3d() {
-		if (pn3d == null) {
-			pn3d = new JPanel();
-			pn3d.setLayout(new GridLayout(3, 1, 0, 0));
-			pn3d.add(getPnVacio20());
-			pn3d.add(getPnVacio21());
-			pn3d.add(getLabel_4_9());
-		}
-		return pn3d;
-	}
-	private JPanel getPnMostrarDiagnosticos() {
-		if (pnMostrarDiagnosticos == null) {
-			pnMostrarDiagnosticos = new JPanel();
-			pnMostrarDiagnosticos.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-			pnMostrarDiagnosticos.add(getCbDiagnosticos());
-			pnMostrarDiagnosticos.add(getBtnDiagnosticar());
-		}
-		return pnMostrarDiagnosticos;
-	}
-	private JPanel getPnVacio22() {
-		if (pnVacio22 == null) {
-			pnVacio22 = new JPanel();
-		}
-		return pnVacio22;
-	}
-	private JLabel getLabel_4_9() {
-		if (lblDiagnosticos == null) {
-			lblDiagnosticos = new JLabel("Diagnosticos:");
-		}
-		return lblDiagnosticos;
-	}
 	private JComboBox<String> getCbDiagnosticos() {
 		if (cbDiagnosticos == null) {
 			cbDiagnosticos = new JComboBox();
+			cbDiagnosticos.setBounds(10, 32, 977, 21);
 			
 			String[] nombreDiagnosticos = new String[diagnosticos.size()];
 			for (int i = 0; i < diagnosticos.size(); i++) {
@@ -1570,6 +1554,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getBtnDiagnosticar() {
 		if (btnDiagnosticar == null) {
 			btnDiagnosticar = new JButton("Diagnosticar");
+			btnDiagnosticar.setBounds(824, 9, 161, 21);
 			btnDiagnosticar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					anadirDiagnostico();
@@ -1611,12 +1596,24 @@ public class ModificarMedicosNuevoCard extends JDialog {
 
 		asignaDiagnosticosPaciente.add(ad);
 		
+		
+		
+		
+		if (tablaDiagnosticosLista == false) { // Para que no casque al pintar la tabla de los diagnosticos
+			tablaDiagnosticosLista = true;
+		}
+		
+		añadirFilasDiagnostico(); // Añadimos a la tabla que nos muestra los diagnosticos que ya le hemos asignado
+		
+		limpiarPanelDiagnosticos(); // Para ponerlo todo de 0
+		
 	}
 	
 	
 	
 	
-	
+
+
 	/**
 	 * Método para guardar definitivamente todos los diagnósticos que se le han asignado al paciente
 	 * @throws SQLException 
@@ -1670,7 +1667,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	/**
 	 * Método para restaurar todos los valores por defecto de la preinscripcion cuando añado una
 	 */
-	private void limpiarPanel() {
+	private void limpiarPanelPrescripciones() {
 		
 		cbNombre.setSelectedIndex(0);
 		spinnerCantidad.setValue(1);
@@ -2085,166 +2082,10 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		return pnVacio13;
 	}
-	private JPanel getPanel_8() {
-		if (pnFiltrarVacunas == null) {
-			pnFiltrarVacunas = new JPanel();
-			pnFiltrarVacunas.setLayout(new GridLayout(3, 0, 0, 0));
-			pnFiltrarVacunas.add(getPanel_10());
-			pnFiltrarVacunas.add(getPanel_11());
-			pnFiltrarVacunas.add(getPanel_12());
-		}
-		return pnFiltrarVacunas;
-	}
-	private JPanel getPanel_9() {
-		if (pnBuscarVacunaAsignar == null) {
-			pnBuscarVacunaAsignar = new JPanel();
-			pnBuscarVacunaAsignar.setLayout(new GridLayout(3, 1, 0, 0));
-			pnBuscarVacunaAsignar.add(getPn3());
-			pnBuscarVacunaAsignar.add(getPnMostrarVacunas());
-			pnBuscarVacunaAsignar.add(getPnVacio14());
-		}
-		return pnBuscarVacunaAsignar;
-	}
-	private JPanel getPanel_10() {
-		if (pnV1 == null) {
-			pnV1 = new JPanel();
-		}
-		return pnV1;
-	}
-	private JPanel getPanel_11() {
-		if (pnFiltrarV == null) {
-			pnFiltrarV = new JPanel();
-			pnFiltrarV.add(getTxtFiltrarVacunas());
-			pnFiltrarV.add(getBtnFiltrarVacunas());
-		}
-		return pnFiltrarV;
-	}
-	private JPanel getPanel_12() {
-		if (pnV2 == null) {
-			pnV2 = new JPanel();
-		}
-		return pnV2;
-	}
-	private JTextField getTxtFiltrarVacunas() {
-		if (txtFiltrarVacunas == null) {
-			txtFiltrarVacunas = new JTextField();
-			txtFiltrarVacunas.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent arg0) {
-					activarBotonFiltrarVacunas();
-				}
-			});
-			txtFiltrarVacunas.setToolTipText("Introduzca el nombre de la vacuna para buscarla");
-			txtFiltrarVacunas.setColumns(10);
-		}
-		return txtFiltrarVacunas;
-	}
-
-
-	private JButton getBtnFiltrarVacunas() {
-		if (btnFiltrarVacunas == null) {
-			btnFiltrarVacunas = new JButton("Buscar");
-			btnFiltrarVacunas.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					buscarVacuna();
-				}
-			});
-			btnFiltrarVacunas.setEnabled(false);
-		}
-		return btnFiltrarVacunas;
-	}
-	
-	
-	
-	/**
-	 * Método que me busca si hay la vacuna que quiere el médico. 
-	 * 		- Si la hay, la pone en el comboBox automáticamente
-	 * 		- Si no la hay, muestra un mensaje al usuario diciendole que no existe
-	 */
-	protected void buscarVacuna() {
-		if (!getTxtFiltrarVacunas().getText().equals("")) { // Si hay algo escrito en el campo de texto
-			String buscador = getTxtFiltrarVacunas().getText().toLowerCase(); // Lo que ha buscado (lo pasamos a minuscula)
-			boolean encontrada = false; // Para saber si encontró o no la vacuna buscada
-			
-			for(int i = 0; i < vacunas.size(); i++) {
-				if (vacunas.get(i).getNombreVacuna().toLowerCase().equals(buscador)) { // Si lo que está buscando lo hay en la lista de vacunas
-					cbVacunas.setSelectedIndex(i); // Lo mostramos en el cb
-					encontrada = true; // la encontró
-				}
-			}
-			
-			if (!encontrada) { // Si no encontró la vacuna
-				JOptionPane.showMessageDialog(null, "No hemos podido encontrar su vacuna en este momento");
-			}
-		}
-		else {
-			JOptionPane.showMessageDialog(null, "No ha introducido nada en el buscador");		
-		}
-	}
-
-	/**
-	 * Método que me activa el botón para buscar al filtrar vacunas
-	 */
-	protected void activarBotonFiltrarVacunas() {
-		if (!btnFiltrarVacunas.isEnabled()) { // Si no estaba activado lo activamos
-			btnFiltrarVacunas.setEnabled(true);
-		}
-	}
-	private JPanel getPanel_1() {
-		if (pnVacio15 == null) {
-			pnVacio15 = new JPanel();
-		}
-		return pnVacio15;
-	}
-	private JPanel getPanel_3() {
-		if (pnVacio16 == null) {
-			pnVacio16 = new JPanel();
-		}
-		return pnVacio16;
-	}
-	private JPanel getPanelDiagnosticos() {
-		if (pnFiltrarDiagnosticos == null) {
-			pnFiltrarDiagnosticos = new JPanel();
-			pnFiltrarDiagnosticos.setLayout(new GridLayout(3, 0, 0, 0));
-			pnFiltrarDiagnosticos.add(getPanel_15());
-			pnFiltrarDiagnosticos.add(getPanel_14());
-			pnFiltrarDiagnosticos.add(getPanel_16());
-		}
-		return pnFiltrarDiagnosticos;
-	}
-	private JPanel getPanel_13() {
-		if (pnBuscarDiagnosticosAsignar == null) {
-			pnBuscarDiagnosticosAsignar = new JPanel();
-			pnBuscarDiagnosticosAsignar.setLayout(new GridLayout(3, 1, 0, 0));
-			pnBuscarDiagnosticosAsignar.add(getPn3d());
-			pnBuscarDiagnosticosAsignar.add(getPnMostrarDiagnosticos());
-			pnBuscarDiagnosticosAsignar.add(getPnVacio22());
-		}
-		return pnBuscarDiagnosticosAsignar;
-	}
-	private JPanel getPanel_14() {
-		if (pnFiltrarD == null) {
-			pnFiltrarD = new JPanel();
-			pnFiltrarD.add(getTxtFiltrarDiagnosticos());
-			pnFiltrarD.add(getBtnFiltrarDiagnosticos());
-		}
-		return pnFiltrarD;
-	}
-	private JPanel getPanel_15() {
-		if (pnVacio18 == null) {
-			pnVacio18 = new JPanel();
-		}
-		return pnVacio18;
-	}
-	private JPanel getPanel_16() {
-		if (pnVacio19 == null) {
-			pnVacio19 = new JPanel();
-		}
-		return pnVacio19;
-	}
 	private JTextField getTxtFiltrarDiagnosticos() {
 		if (txtFiltrarDiagnosticos == null) {
 			txtFiltrarDiagnosticos = new JTextField();
+			txtFiltrarDiagnosticos.setBounds(135, 6, 200, 28);
 			txtFiltrarDiagnosticos.setToolTipText("Introduzca el nombre del diagn\u00F3stico para buscarlo");
 			txtFiltrarDiagnosticos.addMouseListener(new MouseAdapter() {
 				@Override
@@ -2260,6 +2101,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getBtnFiltrarDiagnosticos() {
 		if (btnFiltrarDiagnosticos == null) {
 			btnFiltrarDiagnosticos = new JButton("Buscar");
+			btnFiltrarDiagnosticos.setBounds(352, 9, 76, 21);
 			btnFiltrarDiagnosticos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					buscarDiagnostico();
@@ -2281,19 +2123,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			btnFiltrarDiagnosticos.setEnabled(true);
 		}
 		
-	}
-
-	private JPanel getPnVacio20() {
-		if (pnVacio20 == null) {
-			pnVacio20 = new JPanel();
-		}
-		return pnVacio20;
-	}
-	private JPanel getPnVacio21() {
-		if (pnVacio21 == null) {
-			pnVacio21 = new JPanel();
-		}
-		return pnVacio21;
 	}
 	private JButton getBtnCalendarioVacunas() {
 		if (btnCalendarioVacunas == null) {
@@ -2428,55 +2257,16 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel getPnProcedimientos() {
 		if (pnProcedimientos == null) {
 			pnProcedimientos = new JPanel();
-			pnProcedimientos.setLayout(new GridLayout(1, 2, 0, 0));
-			pnProcedimientos.add(getPnFiltrarProcedimientos());
-			pnProcedimientos.add(getPanel_1_1());
+			pnProcedimientos.setLayout(new BorderLayout(0, 0));
+			pnProcedimientos.add(getPanelCentroPr(), BorderLayout.CENTER);
+			pnProcedimientos.add(getPnDchaPr(), BorderLayout.EAST);
 		}
 		return pnProcedimientos;
-	}
-	private JPanel getPnFiltrarProcedimientos() {
-		if (pnFiltrarProcedimientos == null) {
-			pnFiltrarProcedimientos = new JPanel();
-			pnFiltrarProcedimientos.setLayout(new GridLayout(3, 0, 0, 0));
-			pnFiltrarProcedimientos.add(getPnVacio23());
-			pnFiltrarProcedimientos.add(getPanel_1_2());
-			pnFiltrarProcedimientos.add(getPanel_3_1());
-		}
-		return pnFiltrarProcedimientos;
-	}
-	private JPanel getPanel_1_1() {
-		if (pnBuscarProcedimientosAsignar == null) {
-			pnBuscarProcedimientosAsignar = new JPanel();
-			pnBuscarProcedimientosAsignar.setLayout(new GridLayout(3, 0, 0, 0));
-			pnBuscarProcedimientosAsignar.add(getPn3p());
-			pnBuscarProcedimientosAsignar.add(getPnMostrarProcedimientos());
-			pnBuscarProcedimientosAsignar.add(getPnVacio27());
-		}
-		return pnBuscarProcedimientosAsignar;
-	}
-	private JPanel getPnVacio23() {
-		if (pnVacio23 == null) {
-			pnVacio23 = new JPanel();
-		}
-		return pnVacio23;
-	}
-	private JPanel getPanel_1_2() {
-		if (pnFiltrarP == null) {
-			pnFiltrarP = new JPanel();
-			pnFiltrarP.add(getTxtfFiltrarProcedimientos());
-			pnFiltrarP.add(getBtnFiltrarProcedimientos());
-		}
-		return pnFiltrarP;
-	}
-	private JPanel getPanel_3_1() {
-		if (pnVacio24 == null) {
-			pnVacio24 = new JPanel();
-		}
-		return pnVacio24;
 	}
 	private JTextField getTxtfFiltrarProcedimientos() {
 		if (txtfFiltrarProcedimientos == null) {
 			txtfFiltrarProcedimientos = new JTextField();
+			txtfFiltrarProcedimientos.setBounds(134, 6, 202, 28);
 			txtfFiltrarProcedimientos.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent arg0) {
@@ -2492,6 +2282,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getBtnFiltrarProcedimientos() {
 		if (btnFiltrarProcedimientos == null) {
 			btnFiltrarProcedimientos = new JButton("Buscar");
+			btnFiltrarProcedimientos.setBounds(346, 9, 83, 21);
 			btnFiltrarProcedimientos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					buscarProcedimiento();
@@ -2501,50 +2292,10 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		return btnFiltrarProcedimientos;
 	}
-	
-
-
-	private JPanel getPn3p() {
-		if (pn3p == null) {
-			pn3p = new JPanel();
-			pn3p.setLayout(new GridLayout(3, 0, 0, 0));
-			pn3p.add(getPnVacio25());
-			pn3p.add(getPnVacio26());
-			pn3p.add(getLblProcedimientos());
-		}
-		return pn3p;
-	}
-	private JPanel getPnVacio25() {
-		if (pnVacio25 == null) {
-			pnVacio25 = new JPanel();
-		}
-		return pnVacio25;
-	}
-	private JPanel getPnVacio26() {
-		if (pnVacio26 == null) {
-			pnVacio26 = new JPanel();
-		}
-		return pnVacio26;
-	}
-	private JLabel getLblProcedimientos() {
-		if (lblProcedimientos == null) {
-			lblProcedimientos = new JLabel("Procedimientos");
-		}
-		return lblProcedimientos;
-	}
-	private JPanel getPnMostrarProcedimientos() {
-		if (pnMostrarProcedimientos == null) {
-			pnMostrarProcedimientos = new JPanel();
-			FlowLayout flowLayout = (FlowLayout) pnMostrarProcedimientos.getLayout();
-			flowLayout.setAlignment(FlowLayout.LEFT);
-			pnMostrarProcedimientos.add(getCbProcedimientos());
-			pnMostrarProcedimientos.add(getBtnProceder());
-		}
-		return pnMostrarProcedimientos;
-	}
 	private JComboBox<String> getCbProcedimientos() {
 		if (cbProcedimientos == null) {
 			cbProcedimientos = new JComboBox();
+			cbProcedimientos.setBounds(10, 32, 969, 21);
 			
 			
 			String[] nombreProcedimientos = new String[procedimientos.size()];
@@ -2560,6 +2311,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getBtnProceder() {
 		if (btnProceder == null) {
 			btnProceder = new JButton("Asignar procedimiento");
+			btnProceder.setBounds(845, 9, 135, 21);
 			btnProceder.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					anadirProcedimiento();
@@ -2568,16 +2320,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			});
 		}
 		return btnProceder;
-	}
-
-
-
-
-	private JPanel getPnVacio27() {
-		if (pnVacio27 == null) {
-			pnVacio27 = new JPanel();
-		}
-		return pnVacio27;
 	}
 	
 	
@@ -2648,10 +2390,22 @@ public class ModificarMedicosNuevoCard extends JDialog {
 
 		asignaProcedimientosPaciente.add(ad);
 		
+		
+		
+		if (tablaProcedimientosLista == false) { // Para que no casque al pintar la tabla de los procedimientos
+			tablaProcedimientosLista = true;
+		}
+		
+		añadirFilasProcedimiento(); // Añadimos a la tabla que nos muestra los procedimientos que ya le hemos asignado
+		
+		limpiarPanelProcedimientos(); // Para ponerlo todo de 0
+		
 	}
 	
 	
 	
+
+
 	/**
 	 * Método para volver a poner como nuevo el cb de los procedimientos
 	 */
@@ -2673,4 +2427,1319 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			}
 		}		
 	}
+	private JPanel getPnAntecedentes() {
+		if (pnAntecedentes == null) {
+			pnAntecedentes = new JPanel();
+			pnAntecedentes.setLayout(new BorderLayout(0, 0));
+			pnAntecedentes.add(getPanel_17(), BorderLayout.CENTER);
+			pnAntecedentes.add(getPanel_18(), BorderLayout.EAST);
+		}
+		return pnAntecedentes;
+	}
+	private JPanel getPanel_1_3() {
+		if (panel_1 == null) {
+			panel_1 = new JPanel();
+		}
+		return panel_1;
+	}
+	private JPanel getPanel_3_2() {
+		if (panel_3 == null) {
+			panel_3 = new JPanel();
+		}
+		return panel_3;
+	}
+	private JPanel getPanel_5_6() {
+		if (panel_5 == null) {
+			panel_5 = new JPanel();
+		}
+		return panel_5;
+	}
+	private JButton getBtnNewButton_1() {
+		if (btnNewButton_1 == null) {
+			btnNewButton_1 = new JButton("New button");
+		}
+		return btnNewButton_1;
+	}
+	private JPanel getPanel_17() {
+		if (pnCentroA == null) {
+			pnCentroA = new JPanel();
+			pnCentroA.setLayout(new BorderLayout(0, 0));
+			pnCentroA.add(getPnAccionesAntecedentes(), BorderLayout.CENTER);
+		}
+		return pnCentroA;
+	}
+	private JPanel getPanel_18() {
+		if (pnDchaA == null) {
+			pnDchaA = new JPanel();
+			pnDchaA.setLayout(new BorderLayout(0, 0));
+			pnDchaA.add(getPnResumenA(), BorderLayout.CENTER);
+			pnDchaA.add(getPnBorrarAntecedente(), BorderLayout.SOUTH);
+			pnDchaA.add(getPnResumenAntecedentes(), BorderLayout.NORTH);
+		}
+		return pnDchaA;
+	}
+	private JPanel getPnResumenA() {
+		if (pnResumenA == null) {
+			pnResumenA = new JPanel();
+			pnResumenA.setLayout(new GridLayout(0, 1, 0, 0));
+			pnResumenA.add(getScrollPTablaAntecedentes());
+			//pnResumenA.add(getTableAntecedentes());
+		}
+		return pnResumenA;
+	}
+	private JPanel getPnBorrarAntecedente() {
+		if (pnBorrarAntecedente == null) {
+			pnBorrarAntecedente = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnBorrarAntecedente.getLayout();
+			flowLayout.setAlignment(FlowLayout.RIGHT);
+			pnBorrarAntecedente.add(getBtnBorrarAntecedente());
+		}
+		return pnBorrarAntecedente;
+	}
+	private JPanel getPnResumenAntecedentes() {
+		if (pnResumenAntecedentes == null) {
+			pnResumenAntecedentes = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnResumenAntecedentes.getLayout();
+			flowLayout.setAlignment(FlowLayout.LEFT);
+			pnResumenAntecedentes.add(getLblResumenAntecedentes());
+		}
+		return pnResumenAntecedentes;
+	}
+	private JScrollPane getScrollPTablaAntecedentes() {
+		if (scrollPTablaAntecedentes == null) {
+			scrollPTablaAntecedentes = new JScrollPane();
+			
+			scrollPTablaAntecedentes.setViewportView(getTableAntecedentes());
+
+		}
+		return scrollPTablaAntecedentes;
+	}
+	private JTable getTableAntecedentes() {
+		if (tableAntecedentes == null) {
+			String[] nombreColumnas= {"Nombre","Fecha"};
+			modeloTablaAntecedentes= new ModeloNoEditable(nombreColumnas,0);
+			tableAntecedentes = new JTable(modeloTablaAntecedentes);
+			tableAntecedentes.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
+			tableAntecedentes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tableAntecedentes.getTableHeader().setBackground(Color.LIGHT_GRAY);
+			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableAntecedentes.getModel());
+			tableAntecedentes.setRowSorter(sorter);
+			
+			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+			sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
+			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+			
+			//sorter.setSortKeys(sortKeys);
+			
+			añadirFilasAntecedente();
+		}
+		return tableAntecedentes;
+	}
+
+
+	private JButton getBtnBorrarAntecedente() {
+		if (btnBorrarAntecedente == null) {
+			btnBorrarAntecedente = new JButton("Borrar antecedente");
+			btnBorrarAntecedente.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					borrarFilaAntecedente();
+				}
+			});
+		}
+		return btnBorrarAntecedente;
+	}
+
+
+	private JLabel getLblResumenAntecedentes() {
+		if (lblResumenAntecedentes == null) {
+			lblResumenAntecedentes = new JLabel("Antecedentes seleccionados:");
+		}
+		return lblResumenAntecedentes;
+	}
+	private JPanel getPnAccionesAntecedentes() {
+		if (pnAccionesAntecedentes == null) {
+			pnAccionesAntecedentes = new JPanel();
+			pnAccionesAntecedentes.setLayout(new GridLayout(5, 0, 0, 0));
+			pnAccionesAntecedentes.add(getPnNorteAntecedentes_1());
+			pnAccionesAntecedentes.add(getPanel_19());
+			pnAccionesAntecedentes.add(getPanel_20());
+			pnAccionesAntecedentes.add(getPanel_21());
+			pnAccionesAntecedentes.add(getPanel_22());
+		}
+		return pnAccionesAntecedentes;
+	}
+	private JPanel getPanel_19() {
+		if (pnCbAntecedentes == null) {
+			pnCbAntecedentes = new JPanel();
+			pnCbAntecedentes.setLayout(null);
+			pnCbAntecedentes.add(getCbAntecedentes());
+		}
+		return pnCbAntecedentes;
+	}
+	private JPanel getPanel_20() {
+		if (pnAnadirAntecedente == null) {
+			pnAnadirAntecedente = new JPanel();
+			pnAnadirAntecedente.setLayout(null);
+			pnAnadirAntecedente.add(getTxtFiltrarAntecedentes());
+			pnAnadirAntecedente.add(getBtnFiltrarAntecedentes_1());
+			pnAnadirAntecedente.add(getBtnAsignarAntecedente());
+		}
+		return pnAnadirAntecedente;
+	}
+	private JPanel getPanel_21() {
+		if (pnVacío28 == null) {
+			pnVacío28 = new JPanel();
+			FlowLayout fl_pnVacío28 = (FlowLayout) pnVacío28.getLayout();
+			fl_pnVacío28.setAlignment(FlowLayout.LEFT);
+		}
+		return pnVacío28;
+	}
+	private JPanel getPanel_22() {
+		if (pnVerAntecedentes == null) {
+			pnVerAntecedentes = new JPanel();
+			pnVerAntecedentes.setLayout(null);
+			pnVerAntecedentes.add(getBtnVerAnterioresAntecedentes());
+		}
+		return pnVerAntecedentes;
+	}
+	private JComboBox<String> getCbAntecedentes() {
+		if (cbAntecedentes == null) {
+			cbAntecedentes = new JComboBox();
+			cbAntecedentes.setBounds(new Rectangle(10, 32, 975, 21));
+			
+			String[] nombreAntecedentes = new String[antecedentes.size()];
+			
+			for (int i = 0; i < antecedentes.size(); i++) {
+				nombreAntecedentes[i] = antecedentes.get(i).getNombreAntecedente();
+			}
+			
+			cbAntecedentes.setModel(new DefaultComboBoxModel<String>(nombreAntecedentes));
+			
+		}
+		return cbAntecedentes;
+	}
+	private JButton getBtnAsignarAntecedente() {
+		if (btnAsignarAntecedente == null) {
+			btnAsignarAntecedente = new JButton("Asignar antecedente");
+			btnAsignarAntecedente.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					anadirAntecedente();
+					restaurarCbAntecedentes();
+				}
+			});
+			btnAsignarAntecedente.setBounds(825, 10, 160, 21);
+		}
+		return btnAsignarAntecedente;
+	}
+	
+
+
+
+
+	private JButton getBtnVerAnterioresAntecedentes() {
+		if (btnVerAnterioresAntecedentes == null) {
+			btnVerAnterioresAntecedentes = new JButton("Ver antecedentes anteriores");
+			btnVerAnterioresAntecedentes.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						verAntecedentes();
+					} catch (HeadlessException e1) {
+						e1.printStackTrace();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}
+				
+			});
+			btnVerAnterioresAntecedentes.setBounds(138, 0, 199, 21);
+		}
+		return btnVerAnterioresAntecedentes;
+	}
+
+
+
+	private JTextField getTxtFiltrarAntecedentes() {
+		if (txtFiltrarAntecedentes == null) {
+			txtFiltrarAntecedentes = new JTextField();
+			txtFiltrarAntecedentes.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					activarBotonFiltrarAntecedentes();
+				}
+			});
+			txtFiltrarAntecedentes.setColumns(10);
+			txtFiltrarAntecedentes.setBounds(137, 7, 202, 28);
+		}
+		return txtFiltrarAntecedentes;
+	}
+
+
+	private JButton getBtnFiltrarAntecedentes_1() {
+		if (btnFiltrarAntecedentes == null) {
+			btnFiltrarAntecedentes = new JButton("Buscar");
+			btnFiltrarAntecedentes.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					buscarAntecedente();
+				}
+			});
+			btnFiltrarAntecedentes.setEnabled(false);
+			btnFiltrarAntecedentes.setBounds(349, 10, 90, 21);
+		}
+		return btnFiltrarAntecedentes;
+	}
+	
+	
+	
+
+
+	/**
+	 * Método que me guarda temporalmente un antecedente
+	 */
+	protected void anadirAntecedente() {
+		int indice = cbAntecedentes.getSelectedIndex(); // el índice que hay seleccionado en el cb
+		Antecedente antecedente = null;
+		
+		// Buscamos la vacuna que hay seleccionada en el cb
+		int contador = 0;
+		for(Antecedente a : antecedentes) {
+			if (indice == contador) {
+				antecedente = a;
+			}
+			contador = contador + 1;
+		}
+		
+		Random r = new Random();
+		String codAsigAntecedente = "" + r.nextInt(999999); // El código es aleatorio
+		
+		String nombreAntecedente = antecedente.getNombreAntecedente();
+		String nHistorial = paciente.getHistorial(); // El número de historial del paciente a quien le hemos asignado el antecedente
+		String nAntecedente = antecedente.getCodAntecedente(); // El identificador del antecedente
+		String codMedico = cita.getCodMed();
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());
+		AsignaAntecedente aa = new AsignaAntecedente(codAsigAntecedente, nombreAntecedente, nAntecedente, nHistorial, codMedico, fecha, hora);
+
+		asignaAntecedentesPaciente.add(aa);
+		
+		
+		if (tablaAntecedentesLista == false) { // Para que no casque al pintar la tabla de los antecedentes
+			tablaAntecedentesLista = true;
+		}
+		
+		añadirFilasAntecedente(); // Añadimos a la tabla que nos muestra las preinscripciones que ya le hemos asignado
+		
+		limpiarPanelAntecedentes(); // Para ponerlo todo de 0
+		
+	}
+	
+	
+	
+
+
+	/**
+	 * Método para volver a poner el cb bien
+	 */
+	protected void restaurarCbAntecedentes() {
+		cambiarIndiceCBAntecedentes(0);		
+	}
+	
+	
+	/**
+	 * Método para buscar un antecedente
+	 */
+	protected void activarBotonFiltrarAntecedentes() {
+		if (!btnFiltrarAntecedentes.isEnabled()) { // Si no estaba activado lo activamos
+			btnFiltrarAntecedentes.setEnabled(true);
+		}	
+	}
+	
+	
+	/**
+	 * Método para buscar un antecedente
+	 */
+	protected void buscarAntecedente() {
+		if (!getTxtFiltrarAntecedentes().getText().equals("")) { // Si hay algo escrito en el campo de texto
+			String buscador = getTxtFiltrarAntecedentes().getText().toLowerCase(); // Lo que ha buscado (lo pasamos a minuscula)
+			boolean encontrado = false; // Para saber si encontró o no el antecedentes buscado
+			
+			for(int i = 0; i < antecedentes.size(); i++) {
+				if (antecedentes.get(i).getNombreAntecedente().toLowerCase().equals(buscador)) { // Si lo que está buscando lo hay en la lista de diagnosticos
+					
+					cambiarIndiceCBAntecedentes(i);
+					encontrado = true; // lo encontró
+				}
+			}
+			
+			if (!encontrado) { // Si no encontró el diagnostico
+				JOptionPane.showMessageDialog(null, "No hemos podido encontrar su antecedente en este momento");
+			}
+		}
+		else {
+			JOptionPane.showMessageDialog(null, "No ha introducido nada en el buscador");		
+		}
+		
+		
+	}
+	
+	
+
+
+	/**
+	 * Método que me llama a una ventana nueva para crear un nuevo antecedente
+	 */
+	protected void crearAntecedente() {
+		AnadirAntecedente ventanaAntecedente = new AnadirAntecedente(this);
+		
+		ventanaAntecedente.setLocationRelativeTo(this);
+		ventanaAntecedente.setResizable(true);
+		ventanaAntecedente.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+		ventanaAntecedente.setVisible(true);		
+	}
+
+	
+	
+	/**
+	 * Método para vaciar el combo box de los antecedentes
+	 */
+	public void vaciarCBAntecedentes() {
+		cbAntecedentes.removeAllItems();		
+	}
+
+	
+	/**
+	 * Método que me vuelve a rellenar el cb con los antecedentes actualizados
+	 */
+	public void rellenarCBAntecedentes() {
+		for (int i = 0; i < nombresAntecedentes.size(); i++) {
+			cbAntecedentes.insertItemAt(nombresAntecedentes.get(i), i);
+		}		
+	}
+
+	
+	/**
+	 * Método que me actualiza los valores del cb
+	 * @throws SQLException 
+	 */
+	public void ponerAntecedentes() throws SQLException {
+		nombresAntecedentes = new ArrayList<>();
+		List<String> antecedentes = pbd.buscarNombreTodosAntecedentes();
+		for(int i =0; i< antecedentes.size(); i++) {
+			nombresAntecedentes.add(antecedentes.get(i));
+		}		
+	}
+	
+	
+	
+	
+
+	/**
+	 * Método que me guarda definitivamente los antecedentes
+	 * @throws SQLException 
+	 */
+	private void guardarAntecedentes() throws SQLException {
+		if (!asignaAntecedentesPaciente.isEmpty()) { // Que le hayamos asignado algun antecedente
+			//guardarAccionAntecedentes();
+			for (AsignaAntecedente aa : asignaAntecedentesPaciente) { // Voy guardando cada uno de los antecedentes
+				pbd.nuevaAsignaAntecedente(aa);
+			}
+		}	
+		
+	}
+
+	public void setAntecedente(Antecedente antecedente) {
+		this.antecedente = antecedente;		
+	}
+
+	
+	/**
+	 * Me actualiza la ventana después de añadir un nuevo antecedente
+	 */
+	public void actualizarAntecedente() {
+		try {
+			antecedentes = pbd.cargarAntecedentes(); // Volvemos a cargar los antecedentes de la base de datos después de haber añadido
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		listoAntecedentes = false;
+		cbAntecedentes.removeAllItems(); // Vacío todo el combo box
+		
+		// Cargo otra vez los antecedentes en el cb
+		String[] nombreAntecedentes = new String[antecedentes.size()];
+		for (int i = 0; i< antecedentes.size(); i++) {
+			nombreAntecedentes[i] = antecedentes.get(i).getNombreAntecedente();
+		}
+		
+		cbAntecedentes.setModel(new DefaultComboBoxModel<String>(nombreAntecedentes));				
+
+		listoAntecedentes = true;
+		
+		this.revalidate();
+		repaint();
+		
+		//cbAntecedentes.repaint();
+		//cbAntecedentes.setSelectedIndex(0);
+		int contador = 0;
+		for (Antecedente a : antecedentes) {
+			if (a.getNombreAntecedente().toLowerCase().equals(antecedente.getNombreAntecedente())) {
+				//System.out.println("LO ENCONTRO");
+				//System.out.println("nombre: " + antecedente.getNombreAntecedente());
+				cambiarIndiceCBAntecedentes(contador);
+				
+			}
+			contador = contador + 1;
+		}
+	}
+
+	
+	/**
+	 * Método para cambiar el índice del combo box
+	 * @param indice
+	 */
+	private void cambiarIndiceCBAntecedentes(int indice) {
+		cbAntecedentes.setSelectedIndex(indice); // Lo mostramos en el cb	
+	}
+	
+	
+	
+	/**
+	 * Método para añadir las filas a nuestra tabla de antecedentes
+	 */
+	private void añadirFilasAntecedente() {
+		borrarModeloTablaAntecedentes(); // Borramos todo antes de volver a pintar
+		
+		Object[] nuevaFila=new Object[2]; // 2 son las columnas
+				
+		
+		if (tablaAntecedentesLista) {
+			for (AsignaAntecedente a : asignaAntecedentesPaciente) {
+				nuevaFila[0] = a.getNombreAntecedente(); // El nombre del antecedente
+				nuevaFila[1] = a.getFecha();
+				
+				
+				modeloTablaAntecedentes.addRow(nuevaFila); // Añado la fila				
+			}		
+		}		
+	}
+
+	
+	/**
+	 * Método para borrar el contenido de la tabla de antecedentes antes de pintarla
+	 */
+	private void borrarModeloTablaAntecedentes() {
+		int filas = modeloTablaAntecedentes.getRowCount();
+		
+		for (int i = 0; i < filas; i++) {
+			modeloTablaAntecedentes.removeRow(0);			
+		}		
+	}
+	
+	
+	
+	/**
+	 * Método para dejar como nueva la pantalla de los antecedentes
+	 */
+	private void limpiarPanelAntecedentes() {
+		cbAntecedentes.setSelectedIndex(0);
+		//textArea.setText("");	
+	}
+	
+	
+	
+	/**
+	 * Método que me borra una fila seleccionada de la tabla de antecedentes
+	 */
+	protected void borrarFilaAntecedente() {
+		int fila = tableAntecedentes.getSelectedRow();
+		
+		if (fila != -1) {
+			int res = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea borrar el antecedente?","Mensaje de confirmación",JOptionPane.YES_NO_OPTION);
+			if(res == JOptionPane.YES_OPTION) {	
+					
+					asignaAntecedentesPaciente.remove(tableAntecedentes.getSelectedRow());
+					
+					añadirFilasAntecedente();
+			
+			}						
+		}	
+	}
+	
+
+	private JPanel getPnNorteAntecedentes_1() {
+		if (pnNuevoAntecedente == null) {
+			pnNuevoAntecedente = new JPanel();
+			pnNuevoAntecedente.setLayout(null);
+			pnNuevoAntecedente.add(getBtnNuevoAntecedente());
+		}
+		return pnNuevoAntecedente;
+	}
+	private JButton getBtnNuevoAntecedente() {
+		if (btnNuevoAntecedente == null) {
+			btnNuevoAntecedente = new JButton("Crear nuevo antecedente");
+			btnNuevoAntecedente.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					crearAntecedente();
+				}
+			});
+			btnNuevoAntecedente.setBounds(136, 34, 202, 21);
+		}
+		return btnNuevoAntecedente;
+	}
+	private JPanel getPnCentroV() {
+		if (pnCentroV == null) {
+			pnCentroV = new JPanel();
+			pnCentroV.setLayout(new BorderLayout(0, 0));
+			pnCentroV.add(getPnAccionesVacunas(), BorderLayout.CENTER);
+		}
+		return pnCentroV;
+	}
+	private JPanel getPnDchaV() {
+		if (pnDchaV == null) {
+			pnDchaV = new JPanel();
+			pnDchaV.setLayout(new BorderLayout(0, 0));
+			pnDchaV.add(getPnResumenV(), BorderLayout.CENTER);
+			pnDchaV.add(getPnBorrarVacuna(), BorderLayout.SOUTH);
+			pnDchaV.add(getPnResumenVacunas(), BorderLayout.NORTH);
+		}
+		return pnDchaV;
+	}
+	private JPanel getPnAccionesVacunas() {
+		if (pnAccionesVacunas == null) {
+			pnAccionesVacunas = new JPanel();
+			pnAccionesVacunas.setLayout(new GridLayout(5, 0, 0, 0));
+			pnAccionesVacunas.add(getPnVacio29());
+			pnAccionesVacunas.add(getPanel_6_1());
+			pnAccionesVacunas.add(getPanel_7_2());
+			pnAccionesVacunas.add(getPanel_8_1());
+			pnAccionesVacunas.add(getPanel_9_1());
+		}
+		return pnAccionesVacunas;
+	}
+	private JPanel getPnVacio29() {
+		if (pnVacio29 == null) {
+			pnVacio29 = new JPanel();
+		}
+		return pnVacio29;
+	}
+	private JPanel getPanel_6_1() {
+		if (pnCbVacunas == null) {
+			pnCbVacunas = new JPanel();
+			pnCbVacunas.setLayout(null);
+			pnCbVacunas.add(getCbVacunas_1());
+		}
+		return pnCbVacunas;
+	}
+	private JPanel getPanel_7_2() {
+		if (pnAnadirVacuna == null) {
+			pnAnadirVacuna = new JPanel();
+			pnAnadirVacuna.setLayout(null);
+			pnAnadirVacuna.add(getTextfFiltrarVacunas());
+			pnAnadirVacuna.add(getBtnFiltrarVacunas_1());
+			pnAnadirVacuna.add(getBtnAsignarVacuna());
+		}
+		return pnAnadirVacuna;
+	}
+	private JPanel getPanel_8_1() {
+		if (pnVacio30 == null) {
+			pnVacio30 = new JPanel();
+		}
+		return pnVacio30;
+	}
+	private JPanel getPanel_9_1() {
+		if (pnVacio31 == null) {
+			pnVacio31 = new JPanel();
+		}
+		return pnVacio31;
+	}
+	private JTextField getTextfFiltrarVacunas() {
+		if (textfFiltrarVacunas == null) {
+			textfFiltrarVacunas = new JTextField();
+			textfFiltrarVacunas.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					activarBotonFiltrarVacunas();
+				}
+			});
+			textfFiltrarVacunas.setBounds(134, 6, 203, 28);
+			textfFiltrarVacunas.setToolTipText("Introduzca el nombre de la vacuna para buscarla");
+			textfFiltrarVacunas.setColumns(10);
+		}
+		return textfFiltrarVacunas;
+	}
+
+
+	private JButton getBtnFiltrarVacunas_1() {
+		if (btnFiltrarVacunas == null) {
+			btnFiltrarVacunas = new JButton("Buscar");
+			btnFiltrarVacunas.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					buscarVacuna();
+				}
+			});
+			btnFiltrarVacunas.setBounds(351, 9, 82, 21);
+			btnFiltrarVacunas.setEnabled(false);
+		}
+		return btnFiltrarVacunas;
+	}
+	
+	/**
+	 * Método que me busca si hay la vacuna que quiere el médico. 
+	 * 		- Si la hay, la pone en el comboBox automáticamente
+	 * 		- Si no la hay, muestra un mensaje al usuario diciendole que no existe
+	 */
+	protected void buscarVacuna() {
+		if (!getTextfFiltrarVacunas().getText().equals("")) { // Si hay algo escrito en el campo de texto
+			String buscador = getTextfFiltrarVacunas().getText().toLowerCase(); // Lo que ha buscado (lo pasamos a minuscula)
+			boolean encontrada = false; // Para saber si encontró o no la vacuna buscada
+			
+			for(int i = 0; i < vacunas.size(); i++) {
+				if (vacunas.get(i).getNombreVacuna().toLowerCase().equals(buscador)) { // Si lo que está buscando lo hay en la lista de vacunas
+
+					cbVacunas.setSelectedIndex(i); // Lo mostramos en el cb
+					encontrada = true; // la encontró
+
+					//vacunaBuscada
+
+				}
+			}
+			
+			if (!encontrada) { // Si no encontró la vacuna
+				JOptionPane.showMessageDialog(null, "No hemos podido encontrar su vacuna en este momento");
+			}
+		}
+		else {
+			JOptionPane.showMessageDialog(null, "No ha introducido nada en el buscador");		
+		}
+	}
+	private JComboBox<String> getCbVacunas_1() {
+		if (cbVacunas == null) {
+			cbVacunas = new JComboBox();
+			cbVacunas.setBounds(10, 32, 985, 21);
+			
+			String[] nombreVacunas = new String[vacunas.size()];
+			for (int i = 0; i < vacunas.size(); i++) {
+				nombreVacunas[i] = vacunas.get(i).getNombreVacuna();
+			}
+			
+			cbVacunas.setModel(new DefaultComboBoxModel<String>(nombreVacunas));
+		}
+		return cbVacunas;
+	}
+	private JButton getBtnAsignarVacuna() {
+		if (btnAsignarVacuna == null) {
+			btnAsignarVacuna = new JButton("Vacunar");
+			btnAsignarVacuna.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					anadirVacuna();
+					restaurarCbVacunas();
+				}
+			});
+			btnAsignarVacuna.setBounds(825, 9, 170, 21);
+		}
+		return btnAsignarVacuna;
+	}
+
+
+	private JPanel getPnResumenV() {
+		if (pnResumenV == null) {
+			pnResumenV = new JPanel();
+			pnResumenV.setLayout(new GridLayout(0, 1, 0, 0));
+			pnResumenV.add(getScrollPTablaVacunas());
+			//pnResumenV.add(getTableVacunas());
+		}
+		return pnResumenV;
+	}
+	private JPanel getPnBorrarVacuna() {
+		if (pnBorrarVacuna == null) {
+			pnBorrarVacuna = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnBorrarVacuna.getLayout();
+			flowLayout.setAlignment(FlowLayout.RIGHT);
+			pnBorrarVacuna.add(getBtnBorrarVacuna());
+		}
+		return pnBorrarVacuna;
+	}
+	private JPanel getPnResumenVacunas() {
+		if (pnResumenVacunas == null) {
+			pnResumenVacunas = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnResumenVacunas.getLayout();
+			flowLayout.setAlignment(FlowLayout.LEFT);
+			pnResumenVacunas.add(getLblResumenVacunas());
+		}
+		return pnResumenVacunas;
+	}
+	private JScrollPane getScrollPTablaVacunas() {
+		if (scrollPTablaVacunas == null) {
+			scrollPTablaVacunas = new JScrollPane();
+			
+			scrollPTablaVacunas.setViewportView(getTableVacunas());
+
+		}
+		return scrollPTablaVacunas;
+	}
+	private JTable getTableVacunas() {
+		if (tableVacunas == null) {
+			String[] nombreColumnas= {"Nombre"};
+			modeloTablaVacunas= new ModeloNoEditable(nombreColumnas,0);
+			tableVacunas = new JTable(modeloTablaVacunas);
+			tableVacunas.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
+			tableVacunas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tableVacunas.getTableHeader().setBackground(Color.LIGHT_GRAY);
+			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableVacunas.getModel());
+			tableVacunas.setRowSorter(sorter);
+			
+			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+			sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
+			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+			
+			//sorter.setSortKeys(sortKeys);
+			
+			añadirFilasVacuna();
+		}
+		return tableVacunas;
+	}
+
+
+	private JButton getBtnBorrarVacuna() {
+		if (btnBorrarVacuna == null) {
+			btnBorrarVacuna = new JButton("Borrar vacuna");
+			btnBorrarVacuna.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					borrarFilaVacuna();
+				}
+			});
+		}
+		return btnBorrarVacuna;
+	}
+
+
+	private JLabel getLblResumenVacunas() {
+		if (lblResumenVacunas == null) {
+			lblResumenVacunas = new JLabel("Vacunas seleccionadas:");
+		}
+		return lblResumenVacunas;
+	}
+	
+	
+	/**
+	 * Método para restaurar el cb a su valor principal
+	 */
+	protected void restaurarCbVacunas() {
+		cbVacunas.setSelectedIndex(0);	
+		
+	}
+	
+	
+	/**
+	 * Método que me activa el botón de filtrar vacunas si no estaba ya
+	 */
+	protected void activarBotonFiltrarVacunas() {
+		if (!btnFiltrarVacunas.isEnabled()) { // Si no estaba activado lo activamos
+			btnFiltrarVacunas.setEnabled(true);
+		}	
+	}
+	
+	
+	
+	/**
+	 * Método para añadir las filas a la tabla de vacunas
+	 */
+	private void añadirFilasVacuna() {
+		borrarModeloTablaVacunas(); // Borramos todo antes de volver a pintar
+		
+		Object[] nuevaFila=new Object[1]; // 1 columna
+				
+		
+		if (tablaVacunasLista) {
+			for (AsignaVacuna a : asignaVacunasPaciente) {
+				nuevaFila[0] = a.getNombreVacuna(); // El nombre de la vacuna
+				
+				modeloTablaVacunas.addRow(nuevaFila); // Añado la fila
+				
+			}		
+		}		
+	}
+
+	
+	/**
+	 * Método que me borra toda la tabla de vacunas
+	 */
+	private void borrarModeloTablaVacunas() {
+		int filas = modeloTablaVacunas.getRowCount();
+		
+		for (int i = 0; i < filas; i++) {
+			modeloTablaVacunas.removeRow(0);			
+		}	
+		
+	}
+	
+	
+	
+	/**
+	 * Método para borrar una vacuna que está seleccionada en la tabla de vacunas
+	 */
+	protected void borrarFilaVacuna() {
+		
+		int fila = tableVacunas.getSelectedRow();
+		
+		if (fila != -1) {
+			int res = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea borrar la vacuna?","Mensaje de confirmación",JOptionPane.YES_NO_OPTION);
+			if(res == JOptionPane.YES_OPTION) {	
+					
+					asignaVacunasPaciente.remove(tableVacunas.getSelectedRow());
+					
+					añadirFilasVacuna();			
+			}						
+		}
+	}
+	
+	
+	/**
+	 * Método que me deja el panel de las vacunas como nuevo
+	 */
+	private void limpiarPanelVacunas() {
+		cbVacunas.setSelectedIndex(0);
+		
+	}
+	private JPanel getPnCentroD() {
+		if (pnCentroD == null) {
+			pnCentroD = new JPanel();
+			pnCentroD.setLayout(new BorderLayout(0, 0));
+			pnCentroD.add(getPnAccionesDiagnosticos(), BorderLayout.CENTER);
+		}
+		return pnCentroD;
+	}
+	private JPanel getPnDchaD() {
+		if (pnDchaD == null) {
+			pnDchaD = new JPanel();
+			pnDchaD.setLayout(new BorderLayout(0, 0));
+			pnDchaD.add(getPnResumenD(), BorderLayout.CENTER);
+			pnDchaD.add(getPnBorrarDiagnostico(), BorderLayout.SOUTH);
+			pnDchaD.add(getPnResumenDiagnosticos(), BorderLayout.NORTH);
+		}
+		return pnDchaD;
+	}
+	private JPanel getPnAccionesDiagnosticos() {
+		if (pnAccionesDiagnosticos == null) {
+			pnAccionesDiagnosticos = new JPanel();
+			pnAccionesDiagnosticos.setLayout(new GridLayout(5, 0, 0, 0));
+			pnAccionesDiagnosticos.add(getPnVacio32());
+			pnAccionesDiagnosticos.add(getPnCbDiagnosticos());
+			pnAccionesDiagnosticos.add(getPnAnadirDiagnostico());
+			pnAccionesDiagnosticos.add(getPnVacio33());
+			pnAccionesDiagnosticos.add(getPnVacio34());
+		}
+		return pnAccionesDiagnosticos;
+	}
+	private JPanel getPnVacio32() {
+		if (pnVacio32 == null) {
+			pnVacio32 = new JPanel();
+		}
+		return pnVacio32;
+	}
+	private JPanel getPnCbDiagnosticos() {
+		if (pnCbDiagnosticos == null) {
+			pnCbDiagnosticos = new JPanel();
+			pnCbDiagnosticos.setLayout(null);
+			pnCbDiagnosticos.add(getCbDiagnosticos());
+
+		}
+		return pnCbDiagnosticos;
+	}
+	private JPanel getPnAnadirDiagnostico() {
+		if (pnAnadirDiagnostico == null) {
+			pnAnadirDiagnostico = new JPanel();
+			pnAnadirDiagnostico.setLayout(null);
+			pnAnadirDiagnostico.add(getTxtFiltrarDiagnosticos());
+			pnAnadirDiagnostico.add(getBtnFiltrarDiagnosticos());
+			pnAnadirDiagnostico.add(getBtnDiagnosticar());
+
+		}
+		return pnAnadirDiagnostico;
+	}
+	private JPanel getPnVacio33() {
+		if (pnVacio33 == null) {
+			pnVacio33 = new JPanel();
+		}
+		return pnVacio33;
+	}
+	private JPanel getPnVacio34() {
+		if (pnVacio34 == null) {
+			pnVacio34 = new JPanel();
+		}
+		return pnVacio34;
+	}
+	private JPanel getPnResumenD() {
+		if (pnResumenD == null) {
+			pnResumenD = new JPanel();
+			pnResumenD.setLayout(new GridLayout(1, 0, 0, 0));
+			pnResumenD.add(getScrollPTablaDiagnosticos());
+			//pnResumenD.add(getTableDiagnosticos());
+		}
+		return pnResumenD;
+	}
+	private JPanel getPnBorrarDiagnostico() {
+		if (pnBorrarDiagnostico == null) {
+			pnBorrarDiagnostico = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnBorrarDiagnostico.getLayout();
+			flowLayout.setAlignment(FlowLayout.RIGHT);
+			pnBorrarDiagnostico.add(getBtnBorrarDiagnostico());
+		}
+		return pnBorrarDiagnostico;
+	}
+	private JPanel getPnResumenDiagnosticos() {
+		if (pnResumenDiagnosticos == null) {
+			pnResumenDiagnosticos = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnResumenDiagnosticos.getLayout();
+			flowLayout.setAlignment(FlowLayout.LEFT);
+			pnResumenDiagnosticos.add(getLblResumenDiagnosticos());
+		}
+		return pnResumenDiagnosticos;
+	}
+	private JScrollPane getScrollPTablaDiagnosticos() {
+		if (scrollPTablaDiagnosticos == null) {
+			scrollPTablaDiagnosticos = new JScrollPane();
+			
+			scrollPTablaDiagnosticos.setViewportView(getTableDiagnosticos());
+
+		}
+		return scrollPTablaDiagnosticos;
+	}
+	private JTable getTableDiagnosticos() {
+		if (tableDiagnosticos == null) {
+			String[] nombreColumnas= {"Código","Nombre"};
+			modeloTablaDiagnosticos= new ModeloNoEditable(nombreColumnas,0);
+			tableDiagnosticos = new JTable(modeloTablaDiagnosticos);
+			tableDiagnosticos.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
+			tableDiagnosticos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tableDiagnosticos.getTableHeader().setBackground(Color.LIGHT_GRAY);
+			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableDiagnosticos.getModel());
+			tableDiagnosticos.setRowSorter(sorter);
+			
+			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+			sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
+			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+			
+			//sorter.setSortKeys(sortKeys);
+			
+			añadirFilasDiagnostico();
+		}
+		return tableDiagnosticos;
+	}
+
+
+	private JButton getBtnBorrarDiagnostico() {
+		if (btnBorrarDiagnostico == null) {
+			btnBorrarDiagnostico = new JButton("Borrar diagn\u00F3stico");
+			btnBorrarDiagnostico.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					borrarFilaDiagnostico();
+				}
+			});
+		}
+		return btnBorrarDiagnostico;
+	}
+
+
+	private JLabel getLblResumenDiagnosticos() {
+		if (lblResumenDiagnosticos == null) {
+			lblResumenDiagnosticos = new JLabel("Diagn\u00F3sticos seleccionados:");
+		}
+		return lblResumenDiagnosticos;
+	}
+	
+	
+	/**
+	 * Método para añadir las filas a la tabla de los diagnósticos
+	 */
+	private void añadirFilasDiagnostico() {
+		borrarModeloTablaDiagnosticos(); // Borramos todo antes de volver a pintar
+		
+		Object[] nuevaFila=new Object[2]; // 1 columna
+				
+		
+		if (tablaDiagnosticosLista) {
+			for (AsignaDiagnostico a : asignaDiagnosticosPaciente) {
+				nuevaFila[0] = a.getnDiagnostico(); // El código del diagnóstico
+				nuevaFila[1] = a.getNombreDiagnostico(); // El nombre del diagnóstico
+				
+				modeloTablaDiagnosticos.addRow(nuevaFila); // Añado la fila
+				
+			}		
+		}	
+		
+	}
+
+	
+	/**
+	 * Método para borrar la tabla de los diagnósticos
+	 */
+	private void borrarModeloTablaDiagnosticos() {
+		int filas = modeloTablaDiagnosticos.getRowCount();
+		
+		for (int i = 0; i < filas; i++) {
+			modeloTablaDiagnosticos.removeRow(0);			
+		}	
+		
+	}
+	
+	
+	
+	/**
+	 * Método para borrar una fila de la tabla resumen de los diagnósticos
+	 */
+	protected void borrarFilaDiagnostico() {
+		int fila = tableDiagnosticos.getSelectedRow();
+		
+		if (fila != -1) {
+			int res = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea borrar el diagnóstico?","Mensaje de confirmación",JOptionPane.YES_NO_OPTION);
+			if(res == JOptionPane.YES_OPTION) {	
+					
+					asignaDiagnosticosPaciente.remove(tableDiagnosticos.getSelectedRow());
+					
+					añadirFilasDiagnostico();
+			
+			}						
+		}
+	}
+	
+	
+	
+	/**
+	 * Método para poner como nuevo el panel de los diagnósticos
+	 */
+	private void limpiarPanelDiagnosticos() {
+		cbDiagnosticos.setSelectedIndex(0);	
+	}
+	private JPanel getPanelCentroPr() {
+		if (panelCentroPr == null) {
+			panelCentroPr = new JPanel();
+			panelCentroPr.setLayout(new BorderLayout(0, 0));
+			panelCentroPr.add(getPnAccionesProcedimientos(), BorderLayout.CENTER);
+		}
+		return panelCentroPr;
+	}
+	private JPanel getPnDchaPr() {
+		if (pnDchaPr == null) {
+			pnDchaPr = new JPanel();
+			pnDchaPr.setLayout(new BorderLayout(0, 0));
+			pnDchaPr.add(getPnResumenPr(), BorderLayout.CENTER);
+			pnDchaPr.add(getPnBorrarProcedimiento(), BorderLayout.SOUTH);
+			pnDchaPr.add(getPnResumenProcedimientos(), BorderLayout.NORTH);
+		}
+		return pnDchaPr;
+	}
+	private JPanel getPnAccionesProcedimientos() {
+		if (pnAccionesProcedimientos == null) {
+			pnAccionesProcedimientos = new JPanel();
+			pnAccionesProcedimientos.setLayout(new GridLayout(5, 0, 0, 0));
+			pnAccionesProcedimientos.add(getPnVacio35());
+			pnAccionesProcedimientos.add(getPnCbProcedimientos());
+			pnAccionesProcedimientos.add(getPnAnadirProcedimiento());
+			pnAccionesProcedimientos.add(getPnVacio36());
+			pnAccionesProcedimientos.add(getPnVacio37());
+		}
+		return pnAccionesProcedimientos;
+	}
+	private JPanel getPnVacio35() {
+		if (pnVacio35 == null) {
+			pnVacio35 = new JPanel();
+		}
+		return pnVacio35;
+	}
+	private JPanel getPnCbProcedimientos() {
+		if (pnCbProcedimientos == null) {
+			pnCbProcedimientos = new JPanel();
+			pnCbProcedimientos.setLayout(null);
+			pnCbProcedimientos.add(getCbProcedimientos());
+
+		}
+		return pnCbProcedimientos;
+	}
+	private JPanel getPnAnadirProcedimiento() {
+		if (pnAnadirProcedimiento == null) {
+			pnAnadirProcedimiento = new JPanel();
+			pnAnadirProcedimiento.setLayout(null);
+			pnAnadirProcedimiento.add(getTxtfFiltrarProcedimientos());
+			pnAnadirProcedimiento.add(getBtnFiltrarProcedimientos());
+			pnAnadirProcedimiento.add(getBtnProceder());
+
+		}
+		return pnAnadirProcedimiento;
+	}
+	private JPanel getPnVacio36() {
+		if (pnVacio36 == null) {
+			pnVacio36 = new JPanel();
+		}
+		return pnVacio36;
+	}
+	private JPanel getPnVacio37() {
+		if (pnVacio37 == null) {
+			pnVacio37 = new JPanel();
+		}
+		return pnVacio37;
+	}
+	private JPanel getPnResumenPr() {
+		if (pnResumenPr == null) {
+			pnResumenPr = new JPanel();
+			pnResumenPr.setLayout(new GridLayout(1, 0, 0, 0));
+			pnResumenPr.add(getScrollPTablaProcedimientos());
+			//pnResumenPr.add(getTableProcedimientos());
+		}
+		return pnResumenPr;
+	}
+	private JPanel getPnBorrarProcedimiento() {
+		if (pnBorrarProcedimiento == null) {
+			pnBorrarProcedimiento = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnBorrarProcedimiento.getLayout();
+			flowLayout.setAlignment(FlowLayout.RIGHT);
+			pnBorrarProcedimiento.add(getBtnBorrarProcedimiento());
+		}
+		return pnBorrarProcedimiento;
+	}
+	private JPanel getPnResumenProcedimientos() {
+		if (pnResumenProcedimientos == null) {
+			pnResumenProcedimientos = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnResumenProcedimientos.getLayout();
+			flowLayout.setAlignment(FlowLayout.LEFT);
+			pnResumenProcedimientos.add(getLblResumenProcedimientos());
+		}
+		return pnResumenProcedimientos;
+	}
+	private JScrollPane getScrollPTablaProcedimientos() {
+		if (scrollPTablaProcedimientos == null) {
+			scrollPTablaProcedimientos = new JScrollPane();
+			scrollPTablaProcedimientos.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+			
+			scrollPTablaProcedimientos.setViewportView(getTableProcedimientos());
+
+		}
+		return scrollPTablaProcedimientos;
+	}
+	private JTable getTableProcedimientos() {
+		if (tableProcedimientos == null) {
+			String[] nombreColumnas= {"Código","Nombre"};
+			modeloTablaProcedimientos= new ModeloNoEditable(nombreColumnas,0);
+			tableProcedimientos = new JTable(modeloTablaProcedimientos);
+			tableProcedimientos.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
+			tableProcedimientos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tableProcedimientos.getTableHeader().setBackground(Color.LIGHT_GRAY);
+			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableProcedimientos.getModel());
+			tableProcedimientos.setRowSorter(sorter);
+			
+			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+			sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
+			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+			
+			//sorter.setSortKeys(sortKeys);
+			
+			añadirFilasProcedimiento();
+		}
+		return tableProcedimientos;
+	}
+
+
+	private JButton getBtnBorrarProcedimiento() {
+		if (btnBorrarProcedimiento == null) {
+			btnBorrarProcedimiento = new JButton("Borrar procedimiento");
+			btnBorrarProcedimiento.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					borrarFilaProcedimiento();
+				}
+			});
+		}
+		return btnBorrarProcedimiento;
+	}
+
+	private JLabel getLblResumenProcedimientos() {
+		if (lblResumenProcedimientos == null) {
+			lblResumenProcedimientos = new JLabel("Procedimientos seleccionados:");
+		}
+		return lblResumenProcedimientos;
+	}
+	
+	
+	/**
+	 * Método para añadir filas a la tabla de los procedimientos
+	 */
+	private void añadirFilasProcedimiento() {
+		borrarModeloTablaProcedimientos(); // Borramos todo antes de volver a pintar
+		
+		Object[] nuevaFila=new Object[2]; // 2 columnas
+				
+		
+		if (tablaProcedimientosLista) {
+			for (AsignaProcedimiento a : asignaProcedimientosPaciente) {
+				nuevaFila[0] = a.getCodigoProcedimiento(); // El codigo del procedimento
+				nuevaFila[1] = a.getNombreProcedimiento(); // El nombre del procedimiento
+				
+				modeloTablaProcedimientos.addRow(nuevaFila); // Añado la fila
+				
+			}		
+		}
+		
+	}
+
+	/**
+	 * Método para borrar toda la tabla de los procedimientos
+	 */
+	private void borrarModeloTablaProcedimientos() {
+		int filas = modeloTablaProcedimientos.getRowCount();
+		
+		for (int i = 0; i < filas; i++) {
+			modeloTablaProcedimientos.removeRow(0);			
+		}			
+	}
+	
+	
+	/**
+	 * Metodo que me deja el panel de los procedimientos como nuevo
+	 */
+	private void limpiarPanelProcedimientos() {
+		cbProcedimientos.setSelectedIndex(0);		
+	}
+	
+	
+	/**
+	 * Método para borrar 1 fila de la tabla resumen de procedimientos
+	 */
+	protected void borrarFilaProcedimiento() {
+		int fila = tableProcedimientos.getSelectedRow();
+		
+		if (fila != -1) {
+			int res = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea borrar el procedimiento?","Mensaje de confirmación",JOptionPane.YES_NO_OPTION);
+			if(res == JOptionPane.YES_OPTION) {	
+					
+					asignaProcedimientosPaciente.remove(tableProcedimientos.getSelectedRow());
+					
+					añadirFilasProcedimiento();
+			
+			}						
+		}
+		
+		
+	}
+	
+	/**
+	 * Método que me abre una nueva ventana para ver los antecedentes anteriores del paciente
+	 * @throws SQLException 
+	 * @throws HeadlessException 
+	 */
+	protected void verAntecedentes() throws HeadlessException, SQLException {
+		
+		if (pbd.tieneAntecedentes(paciente.getHistorial())){ // Si tiene algún antecedente abre la ventana
+		
+			VerAntecedentes va = new VerAntecedentes(this, paciente);
+		
+			va.setLocationRelativeTo(this);
+			va.setResizable(true);
+			va.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+			va.setVisible(true);	
+		}
+		else { // Si no tiene ningún antecedente muestra el mensaje y NO abre la ventana
+			JOptionPane.showMessageDialog(null, "El paciente no tiene ningún antecedente previo.");
+		}
+	}
+
+
 }
