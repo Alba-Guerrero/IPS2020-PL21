@@ -8,18 +8,33 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
+import logica.AsignaAntecedente;
+import logica.AsignaDiagnostico;
+import logica.AsignaEnfermPrev;
+import logica.AsignaPreinscripcion;
+import logica.AsignaProcedimiento;
+import logica.AsignaVacuna;
 import logica.Cita;
 import logica.HistorialMedico;
 import logica.Paciente;
 import logica.Preinscripcion;
+import logica.asignar.AsignaEPrev;
 import logica.servicios.HistorialToPDF;
 import logica.servicios.ParserBaseDeDatos;
+import logica.servicios.Printer;
 import net.sf.jasperreports.engine.JRException;
+import ui.medico.ModeloNoEditable;
 
 import java.awt.CardLayout;
+import java.awt.Color;
+
 import javax.swing.JTabbedPane;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
+
 import java.awt.GridLayout;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,14 +42,31 @@ import java.util.List;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
+import javax.swing.JTable;
 
 public class MostrarHistorial extends JDialog {
 
+	
+	private ModeloNoEditable modeloTablaAntecedentes;
+	private ModeloNoEditable modeloTablaProcedimientos;
+	private ModeloNoEditable modeloTablaDiagnosticos;
+	private ModeloNoEditable modeloTablaPrescripciones;
+	private ModeloNoEditable modeloTablaVacunas;
+	private ModeloNoEditable modeloTablaEP;
+
+
+	
+	
 	private JPanel contentPane;
 	private JPanel panelBotones;
 	private JTabbedPane panelPestañas;
@@ -45,7 +77,14 @@ public class MostrarHistorial extends JDialog {
 	
 	private DefaultListModel<Preinscripcion> modeloListaM;
 	
-	
+	List<AsignaAntecedente> antecedentesAsignados;
+	List<AsignaProcedimiento> procedimientosAsignados;
+	List<AsignaDiagnostico> diagnosticosAsignados;
+	List<AsignaPreinscripcion> prescripcionesAsignados;
+	List<AsignaVacuna> vacunasAsignados;
+	List<AsignaEnfermPrev> enfermedadesPAsignadas;
+
+
 	private HistorialMedico hm;
 	private ParserBaseDeDatos pbd = new ParserBaseDeDatos();
 	
@@ -53,16 +92,23 @@ public class MostrarHistorial extends JDialog {
 	private JScrollPane scrollPaneCausas;
 	private JTextArea textAreaCausas;
 	private JScrollPane scrollPaneEnfermPrevia;
-	private JTextArea textAreaEnfermPrev;
 	private JScrollPane scrollPaneVacunas;
-	private JTextArea textAreaVacunas;
 	private JScrollPane scrollPanePreinscripciones;
-	private JTextArea textAreaPreinscripciones;
 	private JPanel panelDiagnosticos;
 	private JScrollPane scrollPaneDiagnosticos;
-	private JTextArea textAreaDiagnosticos;
 	private JButton btnNewButton;
 	private JButton btnNewButton_1;
+	private JPanel panelProcedimientos;
+	private JScrollPane scrollPaneProcedimientos;
+	private JPanel panelAntecedentes;
+	private JScrollPane scrollPaneAntecedentes;
+	private JTextArea textAreaAntecedentes;
+	private JTable tableAntecedentes;
+	private JTable tableProcedimientos;
+	private JTable tableDiagnosticos;
+	private JTable tablePrescripciones;
+	private JTable tableVacunas;
+	private JTable tableEP;
 
 	/**
 	 * Create the frame.
@@ -71,6 +117,15 @@ public class MostrarHistorial extends JDialog {
 	public MostrarHistorial(HistorialMedico hm) throws SQLException {
 		setTitle("Historial m\u00E9dico");
 		this.hm = hm;
+		
+		
+		this.antecedentesAsignados = pbd.listarAntecedentesAsignados(hm.getHistorial());
+		this.procedimientosAsignados = pbd.listarProcedimientosAsignados(hm.getHistorial());
+		this.diagnosticosAsignados = pbd.asignaDiagnosticoHistorial(hm.getHistorial());
+		this.prescripcionesAsignados = pbd.listarPrescripcionesAsignadas(hm.getHistorial());
+		this.vacunasAsignados = pbd.asignaVacunaHistorial(hm.getHistorial());
+		this.enfermedadesPAsignadas = pbd.listarenfermedadesPAsignadas(hm.getHistorial());
+		
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 732, 385);
 		contentPane = new JPanel();
@@ -97,6 +152,8 @@ public class MostrarHistorial extends JDialog {
 			panelPestañas.addTab("Vacunas", null, getPanelVacunas(), null);
 			panelPestañas.addTab("Preinscripciones", null, getPanelPreinscripciones(), null);
 			panelPestañas.addTab("Diagnosticos", null, getPanelDiagnosticos(), null);
+			panelPestañas.addTab("Procedimientos", null, getPanelProcedimientos(), null);
+			panelPestañas.addTab("Antecedentes", null, getPanelAntecedentes(), null);
 		}
 		return panelPestañas;
 	}
@@ -113,6 +170,7 @@ public class MostrarHistorial extends JDialog {
 			panelEnfermedPrevia = new JPanel();
 			panelEnfermedPrevia.setLayout(new BorderLayout(0, 0));
 			panelEnfermedPrevia.add(getScrollPaneEnfermPrevia());
+			//panelEnfermedPrevia.add(getTableEP(), BorderLayout.NORTH);
 		}
 		return panelEnfermedPrevia;
 	}
@@ -121,6 +179,7 @@ public class MostrarHistorial extends JDialog {
 			panelVacunas = new JPanel();
 			panelVacunas.setLayout(new BorderLayout(0, 0));
 			panelVacunas.add(getScrollPaneVacunas());
+			//panelVacunas.add(getTableVacunas(), BorderLayout.NORTH);
 		}
 		return panelVacunas;
 	}
@@ -156,7 +215,8 @@ public class MostrarHistorial extends JDialog {
 	private JScrollPane getScrollPaneEnfermPrevia() throws SQLException{
 		if (scrollPaneEnfermPrevia == null) {
 			scrollPaneEnfermPrevia = new JScrollPane();
-			scrollPaneEnfermPrevia.setViewportView(getTextAreaEnfermPrev());
+			
+			scrollPaneEnfermPrevia.setViewportView(getTableEP());
 		}
 		return scrollPaneEnfermPrevia;
 	}
@@ -171,19 +231,11 @@ public class MostrarHistorial extends JDialog {
 		}
 		return enfermPrev;
 	}
-	
-	private JTextArea getTextAreaEnfermPrev() throws SQLException {
-		if (textAreaEnfermPrev == null) {
-			textAreaEnfermPrev = new JTextArea();
-			textAreaEnfermPrev.setEditable(false);
-			textAreaEnfermPrev.setText(darEnfermPrevias());
-		}
-		return textAreaEnfermPrev;
-	}
 	private JScrollPane getScrollPaneVacunas() throws SQLException {
 		if (scrollPaneVacunas == null) {
 			scrollPaneVacunas = new JScrollPane();
-			scrollPaneVacunas.setViewportView(getTextAreaVacunas());
+			
+			scrollPaneVacunas.setViewportView(getTableVacunas());
 		}
 		return scrollPaneVacunas;
 	}
@@ -204,37 +256,22 @@ public class MostrarHistorial extends JDialog {
 		}
 		return vacunas;
 	}
-	
-	private JTextArea getTextAreaVacunas() throws SQLException {
-		if (textAreaVacunas == null) {
-			textAreaVacunas = new JTextArea();
-			textAreaVacunas.setEditable(false);
-			textAreaVacunas.setText(mostrarVacunas());
-		}
-		return textAreaVacunas;
-	}
 	private JPanel getPanelPreinscripciones() throws SQLException {
 		if (panelPreinscripciones == null) {
 			panelPreinscripciones = new JPanel();
 			panelPreinscripciones.setLayout(new BorderLayout(0, 0));
 			panelPreinscripciones.add(getScrollPanePreinscripciones());
+			//panelPreinscripciones.add(getTablePrescripciones(), BorderLayout.NORTH);
 		}
 		return panelPreinscripciones;
 	}
 	private JScrollPane getScrollPanePreinscripciones() throws SQLException {
 		if (scrollPanePreinscripciones == null) {
 			scrollPanePreinscripciones = new JScrollPane();
-			scrollPanePreinscripciones.setViewportView(getTextAreaPreinscripciones());
+			
+			scrollPanePreinscripciones.setViewportView(getTablePrescripciones());
 		}
 		return scrollPanePreinscripciones;
-	}
-	private JTextArea getTextAreaPreinscripciones() throws SQLException {
-		if (textAreaPreinscripciones == null) {
-			textAreaPreinscripciones = new JTextArea();
-			textAreaPreinscripciones.setEditable(false);
-			textAreaPreinscripciones.setText(ponerPreinscripciones());
-		}
-		return textAreaPreinscripciones;
 	}
 
 	/**
@@ -257,24 +294,18 @@ public class MostrarHistorial extends JDialog {
 			panelDiagnosticos = new JPanel();
 			panelDiagnosticos.setLayout(new BorderLayout(0, 0));
 			panelDiagnosticos.add(getScrollPaneDiagnosticos());
+			//panelDiagnosticos.add(getTableDiagnosticos(), BorderLayout.NORTH);
 		}
 		return panelDiagnosticos;
 	}
 	private JScrollPane getScrollPaneDiagnosticos() throws SQLException {
 		if (scrollPaneDiagnosticos == null) {
 			scrollPaneDiagnosticos = new JScrollPane();
-			scrollPaneDiagnosticos.setViewportView(getTextAreaDiagnosticos());
+			
+			scrollPaneDiagnosticos.setViewportView(getTableDiagnosticos());
 
 		}
 		return scrollPaneDiagnosticos;
-	}
-	private JTextArea getTextAreaDiagnosticos() throws SQLException {
-		if (textAreaDiagnosticos == null) {
-			textAreaDiagnosticos = new JTextArea();
-			textAreaDiagnosticos.setEditable(false);
-			textAreaDiagnosticos.setText(ponerDiagnosticos());
-		}
-		return textAreaDiagnosticos;
 	}
 
 	/**
@@ -293,6 +324,10 @@ public class MostrarHistorial extends JDialog {
 		}
 		return diagnosticos;
 	}
+	
+	
+	
+	
 	private JButton getBtnNewButton() {
 		if (btnNewButton == null) {
 			btnNewButton = new JButton("Descargar Historial");
@@ -318,20 +353,441 @@ public class MostrarHistorial extends JDialog {
 			e.printStackTrace();
 		}
 		
+		JOptionPane.showConfirmDialog(null, "Se ha generado su historial con éxito");
+		
 		
 		
 	}
 	private JButton getBtnNewButton_1() {
 		if (btnNewButton_1 == null) {
 			btnNewButton_1 = new JButton("");
+			btnNewButton_1.setIcon(new ImageIcon("C:\\Users\\Alba\\Downloads\\interface+multimedia+print+printer+icon-1320185667007730348_24.png"));
 			btnNewButton_1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					
+					Printer printer= new Printer();
+					try {
+						File archivo = new File("historial/"+hm.getHistorial()+"Historial.pdf");
+						if (!archivo.exists()) {
+							descargarHistorial();
+						}
+						printer.print("historial/"+hm.getHistorial()+"Historial.pdf");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 				}
 			});
-			btnNewButton_1.setIcon(new ImageIcon(MostrarHistorial.class.getResource("/javax/swing/plaf/metal/icons/Error.gif")));
 		}
 		return btnNewButton_1;
+	}
+	private JPanel getPanelProcedimientos() {
+		if (panelProcedimientos == null) {
+			panelProcedimientos = new JPanel();
+			panelProcedimientos.setLayout(new BorderLayout(0, 0));
+			panelProcedimientos.add(getScrollPaneProcedimientos());
+			//panelProcedimientos.add(getTableProcedimientos(), BorderLayout.NORTH);
+			//panelProcedimientos.add(getTextAreaProcedimientos());
+		}
+		return panelProcedimientos;
+	}
+	private JScrollPane getScrollPaneProcedimientos() {
+		if (scrollPaneProcedimientos == null) {
+			scrollPaneProcedimientos = new JScrollPane();
+			
+			scrollPaneProcedimientos.setViewportView(getTableProcedimientos());
+
+		}
+		return scrollPaneProcedimientos;
+	}
+
+	/**
+	 * Método que me muestra todos los procedimientos que se le han asignado al paciente
+	 * @return
+	 * @throws SQLException 
+	 */
+	private String ponerProcedimientos() throws SQLException {
+		String procedimientos = "";
+		
+		List<String> nombreProcedimientos = new ArrayList<>();
+		nombreProcedimientos = pbd.mostrarProcedimientosAsignados(hm.getHistorial());
+		for(String str : nombreProcedimientos) {
+			procedimientos += str + "\n";
+		}
+		return procedimientos;
+	}
+	private JPanel getPanelAntecedentes() {
+		if (panelAntecedentes == null) {
+			panelAntecedentes = new JPanel();
+			panelAntecedentes.setLayout(new BorderLayout(0, 0));
+			panelAntecedentes.add(getScrollPaneAntecedentes());
+			//panelAntecedentes.add(getTableAntecedentes(), BorderLayout.NORTH);
+			//panelAntecedentes.add(getTextAreaAntecedentes());
+		}
+		return panelAntecedentes;
+	}
+	private JScrollPane getScrollPaneAntecedentes() {
+		if (scrollPaneAntecedentes == null) {
+			scrollPaneAntecedentes = new JScrollPane();
+			
+			scrollPaneAntecedentes.setViewportView(getTableAntecedentes());
+
+		}
+		return scrollPaneAntecedentes;
+	}
+	private JTextArea getTextAreaAntecedentes() {
+		if (textAreaAntecedentes == null) {
+			textAreaAntecedentes = new JTextArea();
+
+			try {
+				textAreaAntecedentes.setText(ponerAntecedentes());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+		return textAreaAntecedentes;
+	}
+
+	
+	/**
+	 * Método que pone los antecedentes en el historial
+	 * @return
+	 * @throws SQLException 
+	 */
+	private String ponerAntecedentes() throws SQLException {
+		String antecedentes = "";
+		
+		List<String> nombreAntecedentes = new ArrayList<>();
+		nombreAntecedentes = pbd.buscarAntecedentesAsignados(hm.getHistorial());
+		for(String str : nombreAntecedentes) {
+			antecedentes += str + "\n";
+		}
+		return antecedentes;
+	}
+	private JTable getTableAntecedentes() {
+		if (tableAntecedentes == null) {
+			String[] nombreColumnas= {"Antecedente","Fecha", "Empleado"};
+			modeloTablaAntecedentes= new ModeloNoEditable(nombreColumnas,0);
+			tableAntecedentes = new JTable(modeloTablaAntecedentes);
+			tableAntecedentes.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
+			tableAntecedentes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tableAntecedentes.getTableHeader().setBackground(Color.LIGHT_GRAY);
+			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableAntecedentes.getModel());
+			tableAntecedentes.setRowSorter(sorter);
+			
+			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+			sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
+			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+			
+			//sorter.setSortKeys(sortKeys);
+			
+			añadirFilasAntecedentes();
+		}
+		return tableAntecedentes;
+	}
+
+	
+	/**
+	 * Método para rellenar la tabla de los antecedentes
+	 */
+	private void añadirFilasAntecedentes() {
+		borrarModeloTablaAntecedentes(); // Borramos todo antes de volver a pintar
+		
+		Object[] nuevaFila=new Object[3]; // 3 son las columnas
+				
+		
+			for (AsignaAntecedente a : antecedentesAsignados) {
+				nuevaFila[0] = a.getNombreAntecedente(); // El nombre del antecedendente
+				nuevaFila[1] = a.getFecha(); // La fecha en la que se le asigno
+				nuevaFila[2] = a.getCodEmpleado(); // El empleado que se lo asigno
+
+				
+				modeloTablaAntecedentes.addRow(nuevaFila); // Añado la fila
+			}		
+	}
+
+	
+	/**
+	 * Método que me borra toda la tabla de antecedentes
+	 */
+	private void borrarModeloTablaAntecedentes() {
+		int filas = modeloTablaAntecedentes.getRowCount();
+		for (int i = 0; i < filas; i++) {
+			modeloTablaAntecedentes.removeRow(0);			
+		}	
+		
+	}
+	private JTable getTableProcedimientos() {
+		if (tableProcedimientos == null) {
+			String[] nombreColumnas= {"Procedimiento","Fecha", "Empleado"};
+			modeloTablaProcedimientos= new ModeloNoEditable(nombreColumnas,0);
+			tableProcedimientos = new JTable(modeloTablaProcedimientos);
+			tableProcedimientos.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
+			tableProcedimientos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tableProcedimientos.getTableHeader().setBackground(Color.LIGHT_GRAY);
+			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableProcedimientos.getModel());
+			tableProcedimientos.setRowSorter(sorter);
+			
+			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+			sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
+			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+			
+			//sorter.setSortKeys(sortKeys);
+			
+			añadirFilasProcedimientos();
+		}
+		return tableProcedimientos;
+	}
+
+	
+	/**
+	 * Método para añadir las filas a la tabla procedimientos
+	 */
+	private void añadirFilasProcedimientos() {
+		borrarModeloTablaProcedimientos(); // Borramos todo antes de volver a pintar
+		
+		Object[] nuevaFila=new Object[3]; // 3 son las columnas
+				
+		
+			for (AsignaProcedimiento a : procedimientosAsignados) {
+				nuevaFila[0] = a.getNombreProcedimiento(); // El nombre del antecedendente
+				nuevaFila[1] = a.getFecha(); // La fecha en la que se le asigno
+				nuevaFila[2] = a.getCodEmpleado(); // El empleado que se lo asigno
+
+				
+				modeloTablaProcedimientos.addRow(nuevaFila); // Añado la fila
+			}	
+	
+		
+	}
+
+	
+	/**
+	 * Método para borrar todos los procedimientos de la tabla
+	 */
+	private void borrarModeloTablaProcedimientos() {
+		int filas = modeloTablaProcedimientos.getRowCount();
+		for (int i = 0; i < filas; i++) {
+			modeloTablaProcedimientos.removeRow(0);			
+		}	
+		
+	}
+	private JTable getTableDiagnosticos() {
+		if (tableDiagnosticos == null) {
+			String[] nombreColumnas= {"Código","Diagnóstico", "Fecha", "Empleado"};
+			modeloTablaDiagnosticos= new ModeloNoEditable(nombreColumnas,0);
+			tableDiagnosticos = new JTable(modeloTablaDiagnosticos);
+			tableDiagnosticos.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
+			tableDiagnosticos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tableDiagnosticos.getTableHeader().setBackground(Color.LIGHT_GRAY);
+			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableDiagnosticos.getModel());
+			tableDiagnosticos.setRowSorter(sorter);
+			
+			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+			sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
+			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+			
+			
+			añadirFilasDiagnosticos();		
+		}
+		return tableDiagnosticos;
+	}
+
+	
+	/**
+	 * Método que me pinta las filas de la tabla de los diagnosticos
+	 */
+	private void añadirFilasDiagnosticos() {
+		
+		borrarModeloTablaDiagnosticos(); // Borramos todo antes de volver a pintar
+		
+		Object[] nuevaFila=new Object[4]; // 4 son las columnas
+				
+		
+			for (AsignaDiagnostico a : diagnosticosAsignados) {
+				nuevaFila[0] = a.getnDiagnostico();
+				nuevaFila[1] = a.getNombreDiagnostico(); // El nombre del antecedendente
+				nuevaFila[2] = a.getFecha(); // La fecha en la que se le asigno
+				nuevaFila[3] = a.getCodMedico(); // El empleado que se lo asigno
+
+				
+				modeloTablaDiagnosticos.addRow(nuevaFila); // Añado la fila
+			}
+	}
+
+	
+	/**
+	 * Método para borrar la tabla de los diagnosticos
+	 */
+	private void borrarModeloTablaDiagnosticos() {
+		int filas = modeloTablaDiagnosticos.getRowCount();
+		for (int i = 0; i < filas; i++) {
+			modeloTablaDiagnosticos.removeRow(0);			
+		}			
+	}
+	private JTable getTablePrescripciones() {
+		if (tablePrescripciones == null) {
+			String[] nombreColumnas= {"Prescripción","Cantidad", "Intervalo (días)", "Duración (horas)", "Instrucciones"};
+			modeloTablaPrescripciones= new ModeloNoEditable(nombreColumnas,0);
+			tablePrescripciones = new JTable(modeloTablaPrescripciones);
+			tablePrescripciones.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
+			tablePrescripciones.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tablePrescripciones.getTableHeader().setBackground(Color.LIGHT_GRAY);
+			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tablePrescripciones.getModel());
+			tablePrescripciones.setRowSorter(sorter);
+			
+			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+			sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
+			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+			
+			
+			añadirFilasPrescripciones();	
+		}
+		return tablePrescripciones;
+	}
+
+	
+	/**
+	 * Método para añadir las prescripciones a la tabla
+	 */
+	private void añadirFilasPrescripciones() {
+		borrarModeloTablaPrescripciones(); // Borramos todo antes de volver a pintar
+		
+		Object[] nuevaFila=new Object[5]; // 5 son las columnas
+				
+		
+			for (AsignaPreinscripcion a : prescripcionesAsignados) {
+				
+				
+				nuevaFila[0] = a.getCodigoPreinscripcion(); // El nombre del antecedendente
+				nuevaFila[1] = "" + a.getCantidad(); 
+				nuevaFila[2] = "" + a.getIntervalo(); 
+				nuevaFila[3] = "" + a.getDuracion();
+				nuevaFila[4] = "" + a.getInstrucciones();
+
+				
+				modeloTablaPrescripciones.addRow(nuevaFila); // Añado la fila
+			}	
+		
+	}
+
+	
+	/**
+	 * Método para borrar todas las prescripciones
+	 */
+	private void borrarModeloTablaPrescripciones() {
+		int filas = modeloTablaPrescripciones.getRowCount();
+		for (int i = 0; i < filas; i++) {
+			modeloTablaPrescripciones.removeRow(0);			
+		}			
+	}
+	private JTable getTableVacunas() {
+		if (tableVacunas == null) {
+			String[] nombreColumnas= {"Vacuna","Empleado", "Fecha"};
+			modeloTablaVacunas= new ModeloNoEditable(nombreColumnas,0);
+			tableVacunas = new JTable(modeloTablaVacunas);
+			tableVacunas.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
+			tableVacunas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tableVacunas.getTableHeader().setBackground(Color.LIGHT_GRAY);
+			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableVacunas.getModel());
+			tableVacunas.setRowSorter(sorter);
+			
+			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+			sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
+			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+			
+			
+			añadirFilasVacunas();
+		}
+		return tableVacunas;
+	}
+	
+	
+	
+	
+	/**
+	 * Método para rellenar la tabla de los antecedentes
+	 */
+	private void añadirFilasVacunas() {
+		borrarModeloTablaVacunas(); // Borramos todo antes de volver a pintar
+		
+		Object[] nuevaFila=new Object[3]; // 3 son las columnas
+				
+		
+			for (AsignaVacuna a : vacunasAsignados) {
+				nuevaFila[0] = a.getNombreVacuna(); 
+				nuevaFila[1] = a.getCodEmpleado(); 
+				nuevaFila[2] = a.getDate(); 
+
+
+				
+				modeloTablaVacunas.addRow(nuevaFila); // Añado la fila
+			}		
+	}
+
+	
+	/**
+	 * Borrar todas las filas de la tabla
+	 */
+	private void borrarModeloTablaVacunas() {
+		int filas = modeloTablaVacunas.getRowCount();
+		for (int i = 0; i < filas; i++) {
+			modeloTablaVacunas.removeRow(0);			
+		}		
+	}
+	private JTable getTableEP() {
+		if (tableEP == null) {
+			String[] nombreColumnas= {"Enferemedades previas","Empleado", "Fecha"};
+			modeloTablaEP= new ModeloNoEditable(nombreColumnas,0);
+			tableEP = new JTable(modeloTablaEP);
+			tableEP.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
+			tableEP.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tableEP.getTableHeader().setBackground(Color.LIGHT_GRAY);
+			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableEP.getModel());
+			tableEP.setRowSorter(sorter);
+			
+			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+			sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
+			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+			
+			
+			añadirFilasEP();
+		}
+		return tableEP;
+	}
+	
+	
+	
+	/**
+	 * Método para rellenar la tabla de los EP
+	 */
+	private void añadirFilasEP() {
+		borrarModeloTablaEP(); // Borramos todo antes de volver a pintar
+		
+		Object[] nuevaFila=new Object[3]; // 3 son las columnas
+				
+		
+			for (AsignaEnfermPrev a : enfermedadesPAsignadas) {
+				nuevaFila[0] = a.getNombreEnfermPrev(); // El nombre del antecedendente
+				nuevaFila[1] = a.getCodEmpleado(); // El empleado que se lo asigno
+				nuevaFila[2] = a.getDate(); // La fecha en la que se le asigno
+
+				
+				modeloTablaEP.addRow(nuevaFila); // Añado la fila
+			}		
+	}
+
+	
+	
+	/**
+	 * para borrar toda la tabla de enfermedades previas
+	 */
+	private void borrarModeloTablaEP() {
+		int filas = modeloTablaEP.getRowCount();
+		for (int i = 0; i < filas; i++) {
+			modeloTablaEP.removeRow(0);			
+		}	
+		
 	}
 }

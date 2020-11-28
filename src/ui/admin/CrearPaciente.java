@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import jdk.nashorn.internal.runtime.regexp.joni.Regex;
+import logica.Accion;
 import logica.Acompañante;
 import logica.HistorialMedico;
 import logica.Paciente;
@@ -31,7 +32,9 @@ import javax.swing.JOptionPane;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -71,25 +74,14 @@ public class CrearPaciente extends JDialog {
 	private ParserBaseDeDatos pbd= new ParserBaseDeDatos();
 	private JLabel lbAEmail;
 	private JTextField txtAEmail;
+	private String codAdmin;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			CrearPaciente dialog = new CrearPaciente();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-			dialog.setResizable(false);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * Create the dialog.
 	 */
-	public CrearPaciente() {
+	public CrearPaciente(String codAdmin) {
+		this.codAdmin = codAdmin;
 		setTitle("Administrador:Crear paciente");
 		setBounds(100, 100, 736, 524);
 		getContentPane().setLayout(new BorderLayout());
@@ -420,7 +412,12 @@ public class CrearPaciente extends JDialog {
 									lbPNombre.setForeground(Color.BLACK);
 									lbPEmail.setForeground(Color.BLACK);
 									lblPApellidos.setForeground(Color.BLACK);
-						
+									try {
+										guardarAccion();
+									} catch (SQLException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
 						}
 						else
 							JOptionPane.showMessageDialog(null, "El nombre o apellido no puede contener caracteres distintos de letras");
@@ -444,6 +441,29 @@ public class CrearPaciente extends JDialog {
 		}
 		return btnPaciente;
 	}
+	protected void guardarAccion() throws SQLException {
+		List<Accion> devolverAccionesAdmin = pbd.devolverAccionesAdmin();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" +numeroAccion;
+		
+		String nombrePaciente=txtPNombre.getText();
+		String apellidoPaciente=txtPApellidos.getText();
+		
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());	
+		
+		
+		String mensajeAccion = "El aministrador " + codAdmin + " ha registrado al paciente " + nombrePaciente + " " + apellidoPaciente;
+		
+		Accion a = new Accion(naccion, codAdmin,  fecha, hora, mensajeAccion);
+		
+		pbd.guardarAccion(a);
+		
+	}
+
 	/**
 	 * Devulve true si los campos estan cubiertos
 	 * @return

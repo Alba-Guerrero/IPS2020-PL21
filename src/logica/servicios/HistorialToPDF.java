@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 
-
 import logica.AsignaCausa;
 import logica.AsignaDiagnostico;
 import logica.AsignaEnfermPrev;

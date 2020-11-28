@@ -8,13 +8,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import logica.Administrativo;
 import logica.servicios.ParserBaseDeDatos;
 import ui.admin.AsignarVacaciones;
+import ui.admin.AñadirEmpleado;
 import ui.admin.CrearEquipo;
 import ui.admin.CrearPaciente;
 import ui.admin.PanelCitas;
 import ui.admin.VentanaJornada;
 import ui.admin.VentanaVerCita;
+import ui.medico.VentanaMedicoCita;
 
 import javax.swing.JButton;
 import java.awt.FlowLayout;
@@ -26,6 +29,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.SystemColor;
+import javax.swing.border.TitledBorder;
 
 public class VentanaAdministrador extends JDialog {
 
@@ -34,36 +38,27 @@ public class VentanaAdministrador extends JDialog {
 	private JPanel pnCentro;
 	private JButton btnCancelar;
 	private JButton btnJornada;
-	private JPanel panel1;
 	private JButton btnAsignarCitas;
-	private JPanel panel2;
-	private JPanel panel3;
-	private JPanel panel4;
-	private JPanel panel5;
-	private JPanel panel7;
-	private JPanel panel9;
-	private JPanel panel10;
-	private JPanel panel11;
-	private JPanel panel12;
-	private JPanel panel6;
-	private JPanel panel8;
+	private JPanel panelPaciente;
 	private JLabel lblSelecciona;
-	private JPanel panel8_1;
-	private JPanel panel;
-	private JPanel panel_1;
-	private JPanel panel_2;
-	private JPanel panel_3;
-	private JButton btnNewButton;
+	private JButton btnCalendarioCitas;
 
 	private String codAdmin;
-	private JPanel panel_4;
-	private JPanel panel_5;
-	private JButton btnNewButton_1;
-	private JPanel panel_6;
-	private JPanel panel_7;
-	private JPanel panel_8;
+	private JButton btnDarVacaciones;
 	private JButton btnAadirPaciente;
 	private JButton btnCrearEquipo;
+	private JPanel panelEmpleados;
+	private JPanel panel;
+	private JPanel panel_1;
+	private JLabel lblOpcionesDePacientes;
+	private JLabel lblOpcionesDeEmpleados;
+	private JPanel panel_2;
+	private JLabel lblBienvenido;
+	private JButton btnNewButton_2;
+	private JPanel panel_3;
+	private JLabel lblNewLabel;
+	private JLabel lblNewLabel_1;
+	private JButton btnAñadirEmpleado;
 
 	/**
 	 * Create the frame.
@@ -78,9 +73,9 @@ public class VentanaAdministrador extends JDialog {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		contentPane.add(getPanel_2(), BorderLayout.NORTH);
 		contentPane.add(getPnSur(), BorderLayout.SOUTH);
 		contentPane.add(getPnCentro(), BorderLayout.CENTER);
-		contentPane.add(getLblSelecciona(), BorderLayout.NORTH);
 	}
 
 	private JPanel getPnSur() {
@@ -97,34 +92,9 @@ public class VentanaAdministrador extends JDialog {
 		if (pnCentro == null) {
 			pnCentro = new JPanel();
 			pnCentro.setBackground(SystemColor.controlHighlight);
-			pnCentro.setLayout(new GridLayout(0, 11, 0, 0));
-			pnCentro.add(getPanel1());
-			pnCentro.add(getPanel2());
-			pnCentro.add(getPanel3());
-			pnCentro.add(getPanel4());
-			pnCentro.add(getPanel5());
-			pnCentro.add(getPanel6());
-			pnCentro.add(getPanel7());
-			pnCentro.add(getPanel_4());
-			pnCentro.add(getPanel_5());
-			pnCentro.add(getPanel8());
-			pnCentro.add(getPanel_6());
-			pnCentro.add(getPanel_7());
-			pnCentro.add(getBtnNewButton_1_1());
-			pnCentro.add(getPanel9());
-			pnCentro.add(getBtnJornada());
-			pnCentro.add(getPanel10());
-			pnCentro.add(getBtnNewButton());
-			pnCentro.add(getPanel11());
-			pnCentro.add(getBtnAsignarCitas());
-			pnCentro.add(getPanel8_1());
-			pnCentro.add(getBtnAadirPaciente());
-			pnCentro.add(getPanel());
-			pnCentro.add(getPanel_1());
-			pnCentro.add(getPanel_8());
-			pnCentro.add(getPanel_2());
-			pnCentro.add(getPanel_3());
-			pnCentro.add(getPanel12());
+			pnCentro.setLayout(new GridLayout(1, 2, 0, 0));
+			pnCentro.add(getPanelPaciente());
+			pnCentro.add(getPanel_9());
 		}
 		return pnCentro;
 	}
@@ -143,7 +113,8 @@ public class VentanaAdministrador extends JDialog {
 	}
 	private JButton getBtnJornada() {
 		if (btnJornada == null) {
-			btnJornada = new JButton("Asignar jornada");
+			btnJornada = new JButton("Asignar jornadas laborales");
+			btnJornada.setFont(new Font("Tahoma", Font.PLAIN, 18));
 			btnJornada.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					
@@ -157,18 +128,10 @@ public class VentanaAdministrador extends JDialog {
 		}
 		return btnJornada;
 	}
-
-
-	private JPanel getPanel1() {
-		if (panel1 == null) {
-			panel1 = new JPanel();
-			panel1.setBackground(SystemColor.controlHighlight);
-		}
-		return panel1;
-	}
 	private JButton getBtnAsignarCitas() {
 		if (btnAsignarCitas == null) {
 			btnAsignarCitas = new JButton("Asignar Citas");
+			btnAsignarCitas.setFont(new Font("Tahoma", Font.PLAIN, 18));
 			btnAsignarCitas.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					
@@ -183,87 +146,18 @@ public class VentanaAdministrador extends JDialog {
 		}
 		return btnAsignarCitas;
 	}
-
-
-	private JPanel getPanel2() {
-		if (panel2 == null) {
-			panel2 = new JPanel();
-			panel2.setBackground(SystemColor.controlHighlight);
+	private JPanel getPanelPaciente() {
+		if (panelPaciente == null) {
+			panelPaciente = new JPanel();
+			panelPaciente.setFont(new Font("Tahoma", Font.PLAIN, 18));
+			panelPaciente.setBackground(SystemColor.controlHighlight);
+			panelPaciente.setLayout(new GridLayout(8, 1, 0, 0));
+			panelPaciente.add(getPanel_10());
+			panelPaciente.add(getBtnAadirPaciente());
+			panelPaciente.add(getBtnAsignarCitas());
+			panelPaciente.add(getBtnCalendarioCitas());
 		}
-		return panel2;
-	}
-
-
-	private JPanel getPanel3() {
-		if (panel3 == null) {
-			panel3 = new JPanel();
-			panel3.setBackground(SystemColor.controlHighlight);
-		}
-		return panel3;
-	}
-	private JPanel getPanel4() {
-		if (panel4 == null) {
-			panel4 = new JPanel();
-			panel4.setBackground(SystemColor.controlHighlight);
-		}
-		return panel4;
-	}
-	private JPanel getPanel5() {
-		if (panel5 == null) {
-			panel5 = new JPanel();
-			panel5.setBackground(SystemColor.controlHighlight);
-		}
-		return panel5;
-	}
-	private JPanel getPanel7() {
-		if (panel7 == null) {
-			panel7 = new JPanel();
-			panel7.setBackground(SystemColor.controlHighlight);
-		}
-		return panel7;
-	}
-	private JPanel getPanel9() {
-		if (panel9 == null) {
-			panel9 = new JPanel();
-			panel9.setBackground(SystemColor.controlHighlight);
-		}
-		return panel9;
-	}
-	private JPanel getPanel10() {
-		if (panel10 == null) {
-			panel10 = new JPanel();
-			panel10.setBackground(SystemColor.controlHighlight);
-		}
-		return panel10;
-	}
-	private JPanel getPanel11() {
-		if (panel11 == null) {
-			panel11 = new JPanel();
-			panel11.setBackground(SystemColor.controlHighlight);
-		}
-		return panel11;
-	}
-	private JPanel getPanel12() {
-		if (panel12 == null) {
-			panel12 = new JPanel();
-			panel12.setBackground(SystemColor.controlHighlight);
-			panel12.add(getBtnCrearEquipo());
-		}
-		return panel12;
-	}
-	private JPanel getPanel6() {
-		if (panel6 == null) {
-			panel6 = new JPanel();
-			panel6.setBackground(SystemColor.controlHighlight);
-		}
-		return panel6;
-	}
-	private JPanel getPanel8() {
-		if (panel8 == null) {
-			panel8 = new JPanel();
-			panel8.setBackground(SystemColor.controlHighlight);
-		}
-		return panel8;
+		return panelPaciente;
 	}
 	private JLabel getLblSelecciona() {
 		if (lblSelecciona == null) {
@@ -281,7 +175,7 @@ public class VentanaAdministrador extends JDialog {
 	 */
 	protected void asignarJornadaLaboral() throws SQLException {
 		
-		VentanaJornada vj = new VentanaJornada(codAdmin);
+		VentanaJornada vj = new VentanaJornada(codAdmin, null);
 		vj.setLocationRelativeTo(null);
 		vj.setResizable(true);
 		vj.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
@@ -315,70 +209,23 @@ protected void verCalendarioCitas() {
 		vca.setLocationRelativeTo(this);
 		
 	}
-	private JPanel getPanel8_1() {
-		if (panel8_1 == null) {
-			panel8_1 = new JPanel();
-			panel8_1.setBackground(SystemColor.controlHighlight);
-		}
-		return panel8_1;
-	}
-	private JPanel getPanel() {
-		if (panel == null) {
-			panel = new JPanel();
-			panel.setBackground(SystemColor.controlHighlight);
-		}
-		return panel;
-	}
-	private JPanel getPanel_1() {
-		if (panel_1 == null) {
-			panel_1 = new JPanel();
-			panel_1.setBackground(SystemColor.controlHighlight);
-		}
-		return panel_1;
-	}
-	private JPanel getPanel_2() {
-		if (panel_2 == null) {
-			panel_2 = new JPanel();
-			panel_2.setBackground(SystemColor.controlHighlight);
-		}
-		return panel_2;
-	}
-	private JPanel getPanel_3() {
-		if (panel_3 == null) {
-			panel_3 = new JPanel();
-			panel_3.setBackground(SystemColor.controlHighlight);
-		}
-		return panel_3;
-	}
-	private JButton getBtnNewButton() {
-		if (btnNewButton == null) {
-			btnNewButton = new JButton("Calendario citas");
-			btnNewButton.addActionListener(new ActionListener() {
+	private JButton getBtnCalendarioCitas() {
+		if (btnCalendarioCitas == null) {
+			btnCalendarioCitas = new JButton("Calendario citas");
+			btnCalendarioCitas.setFont(new Font("Tahoma", Font.PLAIN, 18));
+			btnCalendarioCitas.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					verCalendarioCitas();
 				}
 			});
 		}
-		return btnNewButton;
-	}
-	private JPanel getPanel_4() {
-		if (panel_4 == null) {
-			panel_4 = new JPanel();
-			panel_4.setBackground(SystemColor.controlHighlight);
-		}
-		return panel_4;
-	}
-	private JPanel getPanel_5() {
-		if (panel_5 == null) {
-			panel_5 = new JPanel();
-			panel_5.setBackground(SystemColor.controlHighlight);
-		}
-		return panel_5;
+		return btnCalendarioCitas;
 	}
 	private JButton getBtnNewButton_1_1() {
-		if (btnNewButton_1 == null) {
-			btnNewButton_1 = new JButton("Dar vacaciones");
-			btnNewButton_1.addActionListener(new ActionListener() {
+		if (btnDarVacaciones == null) {
+			btnDarVacaciones = new JButton("Dar vacaciones");
+			btnDarVacaciones.setFont(new Font("Tahoma", Font.PLAIN, 18));
+			btnDarVacaciones.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
 						abrirVacaciones();
@@ -389,7 +236,7 @@ protected void verCalendarioCitas() {
 				}
 			});
 		}
-		return btnNewButton_1;
+		return btnDarVacaciones;
 	}
 	protected void abrirVacaciones() throws SQLException {
 		AsignarVacaciones av = new AsignarVacaciones(codAdmin);
@@ -398,31 +245,10 @@ protected void verCalendarioCitas() {
 		av.setResizable(true);
 		av.setModal(true);
 	}
-
-	private JPanel getPanel_6() {
-		if (panel_6 == null) {
-			panel_6 = new JPanel();
-			panel_6.setBackground(SystemColor.controlHighlight);
-		}
-		return panel_6;
-	}
-	private JPanel getPanel_7() {
-		if (panel_7 == null) {
-			panel_7 = new JPanel();
-			panel_7.setBackground(SystemColor.controlHighlight);
-		}
-		return panel_7;
-	}
-	private JPanel getPanel_8() {
-		if (panel_8 == null) {
-			panel_8 = new JPanel();
-			panel_8.setBackground(SystemColor.controlHighlight);
-		}
-		return panel_8;
-	}
 	private JButton getBtnAadirPaciente() {
 		if (btnAadirPaciente == null) {
 			btnAadirPaciente = new JButton("A\u00F1adir Paciente");
+			btnAadirPaciente.setFont(new Font("Tahoma", Font.PLAIN, 18));
 			btnAadirPaciente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					añdirPaciente();
@@ -435,7 +261,7 @@ protected void verCalendarioCitas() {
 	
 protected void añdirPaciente() {
 		
-		CrearPaciente cp= new CrearPaciente();
+		CrearPaciente cp= new CrearPaciente(codAdmin);
 cp.setLocationRelativeTo(null);
 		cp.setResizable(true);
 		cp.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
@@ -444,7 +270,8 @@ cp.setLocationRelativeTo(null);
 	}
 	private JButton getBtnCrearEquipo() {
 		if (btnCrearEquipo == null) {
-			btnCrearEquipo = new JButton("CrearEquipo");
+			btnCrearEquipo = new JButton("Crear Equipo");
+			btnCrearEquipo.setFont(new Font("Tahoma", Font.PLAIN, 18));
 			btnCrearEquipo.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
@@ -460,10 +287,156 @@ cp.setLocationRelativeTo(null);
 	}
 	
 	private void abrirCrearEquipo() throws SQLException {
-		CrearEquipo cp= new CrearEquipo();
+		CrearEquipo cp= new CrearEquipo(codAdmin);
 		cp.setLocationRelativeTo(null);
 		cp.setResizable(true);
 		cp.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
 		cp.setVisible(true);
+	}
+	private JPanel getPanel_9() {
+		if (panelEmpleados == null) {
+			panelEmpleados = new JPanel();
+			panelEmpleados.setFont(new Font("Tahoma", Font.PLAIN, 18));
+			panelEmpleados.setBackground(SystemColor.controlHighlight);
+			panelEmpleados.setLayout(new GridLayout(8, 1, 0, 0));
+			panelEmpleados.add(getPanel_1_1());
+			panelEmpleados.add(getBtnCrearEquipo());
+			panelEmpleados.add(getBtnJornada());
+			panelEmpleados.add(getBtnNewButton_1_1());
+			panelEmpleados.add(getBtnAñadirEmpleado());
+		}
+	
+		return panelEmpleados;
+	}
+	private JPanel getPanel_10() {
+		if (panel == null) {
+			panel = new JPanel();
+			panel.setBackground(SystemColor.controlHighlight);
+			panel.setLayout(null);
+			panel.add(getLblOpcionesDePacientes());
+		}
+		return panel;
+	}
+	private JPanel getPanel_1_1() {
+		if (panel_1 == null) {
+			panel_1 = new JPanel();
+			panel_1.setBackground(SystemColor.controlHighlight);
+			panel_1.setLayout(null);
+			panel_1.add(getLblOpcionesDeEmpleados());
+		}
+		return panel_1;
+	}
+	private JLabel getLblOpcionesDePacientes() {
+		if (lblOpcionesDePacientes == null) {
+			lblOpcionesDePacientes = new JLabel("Opciones de pacientes");
+			lblOpcionesDePacientes.setForeground(SystemColor.windowBorder);
+			lblOpcionesDePacientes.setFont(new Font("Tahoma", Font.BOLD, 19));
+			lblOpcionesDePacientes.setBounds(159, 13, 252, 43);
+		}
+		return lblOpcionesDePacientes;
+	}
+	private JLabel getLblOpcionesDeEmpleados() {
+		if (lblOpcionesDeEmpleados == null) {
+			lblOpcionesDeEmpleados = new JLabel("Opciones de empleados");
+			lblOpcionesDeEmpleados.setBounds(166, 13, 250, 43);
+			lblOpcionesDeEmpleados.setForeground(SystemColor.windowBorder);
+			lblOpcionesDeEmpleados.setFont(new Font("Tahoma", Font.BOLD, 19));
+		}
+		return lblOpcionesDeEmpleados;
+	}
+	private JPanel getPanel_2() {
+		if (panel_2 == null) {
+			panel_2 = new JPanel();
+			panel_2.setLayout(new GridLayout(0, 3, 0, 0));
+			panel_2.add(getLblSelecciona());
+			panel_2.add(getLblBienvenido());
+			panel_2.add(getPanel_3());
+		}
+		return panel_2;
+	}
+	private JLabel getLblBienvenido() {
+		if (lblBienvenido == null) {
+			Administrativo admin=getAdmin();
+			lblBienvenido = new JLabel("Bienvenido/a "+admin.getNombre()+", "+admin.getApelliod());
+			lblBienvenido.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		}
+		return lblBienvenido;
+	}
+	
+	private Administrativo getAdmin() {
+		Administrativo admin= null;
+		ParserBaseDeDatos pbd = new ParserBaseDeDatos();
+		try {
+			admin =pbd.getAdmin(codAdmin);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.err.println(admin);
+		return admin;
+		
+	}
+	private JButton getBtnNewButton_2() {
+		if (btnNewButton_2 == null) {
+			btnNewButton_2 = new JButton("Cerrar sesi\u00F3n");
+			btnNewButton_2.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					ventanaInicio();
+					dispose();
+							}
+				
+			});
+		}
+		return btnNewButton_2;
+	}
+	
+	
+	
+	private void ventanaInicio() {
+			VentanaInicio vmc =new VentanaInicio();
+			vmc.setLocationRelativeTo(null);
+			vmc.setVisible(true);
+	}
+		
+	private JPanel getPanel_3() {
+		if (panel_3 == null) {
+			panel_3 = new JPanel();
+			panel_3.setLayout(new GridLayout(0, 3, 0, 0));
+			panel_3.add(getLabel_1());
+			panel_3.add(getLabel_2());
+			panel_3.add(getBtnNewButton_2());
+		}
+		return panel_3;
+	}
+	private JLabel getLabel_1() {
+		if (lblNewLabel == null) {
+			lblNewLabel = new JLabel("");
+		}
+		return lblNewLabel;
+	}
+	private JLabel getLabel_2() {
+		if (lblNewLabel_1 == null) {
+			lblNewLabel_1 = new JLabel("");
+		}
+		return lblNewLabel_1;
+	}
+	private JButton getBtnAñadirEmpleado() {
+		if (btnAñadirEmpleado == null) {
+			btnAñadirEmpleado = new JButton("A\u00F1adir empleado a la plantilla");
+			btnAñadirEmpleado.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					abrirVentanaAñadir();
+				}
+			});
+			btnAñadirEmpleado.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		}
+		return btnAñadirEmpleado;
+	}
+	
+	private void abrirVentanaAñadir() {
+		AñadirEmpleado ae = new AñadirEmpleado(codAdmin);
+		ae.setVisible(true);
+		ae.setLocationRelativeTo(null);
+		ae.setResizable(true);
 	}
 }

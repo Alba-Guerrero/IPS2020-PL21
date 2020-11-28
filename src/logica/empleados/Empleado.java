@@ -4,13 +4,15 @@
 package logica.empleados;
 
 import java.sql.Time;
-import java.util.Date;
+import java.sql.Date;
 
 /**
  * @author María
  *
  */
-public abstract class Empleado {
+
+public  class Empleado {
+
 	
 	public String codeEmpleado;
 	public String pass;

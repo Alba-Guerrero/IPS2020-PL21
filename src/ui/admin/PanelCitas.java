@@ -426,7 +426,7 @@ public class PanelCitas extends JDialog {
 									dispose();
 								}
 							}
-							else {
+							else if(equipos.size()>0){
 								if(checkSala()) {
 									crearCitaEquipo();
 									JOptionPane.showMessageDialog(null, "Su cita se ha generado con exito");
@@ -701,6 +701,38 @@ public class PanelCitas extends JDialog {
 		
 	}
 	
+	private void guardarAccionEquipo() throws SQLException {
+		List<Accion> devolverAccionesAdmin = pbd.devolverAccionesAdmin();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" +numeroAccion;
+		
+		String nombrePaciente = pacienteCita.getNombre();
+		String apellidoPaciente = pacienteCita.getApellido();
+		
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());	
+		
+		String infoMedicos  ="";
+		
+		for(int i =0; i<equipos.size(); i++) {
+			if(i==equipos.size()) {
+				infoMedicos += equipos.get(i).getNumEquipo();
+			}
+			else {
+				infoMedicos += equipos.get(i).getNumEquipo() + ",";
+			}
+		}
+		
+		String mensajeAccion = "Cita asignada a " + nombrePaciente + " " + apellidoPaciente + " con " + infoMedicos;
+		
+		Accion a = new Accion(naccion, codAdmin,  fecha, hora, mensajeAccion);
+		
+		pbd.guardarAccion(a);
+	}
+	
 	private void guardarAccion() throws SQLException {
 		List<Accion> devolverAccionesAdmin = pbd.devolverAccionesAdmin();
 		int numeroAccion = 1;
@@ -718,7 +750,13 @@ public class PanelCitas extends JDialog {
 		String infoMedicos  ="";
 		
 		for(int i =0; i<medicos.size(); i++) {
-			infoMedicos += medicos.get(i).getNombre() + " " + medicos.get(i).getApellido() +",";
+			if(i==equipos.size()) {
+				infoMedicos += medicos.get(i).getNombre() + " " + medicos.get(i).getApellido();
+			}
+			else {
+				infoMedicos += medicos.get(i).getNombre() + " " + medicos.get(i).getApellido() +",";
+			}
+			
 		}
 		
 		String mensajeAccion = "Cita asignada a " + nombrePaciente + " " + apellidoPaciente + " con " + infoMedicos;
@@ -1414,12 +1452,13 @@ public class PanelCitas extends JDialog {
 		}
 		return scrollPaneListaEnfermeros;
 	}
+	
 	private JList<Enfermero> getList_1_2() {
 		if (list_1 == null) {
 			list_1 = new JList<Enfermero>();
 			modeloListEnf = new DefaultListModel<Enfermero>();
 			try {
-				((List<Enfermero>) modeloListEnf).addAll(pbd.listarEnfermero());
+				 modeloListEnf.addAll(pbd.listarEnfermero());
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -1454,6 +1493,7 @@ public class PanelCitas extends JDialog {
 		}
 		return list_1;
 	}
+	
 	private JPanel getPanelFiltrosEnf() {
 		if (panelFiltrosEnf == null) {
 			panelFiltrosEnf = new JPanel();
@@ -1534,7 +1574,7 @@ public class PanelCitas extends JDialog {
 			btnFiltroNomEmp = new JButton("Filtrar");
 			btnFiltroNomEmp.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					//pbd.filtrarNombreEnfermero()
+					//pbd.filtrarNombreEnfermero();
 					
 				}
 			});
@@ -1736,7 +1776,7 @@ public class PanelCitas extends JDialog {
 	 * 
 	 * @throws SQLException
 	 */
-	private void crearCitaEquipo() {
+	private void crearCitaEquipo(){
 
 		Date dateIncio = (Date) timeSpinnerInicio.getValue();
 		Time timeInicio = new Time(dateIncio.getTime());
@@ -1754,7 +1794,7 @@ public class PanelCitas extends JDialog {
 				c = new Cita(pacienteCita.getCodePaciente(), timeInicio, timeFin, sDate, sala,
 						chckbxEsUrgente.isSelected(), equipos.get(i).getNumEquipo());
 				pbd.crearCitaEquipo(c);
-				guardarAccion();
+				guardarAccionEquipo();
 				if(c.isUrgente())
 					Email.enviarCorreo("roloalvarez7@gmail.com", "sbeiaolebhiewuzz", "UO266007@uniovi.es", pacienteCita, c);
 
@@ -1762,6 +1802,7 @@ public class PanelCitas extends JDialog {
 				e.printStackTrace();
 			}
 		}
+		
 	}
 	
 }

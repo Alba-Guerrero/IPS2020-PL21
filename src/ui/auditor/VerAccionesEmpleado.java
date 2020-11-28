@@ -64,6 +64,7 @@ public class VerAccionesEmpleado extends JDialog {
 	 * Create the frame.
 	 */
 	public VerAccionesEmpleado() {
+		setTitle("Registro de acciones");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 870, 515);;
 		contentPane = new JPanel();
