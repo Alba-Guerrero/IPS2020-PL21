@@ -78,6 +78,7 @@ public class DatosGerente extends JDialog {
 	 * Create the frame.
 	 */
 	public DatosGerente() {
+		setTitle("Estad\u00EDstica diagn\u00F3sticos");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1300, 750);
 		contentPane = new JPanel();
@@ -134,7 +135,7 @@ public class DatosGerente extends JDialog {
 
 	private JTable getTable() {
 		if (table == null) {
-			String[] nombreColumnas= {" Codigo diagnóstico ", " Nombre diagnóstico "," Nº veces "};
+			String[] nombreColumnas= {" Codigo diagnóstico ", " Nombre diagnóstico "," Nº veces ", "Porcentaje"};
 			modeloTabla= new ModeloNoEditable(nombreColumnas,0);
 			table = new JTable(modeloTabla);
 			table.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
@@ -163,49 +164,77 @@ public class DatosGerente extends JDialog {
 
 	private void añadirFilas(boolean dia) {
 		borrarModeloTabla();
-		Object[] nuevaFila=new Object[3];
-		List<Diagnostico> diagnosticos = new ArrayList<Diagnostico>();
+		Object[] nuevaFila=new Object[4];
+		List<AsignaDiagnostico> diagnosticosAsignados = new ArrayList<AsignaDiagnostico>();
 		try {
-			diagnosticos = pbd.listarDiagnosticos();
+			diagnosticosAsignados = pbd.asignaDiagnostico();
 		} catch (SQLException e) {
 
 			e.printStackTrace();
 		}
+		float total = diagnosticosAsignados.size();
+//		List<Diagnostico> diagnosticos = new ArrayList<Diagnostico>();
+//		try {
+//			diagnosticos = pbd.listarDiagnosticos();
+//		} catch (SQLException e) {
+//
+//			e.printStackTrace();
+//		}
 		if(dia) {
 			Date dateIn = getDateChooser().getDate();
 			java.sql.Date sDateIn = new java.sql.Date(dateIn.getTime());
 			
 			Date dateFin = getDateChooser_1().getDate();
 			java.sql.Date sDateFin = new java.sql.Date(dateFin.getTime());
-			for(Diagnostico diagnostico: diagnosticos) {
+			for(int i=0; i<diagnosticosAsignados.size(); i++) {
 				int cant = 0;
-				nuevaFila[0] = diagnostico.getNumeroDiagnostico();
-				nuevaFila[1]= diagnostico.getNombre();
+				String numDiagnostico = "";
 				try {
-					cant = pbd.listarDiagnosticosAsignadosPorFecha(diagnostico.getNombre(), sDateIn, sDateFin);
+					numDiagnostico = pbd.buscarCodDiagnosticoPorFechas(diagnosticosAsignados.get(i).getNombreDiagnostico(), sDateIn, sDateFin);
 				} catch (SQLException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
+				}
+				nuevaFila[0] = numDiagnostico;
+				nuevaFila[1]= diagnosticosAsignados.get(i).getNombreDiagnostico();
+				for(int j=1; j<diagnosticosAsignados.size(); j++) {
+					if(diagnosticosAsignados.get(i).getNombreDiagnostico().equals(diagnosticosAsignados.get(j).getNombreDiagnostico())) {
+						cant++;
+						diagnosticosAsignados.remove(j);
+					}
 				}
 				nuevaFila[2]= cant + "";
 				int datoss1 = cant;
-				dataset.setValue(datoss1,"", diagnostico.getNombre());
+				dataset.setValue(datoss1,"", diagnosticosAsignados.get(i).getNombreDiagnostico());
 				modeloTabla.addRow(nuevaFila);
+				float porcentaje = ((cant/total) * 100);
+				nuevaFila[3] = porcentaje + "%";
 			}
 			
 		}
 		else {
-			for(Diagnostico diagnostico: diagnosticos) {
+			for(int i=0; i<diagnosticosAsignados.size(); i++) {
 				int cant = 0;
-				nuevaFila[0] = diagnostico.getNumeroDiagnostico();
-				nuevaFila[1]= diagnostico.getNombre();
+				String numDiagnostico = "";
 				try {
-					cant = pbd.listarDiagnosticosAsignados(diagnostico.getNombre());
+					numDiagnostico = pbd.buscarCodDiagnostico(diagnosticosAsignados.get(i).getNombreDiagnostico());
 				} catch (SQLException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				nuevaFila[0] = numDiagnostico;
+				nuevaFila[1]= diagnosticosAsignados.get(i).getNombreDiagnostico();
+				for(int j=1; j<diagnosticosAsignados.size(); j++) {
+					if(diagnosticosAsignados.get(i).getNombreDiagnostico().equals(diagnosticosAsignados.get(j).getNombreDiagnostico())) {
+						cant++;
+						diagnosticosAsignados.remove(j);
+					}
+				}
 				nuevaFila[2]= cant + "";
+				float porcentaje = ((cant/total) * 100);
+				nuevaFila[3] = porcentaje + "%";
 				int datoss1 = cant;
-				dataset.setValue(datoss1,"", diagnostico.getNombre());
+				dataset.setValue(datoss1,"", diagnosticosAsignados.get(i).getNombreDiagnostico());
 				modeloTabla.addRow(nuevaFila);
 			}
 		}

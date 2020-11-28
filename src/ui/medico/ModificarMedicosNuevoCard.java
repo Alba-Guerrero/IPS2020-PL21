@@ -92,7 +92,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private ModeloNoEditable modeloTablaVacunas;
 	private ModeloNoEditable modeloTablaDiagnosticos;
 	private ModeloNoEditable modeloTablaProcedimientos;
-
+	
 	
 	private JPanel contentPane;
 	private JPanel panelSur;
@@ -140,7 +140,6 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton btnAñadirNuevo;
 	private JComboBox cbCausas;
 
-	private List<String> nombresCausas;
 	private List<String> nombresAntecedentes;
 	private ModificarMedicosNuevoCard mm;
 	private JPanel pnPreinscripciones;
@@ -309,12 +308,40 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JLabel lblResumenProcedimientos;
 
 	private JPanel pnVacio27;
-
+	
+	//panel causas
+	private JPanel panelIzqCausas;
+	private JPanel panelDchaCausas;
+	private JLabel lblCausasSelecc;
+	private JPanel panel;
+	private JPanel panelElimCausa;
+	private JButton btnElimCausa;
+	private JScrollPane scrollPaneCausa;
+	private JTable tableCausa;
+	private ModeloNoEditable modeloTablaCausas;
+	private boolean tablaCausaBool = false;
+	private List<Causas> listaCausasSeleccionadas;
+	private JPanel panelMedioCausas;
+	private JButton btnAnadirCausa;
+	private JTextField txtFiltrarCausa;
+	private JButton btnFiltroCausa;
+	private Component verticalStrutCausa;
+	private Component verticalStrutCausa3;
+	private Component verticalStructCausa3;
+	private JLabel lblNombreCausa;
+	private JLabel lblFiltrarCausa;
+	private Component verticalStructCausa4;
+	private Component verticalStructCausa5;
+	private JButton btnSeleccionarCausa;
+	private List<Causas> nombresCausas;
+	private String codmedico;
+	
 	/**
 	 * Create the frame.
 	 * @throws SQLException 
 	 */
-	public ModificarMedicosNuevoCard(Paciente paciente, Cita cita) throws SQLException {
+	public ModificarMedicosNuevoCard(String codmedico, Paciente paciente, Cita cita) throws SQLException {
+		this.codmedico = codmedico;
 		setTitle("Atender Consulta");
 		mm = this;
 		this.paciente = paciente;
@@ -470,12 +497,318 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JPanel getPanelCausas() throws SQLException{
 		if (panelCausas == null) {
 			panelCausas = new JPanel();
-			panelCausas.setLayout(new BorderLayout(0, 0));
-			panelCausas.add(getPanel_2(), BorderLayout.NORTH);
-			panelCausas.add(getPanel_4(), BorderLayout.CENTER);
+			panelCausas.setLayout(new GridLayout(1, 0, 0, 0));
+			panelCausas.add(getPanelIzqCausas());
+			panelCausas.add(getPanelMedioCausas());
+			panelCausas.add(getPanelDchaCausas());
 		}
 		return panelCausas;
 	}
+	
+	// nuevo causas
+	
+	private JPanel getPanelIzqCausas() {
+		if (panelIzqCausas == null) {
+			panelIzqCausas = new JPanel();
+			panelIzqCausas.setLayout(new GridLayout(0, 1, 0, 0));
+			panelIzqCausas.add(getVerticalStrutCausa3());
+			panelIzqCausas.add(getVerticalStructCausa3());
+			panelIzqCausas.add(getLblNombreCausa());
+			panelIzqCausas.add(getLblFiltrarCausa());
+			panelIzqCausas.add(getVerticalStructCausa4());
+			panelIzqCausas.add(getVerticalStructCausa5());
+		}
+		return panelIzqCausas;
+	}
+	private JPanel getPanelDchaCausas() {
+		if (panelDchaCausas == null) {
+			panelDchaCausas = new JPanel();
+			panelDchaCausas.setLayout(new BorderLayout(0, 0));
+			panelDchaCausas.add(getLblCausasSelecc(), BorderLayout.NORTH);
+			panelDchaCausas.add(getPanelTablaCausa(), BorderLayout.CENTER);
+			panelDchaCausas.add(getPanelElimCausa(), BorderLayout.SOUTH);
+		}
+		return panelDchaCausas;
+	}
+	private JLabel getLblCausasSelecc() {
+		if (lblCausasSelecc == null) {
+			lblCausasSelecc = new JLabel("Causas seleccionadas");
+		}
+		return lblCausasSelecc;
+	}
+	private JPanel getPanelTablaCausa() {
+		if (panel == null) {
+			panel = new JPanel();
+			panel.setLayout(new GridLayout(0, 1, 0, 0));
+			panel.add(getScrollPaneCausa());
+		}
+		return panel;
+	}
+	private JPanel getPanelElimCausa() {
+		if (panelElimCausa == null) {
+			panelElimCausa = new JPanel();
+			panelElimCausa.add(getBtnElimCausa());
+		}
+		return panelElimCausa;
+	}
+	private JButton getBtnElimCausa() {
+		if (btnElimCausa == null) {
+			btnElimCausa = new JButton("Borrar causa");
+			FlowLayout flowLayout = (FlowLayout) btnElimCausa.getLayout();
+			flowLayout.setAlignment(FlowLayout.RIGHT);
+			btnElimCausa.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					eliminarCausa();
+				}
+			});
+		}
+		return btnElimCausa;
+	}
+	
+	private void eliminarCausa() {
+		int fila=tableCausa.getSelectedRow();
+		
+		if (fila != -1) {
+			int res = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea borrar la causa?","Mensaje de confirmación",JOptionPane.YES_NO_OPTION);
+			if(res == JOptionPane.YES_OPTION) {	
+					
+					listaCausasSeleccionadas.remove(tableCausa.getSelectedRow());
+					
+					añadirFilasCausas();
+			
+			}						
+		}		
+	}
+	
+	private JScrollPane getScrollPaneCausa() {
+		if (scrollPaneCausa == null) {
+			scrollPaneCausa = new JScrollPane();
+			scrollPaneCausa.setViewportView(getTableCausa());
+		}
+		return scrollPaneCausa;
+	}
+	private JTable getTableCausa() {
+		if (tableCausa == null) {
+			tableCausa = new JTable();
+			String[] nombreColumnas= {"Nombre"};
+			modeloTablaCausas= new ModeloNoEditable(nombreColumnas,0);
+			tableCausa = new JTable(modeloTablaCausas);
+			tableCausa.getTableHeader().setReorderingAllowed(false);//Evita que se pueda mpver las columnas
+			tableCausa.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tableCausa.getTableHeader().setBackground(Color.LIGHT_GRAY);
+			TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tableCausa.getModel());
+			tableCausa.setRowSorter(sorter);
+			
+			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+			sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
+			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+			
+			sorter.setSortKeys(sortKeys);
+			
+			añadirFilasCausas();
+		}
+		return tableCausa;
+	}
+
+	private void añadirFilasCausas() {
+		borrarModeloTablaCausas(); // Borramos todo antes de volver a pintar
+		
+		Object[] nuevaFila=new Object[1]; // 5 son las columnas
+				
+		
+		if (tablaCausaBool) {
+			for (Causas c : listaCausasSeleccionadas) {
+				nuevaFila[0] = c.getNombreVacuna(); // El nombre de la preinscripcion
+				
+				modeloTablaCausas.addRow(nuevaFila); // Añado la fila
+			}
+		}
+		
+	}
+
+	private void borrarModeloTablaCausas() {
+		int filas = modeloTablaCausas.getRowCount();
+		for (int i = 0; i < filas; i++) {
+			modeloTablaCausas.removeRow(0);			
+		}	
+		
+	}
+	private JPanel getPanelMedioCausas() {
+		if (panelMedioCausas == null) {
+			panelMedioCausas = new JPanel();
+			panelMedioCausas.setLayout(new GridLayout(0, 1, 0, 0));
+			panelMedioCausas.add(getVerticalStrutCausa());
+			panelMedioCausas.add(getBtnAnadirCausa());
+			panelMedioCausas.add(getCbCausas());
+			panelMedioCausas.add(getTxtFiltrarCausa());
+			panelMedioCausas.add(getBtnFiltroCausa());
+			panelMedioCausas.add(getBtnSeleccionarCausa());
+		}
+		return panelMedioCausas;
+	}
+	private JButton getBtnAnadirCausa() {
+		if (btnAnadirCausa == null) {
+			btnAnadirCausa = new JButton("Crear nueva causa");
+			btnAnadirCausa.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+//					AnadirCausas ac = new AnadirCausas();
+//					ac.setLocationRelativeTo(null);
+//					ac.setResizable(true);
+//					ac.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+//					ac.setVisible(true);
+				}
+			});
+		}
+		return btnAnadirCausa;
+	}
+	private JComboBox<Causas> getCbCausas() {
+		if (cbCausas == null) {
+			cbCausas = new JComboBox<Causas>();
+			rellenarCBCausas();
+			cbCausas.setSelectedIndex(0);
+		}
+		return cbCausas;
+	}
+	
+	public void rellenarCBCausas() {
+		for (int i = 0; i < nombresCausas.size(); i++) {
+			cbCausas.insertItemAt(nombresCausas.get(i), i);
+		}
+	}
+	
+	public void ponerCausas() throws SQLException {
+		nombresCausas = new ArrayList<>() ;
+		List<Causas> causas = pbd.buscarNombreTodasCausas();
+		for(int i =0; i< causas.size(); i++) {
+			nombresCausas.add(causas.get(i));
+		}
+	}
+	
+	private JTextField getTxtFiltrarCausa() {
+		if (txtFiltrarCausa == null) {
+			txtFiltrarCausa = new JTextField();
+			txtFiltrarCausa.setColumns(10);
+		}
+		return txtFiltrarCausa;
+	}
+	private JButton getBtnFiltroCausa() {
+		if (btnFiltroCausa == null) {
+			btnFiltroCausa = new JButton("Filtrar");
+			btnFiltroCausa.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if(txtFiltrarCausa.getText().equals(""))
+						JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
+					else {	
+						filtrarPorNombreCausas(txtFiltrarCausa.getText());
+				}
+				}
+			});
+		}
+		return btnFiltroCausa;
+	}
+	protected void filtrarPorNombre(String name) {
+		for(int i=0; i < nombresCausas.size(); i++) {
+			if(nombresCausas.get(i).getNombreVacuna().equals(name)) {
+				cbCausas.setSelectedIndex(i);
+			}
+		}
+	}
+
+	private Component getVerticalStrutCausa() {
+		if (verticalStrutCausa == null) {
+			verticalStrutCausa = Box.createVerticalStrut(20);
+		}
+		return verticalStrutCausa;
+	}
+	private Component getVerticalStrutCausa3() {
+		if (verticalStrutCausa3 == null) {
+			verticalStrutCausa3 = Box.createVerticalStrut(20);
+		}
+		return verticalStrutCausa3;
+	}
+	private Component getVerticalStructCausa3() {
+		if (verticalStructCausa3 == null) {
+			verticalStructCausa3 = Box.createVerticalStrut(20);
+		}
+		return verticalStructCausa3;
+	}
+	private JLabel getLblNombreCausa() {
+		if (lblNombreCausa == null) {
+			lblNombreCausa = new JLabel("Nombre");
+		}
+		return lblNombreCausa;
+	}
+	private JLabel getLblFiltrarCausa() {
+		if (lblFiltrarCausa == null) {
+			lblFiltrarCausa = new JLabel("Filtrar por nombre");
+		}
+		return lblFiltrarCausa;
+	}
+	private Component getVerticalStructCausa4() {
+		if (verticalStructCausa4 == null) {
+			verticalStructCausa4 = Box.createVerticalStrut(20);
+		}
+		return verticalStructCausa4;
+	}
+	private Component getVerticalStructCausa5() {
+		if (verticalStructCausa5 == null) {
+			verticalStructCausa5 = Box.createVerticalStrut(20);
+		}
+		return verticalStructCausa5;
+	}
+	private JButton getBtnSeleccionarCausa() {
+		if (btnSeleccionarCausa == null) {
+			btnSeleccionarCausa = new JButton("Seleccionar causa");
+			btnSeleccionarCausa.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					añadirCausa();
+				}
+			});
+		}
+		return btnSeleccionarCausa;
+	}
+
+	protected void añadirCausa() {
+//		int indiceSeleciconado = cbCausas.getSelectedIndex(); // Lo que está seleccionado en el comboBox
+//		Causas c = null; // La preinscripcion
+//			
+//
+//		// Buscamos la preinscripcion que hay seleccionada en el comboBox
+//		int contador = 0;
+//		for (Causas causa : nombresCausas) {
+//			if (indiceSeleciconado == contador) {
+//				c = causa;
+//			}
+//			contador = contador + 1;
+//		}
+		
+		listaCausasSeleccionadas.add((Causas) cbCausas.getSelectedItem());
+		tablaCausaBool = true;
+		
+	}
+	
+	private void guardarCausas() throws SQLException {
+		String nHistorial = "" + mm.getPaciente().getHistorial();
+		Time hora =  cita.gethInicio();
+		java.sql.Date horas = new java.sql.Date(hora.getTime());
+		
+		Time hour = new Time(horas.getTime());
+		Date fecha = (Date) cita.getDate();
+		
+		java.sql.Date sDate = new java.sql.Date(fecha.getTime());
+		
+		Random r = new Random();
+		if(!listaCausasSeleccionadas.isEmpty()) {
+			for(Causas c: listaCausasSeleccionadas) {
+				String nombreCausas = c.getNombreVacuna();
+				String codcausa = "" + r.nextInt(300);
+				pbd.actualizarAsignaCausa(codcausa,nombreCausas, nHistorial, sDate, hour, codmedico);
+				//guardarAccionCausa(causas);
+			}
+		}
+		
+	}
+	
 	private JPanel getPanelVacunas() throws SQLException {
 		if (panelVacunas == null) {
 			panelVacunas = new JPanel();
@@ -668,39 +1001,12 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		return btnAñadirNuevo;
 	}
-	private JComboBox<Causas> getCbCausas() {
-		if (cbCausas == null) {
-			cbCausas = new JComboBox<Causas>();
-			rellenarCBCausas();
-			cbCausas.setSelectedIndex(0);
-		}
-		return cbCausas;
-	}
 
 	public void vaciarCBCausas() {
 		cbCausas.removeAllItems();
 	}
 
-	public void rellenarCBCausas() {
 
-		for (int i = 0; i < nombresCausas.size(); i++) {
-			cbCausas.insertItemAt(nombresCausas.get(i), i);
-		}
-	}
-
-
-	public List<String> darCausas() {
-		return nombresCausas;
-	}
-
-
-	public void añadirCausa(String causa) {
-		nombresCausas.add(causa);
-	}
-
-
-
-	
 	private JPanel getPnIzq() {
 		if (pnIzq == null) {
 			pnIzq = new JPanel();
@@ -1273,9 +1579,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	 */
 	private void guardar() throws SQLException {
 		guardarPreinscripciones();
-		if(isCausaSeleccionada()) {
-			guardarCausas();
-		}
+		guardarCausas();
 		guardarVacunas();
 		guardarDiagnosticos();
 		guardarProcedimientos();
@@ -1328,31 +1632,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		return horizontalStrut;
 	}
 	
-	protected void guardarCausas() throws SQLException {
-			String causas = getCbCausas().getSelectedItem().toString();
-			String nHistorial = "" + mm.getPaciente().getHistorial();
-			Time hora =  cita.gethInicio();
-			
-			java.sql.Date horas = new java.sql.Date(hora.getTime());
-			
-			Time hour = new Time(horas.getTime());
-			
-			Date fecha = (Date) cita.getDate();
-			
-			java.sql.Date sDate = new java.sql.Date(fecha.getTime());
-			
 
-			if(!causas.equals("")) {
-				Random r = new Random();
-				String codcausa = "" + r.nextInt(300);
-				pbd.actualizarAsignaCausa(codcausa,causas, nHistorial, sDate, hour, cita.getCodMed());
-			}
-			
-			guardarAccionCausa(causas);
-		
-		
-	}
-	
 	
 	
 	private void guardarAccionCausa(String causas) throws SQLException {
@@ -1380,13 +1660,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		pbd.guardarAccionEmpleado(a);
 		
 	} 
-	public void ponerCausas() throws SQLException {
-		nombresCausas = new ArrayList<>() ;
-		List<String> causas = pbd.buscarNombreTodasCausas();
-		for(int i =0; i< causas.size(); i++) {
-			nombresCausas.add(causas.get(i));
-		}
-	}
+
 
 
 	private JScrollPane getScrollPTablaPrescripciones() {
@@ -2207,7 +2481,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		pbd.guardarAccionEmpleado(a);
 		
 	}
-	private void filtrarPorNombre(String name) {
+	private void filtrarPorNombreCausas(String name) {
 		for(int i=0; i < nombresCausas.size(); i++) {
 			if(nombresCausas.get(i).equals(name)) {
 				cbCausas.setSelectedIndex(i);
