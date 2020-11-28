@@ -40,7 +40,7 @@ public class Email {
 	
 	public static void enviarEDO(String correoRemitente, String contraseñaRemitente, String correoRecibe, Paciente pacienteCita, Cita cita, String enfermedad) {
 		Properties prop = System.getProperties();
-		prop.put("mail.smtp.host", "smtp.gmail.com");
+		prop.put("mail.smtp.ssl.trust", "smtp.gmail.com");
 		prop.put("mail.smtp.user", correoRemitente);
 		prop.put("mail.smtp.clave", contraseñaRemitente);
 		prop.put("mail.smtp.auth", true);
