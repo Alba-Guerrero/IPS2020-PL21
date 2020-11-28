@@ -11,10 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.lowagie.text.pdf.codec.Base64.OutputStream;
+
 
 import logica.AsignaCausa;
 import logica.AsignaDiagnostico;
+import logica.AsignaEnfermPrev;
 import logica.AsignaPreinscripcion;
 import logica.AsignaVacuna;
 import logica.Paciente;
@@ -37,6 +38,8 @@ public class HistorialToPDF {
 	private List<AsignaPreinscripcion> pres;
 	private List<AsignaVacuna> vacuna;
 	private List<AsignaCausa> causa;
+	private List<AsignaEnfermPrev> enfermedad;
+	private List<Asigna> procedimineto;
 
 	public HistorialToPDF() {
 		super();
