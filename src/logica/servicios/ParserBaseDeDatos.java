@@ -103,7 +103,7 @@ public class ParserBaseDeDatos {
 	private final static String VER_CAUSAS_ASIGNADAS = "SELECT *  FROM asignacausa where historial  = ?";
 	private final static String VER_CAUSAS = "SELECT nombreCausa from causa";
 
-	private final static String VER_NOMBRE_CAUSA = "SELECT  nombrecausa FROM causa";
+	private final static String VER_NOMBRE_CAUSA = "SELECT  * FROM causa";
 	
 	private final static String VER_NOMBRE_ANTECEDENTE = "SELECT nombreAntecedente FROM antecedente";
 
@@ -261,6 +261,11 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	private final static String ADD_MEDICO = "INSERT INTO medico VALUES(?)";
 	private final static String ADD_ENFERMERO = "INSERT INTO enfermero VALUES(?)";
 	
+	private final static String VER_DIAGNOSTICOS = "SELECT * FROM asignadiagnostico";
+	
+	private final static String VER_CODDIAGNOSTICOS_FECHA = "select coddiagnostico from diagnostico where nombrediagnostico = ? and fecha >= ? and fecha <= ?";
+	
+	private final static String VER_CODDIAGNOSTICOS = "SELECT coddiagnostico FROM diagnostico where nombrediagnostico=?";
 	//FUNCIONES
 	
 	
@@ -1729,14 +1734,14 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	
 	
-	public List<String> buscarNombreTodasCausas() throws SQLException {
-		List<String> nombresCausas = new ArrayList<String>();
+	public List<Causas> buscarNombreTodasCausas() throws SQLException {
+		List<Causas> nombresCausas = new ArrayList<Causas>();
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement st = con.prepareStatement(VER_NOMBRE_CAUSA);
 		ResultSet rs = st.executeQuery();
 
 		while (rs.next()) {
-			nombresCausas.add(rs.getString(1));
+			nombresCausas.add(new Causas(rs.getString(1)));
 		}
 
 		// CERRAR EN ESTE ORDEN
@@ -3528,6 +3533,69 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		pst.close();
 		con.close();
 		return enferemedades;
+	}
+	
+	public List<AsignaDiagnostico> asignaDiagnostico() throws SQLException {
+		List<AsignaDiagnostico> diagnsoticos = new ArrayList<AsignaDiagnostico>();
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VER_DIAGNOSTICOS);
+
+		ResultSet rs = pst.executeQuery(); 
+
+		while (rs.next()) {
+			diagnsoticos.add(new AsignaDiagnostico(rs.getString("codAsigDiagnostico"), rs.getString("nombreDiagnostico"),
+					rs.getString("coddiagnostico"),rs.getString("historial"),
+				rs.getString("codempleado"),rs.getDate("fecha"),rs.getTime("hora")));
+					
+			
+		}
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return diagnsoticos;
+	}
+	
+	public String buscarCodDiagnosticoPorFechas(String nombreDiagnostico, Date sDateIn, Date sDateFin) throws SQLException {
+		String diagnsoticos = "";
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VER_CODDIAGNOSTICOS_FECHA);
+		pst.setString(1, nombreDiagnostico);
+		pst.setDate(2, sDateIn);
+		pst.setDate(3, sDateFin);
+		ResultSet rs = pst.executeQuery(); 
+
+		if (rs.next()) {
+			diagnsoticos = rs.getString(1);
+		}
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return diagnsoticos;
+	}
+	
+	public String buscarCodDiagnostico(String nombreDiagnostico) throws SQLException {
+		String diagnsoticos = "";
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VER_CODDIAGNOSTICOS);
+		pst.setString(1, nombreDiagnostico);
+		ResultSet rs = pst.executeQuery(); 
+
+		if (rs.next()) {
+			diagnsoticos = rs.getString(1);
+		}
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return diagnsoticos;
 	}
 	
 }

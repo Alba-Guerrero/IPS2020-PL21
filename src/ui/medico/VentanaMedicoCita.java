@@ -393,7 +393,7 @@ public class VentanaMedicoCita extends JDialog {
 			
 			
 			
-			ModificarMedicosNuevoCard mc = new ModificarMedicosNuevoCard(p, c);
+			ModificarMedicosNuevoCard mc = new ModificarMedicosNuevoCard(codmedico, p, c);
 			mc.setLocationRelativeTo(this);
 			mc.setResizable(true);
 			mc.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
