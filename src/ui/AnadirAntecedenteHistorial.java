@@ -48,6 +48,7 @@ public class AnadirAntecedenteHistorial extends JDialog{
 	 * @param anadirAntecedentesHistorial
 	 */
 	public AnadirAntecedenteHistorial(AnadirAntecedentesHistorial anadirAntecedentesHistorial) {
+		setModal(true);
 		setTitle("A\u00F1adir Antecedente");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 394, 218);
@@ -86,6 +87,7 @@ public class AnadirAntecedenteHistorial extends JDialog{
 				public void actionPerformed(ActionEvent e) {
 					try {
 						guardar();
+						limpiar();
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
@@ -95,6 +97,18 @@ public class AnadirAntecedenteHistorial extends JDialog{
 		return btnGuardar;
 	}
 	
+	
+	/**
+	 * Método para dejar la ventana anterior limpia
+	 */
+	protected void limpiar() {
+		
+		anadirAntecedentesHistorial.limpiar();
+	}
+
+
+
+
 	/**
 	 * Método para guardar la nueva
 	 * @throws SQLException 
@@ -119,7 +133,8 @@ public class AnadirAntecedenteHistorial extends JDialog{
 			anadirAntecedentesHistorial.actualizarAntecedente(); // Ponemos el comboBox que indica el nombre del antecedente con el que acaba de crear
 			//anadirAntecedentesHistorial.añadirFilas();
 			
-			JOptionPane.showMessageDialog(null, "Se ha añadido correctamente su antecedente y se le ha asignado al paciente.");
+			JOptionPane.showMessageDialog(null, "Se ha añadido correctamente su nuevo antecedente.");
+			
 			dispose();
 		}
 		

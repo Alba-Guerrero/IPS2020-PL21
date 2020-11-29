@@ -154,7 +154,11 @@ public class VerAntecedentes extends JDialog{
 			
 			//sorter.setSortKeys(sortKeys);
 			
-			añadirFilas();
+			try {
+				añadirFilas();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return table;
 	}
@@ -162,8 +166,9 @@ public class VerAntecedentes extends JDialog{
 	
 	/**
 	 * Método para añadir las filas a la tabla
+	 * @throws SQLException 
 	 */
-	private void añadirFilas() {
+	private void añadirFilas() throws SQLException {
 		borrarModeloTabla(); // Borramos todo antes de volver a pintar
 		
 		Object[] nuevaFila=new Object[3]; // 3 son las columnas
@@ -171,8 +176,9 @@ public class VerAntecedentes extends JDialog{
 		
 			for (AsignaAntecedente a : antecedentesAsignados) {
 				nuevaFila[0] = a.getNombreAntecedente(); // El nombre del antecedendente
+				nuevaFila[2] = pbd.buscarEmpleadoPorCodigo(a.getCodEmpleado());
 				nuevaFila[1] = a.getFecha(); // La fecha en la que se le asigno
-				nuevaFila[2] = a.getCodEmpleado(); // El empleado que se lo asigno
+				//nuevaFila[2] = a.getCodEmpleado(); // El empleado que se lo asigno
 
 				
 				modeloTabla.addRow(nuevaFila); // Añado la fila

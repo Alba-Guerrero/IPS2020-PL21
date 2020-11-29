@@ -411,6 +411,16 @@ public class CrearEquipo extends JDialog {
 			}
 		}
 		
+		
+		for(int i = 0; i<enfermeros.size(); i++) {
+			if(i == enfermeros.size()) {
+				mensajeMedicos += enfermeros.get(i).toString();
+			}
+			else {
+				mensajeMedicos += enfermeros.get(i).toString() + ", ";
+			}
+		}
+		
 		String mensajeAccion = "El aministrador " + codAdmin + " ha creado el equipo " + numEquipo + " formado por " + mensajeMedicos;
 		
 		Accion a = new Accion(naccion, codAdmin,  fecha, hora, mensajeAccion);
@@ -438,6 +448,7 @@ public class CrearEquipo extends JDialog {
 			 pbd.asignarEquipo(codequipo, numEquipo, codEmpleado);
 		 }
 		 guardarAccion(numEquipo);
+		 
 	}
 	
 	private boolean camposCubiertos() {

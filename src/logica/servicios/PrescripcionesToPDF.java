@@ -16,6 +16,7 @@ import java.util.Map;
 
 import logica.AsignaPreinscripcion;
 import logica.Paciente;
+import logica.empleados.Medico;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -30,6 +31,7 @@ import net.sf.jasperreports.view.JasperViewer;
 
 public class PrescripcionesToPDF {
 	
+	Medico medico = null;
 	List<AsignaPreinscripcion> pres=new ArrayList<AsignaPreinscripcion>();
 	
 	ParserBaseDeDatos pbd=new ParserBaseDeDatos();
@@ -37,6 +39,9 @@ public class PrescripcionesToPDF {
 		
 	try {
 		pres=pbd.asignaPrescricpionesFechaHistorial(p.getHistorial());
+		if (pres.size() !=0) {
+			medico = pbd.buscarMedicoCodigo(pres.get(0).getCodempleado());
+		}
 	} catch (SQLException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -50,8 +55,7 @@ public class PrescripcionesToPDF {
 	final Map<String,Object> parameters = new HashMap<String,Object>();
 	parameters.put("Paciente", p);
 	parameters.put("CollectionBeanParameter", prescripciones);
-	
-	
+	parameters.put("Medico", medico);
 	//leemos el jrcml 
 
 	InputStream input =new FileInputStream(new File("prescripciones.jrxml"));

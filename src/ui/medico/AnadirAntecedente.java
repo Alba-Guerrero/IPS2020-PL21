@@ -85,8 +85,8 @@ public class AnadirAntecedente extends JDialog{
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					modificarCitaMedico.vaciarCBAntecedentes();
-					modificarCitaMedico.rellenarCBAntecedentes();
+//					modificarCitaMedico.vaciarCBAntecedentes();
+//					modificarCitaMedico.rellenarCBAntecedentes();
 				}
 			});
 		}
@@ -142,10 +142,9 @@ public class AnadirAntecedente extends JDialog{
 	protected void guardar() throws SQLException {
 		
 		if (comprobarCampos()) { // Comprueba que al menos ha puesto el nombre y seleccionado el tipo de preinscripcion
-			
 			// Metemos el nuevo antecedente
 			String nombre = getTxtfAntecedente().getText();
-
+			
 			Random random = new Random();
 			String codigo = "" + random.nextInt(99999999);
 			
@@ -159,6 +158,8 @@ public class AnadirAntecedente extends JDialog{
 			
 			modificarCitaMedico.actualizarAntecedente(); // Ponemos el comboBox que indica el nombre del antecedente con el que acaba de crear
 			
+			JOptionPane.showMessageDialog(null, "Se ha añadido correctamente su nuevo antecedente.");
+
 			dispose();
 		}
 		
@@ -166,8 +167,6 @@ public class AnadirAntecedente extends JDialog{
 		else {  // Le avisa de que hay algo que no ha puesto
 			JOptionPane.showMessageDialog(null, "Por favor compruebe que ha rellenado el nombre.");
 		}
-		
-		
 	}
 
 

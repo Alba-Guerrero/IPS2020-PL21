@@ -20,6 +20,7 @@ import java.util.Random;
 import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -440,6 +441,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 				}
 			});
 			btnprintpres.setFont(new Font("Tahoma", Font.PLAIN, 16));
+			btnprintpres.setIcon(new ImageIcon(ModificarMedicosNuevoCard.class.getResource("/img/imoresora.png")));
 		}
 			return btnprintpres;
 	}
@@ -487,13 +489,14 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JTabbedPane getPanelPestañas() throws SQLException {
 		if (panelPestañas == null) {
 			panelPestañas = new JTabbedPane(JTabbedPane.TOP);
-			panelPestañas.addTab("Causas", null, getPanelCausas(), null);
-			panelPestañas.addTab("Vacunas", null, getPanelVacunas(), null);
-			panelPestañas.addTab("Preinscripciones", null, getPnPreinscripciones(), null);
-			panelPestañas.addTab("Diagnosticos", null, getPnDiagnosticos(), null);
-			panelPestañas.addTab("Procedimientos", null, getPnProcedimientos(), null);
-			panelPestañas.addTab("Antecedentes", null, getPnAntecedentes(), null);
 			
+			panelPestañas.addTab("Diagnosticos", null, getPnDiagnosticos(), null);
+			panelPestañas.addTab("Antecedentes", null, getPnAntecedentes(), null);
+			panelPestañas.addTab("Causas", null, getPanelCausas(), null);
+			panelPestañas.addTab("Prescripciones", null, getPnPreinscripciones(), null);
+			panelPestañas.addTab("Procedimientos", null, getPnProcedimientos(), null);
+			panelPestañas.addTab("Vacunas", null, getPanelVacunas(), null);
+		
 		}
 		return panelPestañas;
 	}
@@ -1055,7 +1058,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 	private JButton getBtnNueva() {
 		if (btnNueva == null) {
-			btnNueva = new JButton("Crear nueva preinscripci\u00F3n");
+			btnNueva = new JButton("Crear nueva prescripci\u00F3n");
 			btnNueva.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					crearPreinscripción();
@@ -1232,7 +1235,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 	private JButton getBtnBorrarPrescripcion() {
 		if (btnBorrarPrescripcion == null) {
-			btnBorrarPrescripcion = new JButton("Borrar preinscripci\u00F3n");
+			btnBorrarPrescripcion = new JButton("Borrar prescripci\u00F3n");
 			btnBorrarPrescripcion.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					int fila=tablePrescripciones.getSelectedRow();
@@ -1268,7 +1271,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	}
 	private JLabel getLabel_4_7() {
 		if (lblResumenPreinscripciones == null) {
-			lblResumenPreinscripciones = new JLabel("Preinscripciones seleccionadas:");
+			lblResumenPreinscripciones = new JLabel("Prescripciones seleccionadas:");
 		}
 		return lblResumenPreinscripciones;
 	}
@@ -1968,7 +1971,15 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	 * Método para poner el valor del cb en su valor de inicio
 	 */
 	protected void restaurarCbDiagnosticos() {
-		cbDiagnosticos.setSelectedIndex(0);		
+		cbDiagnosticos.setSelectedIndex(0);	
+		txtFiltrarDiagnosticos.setText("");
+		if (btnFiltrarDiagnosticos.isEnabled()) {
+			btnFiltrarDiagnosticos.setEnabled(false);
+		}
+		
+		if(chckbxEdo.isSelected()) {
+			chckbxEdo.setSelected(false);
+		}
 	}
 	private JPanel getPnHoraInicio() {
 		if (pnHoraInicio == null) {
@@ -2591,7 +2602,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getBtnProceder() {
 		if (btnProceder == null) {
 			btnProceder = new JButton("Asignar procedimiento");
-			btnProceder.setBounds(845, 9, 135, 21);
+			btnProceder.setBounds(788, 9, 192, 21);
 			btnProceder.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					anadirProcedimiento();
@@ -2690,7 +2701,11 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	 * Método para volver a poner como nuevo el cb de los procedimientos
 	 */
 	protected void restaurarCbProcedimientos() {
-		cbProcedimientos.setSelectedIndex(0);		
+		cbProcedimientos.setSelectedIndex(0);	
+		txtfFiltrarProcedimientos.setText("");
+		if(btnFiltrarProcedimientos.isEnabled()) {
+			btnFiltrarProcedimientos.setEnabled(false);
+		}
 	}
 	
 	
@@ -2701,11 +2716,41 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	 */
 	private void guardarProcedimientos() throws SQLException {
 		if (!asignaProcedimientosPaciente.isEmpty()) { // Que le hayamos asignado algun procedimiento
-			//guardarAccionProcedimientos();
+			guardarAccionProdecimientos();
 			for (AsignaProcedimiento ap : asignaProcedimientosPaciente) { // Voy guardando cada uno de los procedimientos
 				pbd.nuevoAsignaProcedimiento(ap);
 			}
 		}		
+	}
+	
+	private void guardarAccionProdecimientos() throws SQLException {
+		List<AccionEmpleado> devolverAccionesAdmin = pbd.devolverAccionesEmlpeado();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" +numeroAccion;
+		
+		String nombrePaciente = paciente.getNombre();
+		String apellidoPaciente= paciente.getApellido();
+		String codMed = codmedico;
+		
+		String nombre =pbd.devolverEmpleado(codMed).getNombre();
+		String apellido =pbd.devolverEmpleado(codMed).getApellido();
+		
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());	
+		
+		String mensajePreinscripciones = "";
+		for(int i =0;i <asignaProcedimientosPaciente.size();i++ ) {
+			mensajePreinscripciones += asignaProcedimientosPaciente.get(i).getNombreProcedimiento() + ", ";
+		}
+		String mensajeAccion = "El médico " + nombre + " " +apellido  + " ha asignado al paciente " + nombrePaciente + " " 
+		+ apellidoPaciente + " el siguiente prodecimiento" + mensajePreinscripciones;
+				
+		AccionEmpleado a = new AccionEmpleado(naccion, codMed,  fecha, hora, mensajeAccion);
+		pbd.guardarAccionEmpleado(a);
+		
 	}
 
 	private JPanel getPnAntecedentes() {
@@ -3022,6 +3067,10 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	 */
 	protected void restaurarCbAntecedentes() {
 		cambiarIndiceCBAntecedentes(0);		
+		txtFiltrarAntecedentes.setText("");
+		if(btnFiltrarAntecedentes.isSelected()) {
+			btnFiltrarAntecedentes.setEnabled(true);
+		}
 	}
 	
 	
@@ -3119,11 +3168,42 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	 */
 	private void guardarAntecedentes() throws SQLException {
 		if (!asignaAntecedentesPaciente.isEmpty()) { // Que le hayamos asignado algun antecedente
-			//guardarAccionAntecedentes();
+			guardarAccionAntecedentes();
 			for (AsignaAntecedente aa : asignaAntecedentesPaciente) { // Voy guardando cada uno de los antecedentes
 				pbd.nuevaAsignaAntecedente(aa);
 			}
 		}	
+		
+	}
+	
+	
+	private void guardarAccionAntecedentes() throws SQLException {
+		List<AccionEmpleado> devolverAccionesAdmin = pbd.devolverAccionesEmlpeado();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" +numeroAccion;
+		
+		String nombrePaciente = paciente.getNombre();
+		String apellidoPaciente= paciente.getApellido();
+		String codMed = codmedico;
+		
+		String nombre =pbd.devolverEmpleado(codMed).getNombre();
+		String apellido =pbd.devolverEmpleado(codMed).getApellido();
+		
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());	
+		
+		String mensajePreinscripciones = "";
+		for(int i =0;i <asignaAntecedentesPaciente.size();i++ ) {
+			mensajePreinscripciones += asignaAntecedentesPaciente.get(i).getNombreAntecedente() + ", ";
+		}
+		String mensajeAccion = "El médico " + nombre + " " +apellido  + " ha asignado al paciente " + nombrePaciente + " " 
+		+ apellidoPaciente + " el siguiente antecedente" + mensajePreinscripciones;
+				
+		AccionEmpleado a = new AccionEmpleado(naccion, codMed,  fecha, hora, mensajeAccion);
+		pbd.guardarAccionEmpleado(a);
 		
 	}
 
@@ -3163,10 +3243,12 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		//cbAntecedentes.setSelectedIndex(0);
 		int contador = 0;
 		for (Antecedente a : antecedentes) {
-			if (a.getNombreAntecedente().toLowerCase().equals(antecedente.getNombreAntecedente())) {
-				//System.out.println("LO ENCONTRO");
-				//System.out.println("nombre: " + antecedente.getNombreAntecedente());
-				cambiarIndiceCBAntecedentes(contador);
+			if (a.getNombreAntecedente().toLowerCase().equals(antecedente.getNombreAntecedente().toLowerCase())) {
+				System.out.println("LO ENCONTRO");
+				System.out.println("nombre: " + antecedente.getNombreAntecedente() + "contador : " + contador);
+				cbAntecedentes.setSelectedIndex(contador); // Lo mostramos en el cb	
+
+				//cambiarIndiceCBAntecedentes(contador);
 				
 			}
 			contador = contador + 1;
@@ -3503,10 +3585,14 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	
 	
 	/**
-	 * Método para restaurar el cb a su valor principal
+	 * Método para restaurar el panel de las vacunas
 	 */
 	protected void restaurarCbVacunas() {
 		cbVacunas.setSelectedIndex(0);	
+		textfFiltrarVacunas.setText("");
+		if(btnFiltrarVacunas.isEnabled()) {
+			btnFiltrarVacunas.setEnabled(false);
+		}
 		
 	}
 	

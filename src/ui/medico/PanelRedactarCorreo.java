@@ -42,6 +42,7 @@ public class PanelRedactarCorreo extends JPanel {
 
 	private List<Medico> medicos;
 	private String[] nombreMedicos;
+	private String[] nombres;
 	
 	private JPanel pnDestinatario;
 	private JPanel pnEnviar;
@@ -73,10 +74,13 @@ public class PanelRedactarCorreo extends JPanel {
 		}
 		
 		this.nombreMedicos = new String[medicos.size()];
+		this.nombres = new String[medicos.size()];
 		for (int i = 0; i < medicos.size(); i++) {
 			String codigo = medicos.get(i).getCodEmpleado();
 			try {
-				nombreMedicos[i] = pbd.buscarNombreMedico(codigo);
+				// cambiado
+				nombres[i] = pbd.buscarNombreMedico(codigo);
+				nombreMedicos[i] = pbd.buscarEmpleadoPorCodigo(codigo);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -218,9 +222,13 @@ public class PanelRedactarCorreo extends JPanel {
 		
 		if (comprobarCampos()) { // Si ha rellenado todos los campos correctamente
 			
-			String codMedicoDestino = buscarMedicoDestino(txtFDestinatario.getText());
+			
+			int indiceSeleccionado = cbMedicos.getSelectedIndex(); // El índice que hay seleccionado en el comboBox
+			String nombreDelMedico = nombres[indiceSeleccionado]; // Cogemos lo que hay seleccionado en el comboBox
+			
+			String codMedicoDestino = buscarMedicoDestino(nombreDelMedico);
 			if (!codMedicoDestino.equals("")) {  //Si existe el médico que ha escrito
-				
+		
 				// Saco los datos que ha introducido
 				String nombreDestinatario = txtFDestinatario.getText();
 				String asunto = txtFAsunto.getText();
@@ -229,7 +237,7 @@ public class PanelRedactarCorreo extends JPanel {
 				Random r = new Random();
 				String codCorreo = "" + (int)r.nextInt(999);
 			
-				codMedicoDestino = buscarMedicoDestino(nombreDestinatario);
+				codMedicoDestino = buscarMedicoDestino(nombreDelMedico);
 				String codMedicoOrigen = codMedico;
 			
 				Date date = new Date();	

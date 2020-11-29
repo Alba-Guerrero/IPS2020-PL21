@@ -174,7 +174,6 @@ public class DatosGerente extends JDialog {
 			e.printStackTrace();
 		}
 		System.out.println(diagnosticosAsignados.size()+"");
-		float total = diagnosticosAsignados.size();
 //		List<Diagnostico> diagnosticos = new ArrayList<Diagnostico>();
 //		try {
 //			diagnosticos = pbd.listarDiagnosticos();
@@ -183,7 +182,7 @@ public class DatosGerente extends JDialog {
 //			e.printStackTrace();
 //		}
 		if(dia) {
-			
+			float total = 0;
 			Date dateIn = getDateChooser().getDate();
 			java.sql.Date sDateIn = new java.sql.Date(dateIn.getTime());
 			
@@ -191,10 +190,12 @@ public class DatosGerente extends JDialog {
 			java.sql.Date sDateFin = new java.sql.Date(dateFin.getTime());
 			try {
 				diagnosticosAsignados = pbd.buscarCodDiagnosticoPorFechas(sDateIn, sDateFin);
+				total = pbd.calcularAsignDiagFecha(sDateIn, sDateFin);
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			
 			for(int i=0; i<diagnosticosAsignados.size(); i++) {
 				int cant = 0;
 				String numDiagnostico = "";
@@ -209,14 +210,21 @@ public class DatosGerente extends JDialog {
 				cant = diagnosticosAsignados.get(i).getCantidad();
 				nuevaFila[2]= cant + "";
 				int datoss1 = cant;
-				dataset.setValue(datoss1,"", diagnosticosAsignados.get(i).getNombreDiagnostico());
-				modeloTabla.addRow(nuevaFila);
 				float porcentaje = ((cant/total) * 100);
 				nuevaFila[3] = porcentaje + "%";
+				dataset.setValue(datoss1,"", diagnosticosAsignados.get(i).getNombreDiagnostico());
+				modeloTabla.addRow(nuevaFila);
 			}
 			
 		}
 		else {
+			float total = 0;
+			try {
+				total = pbd.calcularAsignDiag();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			for(int i=0; i<diagnosticosAsignados.size(); i++) {
 				int cant = 0;
 				String numDiagnostico = "";
@@ -316,7 +324,7 @@ public class DatosGerente extends JDialog {
 	}
 	private JLabel getLblFechaIn_1() {
 		if (lblFechaIn_1 == null) {
-			lblFechaIn_1 = new JLabel("Fecha inicio");
+			lblFechaIn_1 = new JLabel("Fecha fin");
 		}
 		return lblFechaIn_1;
 	}

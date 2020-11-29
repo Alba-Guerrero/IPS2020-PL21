@@ -467,7 +467,7 @@ public class PanelCitas extends JDialog {
 				c = new Cita(pacienteCita.getCodePaciente(), enfermeros.get(i).getCodeEmpleado(), timeInicio, timeFin, sDate, sala,
 						chckbxEsUrgente.isSelected());
 				pbd.crearCita(c);
-				guardarAccion();
+				guardarAccionEnfermero();
 				if(c.isUrgente())
 					Email.enviarCorreo("roloalvarez7@gmail.com", "sbeiaolebhiewuzz", "UO266007@uniovi.es", pacienteCita, c);
 
@@ -477,6 +477,42 @@ public class PanelCitas extends JDialog {
 
 		}
 		
+	}
+	
+	
+	
+	
+	private void guardarAccionEnfermero() throws SQLException {
+		List<Accion> devolverAccionesAdmin = pbd.devolverAccionesAdmin();
+		int numeroAccion = 1;
+		if(devolverAccionesAdmin.size()>0) {
+			numeroAccion = devolverAccionesAdmin.size() + 1;
+		}
+		String naccion = "" +numeroAccion;
+		
+		String nombrePaciente = pacienteCita.getNombre();
+		String apellidoPaciente = pacienteCita.getApellido();
+		
+		Date fecha = new Date();	
+		Time hora = new Time(new Date().getTime());	
+		
+		String infoMedicos  ="";
+		
+		for(int i =0; i<enfermeros.size(); i++) {
+			if(i==enfermeros.size()) {
+				infoMedicos += enfermeros.get(i).getNombre() + " " + enfermeros.get(i).getApellido();
+			}
+			else {
+				infoMedicos += enfermeros.get(i).getNombre() + " " + enfermeros.get(i).getApellido() +",";
+			}
+			
+		}
+		
+		String mensajeAccion = "Cita asignada a " + nombrePaciente + " " + apellidoPaciente + " con " + infoMedicos;
+		
+		Accion a = new Accion(naccion, codAdmin,  fecha, hora, mensajeAccion);
+		
+		pbd.guardarAccion(a);
 	}
 
 	private boolean checkMedico() {

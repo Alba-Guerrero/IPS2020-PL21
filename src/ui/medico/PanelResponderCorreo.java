@@ -111,7 +111,7 @@ public class PanelResponderCorreo extends JPanel{
 			
 			
 			try {
-				txtFDestinatario.setText(pbd.buscarNombreMedico(codMedicoDestino));
+				txtFDestinatario.setText(pbd.buscarEmpleadoPorCodigo(codMedicoDestino));
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -211,7 +211,7 @@ public class PanelResponderCorreo extends JPanel{
 			
 		
 				// Saco los datos que ha introducido
-				String nombreDestinatario = txtFDestinatario.getText();
+				String nombreDestinatario = pbd.buscarEmpleadoPorCodigo(codMedicoDestino);
 				String asunto = txtFAsunto.getText();
 				String mensaje = textArea.getText();
 			

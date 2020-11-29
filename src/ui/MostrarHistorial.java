@@ -154,13 +154,18 @@ public class MostrarHistorial extends JDialog {
 	private JTabbedPane getPanelPestañas() throws SQLException {
 		if (panelPestañas == null) {
 			panelPestañas = new JTabbedPane(JTabbedPane.TOP);
+			
+			panelPestañas.addTab("Diagnosticos", null, getPanelDiagnosticos(), null);
+			panelPestañas.addTab("Antecedentes", null, getPanelAntecedentes(), null);
 			panelPestañas.addTab("Causas", null, getPanelCausas(), null);
 			panelPestañas.addTab("Enferm previas", null, getPanelEnfermedPrevia(), null);
-			panelPestañas.addTab("Vacunas", null, getPanelVacunas(), null);
 			panelPestañas.addTab("Preinscripciones", null, getPanelPreinscripciones(), null);
-			panelPestañas.addTab("Diagnosticos", null, getPanelDiagnosticos(), null);
 			panelPestañas.addTab("Procedimientos", null, getPanelProcedimientos(), null);
-			panelPestañas.addTab("Antecedentes", null, getPanelAntecedentes(), null);
+			panelPestañas.addTab("Vacunas", null, getPanelVacunas(), null);
+
+			
+			
+			
 		}
 		return panelPestañas;
 	}
@@ -368,7 +373,8 @@ public class MostrarHistorial extends JDialog {
 	private JButton getBtnNewButton_1() {
 		if (btnNewButton_1 == null) {
 			btnNewButton_1 = new JButton("");
-			btnNewButton_1.setIcon(new ImageIcon("C:\\Users\\santi\\Downloads\\interface+multimedia+print+printer+icon-1320185667007730348_24.png"));
+			//btnNewButton_1.setIcon(new ImageIcon("C:\\Users\\santi\\Downloads\\interface+multimedia+print+printer+icon-1320185667007730348_24.png"));
+			btnNewButton_1.setIcon(new ImageIcon(MostrarHistorial.class.getResource("/img/imoresora.png")));
 			btnNewButton_1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					Printer printer= new Printer();
@@ -490,7 +496,11 @@ public class MostrarHistorial extends JDialog {
 			
 			//sorter.setSortKeys(sortKeys);
 			
-			añadirFilasAntecedentes();
+			try {
+				añadirFilasAntecedentes();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return tableAntecedentes;
 	}
@@ -498,8 +508,9 @@ public class MostrarHistorial extends JDialog {
 	
 	/**
 	 * Método para rellenar la tabla de los antecedentes
+	 * @throws SQLException 
 	 */
-	private void añadirFilasAntecedentes() {
+	private void añadirFilasAntecedentes() throws SQLException {
 		borrarModeloTablaAntecedentes(); // Borramos todo antes de volver a pintar
 		
 		Object[] nuevaFila=new Object[3]; // 3 son las columnas
@@ -508,7 +519,8 @@ public class MostrarHistorial extends JDialog {
 			for (AsignaAntecedente a : antecedentesAsignados) {
 				nuevaFila[0] = a.getNombreAntecedente(); // El nombre del antecedendente
 				nuevaFila[1] = a.getFecha(); // La fecha en la que se le asigno
-				nuevaFila[2] = a.getCodEmpleado(); // El empleado que se lo asigno
+				//nuevaFila[2] = a.getCodEmpleado(); // El empleado que se lo asigno
+				nuevaFila[2] = pbd.buscarEmpleadoPorCodigo(a.getCodEmpleado());
 
 				
 				modeloTablaAntecedentes.addRow(nuevaFila); // Añado la fila
@@ -543,7 +555,11 @@ public class MostrarHistorial extends JDialog {
 			
 			//sorter.setSortKeys(sortKeys);
 			
-			añadirFilasProcedimientos();
+			try {
+				añadirFilasProcedimientos();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return tableProcedimientos;
 	}
@@ -551,8 +567,9 @@ public class MostrarHistorial extends JDialog {
 	
 	/**
 	 * Método para añadir las filas a la tabla procedimientos
+	 * @throws SQLException 
 	 */
-	private void añadirFilasProcedimientos() {
+	private void añadirFilasProcedimientos() throws SQLException {
 		borrarModeloTablaProcedimientos(); // Borramos todo antes de volver a pintar
 		
 		Object[] nuevaFila=new Object[3]; // 3 son las columnas
@@ -561,7 +578,9 @@ public class MostrarHistorial extends JDialog {
 			for (AsignaProcedimiento a : procedimientosAsignados) {
 				nuevaFila[0] = a.getNombreProcedimiento(); // El nombre del antecedendente
 				nuevaFila[1] = a.getFecha(); // La fecha en la que se le asigno
-				nuevaFila[2] = a.getCodEmpleado(); // El empleado que se lo asigno
+				//nuevaFila[2] = a.getCodEmpleado(); // El empleado que se lo asigno
+				nuevaFila[2] = pbd.buscarEmpleadoPorCodigo(a.getCodEmpleado());
+
 
 				
 				modeloTablaProcedimientos.addRow(nuevaFila); // Añado la fila
@@ -597,7 +616,11 @@ public class MostrarHistorial extends JDialog {
 			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
 			
 			
-			añadirFilasDiagnosticos();		
+			try {
+				añadirFilasDiagnosticos();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}		
 		}
 		return tableDiagnosticos;
 	}
@@ -605,8 +628,9 @@ public class MostrarHistorial extends JDialog {
 	
 	/**
 	 * Método que me pinta las filas de la tabla de los diagnosticos
+	 * @throws SQLException 
 	 */
-	private void añadirFilasDiagnosticos() {
+	private void añadirFilasDiagnosticos() throws SQLException {
 		
 		borrarModeloTablaDiagnosticos(); // Borramos todo antes de volver a pintar
 		
@@ -617,7 +641,8 @@ public class MostrarHistorial extends JDialog {
 				nuevaFila[0] = a.getnDiagnostico();
 				nuevaFila[1] = a.getNombreDiagnostico(); // El nombre del antecedendente
 				nuevaFila[2] = a.getFecha(); // La fecha en la que se le asigno
-				nuevaFila[3] = a.getCodMedico(); // El empleado que se lo asigno
+				//nuevaFila[3] = a.getCodMedico(); // El empleado que se lo asigno
+				nuevaFila[3] = pbd.buscarEmpleadoPorCodigo(a.getCodMedico());
 
 				
 				modeloTablaDiagnosticos.addRow(nuevaFila); // Añado la fila
@@ -706,7 +731,11 @@ public class MostrarHistorial extends JDialog {
 			sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
 			
 			
-			añadirFilasVacunas();
+			try {
+				añadirFilasVacunas();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return tableVacunas;
 	}
@@ -716,8 +745,9 @@ public class MostrarHistorial extends JDialog {
 	
 	/**
 	 * Método para rellenar la tabla de los antecedentes
+	 * @throws SQLException 
 	 */
-	private void añadirFilasVacunas() {
+	private void añadirFilasVacunas() throws SQLException {
 		borrarModeloTablaVacunas(); // Borramos todo antes de volver a pintar
 		
 		Object[] nuevaFila=new Object[3]; // 3 son las columnas
@@ -725,7 +755,9 @@ public class MostrarHistorial extends JDialog {
 		
 			for (AsignaVacuna a : vacunasAsignados) {
 				nuevaFila[0] = a.getNombreVacuna(); 
-				nuevaFila[1] = a.getCodEmpleado(); 
+				//nuevaFila[1] = a.getCodEmpleado(); 
+				nuevaFila[1] = pbd.buscarEmpleadoPorCodigo(a.getCodEmpleado());
+
 				nuevaFila[2] = a.getDate(); 
 
 
@@ -744,7 +776,7 @@ public class MostrarHistorial extends JDialog {
 			modeloTablaVacunas.removeRow(0);			
 		}		
 	}
-	private JTable getTableEP() {
+	private JTable getTableEP() throws SQLException {
 		if (tableEP == null) {
 			String[] nombreColumnas= {"Enferemedades previas","Empleado", "Fecha"};
 			modeloTablaEP= new ModeloNoEditable(nombreColumnas,0);
@@ -769,8 +801,9 @@ public class MostrarHistorial extends JDialog {
 	
 	/**
 	 * Método para rellenar la tabla de los EP
+	 * @throws SQLException 
 	 */
-	private void añadirFilasEP() {
+	private void añadirFilasEP() throws SQLException {
 		borrarModeloTablaEP(); // Borramos todo antes de volver a pintar
 		
 		Object[] nuevaFila=new Object[3]; // 3 son las columnas
@@ -778,7 +811,8 @@ public class MostrarHistorial extends JDialog {
 		
 			for (AsignaEnfermPrev a : enfermedadesPAsignadas) {
 				nuevaFila[0] = a.getNombreEnfermPrev(); // El nombre del antecedendente
-				nuevaFila[1] = a.getCodEmpleado(); // El empleado que se lo asigno
+				nuevaFila[1] = pbd.buscarEmpleadoPorCodigo(a.getCodEmpleado());
+				//nuevaFila[1] = a.getCodEmpleado(); // El empleado que se lo asigno    
 				nuevaFila[2] = a.getDate(); // La fecha en la que se le asigno
 
 				

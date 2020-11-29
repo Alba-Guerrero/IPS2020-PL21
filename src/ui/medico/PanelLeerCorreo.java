@@ -191,7 +191,8 @@ public class PanelLeerCorreo extends JPanel {
 			lblRemitente.setFont(new Font("Tahoma", Font.PLAIN, 15));
 			
 			try {
-				lblRemitente.setText(buscarNombreMedico(correo.getCodMedicoOrigen()).toUpperCase());
+				//lblRemitente.setText(buscarNombreMedico(correo.getCodMedicoOrigen()).toUpperCase());
+				lblRemitente.setText(buscarNombreCompletoMedico(correo.getCodMedicoOrigen()).toUpperCase());
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}		
@@ -208,6 +209,16 @@ public class PanelLeerCorreo extends JPanel {
 	 */
 	private String buscarNombreMedico(String codMedicoOrigen) throws SQLException {
 		return pbd.buscarNombreMedico(codMedicoOrigen);
+	}
+	
+	/**
+	 * Método para buscar en la lista de médicos, el nombre y apellido del médico del que le paso el nombre
+	 * @param codMedicoOrigen
+	 * @return
+	 * @throws SQLException 
+	 */
+	private String buscarNombreCompletoMedico(String codMedicoOrigen) throws SQLException {
+		return pbd.buscarEmpleadoPorCodigo(codMedicoOrigen);
 	}
 	private JScrollPane getScrollPane() {
 		if (scrollPane == null) {

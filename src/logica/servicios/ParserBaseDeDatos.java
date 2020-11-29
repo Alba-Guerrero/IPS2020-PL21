@@ -264,9 +264,15 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	private final static String VER_DIAGNOSTICOS = "select nombrediagnostico, count(*) as contador from asignadiagnostico group by nombrediagnostico";
 	
-	private final static String VER_CODDIAGNOSTICOS_FECHA =  "select nombrediagnostico, count(*) as contador from asignadiagnostico where fecha>=? and fecha <? group by nombrediagnostico";
+
+	
+	private final static String VER_CODDIAGNOSTICOS_FECHA =  "select nombrediagnostico, count(*) as contador from asignadiagnostico where fecha>=? and fecha <=? group by nombrediagnostico";
 	
 	private final static String VER_CODDIAGNOSTICOS = "SELECT coddiagnostico FROM diagnostico where nombrediagnostico=?";
+	
+	private final static String VER_ASIGNA_DIAGNOSTICO = "select nombrediagnostico from asignadiagnostico";
+	
+	private final static String VER_ASIGNA_DIAGNOSTICO_FECHA = "select nombrediagnostico from asignadiagnostico where fecha>=? and fecha <=?";
 	//FUNCIONES
 	
 	
@@ -3668,5 +3674,82 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		return m;
 
 	}
+	
+	
+	
+	/**
+	 * Método que me devuelve el nombre y apellidos del médico que le paso el código por parámetro
+	 * @param codigo
+	 * @return
+	 * @throws SQLException 
+	 */
+	public String buscarEmpleadoPorCodigo(String codigo) throws SQLException {
+		String nombre = null;
+		String apellido = null;
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_MEDICO_NOMBRE);
+
+		pst.setString(1, codigo); // busco por codigo
+		ResultSet rs = pst.executeQuery(); // Creo el resultSet
+
+		
+		if (rs.next()) {
+			nombre = rs.getString("nombre");
+			apellido = rs.getString("apellido");
+		}
+		
+		
+		String nombreCompleto = nombre + " " + apellido;
+		
+
+		rs.close();
+		pst.close();
+		con.close();
+		
+		return nombreCompleto;	
+	}
+	
+	public int calcularAsignDiagFecha(Date sDateIn, Date sDateFin) throws SQLException {
+		List<String> diagnosticos = new ArrayList<String>();
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VER_ASIGNA_DIAGNOSTICO_FECHA);
+		pst.setDate(1, sDateIn);
+		pst.setDate(2, sDateFin);
+		ResultSet rs = pst.executeQuery(); 
+
+		while (rs.next()) {
+			diagnosticos.add(rs.getString("nombrediagnostico"));
+		}
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return diagnosticos.size();
+	}
+	
+	public int calcularAsignDiag() throws SQLException {
+		List<String> diagnosticos = new ArrayList<String>();
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(VER_ASIGNA_DIAGNOSTICO);
+		ResultSet rs = pst.executeQuery(); 
+
+		while (rs.next()) {
+			diagnosticos.add(rs.getString("nombrediagnostico"));
+		}
+
+		// CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return diagnosticos.size();
+	}
+	
+	
+	
+	
 	
 }

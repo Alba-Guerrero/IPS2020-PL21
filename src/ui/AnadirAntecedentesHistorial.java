@@ -43,6 +43,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import java.awt.Rectangle;
 
 /**
  * @author María
@@ -99,6 +100,7 @@ public class AnadirAntecedentesHistorial extends JDialog{
 	 * @param codempleado
 	 */
 	public AnadirAntecedentesHistorial(MostrarHistorial mostrarHistorial, HistorialMedico historial, String codempleado) {
+		setModal(true);
 		setTitle("A\u00F1adir antecedente");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1100, 500);
@@ -475,6 +477,7 @@ public class AnadirAntecedentesHistorial extends JDialog{
 	private JButton getBtnBorrarAntecedente() {
 		if (btnBorrarAntecedente == null) {
 			btnBorrarAntecedente = new JButton("Borrar antecedente");
+			btnBorrarAntecedente.setBounds(new Rectangle(0, 0, 300, 21));
 			btnBorrarAntecedente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					borrarFilaAntecedente();
@@ -626,6 +629,18 @@ public class AnadirAntecedentesHistorial extends JDialog{
 				
 			}
 			contador = contador + 1;
+		}
+	}
+
+
+	/**
+	 * Método que me pinta la ventana nueva
+	 */
+	public void limpiar() {
+		txtFieldFiltrar.setText("");
+		
+		if (btnBuscar.isEnabled()) {
+			btnBuscar.setEnabled(false);
 		}
 	}
 }
