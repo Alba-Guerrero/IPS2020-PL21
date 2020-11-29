@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.SystemColor;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -64,6 +65,7 @@ import logica.servicios.ParserBaseDeDatos;
 import logica.servicios.PrescripcionesToPDF;
 import logica.servicios.Printer;
 import net.sf.jasperreports.engine.JRException;
+import ui.AnadirAntecedentesHistorial;
 import ui.MostrarHistorial;
 
 import javax.swing.ButtonGroup;
@@ -345,6 +347,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	 * @throws SQLException 
 	 */
 	public ModificarMedicosNuevoCard(String codmedico, Paciente paciente, Cita cita) throws SQLException {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		this.codmedico = codmedico;
 		setTitle("Atender Consulta");
 		mm = this;
@@ -361,7 +364,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		antecedentes = pbd.cargarAntecedentes();
 
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 1486, 691);
+		setBounds(100, 100, 1300, 691);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -1693,7 +1696,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		
 		Random r = new Random();
-		String codVacuna = "" + r.nextInt(999);
+		String codVacuna = "" + r.nextInt(99999);
 		
 		String nombreVacuna = vacuna.getNombreVacuna();
 		String codHistorial = paciente.getHistorial();
@@ -1821,7 +1824,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JComboBox<String> getCbDiagnosticos() {
 		if (cbDiagnosticos == null) {
 			cbDiagnosticos = new JComboBox();
-			cbDiagnosticos.setBounds(10, 32, 977, 21);
+			cbDiagnosticos.setBounds(10, 32, 780, 21);
 			
 			String[] nombreDiagnosticos = new String[diagnosticos.size()];
 			for (int i = 0; i < diagnosticos.size(); i++) {
@@ -1835,7 +1838,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getBtnDiagnosticar() {
 		if (btnDiagnosticar == null) {
 			btnDiagnosticar = new JButton("Diagnosticar");
-			btnDiagnosticar.setBounds(824, 9, 161, 21);
+			btnDiagnosticar.setBounds(648, 10, 144, 21);
 			btnDiagnosticar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					comprobarEDO();
@@ -1866,7 +1869,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		}
 		
 		Random r = new Random();
-		String codAsigDiagnostico = "" + r.nextInt(999); // El código es aleatorio
+		String codAsigDiagnostico = "" + r.nextInt(9999999); // El código es aleatorio
 		
 		String nombreDiagnostico = diagnostico.getNombre();
 		String nHistorial = paciente.getHistorial(); // El número de historial del paciente a quien le hemos asignado el diagnostico
@@ -2586,7 +2589,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JComboBox<String> getCbProcedimientos() {
 		if (cbProcedimientos == null) {
 			cbProcedimientos = new JComboBox();
-			cbProcedimientos.setBounds(10, 32, 969, 21);
+			cbProcedimientos.setBounds(10, 32, 779, 21);
 			
 			
 			String[] nombreProcedimientos = new String[procedimientos.size()];
@@ -2602,7 +2605,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton getBtnProceder() {
 		if (btnProceder == null) {
 			btnProceder = new JButton("Asignar procedimiento");
-			btnProceder.setBounds(788, 9, 192, 21);
+			btnProceder.setBounds(598, 10, 192, 21);
 			btnProceder.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					anadirProcedimiento();
@@ -2931,7 +2934,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JComboBox<String> getCbAntecedentes() {
 		if (cbAntecedentes == null) {
 			cbAntecedentes = new JComboBox();
-			cbAntecedentes.setBounds(new Rectangle(10, 32, 975, 21));
+			cbAntecedentes.setBounds(new Rectangle(10, 32, 797, 21));
 			
 			String[] nombreAntecedentes = new String[antecedentes.size()];
 			
@@ -2953,7 +2956,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 					restaurarCbAntecedentes();
 				}
 			});
-			btnAsignarAntecedente.setBounds(825, 10, 160, 21);
+			btnAsignarAntecedente.setBounds(647, 11, 160, 21);
 		}
 		return btnAsignarAntecedente;
 	}
@@ -3478,7 +3481,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JComboBox<String> getCbVacunas_1() {
 		if (cbVacunas == null) {
 			cbVacunas = new JComboBox();
-			cbVacunas.setBounds(10, 32, 985, 21);
+			cbVacunas.setBounds(10, 32, 783, 21);
 			
 			String[] nombreVacunas = new String[vacunas.size()];
 			for (int i = 0; i < vacunas.size(); i++) {
@@ -3498,7 +3501,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 					restaurarCbVacunas();
 				}
 			});
-			btnAsignarVacuna.setBounds(825, 9, 170, 21);
+			btnAsignarVacuna.setBounds(625, 10, 170, 21);
 		}
 		return btnAsignarVacuna;
 	}

@@ -11,12 +11,15 @@ import javax.swing.SwingConstants;
 import logica.Correo;
 import logica.empleados.Medico;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
 
 import java.awt.FlowLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.GridLayout;

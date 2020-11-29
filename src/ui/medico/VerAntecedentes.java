@@ -10,6 +10,7 @@ import logica.AsignaPreinscripcion;
 import logica.Paciente;
 import logica.Preinscripcion;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -32,6 +33,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 
 /**
  * @author María
@@ -63,7 +65,7 @@ public class VerAntecedentes extends JDialog{
 	 * @param paciente
 	 */
 	public VerAntecedentes(ModificarMedicosNuevoCard modificarMedicosNuevoCard, Paciente paciente) {
-		
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		setTitle("Antecedentes");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 600, 350);

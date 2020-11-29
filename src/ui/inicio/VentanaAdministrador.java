@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 
 import logica.Administrativo;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
 import ui.admin.AsignarVacaciones;
 import ui.admin.AñadirEmpleado;
 import ui.admin.CrearEquipo;
@@ -29,6 +30,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.SystemColor;
+import java.awt.Toolkit;
+
 import javax.swing.border.TitledBorder;
 
 public class VentanaAdministrador extends JDialog {
@@ -64,6 +67,7 @@ public class VentanaAdministrador extends JDialog {
 	 * Create the frame.
 	 */
 	public VentanaAdministrador(String codAdmin) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		this.codAdmin = codAdmin;
 		setTitle("VentanaAdministrador");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

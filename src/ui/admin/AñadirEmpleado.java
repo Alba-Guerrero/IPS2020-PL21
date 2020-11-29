@@ -2,12 +2,14 @@ package ui.admin;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import net.miginfocom.swing.MigLayout;
+import ui.AnadirAntecedentesHistorial;
 import ui.gerente.DatosGerente;
 
 import javax.swing.JLabel;
@@ -83,6 +85,7 @@ public class AñadirEmpleado extends JDialog {
 	 * Create the frame.
 	 */
 	public AñadirEmpleado(String codAdmin) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		setResizable(false);
 		this.codAdmin=codAdmin;
 		setTitle("A\u00F1adir empleado");

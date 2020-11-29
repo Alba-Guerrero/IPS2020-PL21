@@ -23,6 +23,7 @@ import logica.HistorialMedico;
 import logica.Paciente;
 import logica.empleados.Medico;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
 
 import javax.swing.JCheckBox;
 import javax.swing.JScrollPane;
@@ -39,6 +40,8 @@ import java.util.List;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+
 import javax.swing.JTextPane;
 
 
@@ -81,6 +84,7 @@ public class CrearPaciente extends JDialog {
 	 * Create the dialog.
 	 */
 	public CrearPaciente(String codAdmin) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		this.codAdmin = codAdmin;
 		setTitle("Administrador:Crear paciente");
 		setBounds(100, 100, 736, 524);
@@ -396,7 +400,7 @@ public class CrearPaciente extends JDialog {
 					dispose();
 				}
 			});
-			btnCancelar.setBounds(71, 117, 97, 25);
+			btnCancelar.setBounds(248, 122, 97, 25);
 		}
 		return btnCancelar;
 	}
@@ -425,7 +429,6 @@ public class CrearPaciente extends JDialog {
 					else {
 						JOptionPane.showMessageDialog(null, "Por favor,rellene todos los campos obligatorios");
 						lbPNombre.setForeground(Color.RED);
-						lbPEmail.setForeground(Color.RED);
 						lblPApellidos.setForeground(Color.RED);
 						
 						
@@ -437,7 +440,7 @@ public class CrearPaciente extends JDialog {
 
 				
 			});
-			btnPaciente.setBounds(208, 117, 134, 25);
+			btnPaciente.setBounds(101, 122, 134, 25);
 		}
 		return btnPaciente;
 	}
@@ -469,7 +472,7 @@ public class CrearPaciente extends JDialog {
 	 * @return
 	 */
 	private boolean checkCamposPaciente() {
-		return !(txtPNombre.getText().isEmpty()||txtPApellidos.getText().isEmpty()||txtPEmail.getText().isEmpty());
+		return !(txtPNombre.getText().isEmpty()||txtPApellidos.getText().isEmpty());
 		
 	}
 	private boolean checkSoloLetras(String cadena) {

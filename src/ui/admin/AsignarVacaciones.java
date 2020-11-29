@@ -1,6 +1,7 @@
 package ui.admin;
 
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -39,6 +40,8 @@ import logica.Vacaciones;
 import logica.empleados.Empleado;
 import logica.empleados.Medico;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
+
 import javax.swing.JTextField;
 
 public class AsignarVacaciones extends JDialog{
@@ -72,6 +75,7 @@ public class AsignarVacaciones extends JDialog{
 	 * @throws SQLException 
 	 */
 	public AsignarVacaciones(String codAdmin) throws SQLException {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		empleados = pbd.buscarEmpleados();
 		this.codAdmin = codAdmin;
 		citasBorrar = new ArrayList<Cita>();

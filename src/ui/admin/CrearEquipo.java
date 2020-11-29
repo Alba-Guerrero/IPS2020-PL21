@@ -25,10 +25,13 @@ import logica.servicios.ParserBaseDeDatos;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import net.miginfocom.swing.MigLayout;
+import ui.AnadirAntecedentesHistorial;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -94,6 +97,7 @@ public class CrearEquipo extends JDialog {
 	 * @throws SQLException 
 	 */
 	public CrearEquipo(String codAdmin) throws SQLException {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		this.codAdmin = codAdmin;
 		setTitle("Crear Equipo");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

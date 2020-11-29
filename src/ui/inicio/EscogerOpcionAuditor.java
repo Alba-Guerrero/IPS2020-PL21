@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import ui.AnadirAntecedentesHistorial;
 import ui.auditor.VerAccionesAdmin;
 import ui.auditor.VerAccionesEmpleado;
 
@@ -17,6 +18,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
+
 import javax.swing.JLabel;
 import java.awt.Font;
 
@@ -38,6 +41,7 @@ public class EscogerOpcionAuditor extends JDialog {
 	 * Create the frame.
 	 */
 	public EscogerOpcionAuditor() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		setTitle("Opciones auditor.");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);

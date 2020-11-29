@@ -13,6 +13,8 @@ import java.awt.BorderLayout;
 import javax.swing.JButton;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
@@ -48,6 +50,7 @@ public class AnadirAntecedenteHistorial extends JDialog{
 	 * @param anadirAntecedentesHistorial
 	 */
 	public AnadirAntecedenteHistorial(AnadirAntecedentesHistorial anadirAntecedentesHistorial) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		setModal(true);
 		setTitle("A\u00F1adir Antecedente");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

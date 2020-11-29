@@ -38,6 +38,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -121,6 +122,7 @@ public class MostrarHistorial extends JDialog {
 	 * @throws SQLException 
 	 */
 	public MostrarHistorial(HistorialMedico hm, String codempleado) throws SQLException {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		setTitle("Historial m\u00E9dico");
 		this.hm = hm;
 		this.codempleado = codempleado;

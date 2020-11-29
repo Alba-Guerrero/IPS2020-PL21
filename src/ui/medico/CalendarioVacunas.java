@@ -16,11 +16,13 @@ import logica.AsignaVacuna;
 import logica.Paciente;
 import logica.Vacuna;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
 import ui.admin.NuevasVacunas;
 
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,7 +48,6 @@ public class CalendarioVacunas extends JDialog {
 	private Paciente paciente;
 	private ParserBaseDeDatos pbd = new ParserBaseDeDatos();
 	private List<AsignaVacuna> vacunas = new ArrayList<AsignaVacuna>();
-	private boolean[] strike;
 	
 	private String[] nombreVacunas = {"Hepatitis B", "Difteria, tétanos y tosferina", "Poliomelitis", "Influenza", "Neumococo", "Rotavirus", "Menungococo B", "Meningococo C y ACWY",
 			"Sarampión, rubeola y parotiditis", "Varicela", "Virus del papiloma humano"};
@@ -78,6 +79,7 @@ public class CalendarioVacunas extends JDialog {
 	 * Create the frame.
 	 */
 	public CalendarioVacunas(Paciente p) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		paciente = p;
 		try {
 			vacunas = pbd.verVacunasPaciente(paciente.getHistorial());
@@ -85,9 +87,9 @@ public class CalendarioVacunas extends JDialog {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		strike = new boolean[vacunas.size()];
+		
 		setTitle("Calendario de vacunas");
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1106, 466);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -127,11 +129,21 @@ public class CalendarioVacunas extends JDialog {
 					Object value = getModel().getValueAt(row, col);
 					
 					if(value != null) {
-						if (isVaccinated(value.toString())) {
-							comp.setBackground(Color.GREEN);
-						} 
-						else
-							comp.setBackground(null);
+						for (int i = 0; i < vacunas.size(); i++) {
+							
+							if(value.toString().equals(vacunas.get(i).getNombreVacuna())) {
+							
+									System.out.println("Correcta: " + vacunas.get(i).getNombreVacuna());
+									
+									comp.setBackground(Color.GREEN);
+								
+							}
+						}
+//						if (isVaccinated(value.toString())) {
+//							comp.setBackground(Color.GREEN);
+//						} 
+//						else
+//							comp.setBackground(null);
 					}
 					else
 						comp.setBackground(null);
@@ -163,7 +175,7 @@ public class CalendarioVacunas extends JDialog {
 			tablaVacunas.setValueAt("DTPa", 1, 1);
 			tablaVacunas.setValueAt("DTPa", 1, 3);
 			tablaVacunas.setValueAt("DTPa", 1, 5);
-			tablaVacunas.setValueAt("DTPa/Tdpa", 1, 9);
+			tablaVacunas.setValueAt("DTPa", 1, 9);
 			tablaVacunas.setValueAt("Tdpa", 1, 10);
 			tablaVacunas.setValueAt("Tdpa", 1, 11);
 			
@@ -190,13 +202,13 @@ public class CalendarioVacunas extends JDialog {
 			tablaVacunas.setValueAt("MenB", 6, 6);
 			
 			tablaVacunas.setValueAt("MenC", 7, 3);
-			tablaVacunas.setValueAt("Men ACWY", 7, 6);
-			tablaVacunas.setValueAt("Men ACWY", 7, 10);
-			tablaVacunas.setValueAt("Men ACWY", 7, 11);
-			tablaVacunas.setValueAt("Men ACWY", 7, 12);
+			tablaVacunas.setValueAt("MenACWY", 7, 6);
+			tablaVacunas.setValueAt("MenACWY", 7, 10);
+			tablaVacunas.setValueAt("MenACWY", 7, 11);
+			tablaVacunas.setValueAt("MenACWY", 7, 12);
 			
 			tablaVacunas.setValueAt("SRP", 8, 6);
-			tablaVacunas.setValueAt("SRP Var /", 8, 8);
+			tablaVacunas.setValueAt("SRP Var/SRPV", 8, 8);
 			
 			tablaVacunas.setValueAt("Var", 9, 7);
 			tablaVacunas.setValueAt("SRP", 9, 8);
@@ -218,16 +230,20 @@ public class CalendarioVacunas extends JDialog {
 	
 	private boolean isVaccinated(String vacuna) {
 		boolean vaccinated = false;
-		
+		System.out.println("Vacuna en tabla: " + vacuna);
 			for (int i = 0; i < vacunas.size(); i++) {
+				
 				if(vacuna.equals(vacunas.get(i).getNombreVacuna())) {
+					System.out.println("Correcta: " + vacunas.get(i).getNombreVacuna());
+					
 					vaccinated = true;
-					//strike[i]=true;
+					
 				}
 				else
 					vaccinated=false;
 			}
-		
+			System.out.println();
+			System.out.println(vaccinated + "");
 		return vaccinated;
 	}
 	

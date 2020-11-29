@@ -274,6 +274,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	private final static String VER_ASIGNA_DIAGNOSTICO_FECHA = "select nombrediagnostico from asignadiagnostico where fecha>=? and fecha <=?";
 	//FUNCIONES
+	private final static String GET_CITAS_DATE_MED_ACTUAL = "select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.codpaciente= p.codpaciente and c.codmedico=? and c.fecha>=?;";
 	
 	
 	
@@ -587,6 +588,59 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 //----------------------A PARTIR DE AQUÍ VENTANA MEDICO CITA-------------------------------------------------------------------
 
 	public List<Cita> devolvercitasMedico(String codmedico) throws SQLException {
+		List<Cita> citas = new ArrayList<Cita>();
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement st = con.prepareStatement(GET_CITAS);
+		boolean res = false;
+		st.setString(1, codmedico);
+
+		ResultSet rs = st.executeQuery();
+
+		while (rs.next()) {
+			if (rs.getByte("urgencia") == 1)
+				res = true;
+
+			citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"), rs.getString("codmedico"),
+					rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res));
+
+		}
+
+//CERRAR EN ESTE ORDEN
+		rs.close();
+		st.close();
+		con.close();
+		return citas;
+	}
+	
+	public List<Cita> devolvercitasMedicoPorFechaActual(String codmedico) throws SQLException {
+		List<Cita> citas = new ArrayList<Cita>();
+		Connection con = new Conexion().getConnectionJDBC();
+		java.util.Date fecha = new java.util.Date();
+		java.sql.Date sDate = new java.sql.Date(fecha.getTime());
+		PreparedStatement pst = con.prepareStatement(GET_CITAS_DATE_MED_ACTUAL);
+		boolean res = false;
+		pst.setString(1, codmedico);
+		pst.setDate(2, sDate);
+
+		ResultSet rs = pst.executeQuery();
+
+		while (rs.next()) {
+			if (rs.getByte("urgencia") == 0)
+				res = true;
+
+			citas.add(new Cita(rs.getString("codcita"), rs.getString("codpaciente"), rs.getString("codmedico"),
+					rs.getTime("hinicio"), rs.getTime("hfin"), rs.getDate("fecha"), rs.getString("ubicacion"), res));
+
+		}
+
+//CERRAR EN ESTE ORDEN
+		rs.close();
+		pst.close();
+		con.close();
+		return citas;
+	}
+	
+	public List<Cita> devolvercitasMedicoFe(String codmedico) throws SQLException {
 		List<Cita> citas = new ArrayList<Cita>();
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement st = con.prepareStatement(GET_CITAS);

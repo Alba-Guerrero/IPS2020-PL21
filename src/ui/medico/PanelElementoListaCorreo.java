@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 
 import logica.Correo;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
 
 import java.awt.GridLayout;
 import javax.swing.JLabel;
@@ -14,6 +15,7 @@ import javax.swing.JButton;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Panel;
+import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.awt.event.ActionEvent;

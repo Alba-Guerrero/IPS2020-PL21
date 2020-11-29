@@ -8,11 +8,15 @@ import javax.swing.JDialog;
 import logica.Antecedente;
 import logica.Preinscripcion;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
+
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -44,6 +48,7 @@ public class AnadirAntecedente extends JDialog{
 	 * @param modificarMedicosNuevoCard
 	 */
 	public AnadirAntecedente(ModificarMedicosNuevoCard modificarMedicosNuevoCard) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		this.modificarCitaMedico = modificarMedicosNuevoCard; // La ventana anterior
 
 		

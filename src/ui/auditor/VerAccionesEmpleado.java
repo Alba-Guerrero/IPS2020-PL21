@@ -33,8 +33,11 @@ import logica.Accion;
 import logica.AccionEmpleado;
 import logica.Cita;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
 import ui.medico.ModeloNoEditable;
 import javax.swing.JTextField;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
 
 public class VerAccionesEmpleado extends JDialog {
 
@@ -64,9 +67,10 @@ public class VerAccionesEmpleado extends JDialog {
 	 * Create the frame.
 	 */
 	public VerAccionesEmpleado() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		setTitle("Registro de acciones");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 870, 515);;
+		setBounds(100, 100, 950, 770);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -86,6 +90,7 @@ public class VerAccionesEmpleado extends JDialog {
 	private JPanel getPanelFiltros() {
 		if (panelFiltros == null) {
 			panelFiltros = new JPanel();
+			panelFiltros.setLayout(new GridLayout(0, 9, 0, 0));
 			panelFiltros.add(getLblFechaIn());
 			panelFiltros.add(getDateChooser());
 			panelFiltros.add(getLblFechaIn_1());
@@ -218,7 +223,7 @@ public class VerAccionesEmpleado extends JDialog {
 	}
 	private JLabel getLblFechaIn_1() {
 		if (lblFechaIn_1 == null) {
-			lblFechaIn_1 = new JLabel("Fecha inicio");
+			lblFechaIn_1 = new JLabel("Fecha fin");
 		}
 		return lblFechaIn_1;
 	}

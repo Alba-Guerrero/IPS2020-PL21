@@ -11,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 import logica.HistorialMedico;
 import logica.Preinscripcion;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
 
 import javax.swing.JButton;
 import java.awt.FlowLayout;
@@ -19,6 +20,8 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -72,7 +75,7 @@ public class AnadirPreinscripcion extends JDialog {
 	 * @param modificarMedicosNuevoCard 
 	 */
 	public AnadirPreinscripcion(ModificarMedicosNuevoCard modificarMedicosNuevoCard) {
-		
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		this.modificarCitaMedico = modificarMedicosNuevoCard; // La ventana anterior
 		
 		setTitle("A\u00F1adir preinscripcion");

@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 
 import logica.Correo;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -18,6 +19,7 @@ import java.awt.Font;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -57,7 +59,6 @@ public class PanelLeerCorreo extends JPanel {
 	 * @param ventanaCorreo 
 	 */
 	public PanelLeerCorreo(Correo correo, VentanaCorreo ventanaCorreo) {
-		
 		this.ventanaCorreo = ventanaCorreo;
 		this.correo = correo;
 		

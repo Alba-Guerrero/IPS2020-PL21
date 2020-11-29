@@ -23,6 +23,7 @@ import logica.Cita;
 import logica.Paciente;
 import logica.empleados.Empleado;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
 import ui.medico.ModeloNoEditable;
 
 import javax.swing.JScrollPane;
@@ -38,6 +39,8 @@ import javax.swing.JDialog;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
+
 import javax.swing.JTextField;
 
 public class VerAccionesAdmin extends JDialog {
@@ -67,9 +70,10 @@ public class VerAccionesAdmin extends JDialog {
 	 * Create the frame.
 	 */
 	public VerAccionesAdmin() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		setTitle("Registro de acciones");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 870, 515);
+		setBounds(100, 100, 950, 770);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -226,7 +230,7 @@ public class VerAccionesAdmin extends JDialog {
 	}
 	private JLabel getLblFechaIn_1() {
 		if (lblFechaIn_1 == null) {
-			lblFechaIn_1 = new JLabel("Fecha inicio");
+			lblFechaIn_1 = new JLabel("Fecha fin");
 		}
 		return lblFechaIn_1;
 	}

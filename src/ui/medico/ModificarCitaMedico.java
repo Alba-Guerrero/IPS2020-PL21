@@ -16,6 +16,7 @@ import logica.HistorialMedico;
 import logica.Paciente;
 import logica.Preinscripcion;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
 
 import javax.swing.JButton;
 import javax.swing.JTextField;
@@ -23,6 +24,8 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
+
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.JScrollBar;
@@ -137,7 +140,7 @@ public class ModificarCitaMedico extends JDialog {
 	 * @throws SQLException 
 	 */
 	public ModificarCitaMedico(Paciente paciente, Cita cita) throws SQLException {
-		
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		this.paciente = paciente;
 		this.cita = cita; // Nuestra cita
 		preinscripciones = pbd.listarPrescripciones();

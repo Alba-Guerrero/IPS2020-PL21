@@ -11,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 import logica.Cita;
 import logica.Paciente;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
 
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
@@ -18,6 +19,7 @@ import javax.swing.JOptionPane;
 
 import java.awt.GridLayout;
 import java.awt.JobAttributes;
+import java.awt.Toolkit;
 
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
@@ -42,6 +44,7 @@ public class VerCitasAdmin extends JDialog {
 	 * Create the dialog.
 	 */
 	public VerCitasAdmin() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		setTitle("Ver citas");
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());

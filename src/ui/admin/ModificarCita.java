@@ -9,9 +9,11 @@ import javax.swing.JPanel;
 
 import logica.servicios.ParserBaseDeDatos;
 import net.miginfocom.swing.MigLayout;
+import ui.AnadirAntecedentesHistorial;
 import ui.inicio.VentanaInicio;
 
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -107,6 +109,7 @@ public class ModificarCita extends JDialog {
 	 * @throws SQLException
 	 */
 	public ModificarCita(VentanaVerCita vvc, Paciente p, Cita cita) throws SQLException {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		this.vvc = vvc;
 		this.pacienteCita=p;
 		this.cita=cita;

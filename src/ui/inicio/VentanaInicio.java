@@ -1,6 +1,7 @@
 package ui.inicio;
 
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.charset.Charset;
@@ -25,6 +26,7 @@ import javax.swing.border.TitledBorder;
 import logica.LecturaExcel;
 
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
 import ui.gerente.DatosGerente;
 import ui.medico.VentanaMedicoCita;
 
@@ -90,6 +92,7 @@ public class VentanaInicio extends JFrame {
 	 * Create the dialog.
 	 */
 	public VentanaInicio() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		setResizable(false);
 		getContentPane().setFont(new Font("Tahoma", Font.PLAIN, 20));
 		setTitle("Inicio de sesi\u00F3n");

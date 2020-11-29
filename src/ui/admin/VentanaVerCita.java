@@ -24,6 +24,7 @@ import logica.servicios.HistorialToPDF;
 import logica.servicios.ParserBaseDeDatos;
 import logica.servicios.PrescripcionesToPDF;
 import net.sf.jasperreports.engine.JRException;
+import ui.AnadirAntecedentesHistorial;
 import ui.MostrarHistorial;
 import ui.medico.ModeloNoEditable;
 
@@ -60,6 +61,8 @@ import javax.swing.DefaultListModel;
 import java.awt.FlowLayout;
 import javax.swing.JComboBox;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+
 import javax.swing.JCheckBox;
 import javax.swing.JList;
 import java.awt.event.ItemListener;
@@ -136,6 +139,7 @@ public class VentanaVerCita extends JDialog {
 	 * @param codmedico
 	 */
 	public VentanaVerCita(String codAdmin) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		this.codAdmin = codAdmin;
 		setTitle("M\u00E9dico: Ver citas");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -656,13 +660,11 @@ public class VentanaVerCita extends JDialog {
 		String naccion = "" + numeroAccion;
 
 		String nombrePaciente = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 0);
-		String apellidoPaciente = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 1);
 
 		Date fecha = new Date();
 		Time hora = new Time(new Date().getTime());
 
-		String mensajeAccion = "El aministrador " + codAdmin + " ha visto el historial del paciente " + nombrePaciente
-				+ " " + apellidoPaciente;
+		String mensajeAccion = "El aministrador " + codAdmin + " ha visto el historial del paciente " + nombrePaciente;
 
 		Accion a = new Accion(naccion, codAdmin, fecha, hora, mensajeAccion);
 

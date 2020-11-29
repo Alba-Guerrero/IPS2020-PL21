@@ -3,6 +3,7 @@ package ui.admin;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import javax.swing.table.TableRowSorter;
 import logica.AsignaPreinscripcion;
 import logica.AsignaVacuna;
 import logica.Preinscripcion;
+import ui.AnadirAntecedentesHistorial;
 import ui.medico.ModeloNoEditable;
 
 import javax.swing.JScrollPane;
@@ -53,6 +55,7 @@ public class NuevasVacunas extends JDialog{
 	 * Create the frame.
 	 */
 	public NuevasVacunas(List<AsignaVacuna> vn) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		setTitle("Nuevas vacunas");
 		vacunas = vn;
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

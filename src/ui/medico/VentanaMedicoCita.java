@@ -21,11 +21,13 @@ import logica.Paciente;
 import logica.empleados.Empleado;
 import logica.empleados.Medico;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
 import ui.MostrarHistorial;
 import ui.inicio.VentanaInicio;
 
 import javax.swing.JScrollPane;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
@@ -88,6 +90,7 @@ public class VentanaMedicoCita extends JDialog {
 	 * @param codmedico 
 	 */
 	public VentanaMedicoCita(String codmedico) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		setTitle("M\u00E9dico: Ver citas");
 		this.codmedico=codmedico;
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -174,7 +177,7 @@ public class VentanaMedicoCita extends JDialog {
 	}
 	else {
 		try {
-			citas = pbd.devolvercitasMedico(codmedico);
+			citas = pbd.devolvercitasMedicoPorFechaActual(codmedico);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}

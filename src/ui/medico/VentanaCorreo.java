@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JButton;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ import javax.swing.JSeparator;
 
 import logica.Correo;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
+
 import javax.swing.JLabel;
 import javax.swing.ScrollPaneConstants;
 import java.awt.Component;
@@ -50,7 +53,7 @@ public class VentanaCorreo extends JDialog{
 	 * @param codmedico
 	 */
 	public VentanaCorreo(String codmedico) {
-		
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		try {
 			correos = pbd.buscarCorreos(codmedico); // Cargo los correos que van dirigidos a mi médico de la base de datos
 			

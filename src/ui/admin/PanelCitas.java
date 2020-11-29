@@ -9,6 +9,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
 import ui.inicio.VentanaInicio;
 
 import java.awt.GridLayout;
@@ -61,6 +62,8 @@ import javax.swing.ListSelectionModel;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.SwingConstants;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+
 import javax.swing.border.LineBorder;
 
 public class PanelCitas extends JDialog {
@@ -140,6 +143,7 @@ public class PanelCitas extends JDialog {
 	 */
 
 	public PanelCitas(String codAdmin) throws SQLException {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		this.codAdmin = codAdmin;
 
 		setTitle("Administrativo: citas");
@@ -500,10 +504,10 @@ public class PanelCitas extends JDialog {
 		
 		for(int i =0; i<enfermeros.size(); i++) {
 			if(i==enfermeros.size()) {
-				infoMedicos += enfermeros.get(i).getNombre() + " " + enfermeros.get(i).getApellido();
+				infoMedicos += enfermeros.get(i).getNombre() + " " + enfermeros.get(i).getNombre();
 			}
 			else {
-				infoMedicos += enfermeros.get(i).getNombre() + " " + enfermeros.get(i).getApellido() +",";
+				infoMedicos += enfermeros.get(i).getNombre() + " " + enfermeros.get(i).getNombre() +",";
 			}
 			
 		}
@@ -1852,8 +1856,11 @@ public class PanelCitas extends JDialog {
 						
 							Equipo equip=(Equipo) listEquipoSeleccionado.getSelectedValue();
 							int res=JOptionPane.showConfirmDialog(null, "¿Esta seguro de que desea borrar este equipo?","Confirmación de eliminación", JOptionPane.YES_NO_OPTION);
-							if(res==JOptionPane.YES_OPTION)	
+							if(res==JOptionPane.YES_OPTION)	{
 								modeloEquipSelec.removeElement(equip);
+								equipos.remove(equip);
+							}
+							
 				}
 					}
 			});

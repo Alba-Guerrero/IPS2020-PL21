@@ -15,6 +15,7 @@ import logica.empleados.Empleado;
 import logica.empleados.Enfermero;
 import logica.empleados.Medico;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -32,6 +33,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
 import javax.swing.JToggleButton;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
@@ -83,6 +85,7 @@ public class VentanaJornada extends JDialog{
 	 * @throws SQLException 
 	 */
 	public VentanaJornada(String codAdmin, Empleado em) throws SQLException {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		this.codAdmin = codAdmin;
 		this.em=em;
 		setTitle("Asignar Jornada");

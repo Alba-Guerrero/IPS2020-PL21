@@ -29,7 +29,7 @@ public class Enfermero extends Empleado{
 	
 	@Override
 	public String toString() {
-		return nombre + " " + apellido;
+		return "Enf/enfa" + nombre + " " + apellido;
 	}
 
 }

@@ -44,6 +44,7 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 
 /**
  * @author María
@@ -100,6 +101,7 @@ public class AnadirAntecedentesHistorial extends JDialog{
 	 * @param codempleado
 	 */
 	public AnadirAntecedentesHistorial(MostrarHistorial mostrarHistorial, HistorialMedico historial, String codempleado) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		setModal(true);
 		setTitle("A\u00F1adir antecedente");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

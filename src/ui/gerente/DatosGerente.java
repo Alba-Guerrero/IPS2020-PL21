@@ -25,10 +25,12 @@ import logica.AsignaDiagnostico;
 import logica.Cita;
 import logica.Diagnostico;
 import logica.servicios.ParserBaseDeDatos;
+import ui.AnadirAntecedentesHistorial;
 import ui.inicio.VentanaInicio;
 import ui.medico.ModeloNoEditable;
 
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +80,7 @@ public class DatosGerente extends JDialog {
 	 * Create the frame.
 	 */
 	public DatosGerente() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(AnadirAntecedentesHistorial.class.getResource("/img/logop.jpg")));
 		setTitle("Estad\u00EDstica diagn\u00F3sticos");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1300, 750);
