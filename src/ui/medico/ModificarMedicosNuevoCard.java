@@ -1458,7 +1458,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		String codigoPreinscripcion = preinscripcion.getNombre();
 		
 		// El codigo del empleado (medico)
-		String codempleado = cita.getCodMed();
+		String codempleado = codmedico;
 		//String codempleado = "1a";
 		
 		
@@ -1700,7 +1700,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		
 		String nombreVacuna = vacuna.getNombreVacuna();
 		String codHistorial = paciente.getHistorial();
-		String codEmpleado = cita.getCodMed();		
+		String codEmpleado = codmedico;		
 		Date fecha = new Date();	
 		Time hora = new Time(new Date().getTime());		
 		
@@ -1874,7 +1874,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		String nombreDiagnostico = diagnostico.getNombre();
 		String nHistorial = paciente.getHistorial(); // El número de historial del paciente a quien le hemos asignado el diagnostico
 		String nDiagnostico = diagnostico.getNumeroDiagnostico(); // El identificador del diagnostico
-		String codMedico = cita.getCodMed();
+		String codMedico = codmedico;
 		Date fecha = new Date();	
 		Time hora = new Time(new Date().getTime());
 		AsignaDiagnostico ad = new AsignaDiagnostico(codAsigDiagnostico, nombreDiagnostico, nDiagnostico, nHistorial, codMedico, fecha, hora);
@@ -2305,7 +2305,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	
 	private void mostrarHistorial() throws SQLException {
 		HistorialMedico hm = pbd.HistorialCita(cita.getCodCita(),paciente.getCodePaciente());
-		MostrarHistorial mh = new MostrarHistorial(hm, cita.getCodMed());
+		MostrarHistorial mh = new MostrarHistorial(hm, codmedico);
 		mh.setLocationRelativeTo(null);
 		mh.setResizable(true);
 		mh.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
@@ -2677,7 +2677,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		String nombreProcedimiento = procedimiento.getNombre();
 		String nProcedimiento = procedimiento.getNumero(); // El identificador del procedimiento
 		String nHistorial = paciente.getHistorial(); // El número de historial del paciente a quien le hemos asignado el procedimiento
-		String codMedico = cita.getCodMed();
+		String codMedico = codmedico;
 		Date fecha = new Date();	
 		Time hora = new Time(new Date().getTime());
 		AsignaProcedimiento ad = new AsignaProcedimiento(codAsigProcedimiento, nombreProcedimiento, nProcedimiento, nHistorial, codMedico, fecha, hora);
@@ -3043,7 +3043,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		String nombreAntecedente = antecedente.getNombreAntecedente();
 		String nHistorial = paciente.getHistorial(); // El número de historial del paciente a quien le hemos asignado el antecedente
 		String nAntecedente = antecedente.getCodAntecedente(); // El identificador del antecedente
-		String codMedico = cita.getCodMed();
+		String codMedico = codmedico;
 		Date fecha = new Date();	
 		Time hora = new Time(new Date().getTime());
 		AsignaAntecedente aa = new AsignaAntecedente(codAsigAntecedente, nombreAntecedente, nAntecedente, nHistorial, codMedico, fecha, hora);

@@ -585,7 +585,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		con.close();
 	}
 
-//----------------------A PARTIR DE AQUÍ VENTANA MEDICO CITA-------------------------------------------------------------------
+//----------------------A PARTIR DE AQUÃ� VENTANA MEDICO CITA-------------------------------------------------------------------
 
 	public List<Cita> devolvercitasMedico(String codmedico) throws SQLException {
 		List<Cita> citas = new ArrayList<Cita>();
@@ -1353,7 +1353,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	}
 
 	/**
-	 * Método para actualizar la cita cuando la modifica el médico
+	 * MÃ©todo para actualizar la cita cuando la modifica el mÃ©dico
 	 * 
 	 * @param b
 	 * @param cita
@@ -1557,7 +1557,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	}
 
 	/**
-	 * Método para guardar una nueva asigna preinscripcion
+	 * MÃ©todo para guardar una nueva asigna preinscripcion
 	 * 
 	 * @param ap
 	 */
@@ -1595,7 +1595,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	}
 
 	/**
-	 * Método para guardar una nueva preinscripcion
+	 * MÃ©todo para guardar una nueva preinscripcion
 	 * 
 	 * @param p
 	 * @throws SQLException
@@ -1637,7 +1637,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	}
 
 	/**
-	 * Método para buscar todas las preinscripciones que se le han asignado a un
+	 * MÃ©todo para buscar todas las preinscripciones que se le han asignado a un
 	 * paciente en concreto
 	 * 
 	 * @param historial
@@ -1837,7 +1837,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		return nombresCausas;
 	}
 
-//AÑADIR QUERY VACACIONES
+//AÃ‘ADIR QUERY VACACIONES
 	public void asignarVacaciones(Vacaciones vacaciones) throws SQLException {
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst = con.prepareStatement(ADD_VACACIONES);
@@ -1861,7 +1861,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	}
 
 	/**
-	 * Método para listar todas las vacunas que tenemos en la base de datos
+	 * MÃ©todo para listar todas las vacunas que tenemos en la base de datos
 	 * 
 	 * @return
 	 * @throws SQLException
@@ -1886,7 +1886,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	}
 
 	/**
-	 * Método para guardar las vacunas que se le han asignado a un paciente
+	 * MÃ©todo para guardar las vacunas que se le han asignado a un paciente
 	 * 
 	 * @param av
 	 * @throws SQLException
@@ -1917,7 +1917,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	}
 
 	/**
-	 * Método para sacar todas las vacunas que se le han asignado a un paciente
+	 * MÃ©todo para sacar todas las vacunas que se le han asignado a un paciente
 	 * 
 	 * @param historial
 	 * @return
@@ -1958,7 +1958,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		}
 
 	/**
-	 * Método que me devuelve una lista con todos los diagnosticos que tengo en la
+	 * MÃ©todo que me devuelve una lista con todos los diagnosticos que tengo en la
 	 * bd
 	 * 
 	 * @return
@@ -1985,7 +1985,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	}
 
 	/**
-	 * Método para guardar todos los diagnosticos que se le han asignaso a un
+	 * MÃ©todo para guardar todos los diagnosticos que se le han asignaso a un
 	 * paciente
 	 * 
 	 * @param ad
@@ -2421,7 +2421,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	
 	/**
-	 * Método para sacar todos los correos que tiene un médico
+	 * MÃ©todo para sacar todos los correos que tiene un mÃ©dico
 	 * @return
 	 * @throws SQLException 
 	 */
@@ -2431,7 +2431,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst = con.prepareStatement(VER_CORREOS);
 
-		pst.setString(1, codMedicoDestino); // busco por codigo médico que tiene que recibir los correos
+		pst.setString(1, codMedicoDestino); // busco por codigo mÃ©dico que tiene que recibir los correos
 		
 		ResultSet rs = pst.executeQuery(); // Creo el resultSet
 
@@ -2570,7 +2570,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	
 	/**
-	 * Método que me guarda un correo nuevo en la base de datos
+	 * MÃ©todo que me guarda un correo nuevo en la base de datos
 	 * @param nuevoCorreo
 	 * @throws SQLException 
 	 */
@@ -2605,7 +2605,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	}
 	
 	/**
-	 * Método para buscar el código de un médico a partir de su nombre
+	 * MÃ©todo para buscar el cÃ³digo de un mÃ©dico a partir de su nombre
 	 * @param codMedico
 	 * @return
 	 * @throws SQLException
@@ -2636,12 +2636,12 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 
 	
 	/**
-	 * Método para eliminar un correo de la lista de correos
+	 * MÃ©todo para eliminar un correo de la lista de correos
 	 * @param correo
 	 * @throws SQLException 
 	 */
 	public void eliminarMensaje(Correo correo) throws SQLException {
-		String codCorreo = correo.getCodCorreo(); // El código del correo que queremos eliminar
+		String codCorreo = correo.getCodCorreo(); // El cÃ³digo del correo que queremos eliminar
 		
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst = con.prepareStatement(DELETE_CORREO);
@@ -3098,7 +3098,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	
 	/**
-	 * Método para guardar un nuevo diagnostico
+	 * MÃ©todo para guardar un nuevo diagnostico
 	 * 
 	 * @param p
 	 * @throws SQLException
@@ -3120,7 +3120,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	
 	/**
-	 * Método para saber si se han cargado los diagnósticos del cie10 o no
+	 * MÃ©todo para saber si se han cargado los diagnÃ³sticos del cie10 o no
 	 * @return
 	 * @throws SQLException 
 	 */
@@ -3128,7 +3128,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 //		Connection con = new Conexion().getConnectionJDBC();
 //		PreparedStatement pst = con.prepareStatement(FIND_DIAGNOSTICO);
 //		
-//		String codigoDiagnostico = "A000"; // Busco por ejemplo el primer diagnóstico, que si está cargado ya me lo dice
+//		String codigoDiagnostico = "A000"; // Busco por ejemplo el primer diagnÃ³stico, que si estÃ¡ cargado ya me lo dice
 //		pst.setString(1, codigoDiagnostico);
 //		ResultSet rs = pst.executeQuery();
 //
@@ -3170,7 +3170,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		
 		PreparedStatement pst2 = null;
 		
-		if(tipo.equals("Médico")) {
+		if(tipo.equals("MÃ©dico")) {
 			pst2 = con.prepareStatement(ADD_MEDICO);
 			pst2.setString(1, empleado.getCodeEmpleado());
 		}
@@ -3188,7 +3188,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	
 	/**
-	 * Método para cargar los procedimientos de la base de datos
+	 * MÃ©todo para cargar los procedimientos de la base de datos
 	 * @return
 	 * @throws SQLException 
 	 */
@@ -3215,7 +3215,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	
 	/**
-	 * Método que me crea una nueva asignaPreinscripcion y me lo guarda
+	 * MÃ©todo que me crea una nueva asignaPreinscripcion y me lo guarda
 	 * @param ap
 	 * @throws SQLException 
 	 */
@@ -3248,7 +3248,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	
 	/**
-	 * Método para buscar todos los procedimientos que tiene asignado un numero de historial que se le pasa por parámetro
+	 * MÃ©todo para buscar todos los procedimientos que tiene asignado un numero de historial que se le pasa por parÃ¡metro
 	 * 
 	 * @param historial
 	 * @return
@@ -3315,7 +3315,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	
 	/**
-	 * Método para guardar un nuevo procedimiento
+	 * MÃ©todo para guardar un nuevo procedimiento
 	 * 
 	 * @param p
 	 * @throws SQLException
@@ -3338,7 +3338,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	
 	/**
-	 * Método para saber si los procedimientos del cie10 están cargados en la base de datos
+	 * MÃ©todo para saber si los procedimientos del cie10 estÃ¡n cargados en la base de datos
 	 * @return
 	 * @throws SQLException 
 	 */
@@ -3354,7 +3354,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 
 	
 	/**
-	 * Método para cargar los antecedentes de la base de datos
+	 * MÃ©todo para cargar los antecedentes de la base de datos
 	 * @return
 	 * @throws SQLException 
 	 */
@@ -3380,7 +3380,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	
 	/**
-	 * Método para actualizar los antecedentes
+	 * MÃ©todo para actualizar los antecedentes
 	 * @param antecedentes
 	 * @throws SQLException 
 	 */
@@ -3424,7 +3424,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 
 	
 	/**
-	 * Método que asigna un nuevo antecedente
+	 * MÃ©todo que asigna un nuevo antecedente
 	 * @param aa
 	 * @throws SQLException 
 	 */
@@ -3457,7 +3457,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 
 	
 	/**
-	 * Método que me devuelve todos los nombres de los antecedentes asignados a un paciente que se pasa por parámetro
+	 * MÃ©todo que me devuelve todos los nombres de los antecedentes asignados a un paciente que se pasa por parÃ¡metro
 	 * @param historial
 	 * @return
 	 * @throws SQLException 
@@ -3512,7 +3512,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 
 	
 	/**
-	 * Método para saber si un paciente tiene asignado algún antecedente
+	 * MÃ©todo para saber si un paciente tiene asignado algÃºn antecedente
 	 * @param codPaciente
 	 * @return
 	 * @throws SQLException 
@@ -3529,7 +3529,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 
 	
 	/**
-	 * Método que me lista los antecedentes asignados a un paciente que se le pasa por parámetro
+	 * MÃ©todo que me lista los antecedentes asignados a un paciente que se le pasa por parÃ¡metro
 	 * @param paciente
 	 * @return
 	 * @throws SQLException 
@@ -3585,7 +3585,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	
 	/**
-	 * Método para listar todas las preinscripciones asignadas
+	 * MÃ©todo para listar todas las preinscripciones asignadas
 	 * @param historial
 	 * @return
 	 * @throws SQLException 
@@ -3614,7 +3614,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	
 	/**
-	 * Método para listar todas las preinscripciones asignadas
+	 * MÃ©todo para listar todas las preinscripciones asignadas
 	 * @param historial
 	 * @return
 	 * @throws SQLException 
@@ -3703,7 +3703,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	
 	/**
-	 * Método que me devuelve el paciente buscando su núemro de historial
+	 * MÃ©todo que me devuelve el paciente buscando su nÃºemro de historial
 	 * @param codigo
 	 * @return
 	 * @throws SQLException
@@ -3732,7 +3732,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	
 	/**
-	 * Método que me devuelve el nombre y apellidos del médico que le paso el código por parámetro
+	 * MÃ©todo que me devuelve el nombre y apellidos del mÃ©dico que le paso el cÃ³digo por parÃ¡metro
 	 * @param codigo
 	 * @return
 	 * @throws SQLException 

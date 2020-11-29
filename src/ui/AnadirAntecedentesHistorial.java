@@ -621,12 +621,12 @@ public class AnadirAntecedentesHistorial extends JDialog{
 
 		listoAntecedentes = true;
 		
-		this.revalidate();
-		repaint();
+		//this.revalidate();
+	//	repaint();
 		
 		int contador = 0;
 		for (Antecedente a : antecedentes) {
-			if (a.getNombreAntecedente().toLowerCase().equals(antecedente.getNombreAntecedente())) {
+			if (a.getNombreAntecedente().toLowerCase().equals(antecedente.getNombreAntecedente().toLowerCase())) {
 				cambiarIndiceCBAntecedentes(contador);
 				
 			}

@@ -106,6 +106,17 @@ public class Cita {
 	
 	
 	
+	public Cita(String codcita,String codPaciente, Time hInicio, Time hFin,Date date,String ubicacion, boolean selected, String numequipo) {
+		this.CodCita=codcita;
+		this.codPaciente = codPaciente;
+		this.urgente = selected;
+		this.hInicio = hInicio;
+		this.hFin = hFin;
+		this.date=date;
+		this.ubicacion=ubicacion;
+		this.numequipo = numequipo;
+	}
+
 	public String getNumequipo() {
 		return numequipo;
 	}

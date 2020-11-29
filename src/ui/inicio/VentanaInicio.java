@@ -55,7 +55,7 @@ public class VentanaInicio extends JFrame {
 	 */
 	public static void main(String[] args) {
 		try {
-			
+			System.out.println("djghfdigh");
 			
 			// DIAGNOSTICOS CIE10
 			if (!pbd.diagnosticosCargados()) { // Si no están cargados los diagnósticos se cargan
