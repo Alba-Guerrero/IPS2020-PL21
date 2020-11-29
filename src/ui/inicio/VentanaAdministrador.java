@@ -162,7 +162,6 @@ public class VentanaAdministrador extends JDialog {
 	private JLabel getLblSelecciona() {
 		if (lblSelecciona == null) {
 			lblSelecciona = new JLabel("Seleccione lo que desea hacer:");
-			lblSelecciona.setBackground(Color.WHITE);
 			lblSelecciona.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		}
 		return lblSelecciona;

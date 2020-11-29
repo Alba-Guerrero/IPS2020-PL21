@@ -262,9 +262,9 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	private final static String ADD_MEDICO = "INSERT INTO medico VALUES(?)";
 	private final static String ADD_ENFERMERO = "INSERT INTO enfermero VALUES(?)";
 	
-	private final static String VER_DIAGNOSTICOS = "SELECT * FROM asignadiagnostico";
+	private final static String VER_DIAGNOSTICOS = "select nombrediagnostico, count(*) as contador from asignadiagnostico group by nombrediagnostico";
 	
-	private final static String VER_CODDIAGNOSTICOS_FECHA = "select coddiagnostico from diagnostico where nombrediagnostico = ? and fecha >= ? and fecha <= ?";
+	private final static String VER_CODDIAGNOSTICOS_FECHA =  "select nombrediagnostico, count(*) as contador from asignadiagnostico where fecha>=? and fecha <? group by nombrediagnostico";
 	
 	private final static String VER_CODDIAGNOSTICOS = "SELECT coddiagnostico FROM diagnostico where nombrediagnostico=?";
 	//FUNCIONES
@@ -3585,13 +3585,11 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst = con.prepareStatement(VER_DIAGNOSTICOS);
-
+		
 		ResultSet rs = pst.executeQuery(); 
 
 		while (rs.next()) {
-			diagnsoticos.add(new AsignaDiagnostico(rs.getString("codAsigDiagnostico"), rs.getString("nombreDiagnostico"),
-					rs.getString("coddiagnostico"),rs.getString("historial"),
-				rs.getString("codempleado"),rs.getDate("fecha"),rs.getTime("hora")));
+			diagnsoticos.add(new AsignaDiagnostico(rs.getString("nombrediagnostico"), rs.getInt("contador")));
 					
 			
 		}
@@ -3603,25 +3601,24 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		return diagnsoticos;
 	}
 	
-	public String buscarCodDiagnosticoPorFechas(String nombreDiagnostico, Date sDateIn, Date sDateFin) throws SQLException {
-		String diagnsoticos = "";
+	public List<AsignaDiagnostico> buscarCodDiagnosticoPorFechas(Date sDateIn, Date sDateFin) throws SQLException {
+		List<AsignaDiagnostico> diagnosticos = new ArrayList<AsignaDiagnostico>();
 
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst = con.prepareStatement(VER_CODDIAGNOSTICOS_FECHA);
-		pst.setString(1, nombreDiagnostico);
-		pst.setDate(2, sDateIn);
-		pst.setDate(3, sDateFin);
+		pst.setDate(1, sDateIn);
+		pst.setDate(2, sDateFin);
 		ResultSet rs = pst.executeQuery(); 
 
-		if (rs.next()) {
-			diagnsoticos = rs.getString(1);
+		while (rs.next()) {
+			diagnosticos.add(new AsignaDiagnostico(rs.getString("nombrediagnostico"), rs.getInt("contador")));
 		}
 
 		// CERRAR EN ESTE ORDEN
 		rs.close();
 		pst.close();
 		con.close();
-		return diagnsoticos;
+		return diagnosticos;
 	}
 	
 	public String buscarCodDiagnostico(String nombreDiagnostico) throws SQLException {

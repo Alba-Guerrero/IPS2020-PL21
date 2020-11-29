@@ -83,6 +83,7 @@ public class AñadirEmpleado extends JDialog {
 	 * Create the frame.
 	 */
 	public AñadirEmpleado(String codAdmin) {
+		setResizable(false);
 		this.codAdmin=codAdmin;
 		setTitle("A\u00F1adir empleado");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -214,14 +215,19 @@ public class AñadirEmpleado extends JDialog {
 					
 				}
 			});
-			btnContinuar.setBounds(601, 387, 89, 23);
+			btnContinuar.setBounds(486, 387, 89, 23);
 		}
 		return btnContinuar;
 	}
 	private JButton getBtnCancelar() {
 		if (btnCancelar == null) {
 			btnCancelar = new JButton("Cancelar");
-			btnCancelar.setBounds(502, 387, 89, 23);
+			btnCancelar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					dispose();
+				}
+			});
+			btnCancelar.setBounds(596, 387, 89, 23);
 		}
 		return btnCancelar;
 	}

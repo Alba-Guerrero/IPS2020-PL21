@@ -166,12 +166,14 @@ public class DatosGerente extends JDialog {
 		borrarModeloTabla();
 		Object[] nuevaFila=new Object[4];
 		List<AsignaDiagnostico> diagnosticosAsignados = new ArrayList<AsignaDiagnostico>();
+		List<AsignaDiagnostico> diagnosticosEstan = new ArrayList<AsignaDiagnostico>();
 		try {
 			diagnosticosAsignados = pbd.asignaDiagnostico();
 		} catch (SQLException e) {
 
 			e.printStackTrace();
 		}
+		System.out.println(diagnosticosAsignados.size()+"");
 		float total = diagnosticosAsignados.size();
 //		List<Diagnostico> diagnosticos = new ArrayList<Diagnostico>();
 //		try {
@@ -181,28 +183,30 @@ public class DatosGerente extends JDialog {
 //			e.printStackTrace();
 //		}
 		if(dia) {
+			
 			Date dateIn = getDateChooser().getDate();
 			java.sql.Date sDateIn = new java.sql.Date(dateIn.getTime());
 			
 			Date dateFin = getDateChooser_1().getDate();
 			java.sql.Date sDateFin = new java.sql.Date(dateFin.getTime());
+			try {
+				diagnosticosAsignados = pbd.buscarCodDiagnosticoPorFechas(sDateIn, sDateFin);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			for(int i=0; i<diagnosticosAsignados.size(); i++) {
 				int cant = 0;
 				String numDiagnostico = "";
 				try {
-					numDiagnostico = pbd.buscarCodDiagnosticoPorFechas(diagnosticosAsignados.get(i).getNombreDiagnostico(), sDateIn, sDateFin);
+					numDiagnostico = pbd.buscarCodDiagnostico(diagnosticosAsignados.get(i).getNombreDiagnostico());
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				nuevaFila[0] = numDiagnostico;
 				nuevaFila[1]= diagnosticosAsignados.get(i).getNombreDiagnostico();
-				for(int j=1; j<diagnosticosAsignados.size(); j++) {
-					if(diagnosticosAsignados.get(i).getNombreDiagnostico().equals(diagnosticosAsignados.get(j).getNombreDiagnostico())) {
-						cant++;
-						diagnosticosAsignados.remove(j);
-					}
-				}
+				cant = diagnosticosAsignados.get(i).getCantidad();
 				nuevaFila[2]= cant + "";
 				int datoss1 = cant;
 				dataset.setValue(datoss1,"", diagnosticosAsignados.get(i).getNombreDiagnostico());
@@ -224,23 +228,32 @@ public class DatosGerente extends JDialog {
 				}
 				nuevaFila[0] = numDiagnostico;
 				nuevaFila[1]= diagnosticosAsignados.get(i).getNombreDiagnostico();
-				for(int j=1; j<diagnosticosAsignados.size(); j++) {
-					if(diagnosticosAsignados.get(i).getNombreDiagnostico().equals(diagnosticosAsignados.get(j).getNombreDiagnostico())) {
-						cant++;
-						diagnosticosAsignados.remove(j);
-					}
-				}
-				nuevaFila[2]= cant + "";
+				cant = diagnosticosAsignados.get(i).getCantidad();
+				nuevaFila[2]= cant;
 				float porcentaje = ((cant/total) * 100);
 				nuevaFila[3] = porcentaje + "%";
 				int datoss1 = cant;
+				
 				dataset.setValue(datoss1,"", diagnosticosAsignados.get(i).getNombreDiagnostico());
+				
 				modeloTabla.addRow(nuevaFila);
+				diagnosticosEstan.add(diagnosticosAsignados.get(i));
 			}
 		}
 		
 	}
 	
+
+	private boolean estaDiagnostico(List<AsignaDiagnostico> diagnosticosAsignados,
+			List<AsignaDiagnostico> diagnosticosEstan) {
+		boolean retornar = true;
+		for(int i=0;i<0; diagnosticosAsignados.size()) {
+			if(diagnosticosEstan.contains(diagnosticosAsignados.get(i))) {
+				retornar = false;
+			}
+		}
+		return retornar;
+	}
 
 	private void añadirGrafico() {
 		JFreeChart chart = ChartFactory.createBarChart("Diagnósticos", "", "", dataset, PlotOrientation.VERTICAL, false, false, false);

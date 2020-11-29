@@ -121,10 +121,6 @@ public class VentanaVerCita extends JDialog {
 	private JLabel lblFiltarPor;
 	private JList<Medico> listMedico;
 	private JPanel panel_2;
-	private JPanel panel_3;
-	private JLabel lblEspecialidad_1;
-	private JTextField textField;
-	private JButton btnIr_2;
 	private DefaultListModel<Medico> modeloListaMedico=new DefaultListModel<Medico>();;
 	private DefaultListModel<Enfermero> modeloListaEnfermero=new DefaultListModel<Enfermero>();
 	private JScrollPane scrollEnfermero;
@@ -1164,44 +1160,11 @@ public class VentanaVerCita extends JDialog {
 	private JPanel getPanel_2() {
 		if (panel_2 == null) {
 			panel_2 = new JPanel();
-			panel_2.setLayout(new GridLayout(3, 1, 0, 0));
-			panel_2.add(getPanel_3());
+			panel_2.setLayout(new GridLayout(2, 1, 0, 0));
 			panel_2.add(getScrollEnfermero());
 			panel_2.add(getScrollMedico());
 		}
 		return panel_2;
-	}
-
-	private JPanel getPanel_3() {
-		if (panel_3 == null) {
-			panel_3 = new JPanel();
-			panel_3.add(getLblEspecialidad_1());
-			panel_3.add(getTextField());
-			panel_3.add(getBtnIr_2());
-		}
-		return panel_3;
-	}
-
-	private JLabel getLblEspecialidad_1() {
-		if (lblEspecialidad_1 == null) {
-			lblEspecialidad_1 = new JLabel("Especialidad:");
-		}
-		return lblEspecialidad_1;
-	}
-
-	private JTextField getTextField() {
-		if (textField == null) {
-			textField = new JTextField();
-			textField.setColumns(10);
-		}
-		return textField;
-	}
-
-	private JButton getBtnIr_2() {
-		if (btnIr_2 == null) {
-			btnIr_2 = new JButton("Ir");
-		}
-		return btnIr_2;
 	}
 	private JScrollPane getScrollEnfermero() {
 		if (scrollEnfermero == null) {

@@ -20,6 +20,7 @@ public class AsignaDiagnostico {
 	private String codMedico;
 	private Date fecha;
 	private Time hora;
+	private int cantidad;
 	
 	
 	
@@ -42,11 +43,25 @@ public class AsignaDiagnostico {
 		this.fecha = fecha;
 		this.hora = hora;
 	}	
+	
+	public AsignaDiagnostico(String nombreDiagnostico, int cantidad) {
+		this.nombreDiagnostico = nombreDiagnostico;
+		this.cantidad = cantidad;
+	}	
 
+	
 
 
 	
 	
+	public int getCantidad() {
+		return cantidad;
+	}
+
+	public void setCantidad(int cantidad) {
+		this.cantidad = cantidad;
+	}
+
 	/**
 	 * @return the nombreDiagnostico
 	 */

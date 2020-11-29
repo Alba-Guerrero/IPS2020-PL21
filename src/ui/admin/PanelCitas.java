@@ -148,7 +148,7 @@ public class PanelCitas extends JDialog {
 		setBounds(100, 100, 1055, 770);
 		getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
 		getContentPane().add(getScrollPane_1_3());
-		contentPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Citas", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		contentPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Citas", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		getContentPane().add(scrollPane_1);
 		contentPanel.setLayout(new GridLayout(6, 1, 0, 0));
 		/*{
@@ -193,7 +193,7 @@ public class PanelCitas extends JDialog {
 	private JPanel getPnMedico() throws SQLException {
 		if (pnMedico == null) {
 			pnMedico = new JPanel();
-			pnMedico.setBorder(new TitledBorder(null, "M\u00E9dico", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			pnMedico.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Médico", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			pnMedico.setSize(new Dimension(219, 200));
 			pnMedico.setLayout(new GridLayout(0, 2, 0, 0));
 			pnMedico.add(getPnDatosMedicoSeleccion());
@@ -224,7 +224,7 @@ public class PanelCitas extends JDialog {
 	private JPanel getPanelAbajo2() {
 		if (panelAbajo2 == null) {
 			panelAbajo2 = new JPanel();
-			panelAbajo2.setBorder(new TitledBorder(null, "Opciones de fecha", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			panelAbajo2.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Opciones de fecha", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			panelAbajo2.setLayout(null);
 			panelAbajo2.add(getScrollPane_descripcion());
 			panelAbajo2.add(getBtnCrearCita());
@@ -1200,6 +1200,7 @@ public class PanelCitas extends JDialog {
 		if (scrollPanePacientes == null) {
 			scrollPanePacientes = new JScrollPane();
 			scrollPanePacientes.setViewportView(getList_1_1());
+			scrollPanePacientes.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "Seleccione al paciente", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		}
 		return scrollPanePacientes;
 	}
@@ -1411,7 +1412,7 @@ public class PanelCitas extends JDialog {
 	private JPanel getPnMedicosLista() throws SQLException {
 		if (pnMedicosLista == null) {
 			pnMedicosLista = new JPanel();
-			pnMedicosLista.setBorder(new TitledBorder(null, "Seleccione los m\u00E9dicos", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			pnMedicosLista.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Seleccione los médicos", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			pnMedicosLista.setLayout(null);
 			pnMedicosLista.add(getScrollPane_1());
 		}
@@ -1430,7 +1431,7 @@ public class PanelCitas extends JDialog {
 	private JPanel getPnMedicosSeleccionados() {
 		if (pnMedicosSeleccionados == null) {
 			pnMedicosSeleccionados = new JPanel();
-			pnMedicosSeleccionados.setBorder(new TitledBorder(null, "M\u00E9dicos seleccionados", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			pnMedicosSeleccionados.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Médicos seleccionados", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			pnMedicosSeleccionados.setLayout(null);
 			pnMedicosSeleccionados.add(getScrollPane());
 			
@@ -1496,6 +1497,7 @@ public class PanelCitas extends JDialog {
 		if (scrollPaneListaEnfermeros == null) {
 			scrollPaneListaEnfermeros = new JScrollPane();
 			scrollPaneListaEnfermeros.setViewportView(getList_1_2());
+			scrollPaneListaEnfermeros.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Seleccione el enfermero", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		}
 		return scrollPaneListaEnfermeros;
 	}
@@ -1504,6 +1506,7 @@ public class PanelCitas extends JDialog {
 		if (list_1 == null) {
 			list_1 = new JList<Enfermero>();
 			modeloListEnf = new DefaultListModel<Enfermero>();
+			enfermeros = new ArrayList<Enfermero>();
 			try {
 				 modeloListEnf.addAll(pbd.listarEnfermero());
 			} catch (SQLException e) {
@@ -1513,7 +1516,7 @@ public class PanelCitas extends JDialog {
 			list_1.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent event) {
-					enfermeros = new ArrayList<Enfermero>();
+					
 					@SuppressWarnings("deprecation")
 					Object[] selectedValues = list_1.getSelectedValues();
 					if (selectedValues.length >= 0) {
@@ -1635,7 +1638,7 @@ public class PanelCitas extends JDialog {
 			btnFiltroNomEmp.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
-						modeloListaEnfermero(pbd.buscarApellidoEnfermero(txtFieldFiltroNomEnf.getText()));
+						modeloListaEnfermero(pbd.buscarNombreEnfermero(txtFieldFiltroNomEnf.getText()));
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -1684,7 +1687,7 @@ public class PanelCitas extends JDialog {
 	private JPanel getPanelEquipo() throws SQLException {
 		if (panelEquipo == null) {
 			panelEquipo = new JPanel();
-			panelEquipo.setBorder(new TitledBorder(null, "Equipo", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			panelEquipo.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Equipo", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 			panelEquipo.setLayout(new GridLayout(1, 0, 0, 0));
 			panelEquipo.add(getPanelDatosEquipoSeleccion());
 			panelEquipo.add(getPnEquiposLista());
@@ -1723,7 +1726,7 @@ public class PanelCitas extends JDialog {
 	private JPanel getPnEquiposLista() throws SQLException {
 		if (pnEquiposLista == null) {
 			pnEquiposLista = new JPanel();
-			pnEquiposLista.setBorder(new TitledBorder(null, "Seleccione el equipo", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			pnEquiposLista.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Seleccione el equipo", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			pnEquiposLista.setLayout(null);
 			pnEquiposLista.add(getScrollPanelListaEquipos());
 		}
@@ -1930,6 +1933,7 @@ public class PanelCitas extends JDialog {
 			btnQuitarFiltro.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
+						modeloListaM.removeAllElements();
 						modeloListaM(pbd.buscarMedico(""));
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
@@ -1946,6 +1950,7 @@ public class PanelCitas extends JDialog {
 			btnNewButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
+						modeloListEnf.removeAllElements();
 						modeloListEnf.addAll(pbd.listarEnfermero());
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block

@@ -368,7 +368,7 @@ public class MostrarHistorial extends JDialog {
 	private JButton getBtnNewButton_1() {
 		if (btnNewButton_1 == null) {
 			btnNewButton_1 = new JButton("");
-			btnNewButton_1.setIcon(new ImageIcon("C:\\Users\\Alba\\Downloads\\interface+multimedia+print+printer+icon-1320185667007730348_24.png"));
+			btnNewButton_1.setIcon(new ImageIcon("C:\\Users\\santi\\Downloads\\interface+multimedia+print+printer+icon-1320185667007730348_24.png"));
 			btnNewButton_1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					Printer printer= new Printer();

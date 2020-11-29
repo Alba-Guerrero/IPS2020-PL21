@@ -13,10 +13,12 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import logica.Accion;
 import logica.Equipo;
+import logica.empleados.Enfermero;
 import logica.empleados.Medico;
 import logica.servicios.ParserBaseDeDatos;
 
@@ -62,10 +64,30 @@ public class CrearEquipo extends JDialog {
 	private ArrayList<Medico> medicos;
 	private JList<Medico> list;
 	private DefaultListModel<Medico> modeloMedSelec;
-	private JButton btnEliminarMedico;
 	private JPanel panel;
 	private JButton btnCrearEquipo;
 	private String codAdmin;
+	private JPanel panel_1;
+	private JPanel panel_2;
+	private JPanel panelEnfermero;
+	private JPanel panelFiltrosSeleccEnfermero;
+	private JScrollPane scrollPaneListaEnfermeros;
+	private JPanel panelFiltrosEnf;
+	private JPanel panelEnfSeleccionados;
+	private JList<Enfermero> list_1;
+	private JLabel lblNewLabel_1;
+	private JLabel lblNewLabel_2;
+	private JTextField txtFieldFiltroNomEnf;
+	private JTextField txtFieldFiltroApeEmp;
+	private JButton btnFiltroNomEmp;
+	private JButton btnFiltroApeNum;
+	private JButton btnNewButton;
+	private DefaultListModel<Enfermero> modeloListEnf;
+	private DefaultListModel<Enfermero> modeloEnfSelec;
+	private ArrayList<Enfermero> enfermeros;
+	private JScrollPane scrrPaneSeleccionados;
+	private JList listEnfSeleccionados;
+	private JButton btnNewButton_1;
 
 	/**
 	 * Create the frame.
@@ -89,17 +111,19 @@ public class CrearEquipo extends JDialog {
 		if (pnMedico == null) {
 			pnMedico = new JPanel();
 			pnMedico.setSize(new Dimension(219, 200));
-			pnMedico.setBorder(new TitledBorder(null, "M\u00E9dico", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			pnMedico.setBorder(new TitledBorder(null, "Empleado", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			pnMedico.setLayout(new GridLayout(0, 2, 0, 0));
 			pnMedico.add(getPnDatosMedicoSeleccion());
 			pnMedico.add(getPnMedicosLista());
+			pnMedico.add(getPanelEnfermero());
+			pnMedico.add(getScrollPaneListaEnfermeros());
 		}
 		return pnMedico;
 	}
 	private JPanel getPnDatosMedicoSeleccion() {
 		if (pnDatosMedicoSeleccion == null) {
 			pnDatosMedicoSeleccion = new JPanel();
-			pnDatosMedicoSeleccion.setLayout(new GridLayout(2, 0, 0, 0));
+			pnDatosMedicoSeleccion.setLayout(new GridLayout(0, 1, 0, 0));
 			pnDatosMedicoSeleccion.add(getPnDatosMedico());
 			pnDatosMedicoSeleccion.add(getPnMedicosSeleccionados());
 		}
@@ -108,13 +132,14 @@ public class CrearEquipo extends JDialog {
 	private JPanel getPnDatosMedico() {
 		if (pnDatosMedico == null) {
 			pnDatosMedico = new JPanel();
-			pnDatosMedico.setLayout(new MigLayout("", "[152px][152px][152px]", "[17px][17px][17px][17px]"));
+			pnDatosMedico.setLayout(new MigLayout("", "[152px][152px][152px]", "[17px][17px][17px][17px][]"));
 			pnDatosMedico.add(getLblNombreFiltroMedico(), "flowx,cell 0 1,grow");
 			pnDatosMedico.add(getTextField_2(), "cell 1 1,grow");
 			pnDatosMedico.add(getBtnFiltrarNombreMedico(), "cell 2 1,grow");
 			pnDatosMedico.add(getLblApellidoMedicoFiltro(), "cell 0 3,grow");
 			pnDatosMedico.add(getTextField_1_1(), "cell 1 3,grow");
 			pnDatosMedico.add(getBtnFiltrarApellidoMedico(), "cell 2 3,grow");
+			pnDatosMedico.add(getBtnNewButton_1(), "cell 2 4");
 		}
 		return pnDatosMedico;
 	}
@@ -126,7 +151,6 @@ public class CrearEquipo extends JDialog {
 			pnMedicosSeleccionados.setLayout(null);
 			pnMedicosSeleccionados.setBorder(new TitledBorder(null, "M\u00E9dicos seleccionados", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			pnMedicosSeleccionados.add(getScrollPane());
-			pnMedicosSeleccionados.add(getBtnEliminarMedico());
 		}
 		return pnMedicosSeleccionados;
 	}
@@ -342,13 +366,6 @@ public class CrearEquipo extends JDialog {
 		}
 		return txtFieldApellidoMedicoFiltro;
 	}
-	private JButton getBtnEliminarMedico() {
-		if (btnEliminarMedico == null) {
-			btnEliminarMedico = new JButton("Eliminar m\u00E9dico");
-			btnEliminarMedico.setBounds(12, 116, 125, 23);
-		}
-		return btnEliminarMedico;
-	}
 	private JPanel getPanel() {
 		if (panel == null) {
 			panel = new JPanel();
@@ -414,11 +431,17 @@ public class CrearEquipo extends JDialog {
 			 String codEmpleado = medicos.get(i).getCodeEmpleado();
 			 pbd.asignarEquipo(codequipo, numEquipo, codEmpleado);
 		 }
+		 for(int i =0;i< enfermeros.size() ; i++) {
+			 Random r = new Random();
+			 String codequipo = "" + r.nextInt(1000);
+			 String codEmpleado = enfermeros.get(i).getCodeEmpleado();
+			 pbd.asignarEquipo(codequipo, numEquipo, codEmpleado);
+		 }
 		 guardarAccion(numEquipo);
 	}
 	
 	private boolean camposCubiertos() {
-		if (JlistMedicoFill()) {
+		if (JlistMedicoFill() || JlistEnfermeoFill()) {
 			btnCrearEquipo.setEnabled(true);
 			return true;
 
@@ -433,5 +456,260 @@ public class CrearEquipo extends JDialog {
 		if (medicos == null)
 			return false;
 		return medicos.size() > 0;
+	}
+	
+	private boolean JlistEnfermeoFill() {
+		if (enfermeros == null)
+			return false;
+		return enfermeros.size() > 0;
+	}
+	
+	private JPanel getPanelEnfermero() {
+		if (panelEnfermero == null) {
+			panelEnfermero = new JPanel();
+			panelEnfermero.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Enfermero", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+			panelEnfermero.setLayout(new GridLayout(0, 1, 0, 0));
+			panelEnfermero.add(getPanelFiltrosSeleccEnfermero());
+		}
+		return panelEnfermero;
+	}
+	
+	private JPanel getPanelFiltrosSeleccEnfermero() {
+		if (panelFiltrosSeleccEnfermero == null) {
+			panelFiltrosSeleccEnfermero = new JPanel();
+			panelFiltrosSeleccEnfermero.setLayout(new GridLayout(2, 0, 0, 0));
+			panelFiltrosSeleccEnfermero.add(getPanelFiltrosEnf());
+			panelFiltrosSeleccEnfermero.add(getPanelEnfSeleccionados());
+		}
+		return panelFiltrosSeleccEnfermero;
+	}
+	private JScrollPane getScrollPaneListaEnfermeros() {
+		if (scrollPaneListaEnfermeros == null) {
+			scrollPaneListaEnfermeros = new JScrollPane();
+			scrollPaneListaEnfermeros.setViewportView(getList_1_2());
+			scrollPaneListaEnfermeros.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Seleccione el enfermero", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		}
+		return scrollPaneListaEnfermeros;
+	}
+	
+	private JPanel getPanelFiltrosEnf() {
+		if (panelFiltrosEnf == null) {
+			panelFiltrosEnf = new JPanel();
+			panelFiltrosEnf.setLayout(new MigLayout("", "[68px][225px][89px]", "[23px][23px][]"));
+			panelFiltrosEnf.add(getLblNewLabel_1(), "cell 0 0,growx,aligny center");
+			panelFiltrosEnf.add(getTxtFieldFiltroNomEnf(), "cell 1 0,growx,aligny center");
+			panelFiltrosEnf.add(getBtnFiltroNomEmp(), "cell 2 0,growx,aligny top");
+			panelFiltrosEnf.add(getLblNewLabel_2(), "cell 0 1,growx,aligny center");
+			panelFiltrosEnf.add(getTxtFieldFiltroApeEmp(), "cell 1 1,growx,aligny center");
+			panelFiltrosEnf.add(getBtnFiltroApeNum(), "cell 2 1,growx,aligny top");
+			panelFiltrosEnf.add(getBtnNewButton(), "cell 2 2");
+		}
+		return panelFiltrosEnf;
+	}
+	
+	private JButton getBtnNewButton() {
+		if (btnNewButton == null) {
+			btnNewButton = new JButton("Quitar filtro");
+			btnNewButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						modeloListEnf.removeAllElements();
+						modeloListEnf.addAll(pbd.listarEnfermero());
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			});
+		}
+		return btnNewButton;
+	}
+	
+	private JPanel getPanelEnfSeleccionados() {
+		if (panelEnfSeleccionados == null) {
+			panelEnfSeleccionados = new JPanel();
+			panelEnfSeleccionados.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Enfermeros seleccionados", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			panelEnfSeleccionados.setLayout(null);
+			panelEnfSeleccionados.add(getScrrPaneSeleccionados());
+		}
+		return panelEnfSeleccionados;
+	}
+	
+	private JScrollPane getScrrPaneSeleccionados() {
+		if (scrrPaneSeleccionados == null) {
+			scrrPaneSeleccionados = new JScrollPane();
+			scrrPaneSeleccionados.setBounds(10, 21, 478, 74);
+			scrrPaneSeleccionados.setViewportView(getListEnfSeleccionados());
+		}
+		return scrrPaneSeleccionados;
+	}
+	
+	private JList getListEnfSeleccionados() {
+		if (listEnfSeleccionados == null) {
+			listEnfSeleccionados = new JList();
+			modeloEnfSelec= new DefaultListModel<Enfermero>();
+			listEnfSeleccionados.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if(e.getClickCount()==2) {
+						
+							Enfermero enf=(Enfermero) listEnfSeleccionados.getSelectedValue();
+							int res=JOptionPane.showConfirmDialog(null, "¿Esta seguro de que desea borrar este enfermero?","Confirmación de eliminación", JOptionPane.YES_NO_OPTION);
+							if(res==JOptionPane.YES_OPTION)	
+								modeloEnfSelec.removeElement(enf);
+				}
+					}
+			});
+		}
+		return listEnfSeleccionados;
+	}
+	
+	private JList<Enfermero> getList_1_2() {
+		if (list_1 == null) {
+			list_1 = new JList<Enfermero>();
+			enfermeros = new ArrayList<Enfermero>();
+			modeloListEnf = new DefaultListModel<Enfermero>();
+			try {
+				 modeloListEnf.addAll(pbd.listarEnfermero());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			list_1.setModel(modeloListEnf);
+			list_1.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent event) {
+					
+					@SuppressWarnings("deprecation")
+					Object[] selectedValues = list_1.getSelectedValues();
+					if (selectedValues.length >= 0) {
+						for (int i = 0; i < selectedValues.length; i++) {
+							enfermeros.add((Enfermero) selectedValues[i]);
+						}
+
+				
+						for (int i = 0; i < enfermeros.size(); i++) {
+							if(!modeloEnfSelec.contains(enfermeros.get(i)))
+							modeloEnfSelec.addElement(enfermeros.get(i));
+							
+						}
+						listEnfSeleccionados.setModel(modeloEnfSelec);
+						camposCubiertos();
+						}
+					
+
+					camposCubiertos();
+
+					}
+
+			});
+		}
+		return list_1;
+	}
+	
+	
+	private JLabel getLblNewLabel_1() {
+		if (lblNewLabel_1 == null) {
+			lblNewLabel_1 = new JLabel("Nombre:");
+		}
+		return lblNewLabel_1;
+	}
+	private JLabel getLblNewLabel_2() {
+		if (lblNewLabel_2 == null) {
+			lblNewLabel_2 = new JLabel("Apellidos:");
+		}
+		return lblNewLabel_2;
+	}
+	private JTextField getTxtFieldFiltroNomEnf() {
+		if (txtFieldFiltroNomEnf == null) {
+			txtFieldFiltroNomEnf = new JTextField();
+			txtFieldFiltroNomEnf.setColumns(10);
+			txtFieldFiltroNomEnf.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					btnFiltroNomEmp.setEnabled(true);
+				}
+			});
+		}
+		return txtFieldFiltroNomEnf;
+	}
+	private JTextField getTxtFieldFiltroApeEmp() {
+		if (txtFieldFiltroApeEmp == null) {
+			txtFieldFiltroApeEmp = new JTextField();
+			txtFieldFiltroApeEmp.setColumns(10);
+			txtFieldFiltroApeEmp.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					btnFiltroApeNum.setEnabled(true);
+				}
+			});
+		}
+		return txtFieldFiltroApeEmp;
+	}
+	private JButton getBtnFiltroNomEmp() {
+		if (btnFiltroNomEmp == null) {
+			btnFiltroNomEmp = new JButton("Filtrar");
+			btnFiltroNomEmp.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						modeloListaEnfermero(pbd.buscarNombreEnfermero(txtFieldFiltroNomEnf.getText()));
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			});
+			btnFiltroNomEmp.setEnabled(false);
+		}
+		return btnFiltroNomEmp;
+	}
+	
+	private DefaultListModel<Enfermero> modeloListaEnfermero(List<Enfermero> enfermeros) throws SQLException {
+		modeloListEnf = new DefaultListModel<Enfermero>();
+		if(enfermeros!=null) {
+		List<Enfermero> enfermero =enfermeros;
+		for (int i = 0; i < enfermero.size(); i++) {
+			modeloListEnf.addElement(enfermero.get(i));
+
+		}
+		list_1.setModel(modeloListEnf);
+		}
+		
+		return modeloListEnf;
+	}
+	
+	private JButton getBtnFiltroApeNum() {
+		if (btnFiltroApeNum == null) {
+			btnFiltroApeNum = new JButton("Filtrar");
+			btnFiltroApeNum.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						modeloListaEnfermero(pbd.buscarApellidoEnfermero(txtFieldFiltroApeEmp.getText()));
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			});
+			btnFiltroApeNum.setEnabled(false);
+		}
+		return btnFiltroApeNum;
+	}
+	
+	private JButton getBtnNewButton_1() {
+		if (btnNewButton_1 == null) {
+			btnNewButton_1 = new JButton("Quitar filtro");
+			btnNewButton_1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						modeloListaM.removeAllElements();;
+						modeloListaM(pbd.buscarMedico(""));
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			});
+		}
+		return btnNewButton_1;
 	}
 }
