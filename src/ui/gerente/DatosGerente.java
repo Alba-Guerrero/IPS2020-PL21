@@ -184,6 +184,7 @@ public class DatosGerente extends JDialog {
 //
 //			e.printStackTrace();
 //		}
+		dataset.clear();
 		if(dia) {
 			float total = 0;
 			Date dateIn = getDateChooser().getDate();
@@ -350,7 +351,7 @@ public class DatosGerente extends JDialog {
 	}
 	private JButton getBtnTodas() {
 		if (btnTodas == null) {
-			btnTodas = new JButton("Todas las acciones");
+			btnTodas = new JButton("Todos los diagn\u00F3sticos");
 			btnTodas.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					añadirFilas(false);

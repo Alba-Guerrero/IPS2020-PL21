@@ -3170,7 +3170,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		
 		PreparedStatement pst2 = null;
 		
-		if(tipo.equals("MÃ©dico")) {
+		if(tipo.equals("Médico")) {
 			pst2 = con.prepareStatement(ADD_MEDICO);
 			pst2.setString(1, empleado.getCodeEmpleado());
 		}

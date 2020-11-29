@@ -653,11 +653,11 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			btnAnadirCausa = new JButton("Crear nueva causa");
 			btnAnadirCausa.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-//					AnadirCausas ac = new AnadirCausas();
-//					ac.setLocationRelativeTo(null);
-//					ac.setResizable(true);
-//					ac.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
-//					ac.setVisible(true);
+					AnadirCausas ac = new AnadirCausas(mm);
+					ac.setLocationRelativeTo(null);
+					ac.setResizable(true);
+					ac.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+					ac.setVisible(true);
 				}
 			});
 		}
