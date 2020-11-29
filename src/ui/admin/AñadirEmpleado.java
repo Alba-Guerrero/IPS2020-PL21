@@ -120,14 +120,14 @@ public class AñadirEmpleado extends JDialog {
 	private JLabel getLblNombre() {
 		if (lblNombre == null) {
 			lblNombre = new JLabel("Nombre:");
-			lblNombre.setBounds(21, 36, 96, 14);
+			lblNombre.setBounds(21, 39, 96, 14);
 		}
 		return lblNombre;
 	}
 	private JTextField getTxtFieldNombre() {
 		if (txtFieldNombre == null) {
 			txtFieldNombre = new JTextField();
-			txtFieldNombre.setBounds(127, 33, 178, 20);
+			txtFieldNombre.setBounds(127, 33, 178, 27);
 			txtFieldNombre.setColumns(10);
 		}
 		return txtFieldNombre;
@@ -142,7 +142,7 @@ public class AñadirEmpleado extends JDialog {
 	private JTextField getTxtFieldApellidos() {
 		if (txtFieldApellidos == null) {
 			txtFieldApellidos = new JTextField();
-			txtFieldApellidos.setBounds(419, 33, 240, 20);
+			txtFieldApellidos.setBounds(419, 33, 240, 27);
 			txtFieldApellidos.setColumns(10);
 		}
 		return txtFieldApellidos;
@@ -150,14 +150,14 @@ public class AñadirEmpleado extends JDialog {
 	private JLabel getLblDni() {
 		if (lblDni == null) {
 			lblDni = new JLabel("DNI:");
-			lblDni.setBounds(21, 74, 96, 14);
+			lblDni.setBounds(21, 77, 96, 14);
 		}
 		return lblDni;
 	}
 	private JTextField getTxtFieldDni() {
 		if (txtFieldDni == null) {
 			txtFieldDni = new JTextField();
-			txtFieldDni.setBounds(127, 71, 86, 20);
+			txtFieldDni.setBounds(127, 71, 178, 27);
 			txtFieldDni.setColumns(10);
 		}
 		return txtFieldDni;
@@ -165,14 +165,14 @@ public class AñadirEmpleado extends JDialog {
 	private JLabel getLblCorreo() {
 		if (lblCorreo == null) {
 			lblCorreo = new JLabel("Correo elect\u00F3nico:");
-			lblCorreo.setBounds(21, 132, 96, 14);
+			lblCorreo.setBounds(21, 135, 96, 14);
 		}
 		return lblCorreo;
 	}
 	private JTextField getTxtFieldCorreo() {
 		if (txtFieldCorreo == null) {
 			txtFieldCorreo = new JTextField();
-			txtFieldCorreo.setBounds(151, 129, 240, 20);
+			txtFieldCorreo.setBounds(169, 129, 240, 27);
 			txtFieldCorreo.setColumns(10);
 		}
 		return txtFieldCorreo;
@@ -193,6 +193,7 @@ public class AñadirEmpleado extends JDialog {
 			rdbtnMedico = new JRadioButton("M\u00E9dico");
 			buttonGroup.add(rdbtnMedico);
 			rdbtnMedico.setBounds(35, 44, 109, 23);
+			rdbtnMedico.setSelected(true);
 		}
 		return rdbtnMedico;
 	}
@@ -227,28 +228,28 @@ public class AñadirEmpleado extends JDialog {
 	private JLabel getLblNewLabel() {
 		if (lblNewLabel == null) {
 			lblNewLabel = new JLabel("Contrase\u00F1a:");
-			lblNewLabel.setBounds(21, 163, 96, 14);
+			lblNewLabel.setBounds(21, 173, 96, 14);
 		}
 		return lblNewLabel;
 	}
 	private JLabel getLblNewLabel_1() {
 		if (lblNewLabel_1 == null) {
 			lblNewLabel_1 = new JLabel("Repetir contrase\u00F1a:");
-			lblNewLabel_1.setBounds(21, 194, 96, 14);
+			lblNewLabel_1.setBounds(21, 209, 120, 14);
 		}
 		return lblNewLabel_1;
 	}
 	private JPasswordField getPsswdField() {
 		if (psswdField == null) {
 			psswdField = new JPasswordField();
-			psswdField.setBounds(151, 160, 178, 20);
+			psswdField.setBounds(169, 167, 178, 27);
 		}
 		return psswdField;
 	}
 	private JPasswordField getPsswdFieldRepetir() {
 		if (psswdFieldRepetir == null) {
 			psswdFieldRepetir = new JPasswordField();
-			psswdFieldRepetir.setBounds(151, 191, 178, 20);
+			psswdFieldRepetir.setBounds(169, 203, 178, 27);
 		}
 		return psswdFieldRepetir;
 	}
@@ -269,6 +270,7 @@ public class AñadirEmpleado extends JDialog {
 				int seleccionJornada = JOptionPane.showConfirmDialog(null, "¿Desea añdir una jornada laboral?", "Añadir jornada", JOptionPane.YES_NO_OPTION);
 				if(seleccionJornada == JOptionPane.YES_OPTION) {
 					VentanaJornada vj= new VentanaJornada(codAdmin, em);
+					vj.setModal(true);
 					vj.setVisible(true);
 					vj.setLocationRelativeTo(null);
 					vj.setResizable(true);
@@ -277,36 +279,52 @@ public class AñadirEmpleado extends JDialog {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			
+			dispose();
 		}
 	}
 	
 	private boolean comprobarCamposLlenos() {
+		boolean flag = false;
 		if(getTxtFieldNombre().getText().equals("")) {
 			JOptionPane.showMessageDialog(null, "Por favor escriba su nombre", "Error: introduza nombre", JOptionPane.ERROR_MESSAGE);
-			return false;
+			flag = false;
+			
 		}
-		if(getTxtFieldApellidos().getText().equals("")) {
+		else if(getTxtFieldApellidos().getText().equals("")) {
 			JOptionPane.showMessageDialog(null, "Por favor escriba sus apellidos", "Error: introduza apellidos", JOptionPane.ERROR_MESSAGE);
-			return false;
+			flag = false;
+			
 		}
-		if(getTxtFieldDni().getText().equals("")) {
+		else if(getTxtFieldDni().getText().equals("")) {
 			JOptionPane.showMessageDialog(null, "Por favor escriba su DNI", "Error: introduza DNI", JOptionPane.ERROR_MESSAGE);
-			return false;
+			flag = false;
+			
 		}
-		if(getTxtFieldCorreo().getText().equals("")) {
+		else if(getTxtFieldCorreo().getText().equals("")) {
 			JOptionPane.showMessageDialog(null, "Por favor escriba su correo", "Error: introduza correo", JOptionPane.ERROR_MESSAGE);
-			return false;
+			flag = false;
+			
 		}
-		if(getPsswdField().getPassword() == null && !(getPsswdField().getPassword().equals(getPsswdFieldRepetir().getPassword()))) {
+		else if(getPsswdField().getPassword() == null) {
+			JOptionPane.showMessageDialog(null, "Rellene las contraseñas", "Error: introduza contraseña", JOptionPane.ERROR_MESSAGE);
+			flag = false;
+			
+		}
+		else if(!(new String(getPsswdField().getPassword()).equals(new String(getPsswdFieldRepetir().getPassword())))) {
 			JOptionPane.showMessageDialog(null, "Las contraseñas deben coincidir", "Error: introduza contraseña", JOptionPane.ERROR_MESSAGE);
-			return false;
+			flag = false;
+			
 		}
-		if(getTipoEmpleado().equals("")) {
+		else if(getTipoEmpleado().equals("")) {
 			JOptionPane.showMessageDialog(null, "Seleccione un tipo de empleado", "Error: introduza tipo de empleado", JOptionPane.ERROR_MESSAGE);
-			return false;
+			flag = false;
+			
 		}
-		return true;
+		else {
+			flag = true;
+			
+		}
+		return flag;
 	}
 	
 	private String getTipoEmpleado() {

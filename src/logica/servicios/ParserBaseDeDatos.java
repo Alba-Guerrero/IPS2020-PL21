@@ -227,7 +227,7 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 	
 	private final static String LISTAR_EQUIPOS = "SELECT * FROM equipo";
 	
-	
+	private final static String LISTAR_EQUIPOS_NOMBRE = "SELECT * FROM equipo where numequipo=?";
 	
 	
 	private final static String GET_EQUIPO = "SELECT * FROM equipo where numequipo=?";
@@ -2610,6 +2610,25 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 
 		Connection con = new Conexion().getConnectionJDBC();
 		PreparedStatement pst = con.prepareStatement(LISTAR_EQUIPOS);
+		ResultSet rs = pst.executeQuery();
+		while (rs.next()) {
+			listaEquipos.add(new Equipo(rs.getString(1)));
+		}
+
+		rs.close();
+		pst.close();
+		con.close();
+
+		return listaEquipos;
+
+	}
+	
+	public List<Equipo> devolverEquipoNombre(String nombre) throws SQLException {
+		List<Equipo> listaEquipos = new ArrayList<Equipo>();
+
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(LISTAR_EQUIPOS_NOMBRE);
+		pst.setString(1, nombre);
 		ResultSet rs = pst.executeQuery();
 		while (rs.next()) {
 			listaEquipos.add(new Equipo(rs.getString(1)));

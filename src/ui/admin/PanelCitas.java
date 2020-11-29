@@ -122,17 +122,16 @@ public class PanelCitas extends JDialog {
 	private JPanel pnEquiposLista;
 	private JScrollPane scrollPanelListaEquipos;
 	private JList<Equipo> listEquipos;
-	private JLabel lblNombreMedicoEquip;
 	private JLabel lblNombreEquipo;
 	private JButton btnFiltrarNombreEquipo;
-	private JButton btnNombreMedicoEquip;
 	private JTextField txtNombreEquipo;
-	private JTextField txtNombreMedicoEquip;
 	private ArrayList<Equipo> equipos;
 	private JScrollPane scrollPaneEquipoSeleccionado;
 	private JList<Equipo> listEquipoSeleccionado;
 	private DefaultListModel<Equipo> modeloEquipSelec;
 	private DefaultListModel<Equipo> modeloListaE;
+	private DefaultListModel<Equipo> modeloListaEquipo;
+	private JButton quitarFiltroEquipo;
 	 
 	/**
 	 * Create the dialog.
@@ -426,13 +425,20 @@ public class PanelCitas extends JDialog {
 									dispose();
 								}
 							}
-							else if(equipos.size()>0){
+							if(equipos.size()>0){
 								if(checkSala()) {
 									crearCitaEquipo();
 									JOptionPane.showMessageDialog(null, "Su cita se ha generado con exito");
 									dispose();
 								}
 								
+							}
+							if(enfermeros.size()>0) {
+								if(checkSala()) {
+									crearCitaEnfermero();
+									JOptionPane.showMessageDialog(null, "Su cita se ha generado con exito");
+									dispose();
+								}
 							}
 						}
 				}
@@ -441,6 +447,36 @@ public class PanelCitas extends JDialog {
 			btnCrearCita.setBounds(779, 128, 97, 25);
 		}
 		return btnCrearCita;
+	}
+
+	protected void crearCitaEnfermero() {
+		Date dateIncio = (Date) timeSpinnerInicio.getValue();
+		Time timeInicio = new Time(dateIncio.getTime());
+
+		Date dateFin = (Date) timeSpinnerFin.getValue();
+		Time timeFin = new Time(dateFin.getTime());
+
+		Date date = getDateCita().getDate();
+		java.sql.Date sDate = new java.sql.Date(date.getTime());
+
+		for (int i = 0; i < enfermeros.size(); i++) {
+			
+			String sala = (String) getCbSala().getSelectedItem();
+			Cita c;
+			try {
+				c = new Cita(pacienteCita.getCodePaciente(), enfermeros.get(i).getCodeEmpleado(), timeInicio, timeFin, sDate, sala,
+						chckbxEsUrgente.isSelected());
+				pbd.crearCita(c);
+				guardarAccion();
+				if(c.isUrgente())
+					Email.enviarCorreo("roloalvarez7@gmail.com", "sbeiaolebhiewuzz", "UO266007@uniovi.es", pacienteCita, c);
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+		
 	}
 
 	private boolean checkMedico() {
@@ -607,7 +643,7 @@ public class PanelCitas extends JDialog {
 
 		Date dateFin = (Date) timeSpinnerFin.getValue();
 		Time timeFin = new Time(dateFin.getTime());
-
+		
 		if (timeFin.compareTo(timeInicio) <= 0) {
 			JOptionPane.showMessageDialog(null,
 					"La fecha de inicio no puede ser igual o posterior a la fecha final.Por favor,modifíquelo y vuelva a intentarlo");
@@ -632,7 +668,7 @@ public class PanelCitas extends JDialog {
 	 * @throws SQLException
 	 */
 	private boolean camposCubiertos() {
-		if ((JlistMedicoFill()||JlistEquipoFill()) &&ComboBoxSala() ) {
+		if ((JlistMedicoFill()||JlistEquipoFill()||JlistEnfermeroFill()) &&ComboBoxSala() ) {
 			btnCrearCita.setEnabled(true);
 			return true;
 
@@ -643,6 +679,12 @@ public class PanelCitas extends JDialog {
 
 	}
 	
+
+	private boolean JlistEnfermeroFill() {
+		if (enfermeros == null)
+			return false;
+		return enfermeros.size() > 0;
+	}
 
 	/**
 	 * Metodo que crea la cita si tiene los cmapos cubiertos
@@ -984,6 +1026,9 @@ public class PanelCitas extends JDialog {
 	private JTextField txtFieldFiltroApeEmp;
 	private JButton btnFiltroNomEmp;
 	private JButton btnFiltroApeNum;
+	private JButton btnQuitarFiltroPac;
+	private JButton btnQuitarFiltro;
+	private JButton btnNewButton;
 	
 	
 	private JButton getBtnActualizarDatos() {
@@ -1052,6 +1097,7 @@ public class PanelCitas extends JDialog {
 			pnDatosPaciente.add(getLblCodHistorial(), "cell 0 3,alignx left,aligny center");
 			pnDatosPaciente.add(getTxtFieldCodHistorial(), "cell 1 3,growx,aligny top");
 			pnDatosPaciente.add(getBtnFiltrarHistorial(), "cell 2 3,grow");
+			pnDatosPaciente.add(getBtnQuitarFiltroPac(), "cell 2 4");
 		}
 		return pnDatosPaciente;
 	}
@@ -1062,9 +1108,10 @@ public class PanelCitas extends JDialog {
 			pnDatosMedico.add(getLblNombreFiltroMedico(), "flowx,cell 0 1,grow");
 			pnDatosMedico.add(getTextField_2(), "cell 1 1,grow");
 			pnDatosMedico.add(getBtnFiltrarNombreMedico(), "cell 2 1,grow");
-			pnDatosMedico.add(getLblApellidoMedicoFiltro(), "cell 0 3,grow");
-			pnDatosMedico.add(getTextField_1_1(), "cell 1 3,grow");
-			pnDatosMedico.add(getBtnFiltrarApellidoMedico(), "cell 2 3,grow");
+			pnDatosMedico.add(getLblApellidoMedicoFiltro(), "cell 0 2,grow");
+			pnDatosMedico.add(getTextField_1_1(), "cell 1 2,grow");
+			pnDatosMedico.add(getBtnFiltrarApellidoMedico(), "cell 2 2,grow");
+			pnDatosMedico.add(getBtnQuitarFiltro(), "cell 2 3");
 		}
 		return pnDatosMedico;
 	}
@@ -1501,9 +1548,10 @@ public class PanelCitas extends JDialog {
 			panelFiltrosEnf.add(getLblNewLabel_1(), "cell 0 0,growx,aligny center");
 			panelFiltrosEnf.add(getTxtFieldFiltroNomEnf(), "cell 1 0,growx,aligny center");
 			panelFiltrosEnf.add(getBtnFiltroNomEmp(), "cell 2 0,growx,aligny top");
-			panelFiltrosEnf.add(getLblNewLabel_2(), "cell 0 2,growx,aligny center");
-			panelFiltrosEnf.add(getTxtFieldFiltroApeEmp(), "cell 1 2,growx,aligny center");
-			panelFiltrosEnf.add(getBtnFiltroApeNum(), "cell 2 2,growx,aligny top");
+			panelFiltrosEnf.add(getLblNewLabel_2(), "cell 0 1,growx,aligny center");
+			panelFiltrosEnf.add(getTxtFieldFiltroApeEmp(), "cell 1 1,growx,aligny center");
+			panelFiltrosEnf.add(getBtnFiltroApeNum(), "cell 2 1,growx,aligny top");
+			panelFiltrosEnf.add(getBtnNewButton(), "cell 2 2");
 		}
 		return panelFiltrosEnf;
 	}
@@ -1559,6 +1607,12 @@ public class PanelCitas extends JDialog {
 		if (txtFieldFiltroNomEnf == null) {
 			txtFieldFiltroNomEnf = new JTextField();
 			txtFieldFiltroNomEnf.setColumns(10);
+			txtFieldFiltroNomEnf.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					btnFiltroNomEmp.setEnabled(true);
+				}
+			});
 		}
 		return txtFieldFiltroNomEnf;
 	}
@@ -1566,6 +1620,12 @@ public class PanelCitas extends JDialog {
 		if (txtFieldFiltroApeEmp == null) {
 			txtFieldFiltroApeEmp = new JTextField();
 			txtFieldFiltroApeEmp.setColumns(10);
+			txtFieldFiltroApeEmp.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					btnFiltroApeNum.setEnabled(true);
+				}
+			});
 		}
 		return txtFieldFiltroApeEmp;
 	}
@@ -1574,17 +1634,48 @@ public class PanelCitas extends JDialog {
 			btnFiltroNomEmp = new JButton("Filtrar");
 			btnFiltroNomEmp.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					//pbd.filtrarNombreEnfermero();
-					
+					try {
+						modeloListaEnfermero(pbd.buscarApellidoEnfermero(txtFieldFiltroNomEnf.getText()));
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			});
 			btnFiltroNomEmp.setEnabled(false);
 		}
 		return btnFiltroNomEmp;
 	}
+	
+	private DefaultListModel<Enfermero> modeloListaEnfermero(List<Enfermero> enfermeros) throws SQLException {
+		modeloListEnf = new DefaultListModel<Enfermero>();
+		if(enfermeros!=null) {
+		List<Enfermero> enfermero =enfermeros;
+		for (int i = 0; i < enfermero.size(); i++) {
+			modeloListEnf.addElement(enfermero.get(i));
+
+		}
+		list_1.setModel(modeloListEnf);
+		}
+	if(modeloListaPaciente.getSize()==0)
+			JOptionPane.showMessageDialog(null, "No se ha encontrado ningún paciente con esas características");
+		
+		return modeloListEnf;
+	}
+	
 	private JButton getBtnFiltroApeNum() {
 		if (btnFiltroApeNum == null) {
 			btnFiltroApeNum = new JButton("Filtrar");
+			btnFiltroApeNum.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						modeloListaEnfermero(pbd.buscarApellidoEnfermero(txtFieldFiltroApeEmp.getText()));
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			});
 			btnFiltroApeNum.setEnabled(false);
 		}
 		return btnFiltroApeNum;
@@ -1616,9 +1707,7 @@ public class PanelCitas extends JDialog {
 			pnDatosEquipo.add(getLblNombreEquipo(), "flowx,cell 0 1,grow");
 			pnDatosEquipo.add(getTxtNombreEquipo(), "cell 1 1,grow");
 			pnDatosEquipo.add(getBtnFiltrarNombreEquipo(), "cell 2 1,grow");
-			pnDatosEquipo.add(getLblNombreMedicoEquip(), "cell 0 3,grow");
-			pnDatosEquipo.add(getTxtNombreMedicoEquip(), "cell 1 3,grow");
-			pnDatosEquipo.add(getBtnNombreMedicoEquip(), "cell 2 3,grow");
+			pnDatosEquipo.add(getBtnQuitarFiltrarEquipo(), "cell 4 1,grow");
 		}
 		return pnDatosEquipo;
 	}
@@ -1748,28 +1837,42 @@ public class PanelCitas extends JDialog {
 	private JButton getBtnFiltrarNombreEquipo() {
 		if (btnFiltrarNombreEquipo == null) {
 			btnFiltrarNombreEquipo = new JButton("Filtrar");
+			btnFiltrarNombreEquipo.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if(txtNombreEquipo.getText().equals(""))
+						JOptionPane.showMessageDialog(null, "Por favor introduce un valor");
+					else {	
+					
+						try {
+							modeloListaEquipo(pbd.devolverEquipoNombre(txtNombreEquipo.getText()));
+							txtNombreEquipo.setText("");
+							
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+					}
+				}
+			});
 		}
 		return btnFiltrarNombreEquipo;
 	}
-	private JLabel getLblNombreMedicoEquip() {
-		if (lblNombreMedicoEquip == null) {
-			lblNombreMedicoEquip = new JLabel("Nombre m\u00E9dico:");
+	
+	private DefaultListModel<Equipo> modeloListaEquipo(List<Equipo> equipo) throws SQLException {
+		modeloListaEquipo = new DefaultListModel<Equipo>();
+		if(equipo!=null) {
+		List<Equipo> equipos = equipo;
+		for (int i = 0; i < equipos.size(); i++) {
+			modeloListaEquipo.addElement(equipos.get(i));
+
 		}
-		return lblNombreMedicoEquip;
-	}
-	private JButton getBtnNombreMedicoEquip() {
-		if (btnNombreMedicoEquip == null) {
-			btnNombreMedicoEquip = new JButton("Filtrar");
+		listEquipos.setModel(modeloListaEquipo);
 		}
-		return btnNombreMedicoEquip;
+		if(modeloListaEquipo.getSize()==0)
+			JOptionPane.showMessageDialog(null, "No se ha encontrado ningún médico con esas características");
+		return modeloListaEquipo;
 	}
-	private JTextField getTxtNombreMedicoEquip() {
-		if (txtNombreMedicoEquip == null) {
-			txtNombreMedicoEquip = new JTextField();
-			txtNombreMedicoEquip.setColumns(10);
-		}
-		return txtNombreMedicoEquip;
-	}
+	
+	
 	
 	/**
 	 * Metodo que crea la cita si tiene los cmapos cubiertos
@@ -1805,4 +1908,70 @@ public class PanelCitas extends JDialog {
 		
 	}
 	
+	private JButton getBtnQuitarFiltroPac() {
+		if (btnQuitarFiltroPac == null) {
+			btnQuitarFiltroPac = new JButton("Quitar filtro");
+			btnQuitarFiltroPac.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						modeloListaPaciente(pbd.buscarPaciente(""));
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			});
+		}
+		return btnQuitarFiltroPac;
+	}
+	private JButton getBtnQuitarFiltro() {
+		if (btnQuitarFiltro == null) {
+			btnQuitarFiltro = new JButton("Quitar filtro");
+			btnQuitarFiltro.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						modeloListaM(pbd.buscarMedico(""));
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			});
+		}
+		return btnQuitarFiltro;
+	}
+	private JButton getBtnNewButton() {
+		if (btnNewButton == null) {
+			btnNewButton = new JButton("Quitar filtro");
+			btnNewButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						modeloListEnf.addAll(pbd.listarEnfermero());
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			});
+		}
+		return btnNewButton;
+	}
+	
+	private JButton getBtnQuitarFiltrarEquipo() {
+		if (quitarFiltroEquipo == null) {
+			quitarFiltroEquipo = new JButton("Quitar filtro");
+			quitarFiltroEquipo.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						modeloListaE(pbd.buscarEquipo(""));
+						listEquipos.setModel(modeloListaE);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			});
+		}
+		return quitarFiltroEquipo;
+	}
 }

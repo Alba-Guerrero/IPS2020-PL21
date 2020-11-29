@@ -115,6 +115,10 @@ public  class Empleado {
 		this.codeEmpleado = codeEmpleado;
 	}
 	
+	@Override
+	public String toString() {
+		return nombre +"  " + apellido ;
+	}
 	
 	
 

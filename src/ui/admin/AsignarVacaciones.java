@@ -45,7 +45,7 @@ public class AsignarVacaciones extends JDialog{
 
 	private JPanel contentPane;
 	private JPanel panelSeleccionEmpleado;
-	private JComboBox<Medico> cmboBoxEmpleado;
+	private JComboBox<Empleado> cmboBoxEmpleado;
 	private JPanel panelJornada;
 	private JDateChooser chooseDFin;
 	private JPanel panelDia;
@@ -64,7 +64,7 @@ public class AsignarVacaciones extends JDialog{
 	private JLabel lblNombre;
 	private JTextField txtNombre;
 	private JButton btnFiltrar;
-	List<Medico> empleados;
+	List<Empleado> empleados;
 
 
 	/**
@@ -72,7 +72,7 @@ public class AsignarVacaciones extends JDialog{
 	 * @throws SQLException 
 	 */
 	public AsignarVacaciones(String codAdmin) throws SQLException {
-		empleados = pbd.buscarMedico("");
+		empleados = pbd.buscarEmpleados();
 		this.codAdmin = codAdmin;
 		citasBorrar = new ArrayList<Cita>();
 		setTitle("Asignar Vacaciones");
@@ -100,11 +100,9 @@ public class AsignarVacaciones extends JDialog{
 		}
 		return panelSeleccionEmpleado;
 	}
-	private JComboBox<Medico> getCmboBoxEmpleado() throws SQLException {
+	private JComboBox<Empleado> getCmboBoxEmpleado() throws SQLException {
 		if (cmboBoxEmpleado == null) {
-			modeloListaM(pbd.buscarMedico(""));
-			cmboBoxEmpleado = new JComboBox<Medico>();
-			cmboBoxEmpleado.setModel(modeloListaM);
+			cmboBoxEmpleado = new JComboBox<Empleado>();
 			cmboBoxEmpleado.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
@@ -117,11 +115,12 @@ public class AsignarVacaciones extends JDialog{
 			});
 			cmboBoxEmpleado.setBounds(341, 34, 352, 32);
 			
+			List<Empleado> empleados = pbd.buscarEmpleados();
 			for (int i = 0; i < empleados.size(); i++) {
 				cmboBoxEmpleado.insertItemAt(empleados.get(i), i);
 			}
 			//activarBoton();
-			
+			cmboBoxEmpleado.setSelectedIndex(0);
 		}
 		return cmboBoxEmpleado;
 	}
@@ -431,7 +430,7 @@ public class AsignarVacaciones extends JDialog{
 	private JButton getBtnFiltrar() {
 		if (btnFiltrar == null) {
 			btnFiltrar = new JButton("Filtrar");
-			btnFiltrar.setBounds(203, 38, 89, 23);
+			btnFiltrar.setBounds(202, 39, 89, 23);
 			btnFiltrar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(txtNombre.getText().equals(""))

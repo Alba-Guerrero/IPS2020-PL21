@@ -435,8 +435,9 @@ cp.setLocationRelativeTo(null);
 	
 	private void abrirVentanaAñadir() {
 		AñadirEmpleado ae = new AñadirEmpleado(codAdmin);
+		ae.setModal(true);
 		ae.setVisible(true);
-		ae.setLocationRelativeTo(null);
+		ae.setLocationRelativeTo(this);
 		ae.setResizable(true);
 	}
 }
