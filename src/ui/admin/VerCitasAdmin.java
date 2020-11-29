@@ -189,11 +189,11 @@ public class VerCitasAdmin extends JDialog {
 		Paciente paciente = pbd.devolverPaciente(nombre, apellido, codpaciente);
 		Cita cita = (Cita) comboBox.getSelectedItem();
 		
-		InfoCitaAdmin ica = new InfoCitaAdmin(paciente, cita);
-		ica.setLocationRelativeTo(null);
-		ica.setResizable(true);
-		ica.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
-		ica.setVisible(true);
+//		InfoCitaAdmin ica = new InfoCitaAdmin(paciente, cita);
+//		ica.setLocationRelativeTo(null);
+//		ica.setResizable(true);
+//		ica.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+//		ica.setVisible(true);
 	}
 	
 	

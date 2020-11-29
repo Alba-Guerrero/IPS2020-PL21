@@ -47,7 +47,7 @@ public class AnadirAntecedente extends JDialog{
 		this.modificarCitaMedico = modificarMedicosNuevoCard; // La ventana anterior
 
 		
-		setTitle("A\u00F1adir antecedente");
+		setTitle("A\u00F1adir Antecedente");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 394, 218);
 		getContentPane().add(getPnSur(), BorderLayout.SOUTH);
