@@ -199,7 +199,7 @@ public class VentanaVerCita extends JDialog {
 						btnVerHistorial.setEnabled(true);
 						try {
 							Paciente p = pbd.devolverPacientes(
-									(String) tablacita.getValueAt(tablacita.getSelectedRow(), 9));
+									(String) tablacita.getValueAt(tablacita.getSelectedRow(), 8));
 						} catch (SQLException e) {
 							e.printStackTrace();
 						}
@@ -351,7 +351,7 @@ public class VentanaVerCita extends JDialog {
 								"Mensaje de confirmación", JOptionPane.YES_NO_OPTION);
 						if (res == JOptionPane.YES_OPTION) {
 							try {
-								pbd.BorrarCita((String) tablacita.getValueAt(tablacita.getSelectedRow(), 9));
+								pbd.BorrarCita((String) tablacita.getValueAt(tablacita.getSelectedRow(), 8));
 								guardarAccionElimCita();
 								añadirFilas(false);
 							} catch (SQLException e1) {
@@ -374,15 +374,14 @@ public class VentanaVerCita extends JDialog {
 					String naccion = "" + numeroAccion;
 
 					String nombrePaciente = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 0);
-					String apellidoPaciente = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 1);
 
-					String nombreMedico = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 6);
+					String nombreMedico = (String) tablacita.getValueAt(tablacita.getSelectedRow(), 5);
 
 					Date fecha = new Date();
 					Time hora = new Time(new Date().getTime());
 
 					String mensajeAccion = "El aministrador " + codAdmin + " ha eliminado la cita del paciente "
-							+ nombrePaciente + " " + apellidoPaciente + " con el médico " + nombreMedico;
+							+ nombrePaciente + " con el médico " + nombreMedico;
 
 					Accion a = new Accion(naccion, codAdmin, fecha, hora, mensajeAccion);
 
@@ -408,15 +407,15 @@ public class VentanaVerCita extends JDialog {
 							if (tablacita.getValueAt(tablacita.getSelectedRow(), 6).equals("")) {
 								System.out.println(fila);
 								p = pbd.devolverPacientesEquipo(
-										(String) tablacita.getValueAt(tablacita.getSelectedRow(), 10));
+										(String) tablacita.getValueAt(tablacita.getSelectedRow(), 9));
 							} else {
 								p = pbd.devolverPacientes(
-										(String) tablacita.getValueAt(tablacita.getSelectedRow(), 9));
+										(String) tablacita.getValueAt(tablacita.getSelectedRow(), 8));
 							}
 							// System.err.println(p.getNombre() +" "+p.getApellido()+"
 							// "+p.getCodePaciente());
-							Cita c = pbd.citaCod((String) tablacita.getValueAt(tablacita.getSelectedRow(), 9),
-									(String) tablacita.getValueAt(tablacita.getSelectedRow(), 10));
+							Cita c = pbd.citaCod((String) tablacita.getValueAt(tablacita.getSelectedRow(), 8),
+									(String) tablacita.getValueAt(tablacita.getSelectedRow(), 9));
 							System.err.println((String) tablacita.getValueAt(tablacita.getSelectedRow(), 10) + " "
 									+ c.getDate() + " " + c.gethFin());
 							VentanaModificarCita(p, c);
