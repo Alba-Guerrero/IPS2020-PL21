@@ -11,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import logica.Antecedente;
 import logica.AsignaAntecedente;
 import logica.AsignaDiagnostico;
 import logica.AsignaEnfermPrev;
@@ -26,6 +27,7 @@ import logica.servicios.HistorialToPDF;
 import logica.servicios.ParserBaseDeDatos;
 import logica.servicios.Printer;
 import net.sf.jasperreports.engine.JRException;
+import ui.medico.AnadirAntecedente;
 import ui.medico.ModeloNoEditable;
 
 import java.awt.CardLayout;
@@ -53,6 +55,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
+import java.awt.FlowLayout;
 
 public class MostrarHistorial extends JDialog {
 
@@ -87,6 +90,7 @@ public class MostrarHistorial extends JDialog {
 
 	private HistorialMedico hm;
 	private ParserBaseDeDatos pbd = new ParserBaseDeDatos();
+	private String codempleado;
 	
 	
 	private JScrollPane scrollPaneCausas;
@@ -109,14 +113,17 @@ public class MostrarHistorial extends JDialog {
 	private JTable tablePrescripciones;
 	private JTable tableVacunas;
 	private JTable tableEP;
+	private JPanel pnNuevoAntecedente;
+	private JButton btnNuevoAntecedente;
 
 	/**
 	 * Create the frame.
 	 * @throws SQLException 
 	 */
-	public MostrarHistorial(HistorialMedico hm) throws SQLException {
+	public MostrarHistorial(HistorialMedico hm, String codempleado) throws SQLException {
 		setTitle("Historial m\u00E9dico");
 		this.hm = hm;
+		this.codempleado = codempleado;
 		
 		
 		this.antecedentesAsignados = pbd.listarAntecedentesAsignados(hm.getHistorial());
@@ -421,6 +428,7 @@ public class MostrarHistorial extends JDialog {
 			panelAntecedentes = new JPanel();
 			panelAntecedentes.setLayout(new BorderLayout(0, 0));
 			panelAntecedentes.add(getScrollPaneAntecedentes());
+			panelAntecedentes.add(getPnNuevoAntecedente(), BorderLayout.SOUTH);
 			//panelAntecedentes.add(getTableAntecedentes(), BorderLayout.NORTH);
 			//panelAntecedentes.add(getTextAreaAntecedentes());
 		}
@@ -789,5 +797,50 @@ public class MostrarHistorial extends JDialog {
 			modeloTablaEP.removeRow(0);			
 		}	
 		
+	}
+
+	private JPanel getPnNuevoAntecedente() {
+		if (pnNuevoAntecedente == null) {
+			pnNuevoAntecedente = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) pnNuevoAntecedente.getLayout();
+			flowLayout.setAlignment(FlowLayout.RIGHT);
+			pnNuevoAntecedente.add(getBtnNuevoAntecedente());
+		}
+		return pnNuevoAntecedente;
+	}
+	private JButton getBtnNuevoAntecedente() {
+		if (btnNuevoAntecedente == null) {
+			btnNuevoAntecedente = new JButton("A\u00F1adir nuevo antecedente");
+			btnNuevoAntecedente.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					nuevoAntecedente();
+				}
+			});
+		}
+		return btnNuevoAntecedente;
+	}
+
+	
+	/**
+	 * Método que me abre un nuevo antecedente
+	 */
+	protected void nuevoAntecedente() {
+		AnadirAntecedentesHistorial vah = new AnadirAntecedentesHistorial(this, hm, codempleado);
+		
+		vah.setLocationRelativeTo(this);
+		vah.setResizable(true);
+		vah.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+		vah.setVisible(true);
+		
+	}
+
+	
+	/**
+	 * Método que repinta la tabla de los antecedentes
+	 * @throws SQLException 
+	 */
+	public void repintarTablaAntecedentes() throws SQLException {
+		this.antecedentesAsignados = pbd.listarAntecedentesAsignados(hm.getHistorial());
+		añadirFilasAntecedentes();
 	}
 }

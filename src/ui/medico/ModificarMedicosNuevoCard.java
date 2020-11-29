@@ -337,6 +337,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	private JButton btnSeleccionarCausa;
 	private List<Causas> nombresCausas;
 	private String codmedico;
+	private JCheckBox chckbxEdo;
 	
 	/**
 	 * Create the frame.
@@ -1630,21 +1631,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 		return horizontalStrut;
 	}
 	
-	protected void guardarCausas() throws SQLException {
-			String causas = getCbCausas().getSelectedItem().toString();
-			String nHistorial = "" + mm.getPaciente().getHistorial();
-			Time hora =  cita.gethInicio();
-			
-			java.sql.Date horas = new java.sql.Date(hora.getTime());
-			
-			Time hour = new Time(horas.getTime());
-			
-			Date fecha = (Date) cita.getDate();
-			
-			java.sql.Date sDate = new java.sql.Date(fecha.getTime());
-			
 
-	
 	
 	private void guardarAccionCausa(String causas) throws SQLException {
 		List<AccionEmpleado> devolverAccionesAdmin = pbd.devolverAccionesEmlpeado();
@@ -2304,7 +2291,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 	
 	private void mostrarHistorial() throws SQLException {
 		HistorialMedico hm = pbd.HistorialCita(cita.getCodCita(),paciente.getCodePaciente());
-		MostrarHistorial mh = new MostrarHistorial(hm);
+		MostrarHistorial mh = new MostrarHistorial(hm, cita.getCodMed());
 		mh.setLocationRelativeTo(null);
 		mh.setResizable(true);
 		mh.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
@@ -3646,6 +3633,7 @@ public class ModificarMedicosNuevoCard extends JDialog {
 			pnAnadirDiagnostico.setLayout(null);
 			pnAnadirDiagnostico.add(getTxtFiltrarDiagnosticos());
 			pnAnadirDiagnostico.add(getBtnFiltrarDiagnosticos());
+			pnAnadirDiagnostico.add(getChckbxEdo());
 			pnAnadirDiagnostico.add(getBtnDiagnosticar());
 
 		}

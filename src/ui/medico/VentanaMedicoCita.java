@@ -317,7 +317,7 @@ public class VentanaMedicoCita extends JDialog {
 			
 			HistorialMedico hm = pbd.HistorialCita(codcita,codPaciente);
 			System.out.println("Historial" + hm.getHistorial());
-			MostrarHistorial mh = new MostrarHistorial(hm);
+			MostrarHistorial mh = new MostrarHistorial(hm, codmedico);
 			mh.setLocationRelativeTo(null);
 			mh.setResizable(true);
 			mh.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra

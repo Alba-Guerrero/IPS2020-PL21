@@ -638,7 +638,7 @@ public class VentanaVerCita extends JDialog {
 				}
 
 				HistorialMedico hm = pbd.HistorialCita(codcita, codPaciente);
-				MostrarHistorial mh = new MostrarHistorial(hm);
+				MostrarHistorial mh = new MostrarHistorial(hm, codAdmin);
 				mh.setLocationRelativeTo(null);
 				mh.setResizable(true);
 				mh.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra

@@ -79,6 +79,7 @@ public class ParserBaseDeDatos {
 	private final static String GET_CITA_FECHA_HISTORIAL_MED = "select * from cita c, medico m ,empleado e,paciente p where m.codmedico= e.codempleado and m.codmedico=c.codmedico and c.codpaciente= p.codpaciente and c.fecha=? and p.nhistorial =? and c.codmedico=?";
 	private final static String GET_ADMINISTRATIVO = "Select * from administrativo where codAdmin=? and pass=?";
 	private final static String GET_GERENTE = "Select * from GERENTE where codgerente=? and pass=?";
+	private final static String GET_PACIENTE = "Select * from paciente where codpaciente =  ?";
 	private final static String GET_AUDITOR = "Select * from auditor where codauditor=? and pass=?";
 	private final static String GET_MEDICO = "Select * from medico m,empleado e  where m.codmedico=e.codempleado and  m.codmedico=? and e.pass=?"; 
 	private final static String GET_MEDICO_NOMBRE = "Select * from empleado where codempleado=?";
@@ -3640,6 +3641,35 @@ private final static String GET_ACCIONES_DATE_ADM = "select * from accion where 
 		pst.close();
 		con.close();
 		return diagnsoticos;
+	}
+	
+	
+	
+	/**
+	 * Método que me devuelve el paciente buscando su núemro de historial
+	 * @param codigo
+	 * @return
+	 * @throws SQLException
+	 */
+	public Paciente buscarPacienteConHistorial(String codigo) throws SQLException {
+		Paciente m=null;
+		Connection con = new Conexion().getConnectionJDBC();
+		PreparedStatement pst = con.prepareStatement(GET_PACIENTE);
+		
+		pst.setString(1, codigo);
+		ResultSet rs = pst.executeQuery();
+
+		if( rs.next()) {
+			m= new Paciente(rs.getString("codpaciente"), rs.getString("nombre"), rs.getString("apellido"),
+					rs.getInt("movil"), rs.getString("email"), rs.getString("info"), rs.getString("nhistorial"));
+		}
+		 
+
+		rs.close();
+		pst.close();
+		con.close();
+		return m;
+
 	}
 	
 }

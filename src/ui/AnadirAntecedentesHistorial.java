@@ -9,7 +9,9 @@ import javax.swing.JOptionPane;
 import logica.Antecedente;
 import logica.AsignaAntecedente;
 import logica.HistorialMedico;
+import logica.Paciente;
 import logica.servicios.ParserBaseDeDatos;
+import ui.medico.AnadirAntecedente;
 import ui.medico.ModeloNoEditable;
 
 import javax.swing.JPanel;
@@ -55,6 +57,11 @@ public class AnadirAntecedentesHistorial extends JDialog{
 	private boolean tablaLista = false;
 	private List<AsignaAntecedente> asignaAntecedentesPaciente = new ArrayList<AsignaAntecedente>();
 	private Paciente paciente;
+	private Antecedente antecedente; // El antecedente
+	private List<String> nombresAntecedentes;
+	private boolean listoAntecedentes = true;
+
+
 
 	private MostrarHistorial mostrarHistorial;
 	private HistorialMedico historial;
@@ -93,12 +100,14 @@ public class AnadirAntecedentesHistorial extends JDialog{
 	 */
 	public AnadirAntecedentesHistorial(MostrarHistorial mostrarHistorial, HistorialMedico historial, String codempleado) {
 		setTitle("A\u00F1adir antecedente");
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 1100, 500);
 		this.mostrarHistorial = mostrarHistorial;
 		this.historial = historial;
 		this.codempleado = codempleado;
 		
 		try {
-			paciente = pbd();
+			paciente = pbd.buscarPacienteConHistorial(historial.getHistorial());
 			antecedentes = pbd.cargarAntecedentes();
 			
 		} catch (SQLException e) {
@@ -154,9 +163,35 @@ public class AnadirAntecedentesHistorial extends JDialog{
 	private JButton getBtnGuardar() {
 		if (btnGuardar == null) {
 			btnGuardar = new JButton("Guardar");
+			btnGuardar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+					try {
+						guardar();
+						JOptionPane.showMessageDialog(null, "Usted guardado correctamente los antecedentes.");	
+						mostrarHistorial.repintarTablaAntecedentes();
+						dispose();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}
+			});
 		}
 		return btnGuardar;
 	}
+	
+	
+	
+	protected void guardar() throws SQLException {
+		if (!asignaAntecedentesPaciente.isEmpty()) { // Que le hayamos asignado algun antecedente
+			//guardarAccionAntecedentes();
+			for (AsignaAntecedente aa : asignaAntecedentesPaciente) { // Voy guardando cada uno de los antecedentes
+				pbd.nuevaAsignaAntecedente(aa);
+			}
+		}		
+	}
+
+
 	private JButton getBtnCancelar() {
 		if (btnCancelar == null) {
 			btnCancelar = new JButton("Cancelar");
@@ -224,14 +259,35 @@ public class AnadirAntecedentesHistorial extends JDialog{
 	private JButton getBtnNuevo() {
 		if (btnNuevo == null) {
 			btnNuevo = new JButton("Crear nuevo antecedente");
+			btnNuevo.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					crearAntecedente();					
+				}
+			});
 			btnNuevo.setBounds(45, 53, 187, 21);
 		}
 		return btnNuevo;
 	}
+	
+	
+	/**
+	 * Método para crear un nuevo antecedente
+	 */
+	protected void crearAntecedente() {
+		
+		AnadirAntecedenteHistorial va = new AnadirAntecedenteHistorial(this);
+		
+		va.setLocationRelativeTo(this);
+		va.setResizable(true);
+		va.setModal(true); // hasta que no se cierre una ventana no se puede abrir otra
+		va.setVisible(true);
+	}
+
+
 	private JComboBox getCbAntecedentes() {
 		if (cbAntecedentes == null) {
 			cbAntecedentes = new JComboBox();
-			cbAntecedentes.setBounds(48, 42, 532, 21);
+			cbAntecedentes.setBounds(48, 42, 576, 21);
 			
 			
 			String[] nombreAntecedentes = new String[antecedentes.size()];
@@ -328,7 +384,7 @@ public class AnadirAntecedentesHistorial extends JDialog{
 					cambiarIndiceCBAntecedentes(0);
 				}
 			});
-			btnAsignar.setBounds(449, 9, 133, 21);
+			btnAsignar.setBounds(414, 9, 210, 21);
 		}
 		return btnAsignar;
 	}
@@ -354,23 +410,32 @@ public class AnadirAntecedentesHistorial extends JDialog{
 		String codAsigAntecedente = "" + r.nextInt(999999); // El código es aleatorio
 		
 		String nombreAntecedente = antecedente.getNombreAntecedente();
-		String nHistorial = paciente.getHistorial(); // El número de historial del paciente a quien le hemos asignado el antecedente
+		String nHistorial = historial.getHistorial(); // El número de historial del paciente a quien le hemos asignado el antecedente
 		String nAntecedente = antecedente.getCodAntecedente(); // El identificador del antecedente
-		String codMedico = cita.getCodMed();
+		String codEmpleado = codempleado;
 		Date fecha = new Date();	
 		Time hora = new Time(new Date().getTime());
-		AsignaAntecedente aa = new AsignaAntecedente(codAsigAntecedente, nombreAntecedente, nAntecedente, nHistorial, codMedico, fecha, hora);
+		AsignaAntecedente aa = new AsignaAntecedente(codAsigAntecedente, nombreAntecedente, nAntecedente, nHistorial, codEmpleado, fecha, hora);
 
 		asignaAntecedentesPaciente.add(aa);
 		
 		
-		if (tablaAntecedentesLista == false) { // Para que no casque al pintar la tabla de los antecedentes
-			tablaAntecedentesLista = true;
+		if (tablaLista == false) { // Para que no casque al pintar la tabla de los antecedentes
+			tablaLista = true;
 		}
 		
-		añadirFilasAntecedente(); // Añadimos a la tabla que nos muestra las preinscripciones que ya le hemos asignado
+		añadirFilas(); // Añadimos a la tabla que nos muestra las preinscripciones que ya le hemos asignado
 		
-		limpiarPanelAntecedentes(); // Para ponerlo todo de 0
+		limpiarPanel(); // Para ponerlo todo de 0
+	}
+
+
+	
+	/**
+	 * Método para limpiar el panel
+	 */
+	private void limpiarPanel() {
+		
 	}
 
 
@@ -410,9 +475,36 @@ public class AnadirAntecedentesHistorial extends JDialog{
 	private JButton getBtnBorrarAntecedente() {
 		if (btnBorrarAntecedente == null) {
 			btnBorrarAntecedente = new JButton("Borrar antecedente");
+			btnBorrarAntecedente.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					borrarFilaAntecedente();
+				}
+			});
 		}
 		return btnBorrarAntecedente;
 	}
+	
+	
+	
+	
+	/**
+	 * Método que me borra una fila seleccionada de la tabla de antecedentes
+	 */
+	protected void borrarFilaAntecedente() {
+		int fila = table.getSelectedRow();
+		
+		if (fila != -1) {
+			int res = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea borrar el antecedente?","Mensaje de confirmación",JOptionPane.YES_NO_OPTION);
+			if(res == JOptionPane.YES_OPTION) {	
+					
+					asignaAntecedentesPaciente.remove(table.getSelectedRow());
+					
+					añadirFilas();
+			}						
+		}	
+	}
+	
+	
 	private JScrollPane getScrollPane() {
 		if (scrollPane == null) {
 			scrollPane = new JScrollPane();
@@ -446,7 +538,7 @@ public class AnadirAntecedentesHistorial extends JDialog{
 	/**
 	 * Método para añadir filas a la tabla
 	 */
-	private void añadirFilas() {
+	void añadirFilas() {
 		borrarModeloTabla(); // Borramos todo antes de volver a pintar
 		
 		Object[] nuevaFila=new Object[2]; // 2 son las columnas
@@ -472,5 +564,68 @@ public class AnadirAntecedentesHistorial extends JDialog{
 		for (int i = 0; i < filas; i++) {
 			modeloTabla.removeRow(0);			
 		}		
+	}
+
+
+	
+	/**
+	 * Método para cambiar el antecedente
+	 * @param antecedente
+	 */
+	public void setAntecedente(Antecedente antecedente) {
+		this.antecedente = antecedente;	
+	}
+
+
+	
+	/**
+	 * Método para poner los antecedentes en el cb
+	 * @throws SQLException 
+	 */
+	public void ponerAntecedentes() throws SQLException {
+		nombresAntecedentes = new ArrayList<>();
+		List<String> antecedentes = pbd.buscarNombreTodosAntecedentes();
+		for(int i =0; i< antecedentes.size(); i++) {
+			nombresAntecedentes.add(antecedentes.get(i));
+		}	
+	}
+
+
+	
+	/**
+	 * Método para actualizar el antecedente
+	 */
+	public void actualizarAntecedente() {
+		try {
+			antecedentes = pbd.cargarAntecedentes(); // Volvemos a cargar los antecedentes de la base de datos después de haber añadido
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		listoAntecedentes = false;
+		cbAntecedentes.removeAllItems(); // Vacío todo el combo box
+		
+		// Cargo otra vez los antecedentes en el cb
+		String[] nombreAntecedentes = new String[antecedentes.size()];
+		for (int i = 0; i< antecedentes.size(); i++) {
+			nombreAntecedentes[i] = antecedentes.get(i).getNombreAntecedente();
+		}
+		
+		cbAntecedentes.setModel(new DefaultComboBoxModel<String>(nombreAntecedentes));				
+
+		listoAntecedentes = true;
+		
+		this.revalidate();
+		repaint();
+		
+		int contador = 0;
+		for (Antecedente a : antecedentes) {
+			if (a.getNombreAntecedente().toLowerCase().equals(antecedente.getNombreAntecedente())) {
+				cambiarIndiceCBAntecedentes(contador);
+				
+			}
+			contador = contador + 1;
+		}
 	}
 }
